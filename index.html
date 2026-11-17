@@ -34,7 +34,7 @@ QX FILE EDIT RULES
 [data-theme="dark"]{--bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}
 [data-theme="light"]{--bg:#f5f5f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--tile-bg:#f5f5f5;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font-family:"Hind Siliguri",system-ui,"Noto Sans Bengali","Kalpurush",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Hind Siliguri",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 header{position:sticky;top:0;background:var(--bg);z-index:5;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top));height:auto;min-height:62px;display:flex;align-items:center;border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;gap:10px;width:100%;min-height:38px}
 h1{font-size:20px;margin:0;flex:1;color:var(--accent)}
@@ -150,7 +150,7 @@ select{font:inherit;width:100%;padding:9px 10px;border-radius:10px;border:1px so
 .switch-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer}
 .switch-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-:root{--ar-font:"Amiri Quran","Traditional Arabic",serif;--bn-font:"Hind Siliguri",system-ui,"Noto Sans Bengali","Kalpurush",sans-serif;--bn-fs:16px}
+:root{--ar-font:"Amiri Quran","Traditional Arabic",serif;--bn-font:"Hind Siliguri",sans-serif;--bn-fs:16px}
 html,body,button,input,select,textarea{font-family:var(--bn-font)}
 body{font-size:var(--bn-fs)}
 .ayah .ar,.ar-name,.bism,.aotd-ar{font-family:var(--ar-font)}
@@ -186,7 +186,7 @@ h1{ color:var(--accent) !important; }
 .num{ min-width:48px !important; height:48px !important; font-size:18px !important; }
 /* Grid dropdown - only list, no collapsible expansion */
 .header-tools{ position:relative; }
-#gridDropdown{ display:none; position:absolute; top:52px; right:0; width:280px; z-index:60; background:var(--tile-bg); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.25); padding:8px; text-align:left; }
+#gridDropdown{ display:none; position:absolute; top:52px; right:0; width:280px; max-height:calc(100vh - 150px - env(safe-area-inset-bottom)); overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; z-index:60; background:var(--tile-bg); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.25); padding:8px; text-align:left; }
 #gridDropdown.open{ display:block; }
 .g-menu-item{ display:flex; align-items:center; justify-content:space-between; width:100%; min-height:48px; padding:13px 12px; border:1px solid transparent; border-bottom:1px solid var(--line); background:var(--tile-bg); color:var(--text); font:inherit; font-size:14px; cursor:pointer; text-align:left; border-radius:10px; margin:4px 0; box-sizing:border-box; transition:background 0.2s ease, border-color 0.2s ease, transform 0.15s ease; }
 .g-menu-item:last-child{ border-bottom:none; }
@@ -387,7 +387,7 @@ body.ww-on .ayah .ar .ww-word{border-bottom:2px dotted var(--accent)}
 .hadith-item.done{border-color:var(--accent)}
 
 /* Final submenu sizing: consistent, responsive boxes */
-#gridDropdown{box-sizing:border-box;width:min(320px,calc(100vw - 2*var(--gut)));padding:8px}
+#gridDropdown{box-sizing:border-box;width:min(320px,calc(100vw - 2*var(--gut)));max-height:calc(100dvh - 150px - env(safe-area-inset-bottom));overflow-y:auto;padding:8px}
 .g-menu-item{box-sizing:border-box;min-height:46px;padding:10px 12px;line-height:1.4;gap:10px}
 .g-menu-item>span{min-width:0;overflow-wrap:anywhere}
 .g-menu-item small{flex-shrink:0;text-align:right}
@@ -563,6 +563,8 @@ h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 <style id="ui-v2">
 .app-logo{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:block}
+body.inside-page .app-logo{display:none}
+body.inside-page h1{display:flex;align-items:center;gap:8px}
 #gridMenu svg{display:block}
 .g-quick{display:flex;gap:8px;padding:2px 0 10px;margin-bottom:4px;border-bottom:1px solid var(--line)}
 .g-quick:empty{display:none}
@@ -1383,6 +1385,7 @@ function renderHome(){
 }
 
 function renderQuranHome(){
+  document.body.classList.remove("inside-page");
   titleEl.textContent = "Quranix";
   navEl.style.display = "flex";
   updateAudioBarPos();
@@ -1680,7 +1683,10 @@ document.querySelectorAll("#nav button").forEach(b => b.onclick = () => setMode(
 function mk(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function showOther(title){
   stopTimer();
-  titleEl.textContent = title;
+  document.body.classList.add("inside-page");
+  titleEl.innerHTML = String(title).replace(/\{\{([a-z_0-9]+)(:f)?\}\}/g, function(match, name, filled){
+    return '<span class="ms' + (filled ? ' f' : '') + '" aria-hidden="true">' + name + '</span>';
+  });
   backBtn.style.display = "none";
   controls.style.display = "none";
   qEl.style.display = "none";
@@ -2297,15 +2303,13 @@ const AR_FONTS = [
   ['system-ui,serif', "ডিভাইস ডিফল্ট আরবি"]
 ];
 const BN_FONTS = [
-  ['"Hind Siliguri",system-ui,"Noto Sans Bengali",sans-serif', "হিন্দ শিলিগুড়ি"],
-  ['system-ui,"Noto Sans Bengali","Kalpurush",sans-serif', "ডিভাইস ডিফল্ট বাংলা"],
-  ['"Noto Sans Bengali"', "নোটো সান্স বাংলা"],
-  ['"Kalpurush"', "কালপুরুষ"]
-]
+  ['"Hind Siliguri",sans-serif', "হিন্দ শিলিগুড়ি"],
+  ['"Kalpurush",sans-serif', "কালপুরুষ"]
+];
 
 let appPrefs = lsGet("appPrefs", {
   arFont: AR_FONTS[0][0],
-  bnFont: '"Hind Siliguri",system-ui,"Noto Sans Bengali",sans-serif',
+  bnFont: '"Hind Siliguri",sans-serif',
   bnFs: 16,
   onboarded: false
 });
@@ -2757,9 +2761,9 @@ setInterval(checkPrayerAlerts, 5000);
     else if(type==='source') renderSourcePopup();
     else if(type==='khatam') renderKhatamPopup();
     else if(type==='downloads') renderDownloadsPopup();
-    else if(type==='hadith'){ if(typeof setMode==='function') setMode('hadith'); }
-    else if(type==='pwa'){ if(window.quranixInstall) window.quranixInstall(); }
-    else if(type==='hijri'){ if(typeof setMode==='function') setMode('hijri'); }
+    else if(type==='hadith'){ closePopup(); if(typeof setMode==='function') setMode('hadith'); }
+    else if(type==='pwa'){ renderPwaPopup(); }
+    else if(type==='hijri'){ closePopup(); if(typeof setMode==='function') setMode('hijri'); }
     else if(type==='wordbyword'){ if(window.toggleWordMode) window.toggleWordMode(); }
     else if(type==='tajweed'){ if(window.toggleTajweed) window.toggleTajweed(); }
     else if(type==='asma'){ if(typeof setMode==='function') setMode('asma'); }
@@ -2768,6 +2772,29 @@ setInterval(checkPrayerAlerts, 5000);
   dd.querySelectorAll('[data-popup]').forEach(function(btn){ btn.onclick=function(e){ e.stopPropagation(); openPopup(btn.dataset.popup); }; });
   window.openGridPopup=openPopup;
   function head(title){ return '<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>'+title+'</h3>'; }
+  function renderPwaPopup(){
+    var installed=window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+    var ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var android=/Android/i.test(navigator.userAgent);
+    var mobile=ios||android;
+    var title=installed?'Quranix ইনস্টল করা আছে':'Quranix অ্যাপ ইনস্টল';
+    var mobileSteps=ios
+      ? '<div class="pp-mini">Safari-তে Share <b>{{share}}</b> → Add to Home Screen → Add চাপুন। iPhone-এ ব্রাউজারের নিজস্ব নিয়মে ইনস্টল করতে হয়।</div>'
+      : '<div class="pp-mini">Install app বাটনে চাপুন। প্রম্পট না এলে Chrome-এর ⋮ মেনু → Install app / Add to Home screen নির্বাচন করুন।</div>';
+    var pcSteps='<div class="pp-mini">Chrome বা Edge-এ Install app বাটনে চাপুন। প্রম্পট না এলে address bar-এর Install আইকন অথবা ব্রাউজারের মেনু → Install Quranix নির্বাচন করুন।</div>';
+    var content=installed
+      ? '<div class="pp-mini" style="text-align:center;padding:12px 4px">Quranix ইতিমধ্যে এই ডিভাইসে ইনস্টল করা আছে। হোম স্ক্রিন বা অ্যাপ তালিকা থেকে খুলুন।</div>'
+      : '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 12px">'
+        +'<div style="border:1px solid var(--line);border-radius:12px;padding:12px 9px;background:var(--card)"><div style="font-size:25px;text-align:center;color:var(--accent);margin-bottom:5px">{{smartphone}}</div><b style="display:block;text-align:center;font-size:13px;margin-bottom:6px">মোবাইল</b>'+mobileSteps+'</div>'
+        +'<div style="border:1px solid var(--line);border-radius:12px;padding:12px 9px;background:var(--card)"><div style="font-size:25px;text-align:center;color:var(--accent);margin-bottom:5px">{{monitor}}</div><b style="display:block;text-align:center;font-size:13px;margin-bottom:6px">PC / ল্যাপটপ</b>'+pcSteps+'</div>'
+        +'</div><p class="pp-mini" style="margin:0 0 10px">ইনস্টল বাটন কাজ করতে সাইটটি HTTPS-এ চালু এবং ব্রাউজারে PWA install সমর্থিত হতে হবে।</p>';
+    box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:16px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:26px">{{download}}</div><b>দ্রুত খুলুন · অফলাইনে পড়ুন</b><p class="pp-mini">হোম স্ক্রিন বা ডেস্কটপে Quranix যোগ করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} এখনই ইনস্টল করুন</button>':'');
+    var installButton=box.querySelector('#quranixPopupInstall');
+    if(installButton){
+      installButton.onclick=function(){ if(window.quranixInstall) window.quranixInstall(); };
+      if(!ios && !android && !window.quranixInstallAvailable) installButton.textContent='ইনস্টল অপশন যাচাই করুন';
+    }
+  }
   var BN_SURAH=['আল-ফাতিহা','আল-বাকারা','আলে ইমরান','আন-নিসা','আল-মায়িদা','আল-আনআম','আল-আরাফ','আল-আনফাল','আত-তাওবা','ইউনুস','হুদ','ইউসুফ','আর-রাদ','ইবরাহীম','আল-হিজর','আন-নাহল','বনি ইসরাঈল','আল-কাহফ','মারইয়াম','ত্বা-হা','আল-আম্বিয়া','আল-হাজ্জ','আল-মুমিনুন','আন-নূর','আল-ফুরকান','আশ-শুআরা','আন-নামল','আল-কাসাস','আল-আনকাবুত','আর-রূম','লুকমান','আস-সাজদা','আল-আহযাব','সাবা','ফাতির','ইয়াসীন','আস-সাফফাত','সোয়াদ','আয-যুমার','গাফির','ফুসসিলাত','আশ-শূরা','আয-যুখরুফ','আদ-দুখান','আল-জাসিয়া','আল-আহকাফ','মুহাম্মাদ','আল-ফাতহ','আল-হুজুরাত','ক্বাফ','আয-যারিয়াত','আত-তূর','আন-নাজম','আল-ক্বামার','আর-রাহমান','আল-ওয়াকিয়া','আল-হাদীদ','আল-মুজাদালা','আল-হাশর','আল-মুমতাহিনা','আস-সাফ','আল-জুমুআ','আল-মুনাফিকুন','আত-তাগাবুন','আত-তালাক','আত-তাহরীম','আল-মুলক','আল-কালাম','আল-হাক্কাহ','আল-মাআরিজ','নূহ','আল-জিন','আল-মুয্যাম্মিল','আল-মুদ্দাসসির','আল-কিয়ামাহ','আদ-দাহর','আল-মুরসালাত','আন-নাবা','আন-নাযিআত','আবাসা','আত-তাকউীর','আল-ইনফিতার','আল-মুতাফফিফীন','আল-ইনশিক্বাক','আল-বুরূজ','আত-তারিক','আল-আ\'লা','আল-গাশিয়া','আল-ফাজর','আল-বালাদ','আশ-শামস','আল-লাইল','আদ-দুহা','আল-ইনশিরাহ','আত-তীন','আল-আলাক','আল-কদর','আল-বাইয়্যিনাহ','আয-যিলযাল','আল-আদিয়াত','আল-কারিআ','আত-তাকাসুর','আল-আসর','আল-হুমাযাহ','আল-ফীল','কুরাইশ','আল-মাউন','আল-কাউসার','আল-কাফিরুন','আন-নাসর','আল-মাসাদ','আল-ইখলাস','আল-ফালাক','আন-নাস'];
   // ---- SEARCH : 2 modes ----
   var searchMode='word';
@@ -3349,7 +3376,7 @@ window.openAyahCard = function(label, ar, bn){
     ctx.direction='ltr'; ctx.textAlign='center';
     y+=18; ctx.fillStyle=th.accent; ctx.fillRect(W/2-60, y, 120, 3); y+=58;
     if(state.showBn){
-      ctx.font='28px system-ui, "Noto Sans Bengali", sans-serif'; ctx.fillStyle=th.bn;
+      ctx.font='28px "Hind Siliguri", sans-serif'; ctx.fillStyle=th.bn;
       var bnLines=wrap(ctx, bn, W-180);
       bnLines.forEach(function(l){ ctx.fillText(l, W/2, y); y+=44; });
       y+=20;
@@ -3592,7 +3619,22 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
   }
   window.toggleTajweed=function(){ ON=!ON; apply(); };
   window.setTajweed=function(v){ ON=!!v; apply(); };
-  // Tajweed remains available internally, but its shortcut is intentionally hidden from the grid menu.
+  // Tajweed Color shortcut is placed in the first quick-grid row.
+  function addTajweedQuick(){
+    var tools=document.getElementById('gQuick');
+    if(!tools || document.getElementById('tajweedQuickToggle')) return;
+    var b=document.createElement('button');
+    b.id='tajweedQuickToggle'; b.className='g-quick-btn'; b.title='তাজভিদ কালার';
+    b.innerHTML='{{palette}}<span>তাজভিদ কালার</span>';
+    b.onclick=function(){ window.toggleTajweed(); };
+    tools.appendChild(b);
+    b.classList.toggle('on', ON);
+  }
+  addTajweedQuick(); setTimeout(addTajweedQuick, 700);
+  // Keep the quick-grid button state synchronized with the setting.
+  var oldApply=apply;
+  apply=function(){ oldApply(); var quick=document.getElementById('tajweedQuickToggle'); if(quick) quick.classList.toggle('on', ON); };
+  // Tajweed color remains available from the grid navigation quick row.
   var lc=document.getElementById('tajweedLegendClose');
   if(lc) lc.onclick=function(){ ON=false; apply(); };
   // Apply after surah loads (ayahCards render later)
@@ -3782,6 +3824,12 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     if(typeof showOther==='function') showOther('{{nights_stay}} হিজরি ক্যালেন্ডার');
     var appEl=document.getElementById('app');
     var h=hijriParts(new Date());
+    if(!h){
+      var unavailable=document.createElement('div'); unavailable.className='hijri-top';
+      unavailable.textContent='এই ব্রাউজারে হিজরি ক্যালেন্ডার গণনা সমর্থিত নয়। আপডেটেড Chrome বা অন্য আধুনিক ব্রাউজারে চেষ্টা করুন।';
+      appEl.appendChild(unavailable);
+      return;
+    }
     var top=document.createElement('div'); top.className='hijri-top';
     top.innerHTML='<small>আজ · '+fmtGreg(new Date())+'</small><div class="big">{{nights_stay}} '+hijriStr(new Date())+'</div><div><small>হিজরি ক্যালেন্ডার (উম্মুল কুরা) — চাঁদ দেখার উপর ১ দিন এদিক-ওদিক হতে পারে</small></div>';
     appEl.appendChild(top);
@@ -3807,7 +3855,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     // Days of month (until next month starts, max 30)
     var cur=new Date(start);
     for(var dnum=1; dnum<=30; dnum++){
-      var hh2=hijriParts(cur); if(!hh2 || hh2.month!==h.month) break;
+      var hh2=hijriParts(cur); if(!hh2 || hh2.month!==h.month || hh2.year!==h.year) break;
       var cell=document.createElement('div'); cell.className='hijri-day'+(hh2.day===h.day?' today':'');
       var evToday=EVENTS.filter(function(ev){ return ev.m===hh2.month && ev.d===hh2.day; });
       if(evToday.length) cell.classList.add('event');
@@ -3825,7 +3873,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     var sorted=EVENTS.map(function(ev){ var f=findNextHijri(ev.m, ev.d); return {ev:ev, date:f?f.date:null, days:f?f.days:999}; }).sort(function(a,b){ return a.days-b.days; });
     sorted.forEach(function(it){
       var row=document.createElement('div'); row.className='hijri-event'+(it.days===0?' next':'');
-      row.innerHTML='<div><b>'+it.ev.name+'</b><div class="trk-mini">'+it.ev.desc+' · হিজরি '+bnNum(it.ev.d)+' '+MONTHS_BN[it.ev.m-1]+'</div></div><div style="text-align:center"><b>'+fmtGreg(it.date)+'</b><div class="trk-mini">'+(it.days===0?'আজই!':bnNum(it.days)+' দিন বাকি')+'</div></div>';
+      row.innerHTML='<div><b>'+it.ev.name+'</b><div class="trk-mini">'+it.ev.desc+' · হিজরি '+bnNum(it.ev.d)+' '+MONTHS_BN[it.ev.m-1]+'</div></div><div style="text-align:center"><b>'+(it.date?fmtGreg(it.date):'তারিখ অনুপলব্ধ')+'</b><div class="trk-mini">'+(it.days===0?'আজই!':bnNum(it.days)+' দিন বাকি')+'</div></div>';
       appEl.appendChild(row);
     });
     var mini=document.getElementById('gHijriMini'); if(mini) mini.textContent=h?hijriStr(new Date()).slice(0,12)+' ›':'›';
@@ -3838,7 +3886,8 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
 /* ===== PWA: install + service worker ===== */
 (function(){
   var deferred=null;
-  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred=e; showBanner(); });
+  window.quranixInstallAvailable=false;
+  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred=e; window.quranixInstallAvailable=true; showBanner(); });
   window.addEventListener('appinstalled', function(){ hideBanner(); if(typeof showToast==='function') showToast('Quranix ইনস্টল হয়েছে'); });
   function showBanner(){ var b=document.getElementById('pwaBanner'); if(b) b.classList.add('show'); }
   function hideBanner(){ var b=document.getElementById('pwaBanner'); if(b) b.classList.remove('show'); }
@@ -3850,12 +3899,25 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
   var bc=document.getElementById('pwaBannerClose');
   if(bc) bc.onclick=function(){ hideBanner(); localStorage.setItem('quranix_pwa_dismiss','1'); };
   async function doInstall(){
-    if(deferred){ deferred.prompt(); try{ var c=await deferred.userChoice; if(c.outcome==='accepted') hideBanner(); }catch(e){} deferred=null; return; }
-    // iOS / manual fallback
+    if(isInstalled()){ if(typeof showToast==='function') showToast('Quranix ইতিমধ্যে ইনস্টল করা আছে'); return; }
+    if(deferred){
+      var promptEvent=deferred;
+      deferred=null;
+      try{
+        await promptEvent.prompt();
+        var choice=await promptEvent.userChoice;
+        if(choice && choice.outcome==='accepted') hideBanner();
+        else if(typeof showToast==='function') showToast('ইনস্টল বাতিল করা হয়েছে');
+      }catch(err){
+        if(typeof showToast==='function') showToast('ইনস্টল প্রম্পট খোলা যায়নি; ব্রাউজার মেনু ব্যবহার করুন');
+      }
+      return;
+    }
     var isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if(isIOS){ alert('iPhone-এ ইনস্টল করতে: নিচে Share বাটন → Add to Home Screen → Add চাপ দাও।'); }
-    else if(isInstalled()){ alert('অ্যাপটা already ইনস্টল করা আছে'); }
-    else { alert('ইনস্টল করতে: ব্রাউজারের মেনু (⋮) → Install app / Add to Home Screen চাপ দাও।'); }
+    var isAndroid=/Android/i.test(navigator.userAgent);
+    if(isIOS){ alert('iPhone-এ Safari খুলে Share → Add to Home Screen → Add চাপুন।'); }
+    else if(isAndroid){ alert('Chrome-এর ⋮ মেনু → Install app / Add to Home screen নির্বাচন করুন।'); }
+    else { alert('PC-তে Chrome বা Edge-এর address bar-এর Install আইকন, অথবা মেনু → Install Quranix নির্বাচন করুন।'); }
   }
   window.quranixInstall=doInstall;
   // Service worker - only on http/https, not file://
