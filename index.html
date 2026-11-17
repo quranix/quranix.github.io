@@ -29,15 +29,15 @@ QX FILE EDIT RULES
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#faf8f3;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e6e2d8;--fs:30px;--tile-bg:#f8f7f4;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
+:root{--bg:#f5f5f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--fs:30px;--tile-bg:#f5f5f5;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
 @media (prefers-color-scheme:dark){:root{--bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}}
 [data-theme="dark"]{--bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}
-[data-theme="light"]{--bg:#faf8f3;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e6e2d8;--tile-bg:#f8f7f4;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
+[data-theme="light"]{--bg:#f5f5f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--tile-bg:#f5f5f5;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--text);font-family:"Hind Siliguri",system-ui,"Noto Sans Bengali","Kalpurush",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-header{position:sticky;top:0;background:var(--bg);z-index:5;padding:calc(8px + env(safe-area-inset-top)) 14px 8px 14px;min-height:calc(60px + env(safe-area-inset-top));display:flex;align-items:center;border-bottom:1px solid var(--line);box-sizing:border-box}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:44px}
-h1{font-size:20px;margin:0;flex:1;color:var(--accent);line-height:1;display:flex;align-items:center}
+header{position:sticky;top:0;background:var(--bg);z-index:5;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top));height:auto;min-height:62px;display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:10px;width:100%;min-height:38px}
+h1{font-size:20px;margin:0;flex:1;color:var(--accent)}
 button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:6px 12px}
 input{width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit}
 .tabs{display:flex;gap:8px;margin-top:8px;overflow-x:auto}
@@ -151,7 +151,8 @@ select{font:inherit;width:100%;padding:9px 10px;border-radius:10px;border:1px so
 .switch-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 :root{--ar-font:"Amiri Quran","Traditional Arabic",serif;--bn-font:"Hind Siliguri",system-ui,"Noto Sans Bengali","Kalpurush",sans-serif;--bn-fs:16px}
-body{font-family:var(--bn-font);font-size:var(--bn-fs)}
+html,body,button,input,select,textarea{font-family:var(--bn-font)}
+body{font-size:var(--bn-fs)}
 .ayah .ar,.ar-name,.bism,.aotd-ar{font-family:var(--ar-font)}
 .ayah .bn,.aotd-bn{font-size:var(--bn-fs)}
 .set-sec{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
@@ -185,19 +186,29 @@ h1{ color:var(--accent) !important; }
 .num{ min-width:48px !important; height:48px !important; font-size:18px !important; }
 /* Grid dropdown - only list, no collapsible expansion */
 .header-tools{ position:relative; }
-#gridDropdown{ display:none; position:absolute; top:52px; right:0; width:280px; z-index:60; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.25); padding:8px; text-align:left; }
+#gridDropdown{ display:none; position:absolute; top:52px; right:0; width:280px; z-index:60; background:var(--tile-bg); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.25); padding:8px; text-align:left; }
 #gridDropdown.open{ display:block; }
 .g-menu-item{ display:flex; align-items:center; justify-content:space-between; width:100%; min-height:48px; padding:13px 12px; border:1px solid transparent; border-bottom:1px solid var(--line); background:var(--tile-bg); color:var(--text); font:inherit; font-size:14px; cursor:pointer; text-align:left; border-radius:10px; margin:4px 0; box-sizing:border-box; transition:background 0.2s ease, border-color 0.2s ease, transform 0.15s ease; }
 .g-menu-item:last-child{ border-bottom:none; }
 .g-menu-item:hover{ background:var(--tile-hover); border-color:var(--line); }
 .g-menu-item:active{ background:var(--line); transform:scale(0.98); }
 .g-menu-item small{ color:var(--muted); }
+.install-menu-item{background:linear-gradient(110deg,rgba(15,107,79,.12),rgba(15,107,79,.035));border:1px solid rgba(15,107,79,.28);margin-top:8px}
+.install-menu-item:hover{background:linear-gradient(110deg,rgba(15,107,79,.20),rgba(15,107,79,.08));border-color:var(--accent)}
+.install-menu-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.install-menu-copy strong{font-size:14px;font-weight:700;color:var(--accent);line-height:1.35}
+.install-menu-copy small{font-size:11px;color:var(--muted);font-weight:400}
+.install-menu-item>#gPwaMini{flex-shrink:0;color:var(--accent);font-size:12px;font-weight:600;margin-left:8px}
+[data-theme="dark"] .install-menu-item{background:linear-gradient(110deg,rgba(76,199,155,.16),rgba(76,199,155,.05));border-color:rgba(76,199,155,.32)}
+[data-theme="dark"] .install-menu-copy strong,[data-theme="dark"] .install-menu-item>#gPwaMini{color:var(--accent)}
 /* Center Popup - middle of screen */
 #gridPopupOverlay{ display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.55); align-items:center; justify-content:center; padding:16px; touch-action:manipulation; }
 #gridPopupOverlay.open{ display:flex; }
-#gridPopupBox{ width:100%; max-width:360px; max-height:82vh; overflow-y:auto; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 20px 40px rgba(0,0,0,.3); }
+#gridPopupBox{ width:100%; max-width:360px; max-height:82vh; overflow-y:auto; background:var(--tile-bg); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 20px 40px rgba(0,0,0,.3); }
 #gridPopupBox h3{ margin:0 0 12px; font-size:16px; }
-.pp-close{ float:right; border:none; background:transparent; font-size:18px; cursor:pointer; color:var(--muted); }
+#gridPopupBox{position:relative}
+.pp-close{position:absolute;top:10px;right:10px;z-index:2;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:20px;line-height:1;cursor:pointer;color:var(--text);padding:0}
+#gridPopupBox h3{min-height:36px;padding:5px 48px 0 0;display:flex;align-items:center}
 .pp-tabs{ display:flex; gap:6px; margin-bottom:12px; }
 .pp-tabs button{ flex:1; padding:9px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--text); font:inherit; font-size:13px; cursor:pointer; }
 .pp-tabs button.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
@@ -205,9 +216,10 @@ h1{ color:var(--accent) !important; }
 .pp-row{ display:flex; gap:8px; margin-bottom:10px; }
 .pp-row input{ flex:1; padding:11px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--text); font:inherit; }
 .pp-btn{ width:100%; padding:12px; border:none; border-radius:10px; background:var(--accent); color:#fff; font:inherit; font-weight:600; cursor:pointer; }
-.pp-opt{ display:flex; align-items:center; justify-content:space-between; padding:12px 10px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; cursor:pointer; font-size:14px; background:var(--card); }
+.pp-opt{ display:flex; align-items:center; justify-content:space-between; padding:12px 10px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; cursor:pointer; font-size:14px; background:var(--tile-bg); }
+.pp-opt:hover,.pp-result:hover,.g-quick-btn:hover,.ayah-menu button:hover{background:var(--tile-hover)}
 .pp-opt.on{ border-color:var(--accent); color:var(--accent); font-weight:600; }
-.pp-result{ padding:10px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; cursor:pointer; }
+.pp-result{ padding:10px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; cursor:pointer; background:var(--tile-bg); }
 .pp-result b{ font-size:14px; }
 .pp-result small{ color:var(--muted); font-size:12px; line-height:1.5; display:block; }
 .pp-font-row{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:13px; }
@@ -225,9 +237,9 @@ h1{ color:var(--accent) !important; }
 .sheet-box .goal-bar{ display:flex !important; }
 .ayah-actions{ position:relative; }
 .more-btn{ border:0; background:none; font-size:22px; line-height:1; padding:0 6px; color:var(--muted); cursor:pointer; }
-.ayah-menu{ display:none; position:absolute; top:100%; right:0; min-width:190px; z-index:30; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.18); padding:4px; }
+.ayah-menu{ display:none; position:absolute; top:100%; right:0; min-width:190px; z-index:30; background:var(--tile-bg); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.18); padding:4px; }
 .ayah-menu.open{ display:block; }
-.ayah-menu button{ display:block; width:100%; text-align:left; border:0; background:none; padding:10px 12px; font-size:14px; border-radius:8px; color:var(--text); }
+.ayah-menu button{ display:block; width:100%; text-align:left; border:0; background:var(--tile-bg); padding:10px 12px; font-size:14px; border-radius:8px; color:var(--text); }
 .ayah-menu button:active{ background:var(--line); }
 header{ transition:transform .25s ease; } nav{ transition:transform .25s ease; } .audio-bar{ transition:bottom .25s ease; }
 body.bars-hidden header{ transform:translateY(-110%); }
@@ -373,6 +385,20 @@ body.ww-on .ayah .ar .ww-word{border-bottom:2px dotted var(--accent)}
 .hadith-item b{font-size:14px}
 .hadith-item .ref{font-size:11px;color:var(--muted)}
 .hadith-item.done{border-color:var(--accent)}
+
+/* Final submenu sizing: consistent, responsive boxes */
+#gridDropdown{box-sizing:border-box;width:min(320px,calc(100vw - 2*var(--gut)));padding:8px}
+.g-menu-item{box-sizing:border-box;min-height:46px;padding:10px 12px;line-height:1.4;gap:10px}
+.g-menu-item>span{min-width:0;overflow-wrap:anywhere}
+.g-menu-item small{flex-shrink:0;text-align:right}
+#gridPopupOverlay{box-sizing:border-box;padding:12px}
+#gridPopupBox{box-sizing:border-box;width:min(420px,calc(100vw - 24px));max-width:420px;max-height:84vh;padding:16px;overflow-x:hidden}
+#gridPopupBox *{box-sizing:border-box}
+#gridPopupBox .pp-opt{width:100%;min-height:44px;padding:10px 12px;gap:12px;line-height:1.4}
+#gridPopupBox .pp-result{width:100%;padding:12px;margin-bottom:8px;line-height:1.45;overflow-wrap:anywhere}
+#gridPopupBox .pp-input,#gridPopupBox .pp-row input{min-width:0;max-width:100%}
+@supports (height:100dvh){#gridPopupBox{max-height:88dvh}}
+@media(max-width:380px){#gridPopupBox{width:calc(100vw - 20px);padding:13px}#gridDropdown{width:min(300px,calc(100vw - 20px))}.g-menu-item{padding:9px 10px;font-size:13px}}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0..1,0&icon_names=abc,arrow_back,auto_awesome,auto_stories,bar_chart,bedtime,bubble_chart,calendar_month,check,check_circle,close,content_copy,crop_portrait,crop_square,dark_mode,delete,download,edit,edit_note,event,explore,filter_list,folder_open,front_hand,headphones,help,history_edu,hourglass_top,image,info,light_mode,lightbulb,location_on,menu_book,mic,more_horiz,mosque,nights_stay,notifications,palette,pause,play_arrow,psychology,public,push_pin,radio_button_unchecked,refresh,repeat,save,search,share,skip_next,skip_previous,smartphone,star,stars,target,text_fields,translate,undo,visibility,volume_up,warning,wb_sunny,wb_twilight,wifi,wifi_off&display=block" rel="stylesheet">
@@ -392,7 +418,7 @@ html,body{overflow-x:clip}
 body{padding-top:0;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 img,svg,canvas,video{max-width:100%}
 /* STEP 1 FIX: PC te full width, kono empty side space thakbe na - mobile thik thakbe */
-header{padding-top:calc(12px + env(safe-area-inset-top));padding-left:var(--gut);padding-right:var(--gut)}
+header{padding-top:calc(12px + env(safe-area-inset-top));padding-bottom:12px;padding-left:var(--gut);padding-right:var(--gut)}
 main{max-width:100%;padding-left:var(--gut);padding-right:var(--gut);padding-bottom:calc(96px + env(safe-area-inset-bottom))}
 nav{justify-content:center;padding-left:0;padding-right:0}
 .audio-bar{padding-left:var(--gut);padding-right:var(--gut)}
@@ -442,7 +468,7 @@ h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 /* ---------- landscape phones / short screens ---------- */
 @media (max-height:480px) and (orientation:landscape){
- header{padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:4px}
+ header{padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:6px}
  .tbtn{width:150px;height:150px}.tcount{font-size:44px}
  .compass-dial{width:170px;height:170px}
  nav button{padding:4px 0;flex-direction:row;justify-content:center;gap:6px}
@@ -540,7 +566,7 @@ h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #gridMenu svg{display:block}
 .g-quick{display:flex;gap:8px;padding:2px 0 10px;margin-bottom:4px;border-bottom:1px solid var(--line)}
 .g-quick:empty{display:none}
-.g-quick-btn{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit;font-size:11px;cursor:pointer;text-align:center;line-height:1.2}
+.g-quick-btn{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border:1px solid var(--line);border-radius:12px;background:var(--tile-bg);color:var(--text);font:inherit;font-size:11px;cursor:pointer;text-align:center;line-height:1.2}
 .g-quick-btn .ms{font-size:22px;color:var(--accent)}
 .g-quick-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .g-quick-btn.on .ms{color:#fff}
@@ -556,7 +582,8 @@ nav button span{line-height:1.15;text-align:center}
 .home-tile:hover{ background:var(--tile-hover); border-color:var(--accent); box-shadow:0 6px 18px rgba(0,0,0,0.08); transform:translateY(-2px); }
 .home-tile:active{ border-color:var(--accent); transform:translateY(0) scale(0.98); }
 [data-theme="dark"] .home-tile:hover{ box-shadow:0 8px 20px rgba(0,0,0,0.3); }
-.home-tile .t-ic .ms{font-size:30px;color:var(--accent);transition:transform 0.2s ease}
+.home-tile .t-ic{display:flex;align-items:center;justify-content:center;min-height:34px;line-height:1}
+.home-tile .t-ic .ms{font-size:30px;color:var(--accent);line-height:1;transition:transform 0.2s ease}
 .home-tile:hover .t-ic .ms{ transform:scale(1.08); }
 .home-tile:nth-child(1) .t-ic .ms{ color:#0f6b4f; }
 .home-tile:nth-child(2) .t-ic .ms{ color:#b7791f; }
@@ -631,16 +658,14 @@ nav button span{line-height:1.15;text-align:center}
 
       <div id="gridDropdown">
         <div class="g-quick" id="gQuick"></div>
-        <button class="g-menu-item" data-popup="filter"><span>{{filter_list}} &nbsp; সূরা ফিল্টার</span><small id="gFilterMini">সব সূরা ›</small></button>
         <button class="g-menu-item" data-popup="trans"><span>{{translate}} &nbsp; অনুবাদ</span><small id="gTransMini">মুহিউদ্দীন খান ›</small></button>
         <button class="g-menu-item" data-popup="tafsir"><span>{{auto_stories}} &nbsp; তাফসির</span><small id="gTafsirMini">›</small></button>
         <button class="g-menu-item" data-popup="reciter"><span>{{headphones}} &nbsp; তেলাওয়াত</span><small id="gReciterMini">সৌদ আশ-শুরাইম ›</small></button>
         <button class="g-menu-item" data-popup="font"><span>{{text_fields}} &nbsp; ফন্ট কাস্টমাইজ</span><small>Aa ›</small></button>
         <button class="g-menu-item" data-popup="downloads"><span>{{download}} &nbsp; ডাউনলোড</span><small id="gDlMini">›</small></button>
-        <button class="g-menu-item" data-popup="tajweed"><span>{{palette}} &nbsp; তাজভিদ কালার</span><small id="gTajweedMini">›</small></button>
         
         <button class="g-menu-item" data-popup="hijri"><span>{{nights_stay}} &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
-        <button class="g-menu-item" data-popup="pwa"><span>{{smartphone}} &nbsp; অ্যাপ ইনস্টল করো</span><small id="gPwaMini">›</small></button>
+        <button class="g-menu-item install-menu-item" data-popup="pwa"><span class="install-menu-copy"><strong>{{smartphone}} &nbsp; Quranix অ্যাপ ইনস্টল</strong><small>দ্রুত খুলুন · অফলাইনে পড়ুন</small></span><small id="gPwaMini">ইনস্টল করুন ›</small></button>
         <button class="g-menu-item" data-popup="hadith"><span>{{history_edu}} &nbsp; হাদিস প্যাকেজ</span><small>›</small></button>
         <button class="g-menu-item" data-popup="backup"><span>{{save}} &nbsp; ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
         <button class="g-menu-item" data-popup="source"><span>{{info}} &nbsp; উৎস ও তথ্যসূত্র</span><small>›</small></button>
@@ -2701,15 +2726,23 @@ setInterval(checkPrayerAlerts, 5000);
   // Global delegation to fix click-through: any click inside gridPopupBox stops propagation and prevents underlying click
   box.addEventListener('click', function(e){
     var target = e.target;
-    if(target.closest('.pp-opt') || target.closest('.pp-result') || target.closest('.pp-btn') || target.closest('.pp-close')){
+    var closeButton = target.closest('.pp-close');
+    if(closeButton){
+      e.preventDefault();
+      e.stopPropagation();
+      closePopup();
+      return;
+    }
+    if(target.closest('.pp-opt') || target.closest('.pp-result') || target.closest('.pp-btn')){
       e.stopPropagation();
       e.preventDefault();
-      // let the original handler run first, then stop
       setTimeout(function(){ e.stopPropagation(); }, 0);
     }
   }, true);
 
   function closePopup(){ overlay.classList.remove('open'); box.innerHTML=''; box.classList.remove('wide'); overlay.classList.remove('wide-ov'); }
+  window.closeGridPopup=closePopup;
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && overlay.classList.contains('open')) closePopup(); });
   function openPopup(type){
     closeDropdown();
     box.classList.remove('wide'); overlay.classList.remove('wide-ov');
@@ -2924,14 +2957,10 @@ setInterval(checkPrayerAlerts, 5000);
     try{ if(typeof last!=='undefined' && last){ var sn=(typeof surahs!=='undefined')?surahs.find(function(x){return x.number===last.n}):null; if(last.t==='s'){ lastNm=(sn?sn.englishName:'সূরা '+last.n); lastAction=function(){ openSurah(last.n, last.y); }; } else { lastNm='পারা '+toBn(last.n); lastAction=function(){ openJuz(last.n, last.y); }; } } }catch(e){}
     var cnt=0, tgt=10; try{ if(typeof goalData!=='undefined'){ cnt=goalData.readKeys?goalData.readKeys.length:0; tgt=goalData.target||10; } }catch(e){}
     var defs=[
-      ['menu_book','শেষ পড়া',lastNm,function(){ lastAction(); }],
-      ['lightbulb','আজকের পড়া',toBn(cnt)+'/'+toBn(tgt),function(){ openTodaySheet(); }],
-      ['auto_awesome','৯৯ নাম','আসমাউল হুসনা',function(){ if(typeof setMode==='function') setMode('asma'); }],
-      ['calendar_month','খতম প্ল্যান','পরিকল্পনা',function(){ openPopup('khatam'); }]
-    ];,
+      ['history_edu','শেষ পড়া',lastNm,function(){ lastAction(); }],
       ['auto_stories','আজকের পড়া',toBn(cnt)+'/'+toBn(tgt),function(){ openTodaySheet(); }],
       ['auto_awesome','৯৯ নাম','আসমাউল হুসনা',function(){ if(typeof setMode==='function') setMode('asma'); }],
-      ['event_note','খতম প্ল্যান','পরিকল্পনা',function(){ openPopup('khatam'); }]
+      ['calendar_month','খতম প্ল্যান','পরিকল্পনা',function(){ openPopup('khatam'); }]
     ];
     var row=document.createElement('div'); row.className='home-tiles';
     defs.forEach(function(d){
@@ -3563,14 +3592,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
   }
   window.toggleTajweed=function(){ ON=!ON; apply(); };
   window.setTajweed=function(v){ ON=!!v; apply(); };
-  // Header toggle button
-  function addBtn(){
-    var tools=document.getElementById('gQuick'); if(!tools||document.getElementById('tajweedToggle')) return;
-    var b=document.createElement('button'); b.id='tajweedToggle'; b.className='g-quick-btn'; b.title='তাজভিদ কালার'; b.innerHTML='{{palette}}<span>তাজভিদ</span>';
-    b.onclick=function(){ window.toggleTajweed(); };
-    tools.insertBefore(b, tools.firstChild);
-  }
-  addBtn(); setTimeout(addBtn, 600);
+  // Tajweed remains available internally, but its shortcut is intentionally hidden from the grid menu.
   var lc=document.getElementById('tajweedLegendClose');
   if(lc) lc.onclick=function(){ ON=false; apply(); };
   // Apply after surah loads (ayahCards render later)
