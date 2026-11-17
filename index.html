@@ -280,26 +280,14 @@ body.hifz-on #hifzBar{display:flex}
 .khatam-dot.done{background:var(--accent);color:#fff;border-color:var(--accent)}
 .khatam-dot.today{box-shadow:0 0 0 2px var(--accent)}
 
-/* ===== STEP 3: OFFLINE DOWNLOAD MANAGER ===== */
+/* ===== STEP 3: OFFLINE AUDIO ===== */
 #dlBar{display:none;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
 #dlBar.show{display:flex;flex-wrap:wrap}
 #dlBar .dl-txt{flex:1;font-size:13px}
 #dlBar .dl-txt small{color:var(--muted);display:block}
-.dl-btn{border:1px solid var(--line);background:var(--accent);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.dl-btn{border:1px solid var(--line);background:var(--accent);color:#fff;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .dl-btn.ghost{background:var(--card);color:var(--text)}
-.dl-btn.danger{background:var(--card);color:#dc2626;border-color:#dc2626}
 .dl-btn:disabled{opacity:.6}
-.dl-pkg{border:1px solid var(--line);border-radius:12px;padding:11px;margin:8px 0;background:var(--card);font-size:13px}
-.dl-pkg-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.dl-pkg-meta{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
-.dl-pkg-prog{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}
-.dl-pkg-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .25s ease}
-.dl-pkg-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;justify-content:flex-end}
-.dl-st{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
-.dl-st.done{background:var(--accent);color:#fff}
-.dl-st.part{background:#f59e0b;color:#fff}
-.dl-st.run{background:#2563eb;color:#fff}
-.dl-st.none{background:var(--line);color:var(--muted)}
 .dl-item{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0;font-size:13px}
 .offline-badge2{display:inline-block;font-size:11px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px}
 
@@ -1183,7 +1171,11 @@ function safeHtml(html){
   return root.innerHTML;
 }
 
-const TAFSIRS = [[381,"তাফসির ফাতহুল মাজীদ"],[165,"তাফসির আহসানুল বায়ান"],[166,"তাফসির আবু বকর যাকারিয়া"],[164,"তাফসীর ইবনে কাসীর"]];
+// Only expose the Bengali edition whose slug is present in the pinned public dataset.
+// Other historic Quran.com resource IDs are not valid slugs in spa5k/tafsir_api.
+const TAFSIRS = [[381,"তাফসির ফাতহুল মাজীদ","bn-tafisr-fathul-majid"]];
+const TAFSIR_CDN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@v1.2.3/tafsir/";
+function getTafsirSlug(id){ const item=TAFSIRS.find(t=>Number(t[0])===Number(id)); return item?item[2]:""; }
 let tafsirId = lsGet("tafsirId", 381);
 function copyText(text, okMsg){
   const done = () => showToast(okMsg || "কপি হয়েছে!");
@@ -1226,19 +1218,25 @@ async function openTafseer(surahNo, ayahNo, label){
       body.innerHTML = safeHtml(cached);
       return;
     }
-    if (window.qxPkgStore && window.qxPkgStore.getTafsirAyah) {
-      const offlineTaf = await window.qxPkgStore.getTafsirAyah(tafsirId, surahNo, ayahNo);
-      if (offlineTaf) {
-        body.innerHTML = safeHtml(offlineTaf);
+    if (window.quranixPackageStore) {
+      const offlineTafsir = await window.quranixPackageStore.getTafsir(tafsirId, surahNo, ayahNo);
+      if (offlineTafsir) {
+        body.innerHTML = safeHtml(offlineTafsir);
         return;
       }
     }
-    const r = await fetch(`https://api.quran.com/api/v4/verses/by_key/${surahNo}:${ayahNo}/tafsirs/${tafsirId}`);
-    if (!r.ok) throw new Error("API error");
+    const tafsirSlug = getTafsirSlug(tafsirId);
+    if (!tafsirSlug) throw new Error("Unknown tafsir edition");
+    const r = await fetch(`${TAFSIR_CDN}${tafsirSlug}/${surahNo}/${ayahNo}.json`);
+    if (r.status === 404) {
+      body.textContent = "এই আয়াতের জন্য নির্বাচিত তাফসিরে আলাদা ব্যাখ্যা নেই।";
+      return;
+    }
+    if (!r.ok) throw new Error("Tafsir API HTTP " + r.status);
     const j = await r.json();
-    if (j && j.tafsir && j.tafsir.text) {
-      cacheSet(cacheKey, j.tafsir.text);
-      body.innerHTML = safeHtml(j.tafsir.text);
+    if (j && j.text) {
+      cacheSet(cacheKey, j.text);
+      body.innerHTML = safeHtml(j.text);
     } else {
       body.textContent = "এই আয়াতের তাফসির পাওয়া যায়নি।";
     }
@@ -1306,14 +1304,25 @@ async function loadSurahList(){
   return getJSON("/surah");
 }
 
+async function getZakariaSurahTranslation(surahNo){
+  const cacheKey = `quranenc_zakaria:${surahNo}`;
+  const cached = cacheGet(cacheKey);
+  if (cached) return cached;
+  const r = await fetch(`https://quranenc.com/api/v1/translation/sura/bengali_zakaria/${surahNo}`);
+  if (!r.ok) throw new Error("QuranEnc HTTP " + r.status);
+  const j = await r.json();
+  const rows = Array.isArray(j) ? j : (Array.isArray(j.result) ? j.result : (Array.isArray(j.translations) ? j.translations : []));
+  if (!rows.length) throw new Error("QuranEnc অনুবাদের ডেটা পাওয়া যায়নি");
+  const cleaned = rows.slice().sort((a,b)=>Number(a.aya||a.ayah||0)-Number(b.aya||b.ayah||0)).map(row => String(row.translation || row.text || "").replace(/<sup[^>]*>.*?<\/sup>/gi, "").replace(/<[^>]+>/g, "").trim());
+  if (cleaned.some(text => !text)) throw new Error("QuranEnc অনুবাদে খালি আয়াত রয়েছে");
+  cacheSet(cacheKey, cleaned);
+  return cleaned;
+}
+
 async function getQuranComTrans(endpoint, resourceId){
   const cacheKey = `qcom_tr:${resourceId}:${endpoint}`;
   const cached = cacheGet(cacheKey);
   if (cached) return cached;
-  if (window.qxPkgStore && window.qxPkgStore.getTransEndpoint) {
-    const offlineTr = await window.qxPkgStore.getTransEndpoint(resourceId, endpoint);
-    if (offlineTr) return offlineTr;
-  }
   const r = await fetch(`https://api.quran.com/api/v4/quran/translations/${resourceId}?${endpoint}`);
   if (!r.ok) throw new Error("HTTP " + r.status);
   const j = await r.json();
@@ -1324,12 +1333,22 @@ async function getQuranComTrans(endpoint, resourceId){
 }
 
 async function loadSurahAyahs(n){
+  if (window.quranixPackageStore) {
+    try {
+      const offlineChapter = await window.quranixPackageStore.getTranslation(currentEdition, n);
+      if (offlineChapter && offlineChapter.length) {
+        const meta = (LOCAL && LOCAL.meta[n-1]) || (surahs.find(x => x.number === n) || {});
+        const chapterInfo = {number:n, name:meta.name || "", englishName:meta.en || meta.englishName || "সূরা " + n};
+        return offlineChapter.map(row => ({s:chapterInfo, no:row.no, ar:row.ar, bn:row.bn || ""}));
+      }
+    } catch(e) {}
+  }
   if (LOCAL && currentEdition === "bn.bengali") {
     const m = LOCAL.meta[n-1], s = {number:n,name:m.name,englishName:m.en};
     return LOCAL.ar[n-1].map((t,i) => ({s,no:i+1,ar:t,bn:LOCAL.bn[n-1][i] || ""}));
   }
   if (currentEdition === "bn.zakaria") {
-    const trList = await getQuranComTrans(`chapter_number=${n}`, 213);
+    const trList = await getZakariaSurahTranslation(n);
     if (LOCAL) {
       const m = LOCAL.meta[n-1], s = {number:n,name:m.name,englishName:m.en};
       return LOCAL.ar[n-1].map((t,i) => ({s,no:i+1,ar:t,bn:trList[i] || ""}));
@@ -1352,17 +1371,22 @@ async function loadJuzAyahs(j){
     return out;
   }
   if (currentEdition === "bn.zakaria") {
-    const trList = await getQuranComTrans(`juz_number=${j}`, 213);
     if (LOCAL) {
+      const translations = {};
+      for (let si=0;si<LOCAL.juz.length;si++) {
+        if (LOCAL.juz[si].some(jj => jj === j)) translations[si+1] = await getZakariaSurahTranslation(si+1);
+      }
       const out = [];
-      let idx = 0;
       LOCAL.juz.forEach((arr, si) => arr.forEach((jj, i) => {
-        if (jj === j) { const m = LOCAL.meta[si]; out.push({s:{number:si+1,name:m.name,englishName:m.en},no:i+1,ar:LOCAL.ar[si][i],bn:trList[idx++] || ""}); }
+        if (jj === j) { const m=LOCAL.meta[si]; out.push({s:{number:si+1,name:m.name,englishName:m.en},no:i+1,ar:LOCAL.ar[si][i],bn:translations[si+1][i]||""}); }
       }));
       return out;
     }
     const d = await getJSON("/juz/" + j + "/quran-uthmani");
-    return d.ayahs.map((a,i) => ({s:{number:a.surah.number,name:a.surah.name,englishName:a.surah.englishName},no:a.numberInSurah,ar:a.text,bn:trList[i] || ""}));
+    const translations = {};
+    const surahNumbers = Array.from(new Set(d.ayahs.map(a=>a.surah.number)));
+    for (const sn of surahNumbers) translations[sn] = await getZakariaSurahTranslation(sn);
+    return d.ayahs.map(a => ({s:{number:a.surah.number,name:a.surah.name,englishName:a.surah.englishName},no:a.numberInSurah,ar:a.text,bn:translations[a.surah.number][a.numberInSurah-1]||""}));
   }
   const d = await getJSON("/juz/" + j + "/editions/quran-uthmani," + currentEdition);
   return d[0].ayahs.map((a,i) => ({s:{number:a.surah.number,name:a.surah.name,englishName:a.surah.englishName},no:a.numberInSurah,ar:a.text,bn:d[1].ayahs[i] ? d[1].ayahs[i].text : ""}));
@@ -2680,8 +2704,8 @@ document.getElementById("gridMenu").onclick = () => {
   infoSec.innerHTML = `<div style="font-size:12px; line-height:1.6; color:var(--muted);">
     <b>উৎস ও তথ্যসূত্র:</b><br>
     • আরবি পাঠ ও বাংলা অনুবাদ (মুহিউদ্দীন খান): Tanzil, AlQuran Cloud-এর মাধ্যমে (অফলাইন ডেটা)<br>
-    • বাংলা অনুবাদ (ড. আবু বকর মুহাম্মাদ যাকারিয়া): প্রকাশক King Fahd Glorious Quran Printing Complex, উৎস QuranEnc.com; অনলাইনে Quran.com API থেকে আনা<br>
-    • তাফসির: Quran.com API (নির্বাচিত তাফসির) (Quran.com API, অনলাইন)<br>
+    • বাংলা অনুবাদ (ড. আবু বকর মুহাম্মাদ যাকারিয়া): প্রকাশক King Fahd Glorious Quran Printing Complex, উৎস QuranEnc.com; সংস্করণ V1.1.1 (অনলাইন ও অফলাইন)<br>
+    • বাংলা তাফসির: spa5k/tafsir_api (নির্বাচিত বাংলা সংস্করণ; অনলাইন ও অফলাইন)<br>• হাদিস: KafelaNetwork Hadith API (কমিউনিটি ডেটাসেট)<br>
     • অডিও তেলাওয়াত: EveryAyah.com (অনলাইন)
   </div>`;
   body.appendChild(infoSec);
@@ -2985,7 +3009,7 @@ setInterval(checkPrayerAlerts, 5000);
     document.getElementById('ppFile').onchange=function(e){ if(typeof importUserBackup==='function') importUserBackup(e.target.files[0], function(){ closePopup(); }); };
   }
   function renderSourcePopup(){
-    box.innerHTML=head('{{info}} উৎস ও তথ্যসূত্র') + '<div class="pp-mini"><b>উৎস:</b><br>• আরবি পাঠ ও বাংলা অনুবাদ: Tanzil, AlQuran Cloud<br>• বাংলা অনুবাদ (যাকারিয়া): QuranEnc / Quran.com API<br>• তাফসির: Quran.com API (নির্বাচিত তাফসির)<br>• অডিও: EveryAyah.com</div>';
+    box.innerHTML=head('{{info}} উৎস ও তথ্যসূত্র') + '<div class="pp-mini"><b>উৎস:</b><br>• আরবি পাঠ ও বাংলা অনুবাদ: Tanzil, AlQuran Cloud<br>• বাংলা অনুবাদ (যাকারিয়া): QuranEnc.com, V1.1.1<br>• বাংলা তাফসির: spa5k/tafsir_api (Quran.com ও QUL-এ তালিকাভুক্ত মূল সংস্করণ)<br>• হাদিস: KafelaNetwork Hadith API (কমিউনিটি ডেটাসেট)<br>• অডিও: EveryAyah.com</div>';
   }
   refreshMinis();
   // ---- Home Hero ----
@@ -3215,667 +3239,477 @@ setInterval(checkPrayerAlerts, 5000);
 </script>
 
 <script>
-/* ===== STEP 3: FULL PACKAGE & SURAH OFFLINE DOWNLOAD MANAGER ===== */
+/* ===== STEP 3: OFFLINE AUDIO (IndexedDB) ===== */
 (function(){
-  var DB_AUDIO = 'quranix-audio', STORE_AUDIO = 'audio';
-  var DB_PKG = 'quranix-packages', STORE_DATA = 'data';
-  var TOTAL_SURAHS = 114;
-  var TOTAL_AYAHS = 6236;
-  var META_KEY = 'quranix_pkg_meta_v2';
-  var LEGACY_META_KEY = 'quranix_dl_meta';
-
-  var SURAH_COUNTS = [
-    7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,
-    112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,
-    54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,
-    14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,
-    29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,
-    11,8,3,9,5,4,7,3,6,3,5,4,5,6
-  ];
-
-  function openDb(name, store){
-    return new Promise(function(res, rej){
-      var r = indexedDB.open(name, 1);
-      r.onupgradeneeded = function(){ try{ r.result.createObjectStore(store); }catch(e){} };
-      r.onsuccess = function(){ res(r.result); };
-      r.onerror = function(){ rej(r.error); };
-    });
-  }
-  function dbPut(name, store, key, val){
-    return openDb(name, store).then(function(d){
-      return new Promise(function(res, rej){
-        var tx = d.transaction(store, 'readwrite');
-        tx.objectStore(store).put(val, key);
-        tx.oncomplete = function(){ res(); };
-        tx.onerror = function(){ rej(tx.error); };
-      });
-    });
-  }
-  function dbGet(name, store, key){
-    return openDb(name, store).then(function(d){
-      return new Promise(function(res, rej){
-        var q = d.transaction(store).objectStore(store).get(key);
-        q.onsuccess = function(){ res(q.result || null); };
-        q.onerror = function(){ rej(q.error); };
-      });
-    });
-  }
-  function dbDel(name, store, key){
-    return openDb(name, store).then(function(d){
-      return new Promise(function(res, rej){
-        var tx = d.transaction(store, 'readwrite');
-        tx.objectStore(store).delete(key);
-        tx.oncomplete = function(){ res(); };
-        tx.onerror = function(){ rej(tx.error); };
-      });
-    });
-  }
-  function dbDelPrefix(name, store, prefix){
-    return openDb(name, store).then(function(d){
-      return new Promise(function(res, rej){
-        var tx = d.transaction(store, 'readwrite');
-        var st = tx.objectStore(store);
-        var req = st.openCursor();
-        req.onsuccess = function(e){
-          var cur = e.target.result;
-          if(cur){
-            if(String(cur.key).indexOf(prefix) === 0) cur.delete();
-            cur.continue();
-          }
-        };
-        tx.oncomplete = function(){ res(); };
-        tx.onerror = function(){ rej(tx.error); };
-      });
-    });
-  }
-
-  function getPkgMeta(){
-    try{ return JSON.parse(localStorage.getItem(META_KEY) || '{}'); }catch(e){ return {}; }
-  }
-  function savePkgMeta(m){
-    try{ localStorage.setItem(META_KEY, JSON.stringify(m)); }catch(e){}
-  }
-  function getSurahMeta(){
-    try{ return JSON.parse(localStorage.getItem(LEGACY_META_KEY) || '{}'); }catch(e){ return {}; }
-  }
-  function saveSurahMeta(m){
-    try{ localStorage.setItem(LEGACY_META_KEY, JSON.stringify(m)); }catch(e){}
-  }
-
-  function pad(n){ return String(n).padStart(3, '0'); }
-  function bn(n){ return (typeof toBn === 'function') ? toBn(n) : String(n); }
-  function fmtBytes(bytes){
-    if(!bytes || bytes <= 0) return '০ MB';
-    if(bytes < 1024 * 1024) return bn((bytes / 1024).toFixed(0)) + ' KB';
-    if(bytes < 1024 * 1024 * 1024) return bn((bytes / (1024 * 1024)).toFixed(1)) + ' MB';
-    return bn((bytes / (1024 * 1024 * 1024)).toFixed(2)) + ' GB';
-  }
-  function audioUrl(rec, s, a){ return 'https://everyayah.com/data/' + rec + '/' + pad(s) + pad(a) + '.mp3'; }
-  function audioKey(rec, s, a){ return rec + '/' + pad(s) + pad(a); }
-  function reciterNow(){ try{ var v = localStorage.getItem('reciter'); return v ? JSON.parse(v) : 'Saood_ash-Shuraym_128kbps'; }catch(e){ return 'Saood_ash-Shuraym_128kbps'; } }
-  function reciterName(id){ var f = (window.RECITERS || []).find(function(r){ return r[0] === id; }); return f ? f[1] : id; }
-
-  function getAllPackages(){
-    var list = [
-      {
-        id: 'trans:213',
-        cat: 'trans',
-        title: 'ড. আবু বকর মুহাম্মাদ যাকারিয়া (অনুবাদ)',
-        sub: 'সম্পূর্ণ কুরআন · ১১৪ সূরা (৬,২৩৬ আয়াত)',
-        total: TOTAL_SURAHS,
-        unit: 'সূরা',
-        estBytes: 2.4 * 1024 * 1024,
-        resourceId: 213
-      }
-    ];
-    (typeof TAFSIRS !== 'undefined' ? TAFSIRS : [
-      [381,'তাফসির ফাতহুল মাজীদ'],[165,'তাফসির আহসানুল বায়ান'],
-      [166,'তাফসির আবু বকর যাকারিয়া'],[164,'তাফসীর ইবনে কাসীর']
-    ]).forEach(function(t){
-      list.push({
-        id: 'tafsir:' + t[0],
-        cat: 'tafsir',
-        title: t[1],
-        sub: 'সম্পূর্ণ কুরআনের তাফসির · ১১৪ সূরা',
-        total: TOTAL_SURAHS,
-        unit: 'সূরা',
-        estBytes: 18 * 1024 * 1024,
-        tafsirId: t[0]
-      });
-    });
-    (typeof RECITERS !== 'undefined' ? RECITERS : [
-      ['Saood_ash-Shuraym_128kbps', 'সৌদ আশ-শুরাইম'],
-      ['Alafasy_128kbps', 'মিশারি রশিদ আল-আফাসি'],
-      ['Abdul_Basit_Murattal_192kbps', 'আব্দুল বাসিত (মুরাত্তাল)'],
-      ['Abdurrahmaan_As-Sudais_192kbps', 'আব্দুর রহমান আস-সুদাইস'],
-      ['MaherAlMuaiqly128kbps', 'মাহের আল-মুআইকলি']
-    ]).forEach(function(r){
-      var is192 = r[0].indexOf('192') >= 0;
-      list.push({
-        id: 'audio:' + r[0],
-        cat: 'audio',
-        title: r[1],
-        sub: 'সম্পূর্ণ কুরআন তেলাওয়াত · ১১৪ সূরা (৬,২৩৬ আয়াত)',
-        total: TOTAL_AYAHS,
-        unit: 'আয়াত',
-        estBytes: (is192 ? 780 : 520) * 1024 * 1024,
-        reciterId: r[0]
-      });
-    });
-    return list;
-  }
-
-  var activeJobs = {};
-  var activeTab = 'trans';
-
-  function updateGlobalMiniBadge(){
-    var m = getPkgMeta();
-    var sm = getSurahMeta();
-    var completedPkgs = Object.keys(m).filter(function(k){ return m[k] && m[k].status === 'complete'; }).length;
-    var surahCount = Object.keys(sm).length;
-    var totalDone = completedPkgs + surahCount;
-    var mini = document.getElementById('gDlMini');
-    if(mini) mini.textContent = totalDone ? bn(totalDone) + 'টি ›' : '›';
-  }
-
-  function refreshPopupUI(){
-    var box = document.getElementById('gridPopupBox');
-    var overlay = document.getElementById('gridPopupOverlay');
-    if(overlay && overlay.classList.contains('open') && box && box.querySelector('#qxDlCenter')){
-      renderDownloadsPopup();
-    }
-    updateGlobalMiniBadge();
-  }
-
-  function getPkgState(pkg){
-    var m = getPkgMeta();
-    var rec = m[pkg.id] || { done: 0, bytes: 0, status: 'none', doneMap: {} };
-    var running = !!activeJobs[pkg.id];
-    var isComplete = (rec.done >= pkg.total) && (rec.status === 'complete');
-    if(!isComplete && rec.status === 'complete'){
-      rec.status = rec.done > 0 ? 'incomplete' : 'none';
-      m[pkg.id] = rec;
-      savePkgMeta(m);
-    }
-    var status = running ? 'downloading' : (isComplete ? 'complete' : (rec.done > 0 ? 'incomplete' : 'none'));
-    return {
-      done: Math.min(rec.done || 0, pkg.total),
-      bytes: rec.bytes || 0,
-      status: status,
-      doneMap: rec.doneMap || {},
-      error: rec.error || ''
-    };
-  }
-
-  async function fetchWithAbort(url, signal, asBlob){
-    var r = await fetch(url, { signal: signal });
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    return asBlob ? await r.blob() : await r.json();
-  }
-
-  async function startPackageDownload(pkgId){
-    if(activeJobs[pkgId]) return;
-    var pkg = getAllPackages().find(function(p){ return p.id === pkgId; });
-    if(!pkg) return;
-    if(!navigator.onLine){
-      if(typeof showToast === 'function') showToast('ডাউনলোডের জন্য ইন্টারনেট সংযোগ প্রয়োজন');
-      return;
-    }
-
-    var ac = new AbortController();
-    var job = { cancelled: false, controller: ac };
-    activeJobs[pkgId] = job;
-
-    var m = getPkgMeta();
-    var rec = m[pkgId] || { done: 0, bytes: 0, status: 'incomplete', doneMap: {} };
-    rec.status = 'downloading';
-    rec.error = '';
-    m[pkgId] = rec;
-    savePkgMeta(m);
-    refreshPopupUI();
-
-    var lastPaint = 0;
-    function tickUI(force){
-      var now = Date.now();
-      if(force || now - lastPaint > 350){
-        lastPaint = now;
-        refreshPopupUI();
-      }
-    }
-
-    try {
-      if(pkg.cat === 'trans'){
-        for(var s = 1; s <= TOTAL_SURAHS; s++){
-          if(job.cancelled) throw new Error('CANCELLED');
-          if(rec.doneMap[s]) continue;
-          var dbKey = 'tr:' + pkg.resourceId + ':ch:' + s;
-          var existing = await dbGet(DB_PKG, STORE_DATA, dbKey);
-          if(!existing){
-            var j = await fetchWithAbort('https://api.quran.com/api/v4/quran/translations/' + pkg.resourceId + '?chapter_number=' + s, ac.signal, false);
-            if(!j || !Array.isArray(j.translations) || !j.translations.length) throw new Error('INVALID_DATA');
-            var cleaned = j.translations.map(function(t){
-              return (t.text || '').replace(/<sup[^>]*>.*?<\/sup>/gi, '').replace(/<[^>]+>/g, '').trim();
-            });
-            var byteLen = new Blob([JSON.stringify(cleaned)]).size;
-            await dbPut(DB_PKG, STORE_DATA, dbKey, cleaned);
-            rec.bytes = (rec.bytes || 0) + byteLen;
-          }
-          rec.doneMap[s] = 1;
-          rec.done = Object.keys(rec.doneMap).length;
-          m[pkgId] = rec;
-          savePkgMeta(m);
-          tickUI(false);
-        }
-      } else if(pkg.cat === 'tafsir'){
-        for(var s = 1; s <= TOTAL_SURAHS; s++){
-          if(job.cancelled) throw new Error('CANCELLED');
-          if(rec.doneMap[s]) continue;
-          var dbKey = 'tf:' + pkg.tafsirId + ':ch:' + s;
-          var existing = await dbGet(DB_PKG, STORE_DATA, dbKey);
-          if(!existing){
-            var j = await fetchWithAbort('https://api.quran.com/api/v4/quran/tafsirs/' + pkg.tafsirId + '?chapter_number=' + s, ac.signal, false);
-            if(!j || !Array.isArray(j.tafsirs) || !j.tafsirs.length) throw new Error('INVALID_DATA');
-            var mapObj = {};
-            j.tafsirs.forEach(function(item, idx){
-              var vKey = item.verse_key || (s + ':' + (idx + 1));
-              mapObj[vKey] = item.text || '';
-            });
-            var byteLen = new Blob([JSON.stringify(mapObj)]).size;
-            await dbPut(DB_PKG, STORE_DATA, dbKey, mapObj);
-            rec.bytes = (rec.bytes || 0) + byteLen;
-          }
-          rec.doneMap[s] = 1;
-          rec.done = Object.keys(rec.doneMap).length;
-          m[pkgId] = rec;
-          savePkgMeta(m);
-          tickUI(false);
-        }
-      } else if(pkg.cat === 'audio'){
-        var queue = [];
-        for(var s = 1; s <= TOTAL_SURAHS; s++){
-          var cnt = SURAH_COUNTS[s - 1];
-          for(var a = 1; a <= cnt; a++){
-            var k = pad(s) + pad(a);
-            if(!rec.doneMap[k]) queue.push([s, a, k]);
-          }
-        }
-        var BATCH = 4;
-        for(var i = 0; i < queue.length; i += BATCH){
-          if(job.cancelled) throw new Error('CANCELLED');
-          var slice = queue.slice(i, i + BATCH);
-          await Promise.all(slice.map(async function(item){
-            var sNo = item[0], aNo = item[1], code = item[2];
-            var aKey = audioKey(pkg.reciterId, sNo, aNo);
-            var existing = await dbGet(DB_AUDIO, STORE_AUDIO, aKey);
-            if(!existing){
-              var blob = await fetchWithAbort(audioUrl(pkg.reciterId, sNo, aNo), ac.signal, true);
-              if(!blob || blob.size < 500) throw new Error('EMPTY_AUDIO');
-              await dbPut(DB_AUDIO, STORE_AUDIO, aKey, blob);
-              rec.bytes = (rec.bytes || 0) + blob.size;
-            }
-            rec.doneMap[code] = 1;
-          }));
-          rec.done = Object.keys(rec.doneMap).length;
-          m[pkgId] = rec;
-          savePkgMeta(m);
-          tickUI(false);
-        }
-      }
-
-      var finalCount = Object.keys(rec.doneMap).length;
-      rec.done = finalCount;
-      if(finalCount >= pkg.total){
-        rec.status = 'complete';
-        rec.completedAt = new Date().toISOString();
-        delete rec.doneMap;
-        if(typeof showToast === 'function') showToast('{{check_circle:f}} ' + pkg.title + ' সম্পূর্ণ ডাউনলোড হয়েছে!');
-      } else {
-        rec.status = 'incomplete';
-      }
-      m[pkgId] = rec;
-      savePkgMeta(m);
-    } catch(err){
-      var isAbort = job.cancelled || (err && err.name === 'AbortError') || String(err && err.message) === 'CANCELLED';
-      rec.done = rec.doneMap ? Object.keys(rec.doneMap).length : (rec.done || 0);
-      rec.status = rec.done > 0 ? 'incomplete' : 'none';
-      rec.error = isAbort ? 'বাতিল করা হয়েছে' : (!navigator.onLine ? 'ইন্টারনেট সংযোগ বিচ্ছিন্ন' : 'নেটওয়ার্ক ত্রুটি — পুনরায় চেষ্টা করুন');
-      m[pkgId] = rec;
-      savePkgMeta(m);
-      if(typeof showToast === 'function') showToast(isAbort ? 'ডাউনলোড বাতিল করা হয়েছে' : 'ডাউনলোড স্থগিত: ' + rec.error);
-    } finally {
-      delete activeJobs[pkgId];
-      tickUI(true);
-    }
-  }
-
-  function cancelPackageDownload(pkgId){
-    var job = activeJobs[pkgId];
-    if(job){
-      job.cancelled = true;
-      try{ job.controller.abort(); }catch(e){}
-    }
-  }
-
-  async function deletePackageDownload(pkgId){
-    if(activeJobs[pkgId]) cancelPackageDownload(pkgId);
-    var pkg = getAllPackages().find(function(p){ return p.id === pkgId; });
-    if(!pkg) return;
-    if(!confirm('“' + pkg.title + '” প্যাকেজের ডাউনলোড করা সব ডেটা মুছে ফেলবেন?')) return;
-
-    if(pkg.cat === 'trans'){
-      await dbDelPrefix(DB_PKG, STORE_DATA, 'tr:' + pkg.resourceId + ':');
-    } else if(pkg.cat === 'tafsir'){
-      await dbDelPrefix(DB_PKG, STORE_DATA, 'tf:' + pkg.tafsirId + ':');
-    } else if(pkg.cat === 'audio'){
-      await dbDelPrefix(DB_AUDIO, STORE_AUDIO, pkg.reciterId + '/');
-    }
-    var m = getPkgMeta();
-    delete m[pkgId];
-    savePkgMeta(m);
-    refreshPopupUI();
-    refreshDlBar();
-    if(typeof showToast === 'function') showToast('প্যাকেজ মুছে ফেলা হয়েছে');
-  }
-
-  window.qxPkgStore = {
-    getTransEndpoint: async function(resourceId, endpoint){
-      var chMatch = String(endpoint).match(/chapter_number=(\d+)/);
-      if(chMatch){
-        return await dbGet(DB_PKG, STORE_DATA, 'tr:' + resourceId + ':ch:' + chMatch[1]);
-      }
-      var juzMatch = String(endpoint).match(/juz_number=(\d+)/);
-      if(juzMatch && typeof LOCAL !== 'undefined' && LOCAL && LOCAL.juz){
-        var jNo = parseInt(juzMatch[1], 10);
-        var neededSurahs = [];
-        LOCAL.juz.forEach(function(arr, si){
-          if(arr.indexOf(jNo) >= 0) neededSurahs.push(si + 1);
-        });
-        var chCache = {};
-        for(var i = 0; i < neededSurahs.length; i++){
-          var sNo = neededSurahs[i];
-          var data = await dbGet(DB_PKG, STORE_DATA, 'tr:' + resourceId + ':ch:' + sNo);
-          if(!data) return null;
-          chCache[sNo] = data;
-        }
-        var out = [];
-        LOCAL.juz.forEach(function(arr, si){
-          arr.forEach(function(jj, ai){
-            if(jj === jNo) out.push((chCache[si + 1] && chCache[si + 1][ai]) || '');
-          });
-        });
-        return out.length ? out : null;
-      }
-      return null;
-    },
-    getTafsirAyah: async function(tId, surahNo, ayahNo){
-      var chMap = await dbGet(DB_PKG, STORE_DATA, 'tf:' + tId + ':ch:' + surahNo);
-      if(!chMap) return null;
-      return chMap[surahNo + ':' + ayahNo] || null;
-    }
-  };
-
+  var DB='quranix-audio', STORE='audio';
+  function db(){ return new Promise(function(res,rej){ var r=indexedDB.open(DB,1); r.onupgradeneeded=function(){ try{r.result.createObjectStore(STORE);}catch(e){} }; r.onsuccess=function(){res(r.result)}; r.onerror=function(){rej(r.error)}; }); }
+  function put(key, blob){ return db().then(function(d){ return new Promise(function(res,rej){ var tx=d.transaction(STORE,'readwrite'); tx.objectStore(STORE).put(blob,key); tx.oncomplete=function(){res()}; tx.onerror=function(){rej(tx.error)}; }); }); }
+  function get(key){ return db().then(function(d){ return new Promise(function(res,rej){ var q=d.transaction(STORE).objectStore(STORE).get(key); q.onsuccess=function(){res(q.result||null)}; q.onerror=function(){rej(q.error)}; }); }); }
+  function del(key){ return db().then(function(d){ return new Promise(function(res,rej){ var tx=d.transaction(STORE,'readwrite'); tx.objectStore(STORE).delete(key); tx.oncomplete=function(){res()}; tx.onerror=function(){rej(tx.error)}; }); }); }
+  function keys(){ return db().then(function(d){ return new Promise(function(res,rej){ var q=d.transaction(STORE).objectStore(STORE).getAllKeys(); q.onsuccess=function(){res(q.result||[])}; q.onerror=function(){rej(q.error)}; }); }); }
+  function meta(){ try{ return JSON.parse(localStorage.getItem('quranix_dl_meta')||'{}'); }catch(e){ return {}; } }
+  function saveMeta(m){ localStorage.setItem('quranix_dl_meta', JSON.stringify(m)); }
+  function pad(n){ return String(n).padStart(3,'0'); }
+  function urlFor(rec, s, a){ return 'https://everyayah.com/data/'+rec+'/'+pad(s)+pad(a)+'.mp3'; }
+  function keyFor(rec,s,a){ return rec+'/'+pad(s)+pad(a); }
   function currentSurah(){
-    var list = window._activeAyahList || [];
-    if(list.length && list[0] && list[0].s) return { n: list[0].s.number, name: list[0].s.englishName, count: list.length, list: list };
-    if(typeof reading !== 'undefined' && reading && reading.t === 's'){
-      var s = (window.surahs || []).find(function(x){ return x.number === reading.n; });
-      if(s) return { n: s.number, name: s.englishName, count: s.numberOfAyahs, list: null };
-    }
+    var list=window._activeAyahList||[];
+    if(list.length && list[0] && list[0].s) return {n:list[0].s.number, name:list[0].s.englishName, count:list.length, list:list};
+    if(typeof reading!=='undefined' && reading && reading.t==='s'){ var s=(window.surahs||[]).find(function(x){return x.number===reading.n}); if(s) return {n:s.number,name:s.englishName,count:s.numberOfAyahs,list:null}; }
     return null;
   }
+  function currentReciter(){ return (typeof currentReciter!=='undefined'?currentReciter:localStorage.getItem('reciter')) || 'Saood_ash-Shuraym_128kbps'; }
+  // NOTE: currentReciter is a let in main script; accessing it here via window may fail - read from ls instead
+  function reciterNow(){ try{ var v=localStorage.getItem('reciter'); return v?JSON.parse(v):'Saood_ash-Shuraym_128kbps'; }catch(e){ return 'Saood_ash-Shuraym_128kbps'; } }
+  function reciterName(id){ var f=(typeof RECITERS!=='undefined'?RECITERS:[]).find(function(r){return r[0]===id}); return f?f[1]:id; }
 
-  var surahDownloading = false;
+  var downloading=false;
   async function refreshDlBar(){
-    var bar = document.getElementById('dlBar'); if(!bar) return;
-    var cur = currentSurah();
-    var nav = document.getElementById('nav');
-    var inReader = nav && nav.style.display === 'none' && cur;
+    var bar=document.getElementById('dlBar'); if(!bar) return;
+    var cur=currentSurah();
+    // show only inside a surah reader (nav hidden = reader open)
+    var nav=document.getElementById('nav');
+    var inReader = nav && nav.style.display==='none' && cur;
     bar.classList.toggle('show', !!inReader);
     if(!inReader) return;
-
-    var rec = reciterNow();
-    var fullMeta = getPkgMeta()['audio:' + rec];
-    var isFullOffline = fullMeta && fullMeta.status === 'complete';
-    var m = getSurahMeta();
-    var k = cur.n + '|' + rec;
-    var info = m[k];
-
-    document.getElementById('dlTitle').textContent = '{{download}} ' + cur.name + ' — তেলাওয়াত';
-    var btn = document.getElementById('dlBtn');
-
-    if(isFullOffline){
-      document.getElementById('dlSub').innerHTML = '<span class="offline-badge2">{{check_circle:f}} সম্পূর্ণ কুরআন অফলাইন</span> ' + reciterName(rec) + ' · ডাটা ছাড়াই চলবে';
-      btn.textContent = '{{check_circle:f}} ডাউনলোডকৃত';
-      btn.disabled = true;
-    } else if(info){
-      document.getElementById('dlSub').innerHTML = '<span class="offline-badge2">{{check_circle:f}} অফলাইন</span> ' + bn(info.count) + ' আয়াত · ' + reciterName(rec);
-      btn.textContent = '{{delete}} মুছুন';
-      btn.disabled = false;
-    } else {
-      document.getElementById('dlSub').textContent = bn(cur.count) + ' আয়াত · ' + reciterName(rec) + ' · অফলাইনে শুনতে ডাউনলোড করুন';
-      btn.textContent = '{{download}} ডাউনলোড';
-      btn.disabled = surahDownloading;
-    }
+    var rec=reciterNow(); var m=meta(); var k=cur.n+'|'+rec;
+    var info=m[k];
+    var fullPackage=packageMeta()['audio|'+rec];
+    var hasFullPackage=!!(fullPackage && fullPackage.status==='complete');
+    document.getElementById('dlTitle').textContent='{{download}} '+cur.name+' — তেলাওয়াত';
+    var btn=document.getElementById('dlBtn');
+    if(info || hasFullPackage){
+      var savedCount=info?info.count:cur.count;
+      document.getElementById('dlSub').innerHTML='<span class="offline-badge2">{{check_circle:f}} অফলাইন</span> '+savedCount+' আয়াত · '+reciterName(rec)+' · ডাটা ছাড়াই চলবে'+(hasFullPackage?' · সম্পূর্ণ কুরআন ডাউনলোড করা':'');
+      btn.textContent=info?'{{delete}} মুছুন':'সম্পূর্ণ প্যাকেজ ডাউনলোডেড';
+      btn.disabled=!info;
+    } else { document.getElementById('dlSub').textContent=cur.count+' আয়াত · '+reciterName(rec)+' · একবার ডাউনলোড করলেই অফলাইনে চলবে'; btn.textContent='{{download}} ডাউনলোড'; btn.disabled=downloading; }
   }
-
   async function downloadCurrent(){
-    if(surahDownloading) return;
-    var cur = currentSurah(); if(!cur) return;
-    var rec = reciterNow();
-    var m = getSurahMeta();
-    var k = cur.n + '|' + rec;
-    var btn = document.getElementById('dlBtn');
-
-    if(m[k]){
-      if(!confirm('এই সূরার ডাউনলোড মুছে ফেলবেন?')) return;
-      var cnt = SURAH_COUNTS[cur.n - 1] || cur.count;
-      for(var i = 1; i <= cnt; i++){
-        try{ await dbDel(DB_AUDIO, STORE_AUDIO, audioKey(rec, cur.n, i)); }catch(e){}
-      }
-      delete m[k];
-      saveSurahMeta(m);
-      if(typeof showToast === 'function') showToast('ডাউনলোড মুছে ফেলা হয়েছে');
-      refreshDlBar();
-      updateGlobalMiniBadge();
-      return;
+    if(downloading) return; var cur=currentSurah(); if(!cur) return;
+    var rec=reciterNow(); var m=meta(); var k=cur.n+'|'+rec;
+    var btn=document.getElementById('dlBtn');
+    if(m[k]){ // delete
+      if(!confirm('এই সূরার ডাউনলোড মুছে ফেলবা?')) return;
+      var count=Number(cur.count||0);
+      // Reader list may be unavailable after navigation; use canonical surah metadata as fallback.
+      if(!count && window.surahs){var sm=window.surahs.find(function(x){return Number(x.number)===Number(cur.n);});count=sm?Number(sm.numberOfAyahs||0):0;}
+      if(cur.list && cur.list.length){for(var i=0;i<cur.list.length;i++){try{await del(keyFor(rec,cur.list[i].s.number,cur.list[i].no));}catch(e){}}}
+      else {for(var ai=1;ai<=count;ai++){try{await del(keyFor(rec,cur.n,ai));}catch(e){}}}
+      delete m[k]; saveMeta(m); if(typeof showToast==='function') showToast('ডাউনলোড মুছে ফেলা হয়েছে'); refreshDlBar(); return;
     }
-    if(!navigator.onLine){
-      if(typeof showToast === 'function') showToast('ডাউনলোডের জন্য ইন্টারনেট লাগবে');
-      return;
-    }
-    surahDownloading = true;
-    refreshDlBar();
+    if(!navigator.onLine){ if(typeof showToast==='function') showToast('ডাউনলোডের জন্য ইন্টারনেট লাগবে'); return; }
+    downloading=true; refreshDlBar();
     try{
-      var cnt = SURAH_COUNTS[cur.n - 1] || cur.count;
-      var done = 0, failed = 0;
-      for(var i = 1; i <= cnt; i++){
-        var key = audioKey(rec, cur.n, i);
-        try{
-          var ex = await dbGet(DB_AUDIO, STORE_AUDIO, key);
-          if(!ex){
-            var r = await fetch(audioUrl(rec, cur.n, i));
-            if(!r.ok) throw new Error('HTTP ' + r.status);
-            await dbPut(DB_AUDIO, STORE_AUDIO, key, await r.blob());
-          }
-          done++;
-        }catch(e){ failed++; }
-        if(btn) btn.textContent = '{{hourglass_top}} ' + Math.round(i / cnt * 100) + '% (' + bn(i) + '/' + bn(cnt) + ')';
-        if((i % 5) === 4) await new Promise(function(r){ setTimeout(r, 25); });
+      var list=cur.list||[];
+      // if list missing, build from surahs count (fetch ayahs via openSurah already loaded, so list should exist)
+      var done=0, failed=0;
+      for(var i=0;i<list.length;i++){
+        var a=list[i]; var key=keyFor(rec,a.s.number,a.no);
+        try{ var ex=await get(key); if(!ex){ var r=await fetch(urlFor(rec,a.s.number,a.no)); if(!r.ok) throw new Error('HTTP '+r.status); await put(key, await r.blob()); } done++; }
+        catch(e){ failed++; }
+        if(btn) btn.textContent='{{hourglass_top}} '+Math.round((i+1)/list.length*100)+'% ('+(window.toBn?toBn(i+1):i+1)+'/'+(window.toBn?toBn(list.length):list.length)+')';
+        if((i%5)===4) await new Promise(function(r){setTimeout(r,30)});
       }
-      if(failed === 0){
-        var mm = getSurahMeta();
-        mm[k] = { count: done, at: new Date().toISOString(), reciter: rec, name: cur.name };
-        saveSurahMeta(mm);
-        if(typeof showToast === 'function') showToast('{{check_circle:f}} সূরা ডাউনলোড সম্পন্ন!');
-      } else {
-        if(typeof showToast === 'function') showToast('অসম্পূর্ণ: ' + bn(done) + '/' + bn(cnt) + ' আয়াত ডাউনলোড হয়েছে। আবার চেষ্টা করুন।');
-      }
-    }catch(e){
-      if(typeof showToast === 'function') showToast('ডাউনলোড হয়নি, আবার চেষ্টা করুন');
-    }
-    surahDownloading = false;
-    refreshDlBar();
-    updateGlobalMiniBadge();
+      var mm=meta();
+      if(failed===0 && done===list.length){mm[k]={count:done, at:new Date().toISOString(), reciter:rec, name:cur.name};saveMeta(mm);}
+      else {delete mm[k];saveMeta(mm);}
+      if(typeof showToast==='function') showToast(failed?('ডাউনলোড অসম্পূর্ণ — '+done+'টি হয়েছে, '+failed+'টি হয়নি। আবার চেষ্টা করো।'):'{{check_circle:f}} ডাউনলোড শেষ! এখন অফলাইনে চলবে');
+    }catch(e){ if(typeof showToast==='function') showToast('ডাউনলোড হয়নি, আবার চেষ্টা করো'); }
+    downloading=false; refreshDlBar();
   }
-
-  document.getElementById('dlBtn').onclick = downloadCurrent;
-  document.getElementById('dlManageBtn').onclick = function(){ if(window.openGridPopup) window.openGridPopup('downloads'); };
-  setInterval(refreshDlBar, 900);
+  document.getElementById('dlBtn').onclick=downloadCurrent;
+  document.getElementById('dlManageBtn').onclick=function(){ if(window.openGridPopup) window.openGridPopup('downloads'); };
+  setInterval(refreshDlBar, 800);
   document.addEventListener('click', function(){ setTimeout(refreshDlBar, 400); });
 
+  // --- Playback: use the IndexedDB Blob directly when it is available offline ---
   var origPlay = window.playAyahAtIndex;
+  var offlineAudioObjectUrl = null;
   window.playAyahAtIndex = async function(idx){
     try{
-      var list = (typeof currentPlaylist !== 'undefined' && currentPlaylist && currentPlaylist.length) ? currentPlaylist : (window._activeAyahList || []);
+      // currentPlaylist and audioObj are top-level lexical bindings, not window properties.
+      var list = (typeof currentPlaylist !== 'undefined' && currentPlaylist.length)
+        ? currentPlaylist
+        : (window._activeAyahList || []);
       var item = list[idx];
-      if(!item) return origPlay(idx);
-      var rec = reciterNow();
-      var blob = await dbGet(DB_AUDIO, STORE_AUDIO, audioKey(rec, item.s.number, item.no));
-      if(blob){
-        origPlay(idx);
-        setTimeout(function(){
-          try{
-            var u = URL.createObjectURL(blob);
-            if(typeof audioObj !== 'undefined' && audioObj){
-              audioObj.src = u;
-              audioObj.playbackRate = (typeof SPEEDS !== 'undefined' ? SPEEDS[audioSpeedIdx] : 1) || 1;
-              audioObj.play().catch(function(){});
-            }
-            var lbl = document.getElementById('audioReciterLabel');
-            if(lbl) lbl.textContent = reciterName(rec) + ' · অফলাইন';
-          }catch(e){}
-        }, 30);
-        return;
+      if(item){
+        var rec = reciterNow();
+        var blob = await get(keyFor(rec, item.s.number, item.no));
+        if(blob){
+          if(offlineAudioObjectUrl) URL.revokeObjectURL(offlineAudioObjectUrl);
+          offlineAudioObjectUrl = URL.createObjectURL(blob);
+          currentPlayIdx = idx;
+          audioObj.src = offlineAudioObjectUrl;
+          audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+          audioTitle.textContent = item.s.englishName + ' · আয়াত ' + toBn(item.no);
+          audioReciterLabel.textContent = reciterName(rec) + ' · অফলাইন';
+          audioBar.style.display = 'block';
+          updateAudioBarPos();
+          audioAuto.classList.toggle('on', autoPlayNext);
+          highlightPlayingCard(item.s.number, item.no);
+          await audioObj.play();
+          audioPlayPause.textContent = '{{pause}}';
+          return;
+        }
       }
-    }catch(e){}
+    }catch(e){
+      // If the offline blob is missing or cannot be played, use the normal online player.
+    }
+    if(offlineAudioObjectUrl){ URL.revokeObjectURL(offlineAudioObjectUrl); offlineAudioObjectUrl=null; }
     return origPlay(idx);
   };
   try{ playAyahAtIndex = window.playAyahAtIndex; }catch(e){}
 
-  function renderDownloadsPopup(){
-    var box = document.getElementById('gridPopupBox');
-    var overlay = document.getElementById('gridPopupOverlay');
-    if(!box || !overlay) return;
-    overlay.classList.add('open');
-
-    var pkgs = getAllPackages();
-    var m = getPkgMeta();
-    var totalUsedBytes = Object.keys(m).reduce(function(sum, k){ return sum + ((m[k] && m[k].bytes) || 0); }, 0);
-
-    var html = '<div id="qxDlCenter">';
-    html += '<button class="pp-close" onclick="document.getElementById('gridPopupOverlay').classList.remove('open')">{{close}}</button>';
-    html += '<h3>{{download}} অফলাইন ডাউনলোড সেন্টার</h3>';
-    html += '<div class="pp-mini" style="margin-bottom:8px">মোট ব্যবহৃত স্টোরেজ: <b>' + fmtBytes(totalUsedBytes) + '</b> · অফলাইন প্যাকেজ ইন্টারনেট ছাড়াই চলবে।</div>';
-
-    html += '<div class="pp-tabs" id="qxDlTabs">';
-    html += '<button data-dtab="trans" class="' + (activeTab === 'trans' ? 'on' : '') + '">অনুবাদ</button>';
-    html += '<button data-dtab="tafsir" class="' + (activeTab === 'tafsir' ? 'on' : '') + '">তাফসির</button>';
-    html += '<button data-dtab="audio" class="' + (activeTab === 'audio' ? 'on' : '') + '">অডিও</button>';
-    html += '<button data-dtab="surahs" class="' + (activeTab === 'surahs' ? 'on' : '') + '">একক সূরা</button>';
-    html += '</div>';
-
-    if(activeTab === 'surahs'){
-      var sm = getSurahMeta();
-      var sks = Object.keys(sm);
-      if(!sks.length){
-        html += '<div class="pp-mini">কোনো একক সূরার অডিও ডাউনলোড করা নেই। সূরা খুলে ডাউনলোড বাটন চাপুন অথবা <b>অডিও</b> ট্যাব থেকে পুরো কুরআন একসাথে ডাউনলোড করুন।</div>';
-      } else {
-        sks.forEach(function(k){
-          var info = sm[k];
-          var sn = parseInt(k.split('|')[0], 10);
-          html += '<div class="dl-item"><div><b>' + (info.name || ('সূরা ' + sn)) + '</b><br><small>' + reciterName(info.reciter) + ' · ' + bn(info.count) + ' আয়াত</small></div>' +
-            '<div style="display:flex;gap:4px"><button class="dl-btn ghost" data-splay="' + sn + '">{{play_arrow}}</button><button class="dl-btn danger" data-sdel="' + k + '">{{delete}}</button></div></div>';
-        });
-      }
-    } else {
-      if(activeTab === 'trans'){
-        html += '<div class="pp-mini" style="margin-bottom:6px">{{check_circle:f}} মাওলানা মুহিউদ্দীন খানের অনুবাদ অ্যাপের সাথে বিল্ট-ইন অফলাইন আছে।</div>';
-      }
-      var filtered = pkgs.filter(function(p){ return p.cat === activeTab; });
-      filtered.forEach(function(pkg){
-        var st = getPkgState(pkg);
-        var pct = Math.min(100, Math.round((st.done / pkg.total) * 100));
-        var badgeHtml = '';
-        if(st.status === 'complete') badgeHtml = '<span class="dl-st done">{{check_circle:f}} সম্পূর্ণ</span>';
-        else if(st.status === 'downloading') badgeHtml = '<span class="dl-st run">{{hourglass_top}} ডাউনলোড হচ্ছে ' + bn(pct) + '%</span>';
-        else if(st.status === 'incomplete') badgeHtml = '<span class="dl-st part">{{warning}} অসম্পূর্ণ (' + bn(pct) + '%)</span>';
-        else badgeHtml = '<span class="dl-st none">ডাউনলোড নেই</span>';
-
-        var sizeTxt = st.bytes > 0
-          ? ('সাইজ: ' + fmtBytes(st.bytes) + (st.status !== 'complete' ? ' / ~' + fmtBytes(pkg.estBytes) : ''))
-          : ('আনুমানিক সাইজ: ~' + fmtBytes(pkg.estBytes));
-        var progTxt = bn(st.done) + '/' + bn(pkg.total) + ' ' + pkg.unit;
-
-        html += '<div class="dl-pkg">';
-        html += '<div class="dl-pkg-top"><div><b>' + pkg.title + '</b><div class="dl-pkg-meta">' + pkg.sub + '<br>' + sizeTxt + ' · ' + progTxt + '</div></div>' + badgeHtml + '</div>';
-
-        if(st.status === 'downloading' || st.status === 'incomplete'){
-          html += '<div class="dl-pkg-prog"><div class="dl-pkg-fill" style="width:' + pct + '%"></div></div>';
-          if(st.error && st.status === 'incomplete'){
-            html += '<div class="dl-pkg-meta" style="color:#dc2626">{{warning}} ' + st.error + '</div>';
-          }
-        }
-
-        html += '<div class="dl-pkg-acts">';
-        if(st.status === 'downloading'){
-          html += '<button class="dl-btn danger" data-pkg-cancel="' + pkg.id + '">{{close}} Cancel</button>';
-        } else if(st.status === 'incomplete'){
-          html += '<button class="dl-btn" data-pkg-start="' + pkg.id + '">{{refresh}} Retry (' + bn(pkg.total - st.done) + ' বাকি)</button>';
-          html += '<button class="dl-btn danger" data-pkg-del="' + pkg.id + '">{{delete}} Delete</button>';
-        } else if(st.status === 'complete'){
-          html += '<button class="dl-btn danger" data-pkg-del="' + pkg.id + '">{{delete}} প্যাকেজ মুছুন</button>';
-        } else {
-          html += '<button class="dl-btn" data-pkg-start="' + pkg.id + '">{{download}} সম্পূর্ণ ডাউনলোড</button>';
-        }
-        html += '</div></div>';
+  var packageJob = null;
+  var CONTENT_DB = 'quranix-content';
+  var CONTENT_STORE = 'chapters';
+  function contentDb(){
+    return new Promise(function(resolve,reject){
+      var req=indexedDB.open(CONTENT_DB,1);
+      req.onupgradeneeded=function(){ if(!req.result.objectStoreNames.contains(CONTENT_STORE)) req.result.createObjectStore(CONTENT_STORE); };
+      req.onsuccess=function(){ resolve(req.result); };
+      req.onerror=function(){ reject(req.error); };
+    });
+  }
+  async function contentPut(key,value){
+    var d=await contentDb();
+    return new Promise(function(resolve,reject){ var tx=d.transaction(CONTENT_STORE,'readwrite'); tx.objectStore(CONTENT_STORE).put(value,key); tx.oncomplete=function(){d.close();resolve();}; tx.onerror=function(){d.close();reject(tx.error);}; });
+  }
+  async function contentGet(key){
+    var d=await contentDb();
+    return new Promise(function(resolve,reject){ var q=d.transaction(CONTENT_STORE).objectStore(CONTENT_STORE).get(key); q.onsuccess=function(){d.close();resolve(q.result||null);}; q.onerror=function(){d.close();reject(q.error);}; });
+  }
+  async function contentDel(key){
+    var d=await contentDb();
+    return new Promise(function(resolve,reject){ var tx=d.transaction(CONTENT_STORE,'readwrite'); tx.objectStore(CONTENT_STORE).delete(key); tx.oncomplete=function(){d.close();resolve();}; tx.onerror=function(){d.close();reject(tx.error);}; });
+  }
+  function packageMeta(){ try{return JSON.parse(localStorage.getItem('quranix_content_packages')||'{}');}catch(e){return {};} }
+  function savePackageMeta(m){ localStorage.setItem('quranix_content_packages',JSON.stringify(m)); }
+  function editionLabel(){
+    var sel=document.getElementById('transSel');
+    if(!sel) return currentEdition;
+    var opt=sel.options[sel.selectedIndex]; return opt ? opt.textContent.trim() : currentEdition;
+  }
+  function tafsirLabel(id){ var item=(typeof TAFSIRS!=='undefined'?TAFSIRS:[]).find(function(x){return Number(x[0])===Number(id);}); return item?item[1]:'তাফসির '+id; }
+  function packageKey(type,id){ return type+'|'+String(id); }
+  // Hadith corpus source: KafelaNetwork's public six-collection JSON repository.
+  // Keep source attribution visible; this community dataset is not an official publisher API.
+  var HADITH_CORPUS=[
+    {id:'Bukhari',name:'সহিহ আল-বুখারি',chapters:97,meta:'bukhari.json',folder:'Bukhari'},
+    {id:'Muslim',name:'সহিহ মুসলিম',chapters:56,meta:'muslim.json',folder:'Muslim'},
+    {id:'AbuDaud',name:'সুনান আবু দাউদ',chapters:43,meta:'abudaud.json',folder:'AbuDaud'},
+    {id:'At-tirmizi',name:'জামে আত-তিরমিজি',chapters:46,meta:'at-tirmizi.json',folder:'At-tirmizi'},
+    {id:'Al-Nasai',name:'সুনান আন-নাসাঈ',chapters:50,meta:"nasa'i.json",folder:'Al-Nasai'},
+    {id:'Ibne-Mazah',name:'সুনান ইবনে মাজাহ',chapters:37,meta:'ibnemajah.json',folder:'Ibne-Mazah'}
+  ];
+  var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@main/';
+  function normalizeHadithRows(payload){
+    var rows=Array.isArray(payload)?payload:(payload&&Array.isArray(payload.hadiths)?payload.hadiths:(payload&&Array.isArray(payload.data)?payload.data:(payload&&Array.isArray(payload.items)?payload.items:(payload&&Array.isArray(payload.hadith)?payload.hadith:null))));
+    if(!rows && payload && payload.hadith) rows=[payload];
+    if(!rows && payload && typeof payload==='object'){
+      rows=Object.keys(payload).map(function(k){return payload[k];}).filter(function(v){return v&&typeof v==='object'&&(v.hadith||v.hadith_id||v.id);});
+    }
+    if(!Array.isArray(rows)) return [];
+    return rows.map(function(item){var h=item&&item.hadith?item.hadith:item;return h&&typeof h==='object'?h:null;}).filter(function(h){
+      var bn=h&&(h.bn||h.text||h.translation), ar=h&&(h.ar||h.arabic);
+      return h && (h.hadith_id!==undefined || h.id!==undefined) && String(bn||'').trim() && String(ar||'').trim();
+    });
+  }
+  function hadithChapterUrl(collection,chapter){return HADITH_CDN+collection.folder+'/Chapter/'+chapter+'.json';}
+  function hadithChapterKey(collectionId,chapter){return 'hadith|'+collectionId+'|'+chapter;}
+  function hadithMetaKey(collectionId){return 'hadith-meta|'+collectionId;}
+  function hadithMetaIndex(collection,chapter){return collection.id==='Ibne-Mazah'?String(chapter-1):String(chapter);}
+  function hadithRangeCount(range){
+    if(!range)return 0;
+    var normalized=String(range).replace(/[০-৯]/g,function(d){return '০১২৩৪৫৬৭৮৯'.indexOf(d);}).replace(/[٠-٩]/g,function(d){return '٠١٢٣٤٥٦٧٨٩'.indexOf(d);});
+    var nums=normalized.match(/\d+/g);
+    return nums&&nums.length>=2?Math.max(0,Number(nums[1])-Number(nums[0])+1):0;
+  }
+  function allSurahList(){
+    if(window.surahs && window.surahs.length) return Promise.resolve(window.surahs);
+    return loadSurahList();
+  }
+  function jobPauseWait(job){
+    return new Promise(function(resolve,reject){
+      function check(){ if(job.cancelled){reject(new Error('cancelled'));return;} if(!job.paused){resolve();return;} setTimeout(check,250); }
+      check();
+    });
+  }
+  function updatePackageProgress(job){
+    var p=document.getElementById('qxPackageProgress');
+    var t=document.getElementById('qxPackageStatus');
+    var action=document.getElementById('qxPackageAction');
+    if(p) p.value=job.total?Math.min(100,Math.round(job.done/job.total*100)):0;
+    if(t) t.textContent=job.message+' · '+job.done+'/'+job.total;
+    if(action) action.textContent=job.paused?'আবার চালু':'বিরতি';
+  }
+  async function loadSurahAyahsForEdition(edition, surahNo){
+    if(LOCAL && edition === 'bn.bengali'){
+      var localMeta = LOCAL.meta[surahNo-1];
+      if(!localMeta || !LOCAL.ar[surahNo-1] || !LOCAL.bn[surahNo-1]) throw new Error('স্থানীয় অনুবাদ পাওয়া যায়নি: সূরা '+surahNo);
+      return LOCAL.ar[surahNo-1].map(function(ar,i){
+        return {no:i+1,ar:ar,bn:LOCAL.bn[surahNo-1][i]||''};
       });
     }
-
-    html += '<div class="pp-mini" style="margin-top:10px">{{lightbulb}} নেটওয়ার্ক বিচ্ছিন্ন হলে অসম্পূর্ণ প্যাকেজে <b>Retry</b> চাপলে যেখান থেকে থেমেছিল সেখান থেকেই বাকি অংশ ডাউনলোড হবে।</div>';
-    html += '</div>';
-    box.innerHTML = html;
-
-    box.querySelectorAll('[data-dtab]').forEach(function(btn){
-      btn.onclick = function(e){
-        e.stopPropagation();
-        activeTab = btn.dataset.dtab;
-        renderDownloadsPopup();
-      };
-    });
-    box.querySelectorAll('[data-pkg-start]').forEach(function(btn){
-      btn.onclick = function(e){ e.stopPropagation(); startPackageDownload(btn.dataset.pkgStart); };
-    });
-    box.querySelectorAll('[data-pkg-cancel]').forEach(function(btn){
-      btn.onclick = function(e){ e.stopPropagation(); cancelPackageDownload(btn.dataset.pkgCancel); };
-    });
-    box.querySelectorAll('[data-pkg-del]').forEach(function(btn){
-      btn.onclick = function(e){ e.stopPropagation(); deletePackageDownload(btn.dataset.pkgDel); };
-    });
-    box.querySelectorAll('[data-splay]').forEach(function(b){
-      b.onclick = function(){ overlay.classList.remove('open'); if(typeof openSurah === 'function') openSurah(parseInt(b.dataset.splay, 10)); };
-    });
-    box.querySelectorAll('[data-sdel]').forEach(function(b){
-      b.onclick = async function(){
-        var k = b.dataset.sdel;
-        var sm = getSurahMeta();
-        var info = sm[k];
-        var sn = parseInt(k.split('|')[0], 10);
-        var cnt = SURAH_COUNTS[sn - 1] || (info && info.count) || 0;
-        for(var i = 1; i <= cnt; i++){ try{ await dbDel(DB_AUDIO, STORE_AUDIO, audioKey(info.reciter, sn, i)); }catch(e){} }
-        delete sm[k];
-        saveSurahMeta(sm);
-        renderDownloadsPopup();
-        refreshDlBar();
-        if(typeof showToast === 'function') showToast('মুছে ফেলা হয়েছে');
-      };
-    });
-
-    updateGlobalMiniBadge();
+    if(edition === 'bn.zakaria'){
+      var zakaria = await getZakariaSurahTranslation(surahNo);
+      if(LOCAL && LOCAL.meta[surahNo-1]){
+        return LOCAL.ar[surahNo-1].map(function(ar,i){return {no:i+1,ar:ar,bn:zakaria[i]||''};});
+      }
+      var arabicData = await getJSON('/surah/'+surahNo+'/quran-uthmani');
+      return arabicData.ayahs.map(function(a,i){return {no:a.numberInSurah,ar:a.text,bn:zakaria[i]||''};});
+    }
+    var data = await getJSON('/surah/'+surahNo+'/editions/quran-uthmani,'+edition);
+    if(!Array.isArray(data) || !data[0] || !data[1] || !Array.isArray(data[0].ayahs) || !Array.isArray(data[1].ayahs)){
+      throw new Error('অনুবাদের ডেটা অসম্পূর্ণ: সূরা '+surahNo);
+    }
+    return data[0].ayahs.map(function(a,i){return {no:a.numberInSurah,ar:a.text,bn:data[1].ayahs[i]?data[1].ayahs[i].text:''};});
   }
 
-  window.renderDownloadsPopup = renderDownloadsPopup;
-  window.quranixOffline = { refresh: refreshDlBar, download: downloadCurrent };
-  setTimeout(updateGlobalMiniBadge, 300);
+  async function runPackage(type,id,label){
+    if(packageJob && !packageJob.finished){ showToast('আগের ডাউনলোডটি আগে শেষ বা বাতিল করো'); return; }
+    if(!navigator.onLine){ showToast('ডাউনলোডের জন্য ইন্টারনেট সংযোগ প্রয়োজন'); return; }
+    if(type==='audio' && !confirm('সম্পূর্ণ কুরআনের ৬,২৩৬টি অডিও ফাইল ডাউনলোড হবে। এতে অনেক স্টোরেজ ও ডেটা লাগতে পারে। চালিয়ে যাবে?')) return;
+    if(navigator.storage && navigator.storage.estimate){
+      try{
+        var estimate=await navigator.storage.estimate();
+        if(estimate.quota && estimate.usage/estimate.quota>.95){ showToast('ডিভাইসের স্টোরেজ প্রায় পূর্ণ। আগে জায়গা খালি করো।'); return; }
+      }catch(e){}
+    }
+    if(navigator.storage && navigator.storage.persist){
+      try{ await navigator.storage.persist(); }catch(e){}
+    }
+    var surahList;
+    try{ surahList=await allSurahList(); }catch(e){ showToast('সূরার তালিকা পাওয়া যায়নি: '+e.message); return; }
+    if(!surahList || surahList.length!==114){ showToast('পূর্ণ ১১৪ সূরার তালিকা যাচাই করা যায়নি'); return; }
+    var totalAyahs=surahList.reduce(function(sum,item){return sum+Number(item.numberOfAyahs||0);},0);
+    if(totalAyahs!==6236){ showToast('আয়াতের মোট সংখ্যা যাচাইয়ে সমস্যা হয়েছে ('+totalAyahs+')'); return; }
+
+    var job={type:type,id:String(id),label:label,done:0,bytes:0,total:type==='audio'?totalAyahs:(type==='hadith'?(HADITH_CORPUS.find(function(c){return c.id===String(id);})||{chapters:0}).chapters:114),paused:false,cancelled:false,finished:false,message:'প্রস্তুতি চলছে',controller:null};
+    packageJob=job;
+    renderDownloadsPopup().then(function(){updatePackageProgress(job);});
+    var metaMap=packageMeta(), key=packageKey(type,id);
+    var previous=metaMap[key]||{};
+    metaMap[key]={type:type,id:String(id),label:label,status:'downloading',done:0,bytes:previous.bytes||0,total:job.total,updated:new Date().toISOString()};
+    savePackageMeta(metaMap);
+    try{
+      if(type==='translation'){
+        for(var sn=1;sn<=114;sn++){
+          await jobPauseWait(job);
+          var storeKey='translation|'+id+'|'+sn;
+          var existing=await contentGet(storeKey);
+          var expected=Number(surahList[sn-1].numberOfAyahs||0);
+          var validChapter=Array.isArray(existing) && existing.length===expected && existing.every(function(a,i){return Number(a.no)===i+1 && String(a.ar||'').trim() && String(a.bn||'').trim();});
+          if(!validChapter){
+            var chapter=await loadSurahAyahsForEdition(String(id),sn);
+            if(!chapter || chapter.length!==expected) throw new Error('অনুবাদের আয়াতসংখ্যা মেলেনি: সূরা '+sn);
+            existing=chapter.map(function(a){return {no:Number(a.no),ar:String(a.ar||''),bn:String(a.bn||'')};});
+            if(!existing.every(function(a,i){return a.no===i+1 && a.ar.trim() && a.bn.trim();})) throw new Error('অনুবাদের কিছু আয়াতের আরবি বা অনুবাদ খালি: সূরা '+sn);
+            await contentPut(storeKey,existing);
+          }
+          job.done=sn;
+          job.bytes+=new Blob([JSON.stringify(existing)]).size;
+          job.message='অনুবাদ ডাউনলোড হচ্ছে'; updatePackageProgress(job);
+          metaMap=packageMeta(); metaMap[key].done=job.done; metaMap[key].bytes=job.bytes; metaMap[key].updated=new Date().toISOString(); savePackageMeta(metaMap);
+        }
+      } else if(type==='tafsir'){
+        var tafsirSlug=getTafsirSlug(id);
+        if(!tafsirSlug) throw new Error('নির্বাচিত তাফসিরের ডেটাসেট পাওয়া যায়নি');
+        for(var ts=1;ts<=114;ts++){
+          await jobPauseWait(job);
+          var tafKey='tafsir|'+id+'|'+ts;
+          var tafData=await contentGet(tafKey);
+          var tafExpected=Number(surahList[ts-1].numberOfAyahs||0);
+          function validTafsirRows(rows){
+            if(!Array.isArray(rows) || !rows.length) return false;
+            var seen={};
+            return rows.every(function(row){
+              var n=Number(row&&row.verse_number);
+              if(!row || !Number.isInteger(n) || n<1 || n>tafExpected || !String(row.text||'').trim() || seen[n]) return false;
+              seen[n]=true; return true;
+            });
+          }
+          if(!validTafsirRows(tafData)){
+            job.controller=new AbortController();
+            // spa5k/tafsir_api returns the surah's available tafsir rows as an array,
+            // not { ayahs: [...] }. Ayahs without commentary are intentionally omitted.
+            var url=TAFSIR_CDN+tafsirSlug+'/'+ts+'.json';
+            var response=await fetch(url,{signal:job.controller.signal});
+            if(!response.ok) throw new Error('তাফসির API HTTP '+response.status+' (সূরা '+ts+')');
+            var payload=await response.json();
+            var sourceRows=Array.isArray(payload)?payload:(payload&&Array.isArray(payload.ayahs)?payload.ayahs:(payload&&Array.isArray(payload.data)?payload.data:null));
+            if(!sourceRows) throw new Error('তাফসিরের ডেটা কাঠামো সঠিক নয়: সূরা '+ts);
+            tafData=sourceRows.map(function(row){
+              var n=Number(row&& (row.ayah||row.verse_number||row.verse||row.number)||0);
+              return {verse_number:n,verse_key:ts+':'+n,text:String(row&&row.text||'').trim()};
+            }).filter(function(row){return row.verse_number>0 && row.text;});
+            if(!validTafsirRows(tafData)) throw new Error('তাফসিরের সূরা '+ts+'-এর ডেটা খালি, ত্রুটিপূর্ণ বা পুনরাবৃত্ত আয়াতযুক্ত');
+            await contentPut(tafKey,tafData);
+          }
+          job.done=ts; job.bytes+=new Blob([JSON.stringify(tafData)]).size; job.message='তাফসির ডাউনলোড হচ্ছে'; updatePackageProgress(job);
+          metaMap=packageMeta(); metaMap[key].done=job.done; metaMap[key].bytes=job.bytes; metaMap[key].updated=new Date().toISOString(); savePackageMeta(metaMap);
+        }
+      } else if(type==='audio'){
+        var rec=String(id);
+        for(var si=0;si<surahList.length;si++){
+          var surah=surahList[si];
+          for(var ai=1;ai<=Number(surah.numberOfAyahs);ai++){
+            await jobPauseWait(job);
+            var audioKey=keyFor(rec,surah.number,ai);
+            var blob=await get(audioKey);
+            if(!blob){
+              job.controller=new AbortController();
+              var audioResponse=await fetch(urlFor(rec,surah.number,ai),{signal:job.controller.signal});
+              if(!audioResponse.ok) throw new Error('অডিও ফাইল পাওয়া যায়নি: '+surah.number+':'+ai+' (HTTP '+audioResponse.status+')');
+              blob=await audioResponse.blob();
+              if(!blob || !blob.size) throw new Error('খালি অডিও ফাইল: '+surah.number+':'+ai);
+              await put(audioKey,blob);
+            }
+            job.done++; job.bytes+=blob.size||0; job.message='অডিও ডাউনলোড হচ্ছে';
+            if(job.done%5===0 || job.done===job.total) updatePackageProgress(job);
+            if(job.done%20===0){ metaMap=packageMeta(); metaMap[key].done=job.done; metaMap[key].bytes=job.bytes; metaMap[key].updated=new Date().toISOString(); savePackageMeta(metaMap); }
+          }
+        }
+      } else if(type==='hadith'){
+        var collection=HADITH_CORPUS.find(function(c){return c.id===String(id);});
+        if(!collection) throw new Error('হাদিসের সংগ্রহটি চেনা যায়নি');
+        job.total=collection.chapters;
+        var sourceMetaUrl=HADITH_CDN+collection.folder+'/Meta/'+collection.meta;
+        var metaResponse=await fetch(sourceMetaUrl);
+        if(!metaResponse.ok) throw new Error('হাদিসের অধ্যায়-তথ্য পাওয়া যায়নি (HTTP '+metaResponse.status+')');
+        var chapterMeta=await metaResponse.json();
+        if(!chapterMeta || typeof chapterMeta!=='object') throw new Error('অধ্যায়-তথ্য অসম্পূর্ণ; প্যাকেজ সম্পূর্ণ করা হয়নি');
+        for(var hm=1;hm<=collection.chapters;hm++){
+          var metaEntry=chapterMeta[hadithMetaIndex(collection,hm)];
+          if(!metaEntry || !String(metaEntry.title||'').trim() || !String(metaEntry.hadis_range||'').trim()) throw new Error('অধ্যায়-তথ্যে ঘাটতি: '+collection.name+' · অধ্যায় '+hm);
+        }
+        await contentPut(hadithMetaKey(collection.id),chapterMeta);
+        for(var hc=1;hc<=collection.chapters;hc++){
+          await jobPauseWait(job);
+          var hKey=hadithChapterKey(collection.id,hc), cached=await contentGet(hKey);
+          var chapterInfo=chapterMeta[hadithMetaIndex(collection,hc)];
+          var expectedHadiths=hadithRangeCount(chapterInfo.hadis_range);
+          var cachedValid=Array.isArray(cached) && cached.length>0 && cached.every(function(h){return h && (h.hadith_id!==undefined || h.id!==undefined) && String(h.bn||h.text||h.translation||'').trim() && String(h.ar||h.arabic||'').trim();}) && (!expectedHadiths || cached.length===expectedHadiths);
+          if(!cachedValid){
+            job.controller=new AbortController();
+            var hResponse=await fetch(hadithChapterUrl(collection,hc),{signal:job.controller.signal});
+            if(!hResponse.ok) throw new Error(collection.name+' · অধ্যায় '+hc+' (HTTP '+hResponse.status+')');
+            var hPayload=await hResponse.json();
+            cached=normalizeHadithRows(hPayload);
+            if(!cached.length) throw new Error(collection.name+' · অধ্যায় '+hc+'-এ আরবি ও বাংলা উভয় পাঠসহ ব্যবহারযোগ্য হাদিস পাওয়া যায়নি');
+            if(expectedHadiths && cached.length!==expectedHadiths) throw new Error(collection.name+' · অধ্যায় '+hc+'-এ হাদিসসংখ্যা মেলেনি (পাওয়া '+cached.length+', প্রত্যাশিত '+expectedHadiths+')');
+            await contentPut(hKey,cached);
+          }
+          job.done=hc; job.bytes+=new Blob([JSON.stringify(cached)]).size;
+          job.message=collection.name+' ডাউনলোড হচ্ছে'; updatePackageProgress(job);
+          metaMap=packageMeta(); metaMap[key].done=job.done; metaMap[key].bytes=job.bytes; metaMap[key].updated=new Date().toISOString(); savePackageMeta(metaMap);
+        }
+      } else {
+        throw new Error('অজানা প্যাকেজের ধরন');
+      }
+      if(job.cancelled) throw new Error('cancelled');
+      job.finished=true; job.message='ডাউনলোড সম্পন্ন'; job.done=job.total; updatePackageProgress(job);
+      metaMap=packageMeta(); metaMap[key]={type:type,id:String(id),label:label,status:'complete',done:job.total,bytes:job.bytes,total:job.total,updated:new Date().toISOString()}; savePackageMeta(metaMap);
+      showToast(label+' সম্পূর্ণ ডাউনলোড হয়েছে');
+    }catch(error){
+      job.finished=true;
+      var cancelled=job.cancelled || error.name==='AbortError' || error.message==='cancelled';
+      job.message=cancelled?'ডাউনলোড বাতিল':'ডাউনলোডে সমস্যা: '+error.message;
+      metaMap=packageMeta();
+      if(metaMap[key]){metaMap[key].status=cancelled?'paused':'incomplete';metaMap[key].done=job.done;metaMap[key].bytes=job.bytes;metaMap[key].updated=new Date().toISOString();savePackageMeta(metaMap);}
+      showToast(cancelled?'ডাউনলোড থামানো হয়েছে':'ডাউনলোড সম্পূর্ণ হয়নি: '+error.message);
+    }
+    packageJob=null;
+    renderDownloadsPopup();
+  }
+
+  async function deletePackage(type,id){
+    var key=packageKey(type,id), m=packageMeta();
+    if(!m[key]) return;
+    if(!confirm('“'+(m[key].label||'প্যাকেজ')+'” ডাউনলোড মুছে ফেলবে?')) return;
+    if(type==='translation' || type==='tafsir'){
+      for(var n=1;n<=114;n++) await contentDel((type==='translation'?'translation':'tafsir')+'|'+id+'|'+n);
+    } else if(type==='hadith'){
+      var hc=HADITH_CORPUS.find(function(c){return c.id===String(id);});
+      if(hc){for(var hn=1;hn<=hc.chapters;hn++) await contentDel(hadithChapterKey(hc.id,hn));await contentDel(hadithMetaKey(hc.id));}
+    } else if(type==='audio'){
+      var list=await allSurahList();
+      var audioMeta=meta();
+      // Keep any audio files that are also part of a separately downloaded single-surah package.
+      for(var si=0;si<list.length;si++){
+        var singleKey=list[si].number+'|'+id;
+        if(audioMeta[singleKey]) continue;
+        for(var ai=1;ai<=Number(list[si].numberOfAyahs);ai++) await del(keyFor(String(id),list[si].number,ai));
+      }
+    }
+    delete m[key]; savePackageMeta(m); showToast('প্যাকেজ মুছে ফেলা হয়েছে'); renderDownloadsPopup(); refreshDlBar();
+  }
+  async function getPackageStorage(){
+    try{ if(navigator.storage&&navigator.storage.estimate){var e=await navigator.storage.estimate();return {usage:e.usage||0,quota:e.quota||0};} }catch(e){}
+    return {usage:0,quota:0};
+  }
+  function formatBytes(bytes){ if(!bytes) return '—'; var units=['B','KB','MB','GB']; var i=0; while(bytes>=1024&&i<3){bytes/=1024;i++;} return bytes.toFixed(i?1:0)+' '+units[i]; }
+  async function renderDownloadsPopup(){
+    var box=document.getElementById('gridPopupBox'), overlay=document.getElementById('gridPopupOverlay');
+    if(!box||!overlay) return; overlay.classList.add('open');
+    var selectedEdition=(typeof currentEdition!=='undefined'?currentEdition:'bn.bengali');
+    var selectedTafsir=(typeof tafsirId!=='undefined'?tafsirId:381);
+    var selectedReciter=reciterNow();
+    var packages=packageMeta();
+    Object.keys(packages).forEach(function(k){
+      if(packages[k].status==='downloading' && (!packageJob || packageJob.finished)) packages[k].status='incomplete';
+    });
+    savePackageMeta(packages);
+    var html='<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>{{download}} ডাউনলোড ম্যানেজার</h3>'+ 
+      '<div class="pp-mini">সম্পূর্ণ প্যাকেজ ডাউনলোড করলে অনুবাদ, তাফসির, নির্বাচিত কারির তিলাওয়াত এবং হাদিসগ্রন্থ অফলাইনে ব্যবহার করা যাবে। ডাউনলোড চলাকালে পৃষ্ঠা বন্ধ হলে পরে Retry দিয়ে বাকি অংশ চালানো যাবে।</div>'+ 
+      '<div class="dl-item" style="display:block"><b>অনুবাদ · '+editionLabel()+'</b><small style="display:block;margin:4px 0 8px">বর্তমানে নির্বাচিত অনুবাদের সম্পূর্ণ ১১৪ সূরা</small><button class="pp-btn" id="qxDownloadTranslation">{{download}} সম্পূর্ণ অনুবাদ ডাউনলোড</button></div>'+ 
+      '<div class="dl-item" style="display:block"><b>তাফসির · '+tafsirLabel(selectedTafsir)+'</b><small style="display:block;margin:4px 0 8px">বর্তমানে নির্বাচিত তাফসিরের সম্পূর্ণ কুরআন</small><button class="pp-btn" id="qxDownloadTafsir">{{download}} সম্পূর্ণ তাফসির ডাউনলোড</button></div>'+ 
+      '<div class="dl-item" style="display:block"><b>অডিও · '+getReciterName(selectedReciter)+'</b><small style="display:block;margin:4px 0 8px">নির্বাচিত কারির ৬,২৩৬টি আয়াতের অডিও</small><button class="pp-btn" id="qxDownloadAudio">{{download}} সম্পূর্ণ অডিও ডাউনলোড</button></div>';
+    html+='<div class="dl-item" style="display:block"><b>হাদিসের সম্পূর্ণ কিতাব</b><small style="display:block;margin:4px 0 8px">ছয়টি হাদিসগ্রন্থের বাংলা ও আরবি ডেটা অধ্যায়ভিত্তিক সংরক্ষণ</small><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px">';
+    HADITH_CORPUS.forEach(function(c){html+='<button class="pp-btn" data-hadith-dl="'+c.id+'">'+c.name+' · ডাউনলোড</button>';});
+    html+='</div><small style="display:block;margin-top:8px">ডেটা-উৎস: KafelaNetwork Hadith API (কমিউনিটি GitHub ডেটাসেট)। ব্যবহার করার আগে মূল উৎসে পাঠ ও রেফারেন্স যাচাই করো।</small></div>';
+    if(packageJob && !packageJob.finished){
+      html+='<div class="dl-item" style="display:block"><b id="qxPackageStatus">'+packageJob.message+'</b><progress id="qxPackageProgress" max="100" value="0" style="width:100%;height:10px;margin:10px 0"></progress><div style="display:flex;gap:8px"><button class="dl-btn" id="qxPackageAction">বিরতি</button><button class="dl-btn ghost" id="qxPackageCancel">বাতিল</button></div></div>';
+    }
+    html+='<h4 style="margin:16px 0 8px">ডাউনলোড করা প্যাকেজ</h4>';
+    var entries=Object.keys(packages).filter(function(k){return ['complete','incomplete','paused'].includes(packages[k].status);});
+    if(!entries.length) html+='<div class="pp-mini">এখনো কোনো প্যাকেজ ডাউনলোড করা হয়নি।</div>';
+    entries.forEach(function(k){
+      var item=packages[k];
+      var state=item.status==='complete'?'সম্পূর্ণ':item.status==='paused'?'থামানো':'অসম্পূর্ণ';
+      html+='<div class="dl-item"><div style="min-width:0;flex:1"><b>'+String(item.label||'প্যাকেজ')+'</b><br><small>'+state+' · '+Number(item.done||0)+'/'+Number(item.total||0)+' · '+formatBytes(item.bytes||0)+'</small></div>'+
+        (item.status==='complete'?'':'<button class="dl-btn" data-pkgretry="'+k+'">আবার চেষ্টা</button>')+
+        '<button class="dl-btn ghost" data-pkgdel="'+k+'">{{delete}} মুছুন</button></div>';
+    });
+    var storage=await getPackageStorage();
+    html+='<div class="pp-mini" style="margin-top:10px">স্টোরেজ ব্যবহার: '+(storage.quota?formatBytes(storage.usage)+' / '+formatBytes(storage.quota):'ব্রাউজার তথ্য দেয়নি')+'. অডিও প্যাকেজের জন্য উল্লেখযোগ্য জায়গা প্রয়োজন হতে পারে।</div>';
+    html+='<h4 style="margin:16px 0 8px">সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
+    var m=meta(), ks=Object.keys(m);
+    if(!ks.length) html+='<div class="pp-mini">এখনো কোনো সূরা-ভিত্তিক অডিও ডাউনলোড করা নেই।</div>';
+    else ks.forEach(function(k){var info=m[k],parts=k.split('|'),sn=parseInt(parts[0],10); html+='<div class="dl-item"><div><b>'+(info.name||('সূরা '+sn))+'</b><br><small>'+getReciterName(info.reciter)+' · '+info.count+' আয়াত</small></div><button class="dl-btn ghost" data-del="'+k+'">{{delete}}</button></div>';});
+    box.innerHTML=html;
+    var bind=function(id,fn){var el=box.querySelector('#'+id);if(el)el.onclick=fn;};
+    bind('qxDownloadTranslation',function(){runPackage('translation',selectedEdition,'অনুবাদ · '+editionLabel());});
+    bind('qxDownloadTafsir',function(){runPackage('tafsir',selectedTafsir,'তাফসির · '+tafsirLabel(selectedTafsir));});
+    bind('qxDownloadAudio',function(){runPackage('audio',selectedReciter,'অডিও · '+getReciterName(selectedReciter));});
+    box.querySelectorAll('[data-hadith-dl]').forEach(function(b){b.onclick=function(){var c=HADITH_CORPUS.find(function(x){return x.id===b.dataset.hadithDl;});if(c)runPackage('hadith',c.id,c.name);};});
+    bind('qxPackageAction',function(){if(!packageJob)return;packageJob.paused=!packageJob.paused;updatePackageProgress(packageJob);});
+    bind('qxPackageCancel',function(){if(!packageJob)return;packageJob.cancelled=true;if(packageJob.controller)packageJob.controller.abort();});
+    box.querySelectorAll('[data-pkgretry]').forEach(function(b){b.onclick=function(){var bits=b.dataset.pkgretry.split('|'),type=bits.shift(),id=bits.join('|'),item=packages[b.dataset.pkgretry];runPackage(type,id,item.label||'প্যাকেজ');};});
+    box.querySelectorAll('[data-pkgdel]').forEach(function(b){b.onclick=function(){var bits=b.dataset.pkgdel.split('|');deletePackage(bits[0],bits.slice(1).join('|'));};});
+    box.querySelectorAll('[data-del]').forEach(function(b){b.onclick=async function(){var k=b.dataset.del,info=m[k],parts=k.split('|'),sn=parseInt(parts[0],10);if(!confirm('এই সূরার অডিও ডাউনলোড মুছে ফেলবে?'))return;for(var i=1;i<=Number(info.count||0)+2;i++){try{await del(keyFor(info.reciter,sn,i));}catch(e){}}delete m[k];saveMeta(m);renderDownloadsPopup();refreshDlBar();};});
+    var mini=document.getElementById('gDlMini'); if(mini) mini.textContent=entries.length+' প্যাকেজ ›';
+  }
+  window.quranixHadithCollections=HADITH_CORPUS;
+  window.quranixPackageStore={
+    getHadithChapter:async function(id,chapter){return contentGet(hadithChapterKey(id,chapter));},
+    getHadithMeta:async function(id){return contentGet(hadithMetaKey(id));},
+    getTranslation:async function(edition,surah){return contentGet('translation|'+edition+'|'+surah);},
+    getTafsir:async function(id,surah,ayah){var rows=await contentGet('tafsir|'+id+'|'+surah);if(!Array.isArray(rows))return null;var row=rows.find(function(x){return Number(x.verse_number)===Number(ayah)||x.verse_key===surah+':'+ayah;});return row?(row.text||'এই আয়াতের জন্য এই তাফসিরে আলাদা ব্যাখ্যা পাওয়া যায়নি।'):'এই আয়াতের জন্য এই তাফসিরে আলাদা ব্যাখ্যা পাওয়া যায়নি।';}
+  };
+  window.renderDownloadsPopup=renderDownloadsPopup;
+  window.quranixOffline={ refresh:refreshDlBar, download:downloadCurrent };
 })();
 </script>
 
@@ -4488,10 +4322,28 @@ var HADITH_DATA={"nawawi": [["নিয়ত", "إِنَّمَا الأَعْم
 function hadithAll(){var out=[];['nawawi','qudsi','short'].forEach(function(k){HADITH_DATA[k].forEach(function(h,i){out.push({pkg:k,idx:i,title:h[0],ar:h[1],bn:h[2],ref:h[3]});});});return out;}
 function hadithToday(){var all=hadithAll();var d=new Date();return all[(d.getDate()-1)%all.length];}
 function buildHadithCard(){var h=hadithToday();var box=document.createElement('div');box.className='khatam-card';box.innerHTML='<div class="khatam-row"><b>{{history_edu}} আজকের হাদিস</b><span>'+(h.pkg==='nawawi'?'৪০ হাদিস':h.pkg==='qudsi'?'হাদিসে কুদসি':'ছোট হাদিস')+'</span></div><div style="text-align:center"><div style="font-family:Amiri Quran,serif;font-size:22px;color:var(--accent)">'+h.ar+'</div><b>'+h.title+'</b><div class="trk-mini">'+h.bn+'</div><div class="trk-mini">{{auto_stories}} '+h.ref+'</div></div><div class="khatam-row"><span style="color:var(--accent);font-weight:700">হাদিস প্যাকেজ দেখো →</span><span>৩টি প্যাকেজ · '+(hadithAll().length)+'টি হাদিস</span></div>';box.onclick=function(){if(typeof setMode==='function')setMode('hadith');};return box;}
-function renderHadith(){if(typeof showOther==='function')showOther('{{history_edu}} হাদিস প্যাকেজ');var appEl=document.getElementById('app');var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='সব হাদিস না — শুধু প্যাকেজ আকারের বইগুলো। একে একে পড়ো, মুখস্থ হলে {{check_circle:f}} মার্ক করো।';appEl.appendChild(info);var pkgs=[{k:'nawawi',icon:'{{menu_book}}',name:'৪০ হাদিস (ইমাম নববী)',desc:'ইসলামের মূল ৪২টি হাদিস — প্রতিটা মুসলিমের জানা উচিত',count:HADITH_DATA.nawawi.length},{k:'qudsi',icon:'{{auto_awesome}}',name:'হাদিসে কুদসি',desc:'আল্লাহর কথা, রাসূল ﷺ-এর ভাষায় — ২০টি নির্বাচিত',count:HADITH_DATA.qudsi.length},{k:'short',icon:'{{lightbulb}}',name:'ছোট হাদিস — দৈনন্দিন জীবন',desc:'ছোট ছোট হাদিস, মুখস্থ করা সহজ — প্রতিদিন ১টা',count:HADITH_DATA.short.length}];pkgs.forEach(function(pk){var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var done=0;for(var i=0;i<pk.count;i++){if(mem[pk.k+':'+i])done++;}var card=document.createElement('div');card.className='hadith-pkg';card.innerHTML='<h3>'+pk.icon+' '+pk.name+'</h3><div class="sub">'+pk.desc+'</div><div class="khatam-row" style="margin-top:8px"><span>'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'টি হাদিস</span><span>মুখস্থ: '+(typeof toBn==='function'?toBn(done):done)+'/'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'</span><span style="color:var(--accent);font-weight:700">খোলো →</span></div><div class="goal-track"><div class="goal-fill" style="width:'+Math.round(done/pk.count*100)+'%" ></div></div>';card.onclick=function(){renderHadithList(pk.k,pk.name);};appEl.appendChild(card);});var today=hadithToday();var tc=document.createElement('div');tc.className='hadith-pkg';tc.innerHTML='<h3>{{history_edu}} আজকের হাদিস</h3><div class="ar" style="font-family:Amiri Quran,serif;font-size:22px;direction:rtl;text-align:right;color:var(--accent)">'+today.ar+'</div><b>'+today.title+'</b><div class="trk-mini">'+today.bn+'</div><div class="ref" style="font-size:11px;color:var(--muted)">{{auto_stories}} '+today.ref+'</div>';tc.onclick=function(){openHadithDetail(today.pkg,today.idx);};appEl.appendChild(tc);}
+function renderOfflineHadithCollections(appEl){
+  var m={};try{m=JSON.parse(localStorage.getItem('quranix_content_packages')||'{}');}catch(e){}
+  var keys=Object.keys(m).filter(function(k){return k.indexOf('hadith|')===0 && (m[k].status==='complete'||m[k].status==='incomplete'||m[k].status==='paused');});
+  if(!keys.length)return;
+  var wrap=document.createElement('div');wrap.className='hadith-pkg';
+  wrap.innerHTML='<h3>অফলাইনে সংরক্ষিত হাদিসগ্রন্থ</h3><div class="sub">ডাউনলোড করা অধ্যায়গুলো ইন্টারনেট ছাড়াই পড়া যাবে</div>';
+  keys.forEach(function(k){var item=m[k],id=k.split('|').slice(1).join('|'),c=(window.quranixHadithCollections||[]).find(function(x){return x.id===id;});if(!c)return;var b=document.createElement('button');b.className='dl-btn';b.style.margin='6px 6px 0 0';b.textContent=c.name+' · '+(item.status==='complete'?'সম্পূর্ণ':item.status==='paused'?'থামানো':'অসম্পূর্ণ');b.onclick=function(){openOfflineHadithCollection(c);};wrap.appendChild(b);});
+  appEl.appendChild(wrap);
+}
+async function openOfflineHadithCollection(collection){
+  if(typeof showOther==='function')showOther(collection.name);
+  var appEl=document.getElementById('app');var back=document.createElement('button');back.className='dl-btn ghost';back.textContent='← হাদিস প্যাকেজ';back.onclick=function(){renderHadith();};appEl.appendChild(back);
+  var search=document.createElement('input');search.className='asma-search';search.placeholder='হাদিস খুঁজুন...';appEl.appendChild(search);
+  var list=document.createElement('div');appEl.appendChild(list);var rows=[];var hadithMeta=await window.quranixPackageStore.getHadithMeta(collection.id)||{};
+  for(var i=1;i<=collection.chapters;i++){var chapter=await window.quranixPackageStore.getHadithChapter(collection.id,i);var chapterInfo=hadithMeta[collection.id==='Ibne-Mazah'?String(i-1):String(i)]||{};if(Array.isArray(chapter))chapter.forEach(function(h){var copy=Object.assign({},h);copy._qxChapterTitle=chapterInfo.title||'';rows.push(copy);});}
+  function draw(q){list.innerHTML='';var term=(q||'').toLowerCase();rows.forEach(function(h){var ar=h.ar||h.arabic||'',bn=h.bn||h.text||h.translation||'',narrator=h.narrator||'',grade=h.grade||'',chapterTitle=h._qxChapterTitle||'';var hay=(ar+' '+bn+' '+narrator+' '+grade+' '+chapterTitle).toLowerCase();if(term&&hay.indexOf(term)<0)return;var card=document.createElement('div');card.className='hadith-item';var title=document.createElement('b');title.textContent='হাদিস '+(h.hadith_id||h.id||'');var arabic=document.createElement('div');arabic.className='ar';arabic.textContent=ar;var body=document.createElement('div');body.style.cssText='font-size:14px;line-height:1.7;margin:5px 0';body.textContent=bn;var ref=document.createElement('div');ref.className='ref';ref.textContent=[narrator,grade,chapterTitle||('অধ্যায় '+((h.chapter&&h.chapter.chapter_number)||''))].filter(Boolean).join(' · ');card.appendChild(title);if(ar)card.appendChild(arabic);card.appendChild(body);card.appendChild(ref);list.appendChild(card);});if(!list.children.length)list.textContent='এই অনুসন্ধানে কোনো হাদিস পাওয়া যায়নি।';}
+  search.oninput=function(){draw(search.value);};draw('');
+}
+function renderHadith(){if(typeof showOther==='function')showOther('{{history_edu}} হাদিস প্যাকেজ');var appEl=document.getElementById('app');var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='সব হাদিস না — শুধু প্যাকেজ আকারের বইগুলো। একে একে পড়ো, মুখস্থ হলে {{check_circle:f}} মার্ক করো।';appEl.appendChild(info);var pkgs=[{k:'nawawi',icon:'{{menu_book}}',name:'৪০ হাদিস (ইমাম নববী)',desc:'ইসলামের মূল ৪২টি হাদিস — প্রতিটা মুসলিমের জানা উচিত',count:HADITH_DATA.nawawi.length},{k:'qudsi',icon:'{{auto_awesome}}',name:'হাদিসে কুদসি',desc:'আল্লাহর কথা, রাসূল ﷺ-এর ভাষায় — ২০টি নির্বাচিত',count:HADITH_DATA.qudsi.length},{k:'short',icon:'{{lightbulb}}',name:'ছোট হাদিস — দৈনন্দিন জীবন',desc:'ছোট ছোট হাদিস, মুখস্থ করা সহজ — প্রতিদিন ১টা',count:HADITH_DATA.short.length}];pkgs.forEach(function(pk){var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var done=0;for(var i=0;i<pk.count;i++){if(mem[pk.k+':'+i])done++;}var card=document.createElement('div');card.className='hadith-pkg';card.innerHTML='<h3>'+pk.icon+' '+pk.name+'</h3><div class="sub">'+pk.desc+'</div><div class="khatam-row" style="margin-top:8px"><span>'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'টি হাদিস</span><span>মুখস্থ: '+(typeof toBn==='function'?toBn(done):done)+'/'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'</span><span style="color:var(--accent);font-weight:700">খোলো →</span></div><div class="goal-track"><div class="goal-fill" style="width:'+Math.round(done/pk.count*100)+'%" ></div></div>';card.onclick=function(){renderHadithList(pk.k,pk.name);};appEl.appendChild(card);});var today=hadithToday();var tc=document.createElement('div');tc.className='hadith-pkg';tc.innerHTML='<h3>{{history_edu}} আজকের হাদিস</h3><div class="ar" style="font-family:Amiri Quran,serif;font-size:22px;direction:rtl;text-align:right;color:var(--accent)">'+today.ar+'</div><b>'+today.title+'</b><div class="trk-mini">'+today.bn+'</div><div class="ref" style="font-size:11px;color:var(--muted)">{{auto_stories}} '+today.ref+'</div>';tc.onclick=function(){openHadithDetail(today.pkg,today.idx);};appEl.appendChild(tc);renderOfflineHadithCollections(appEl);}
 function renderHadithList(pkgKey,pkgName){if(typeof showOther==='function')showOther('{{history_edu}} '+pkgName);var appEl=document.getElementById('app');var back=document.createElement('button');back.className='dl-btn ghost';back.textContent='← সব প্যাকেজ';back.onclick=function(){renderHadith();};appEl.appendChild(back);var search=document.createElement('input');search.className='asma-search';search.placeholder='হাদিস খুঁজুন... যেমন: নিয়ত, রাগ, ধৈর্য';appEl.appendChild(search);var list=document.createElement('div');appEl.appendChild(list);function draw(f){list.innerHTML='';var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}HADITH_DATA[pkgKey].forEach(function(h,i){if(f&&(h[0]+h[2]+h[3]).toLowerCase().indexOf(f.toLowerCase())<0)return;var item=document.createElement('div');item.className='hadith-item'+(mem[pkgKey+':'+i]?' done':'');item.innerHTML='<div class="ar">'+h[1]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+h[0]+'</b><div style="font-size:13px;margin:4px 0">'+h[2]+'</div><div class="ref">{{auto_stories}} '+h[3]+(mem[pkgKey+':'+i]?' · {{check_circle:f}} মুখস্থ':'')+'</div>';item.onclick=function(){openHadithDetail(pkgKey,i);};list.appendChild(item);});}search.oninput=function(){draw(search.value);};draw('');}
 function openHadithDetail(pkgKey,idx){var h=HADITH_DATA[pkgKey][idx];var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var key=pkgKey+':'+idx;var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>{{history_edu}} '+(pkgKey==='nawawi'?'৪০ হাদিস':pkgKey==='qudsi'?'হাদিসে কুদসি':'ছোট হাদিস')+' · '+(typeof toBn==='function'?toBn(idx+1):idx+1)+'</span><button id="hX">{{close}}</button></div><div class="ar" style="font-family:Amiri Quran,serif;font-size:26px;direction:rtl;text-align:center;color:var(--accent);line-height:1.8">'+h[1]+'</div><b style="font-size:18px">'+h[0]+'</b><div style="line-height:1.7;margin:10px 0">'+h[2]+'</div><div class="trk-mini">{{auto_stories}} রেফারেন্স: '+h[3]+'</div><div class="trk-mini" style="margin-top:6px">{{lightbulb}} এই হাদিসটা আজকের দিনে কীভাবে আমল করবা, একটু ভেবে নাও। মুখস্থ হলে {{check_circle:f}} চাপ দাও।</div><div class="ac-row"><button class="ac-btn ghost" id="hMem">'+(mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো')+'</button><button class="ac-btn" id="hShare">{{share}} শেয়ার করো</button></div><div class="ac-row"><button class="ac-btn ghost" id="hPrev">← আগের হাদিস</button><button class="ac-btn ghost" id="hNext">পরের হাদিস →</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='hadith'){};};box.querySelector('#hX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#hMem').onclick=function(){if(mem[key])delete mem[key];else mem[key]=1;localStorage.setItem('quranix_hadith_mem',JSON.stringify(mem));this.textContent=mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো';if(typeof showToast==='function')showToast(mem[key]?'মুখস্থ মার্ক হয়েছে':'মার্ক সরানো হয়েছে');};box.querySelector('#hShare').onclick=async function(){var text=''+h[0]+'\n'+h[1]+'\n'+h[2]+'\n'+h[3]+'\n— Quranix · হাদিস প্যাকেজ';if(navigator.share){try{await navigator.share({title:h[0],text:text});}catch(e){}}else if(typeof copyText==='function')copyText(text,'কপি হয়েছে!');};box.querySelector('#hPrev').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+HADITH_DATA[pkgKey].length-1)%HADITH_DATA[pkgKey].length);};box.querySelector('#hNext').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+1)%HADITH_DATA[pkgKey].length);};}
-window.renderHadith=renderHadith;window.buildHadithCard=buildHadithCard;window.openHadithDetail=openHadithDetail;window.renderHadithList=renderHadithList;
+window.renderHadith=renderHadith;window.openOfflineHadithCollection=openOfflineHadithCollection;window.buildHadithCard=buildHadithCard;window.openHadithDetail=openHadithDetail;window.renderHadithList=renderHadithList;
 </script>
 </body>
 </html>
