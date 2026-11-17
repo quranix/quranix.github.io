@@ -29,12 +29,12 @@ QX FILE EDIT RULES
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f5f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--fs:30px;--tile-bg:#f5f5f5;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
-@media (prefers-color-scheme:dark){:root{--bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}}
-[data-theme="dark"]{--bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}
-[data-theme="light"]{--bg:#f5f5f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--tile-bg:#f5f5f5;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
+:root{--bg:#f5f5f5;--outer-bg:#e5e7eb;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--fs:30px;--tile-bg:#f5f5f5;--tile-hover:#e5e7eb;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#121413;--outer-bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}}
+[data-theme="dark"]{--bg:#121413;--outer-bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}
+[data-theme="light"]{--bg:#f5f5f5;--outer-bg:#e5e7eb;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--tile-bg:#f5f5f5;--tile-hover:#e5e7eb;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font-family:"Hind Siliguri",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+body{margin:0;background:var(--outer-bg);color:var(--text);font-family:"Hind Siliguri",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 header{position:sticky;top:0;background:var(--bg);z-index:5;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top));height:auto;min-height:62px;display:flex;align-items:center;border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;gap:10px;width:100%;min-height:38px}
 h1{font-size:20px;margin:0;flex:1;color:var(--accent)}
@@ -43,7 +43,7 @@ input{width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px 
 .tabs{display:flex;gap:8px;margin-top:8px;overflow-x:auto}
 .tabs button{white-space:nowrap}
 .tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-main{padding:10px 14px 90px;max-width:720px;margin:auto}
+main{padding:10px 14px 90px;max-width:720px;margin:auto;background:var(--bg);min-height:calc(100vh - 62px)}
 .item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0;cursor:pointer}
 .num{min-width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
 .mid{flex:1}.mid b{display:block}.mid small{color:var(--muted)}
@@ -239,7 +239,7 @@ h1{ color:var(--accent) !important; }
 .more-btn{ border:0; background:none; font-size:22px; line-height:1; padding:0 6px; color:var(--muted); cursor:pointer; }
 .ayah-menu{ display:none; position:absolute; top:100%; right:0; min-width:190px; z-index:30; background:var(--tile-bg); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.18); padding:4px; }
 .ayah-menu.open{ display:block; }
-.ayah-menu button{ display:block; width:100%; text-align:left; border:0; background:var(--tile-bg); padding:10px 12px; font-size:14px; border-radius:8px; color:var(--text); }
+.ayah-menu button{ display:block; width:100%; text-align:left; border:0; background:var(--tile-bg); padding:12px 14px; font-size:14px; border-radius:8px; color:var(--text); }
 .ayah-menu button:active{ background:var(--line); }
 header{ transition:transform .25s ease; } nav{ transition:transform .25s ease; } .audio-bar{ transition:bottom .25s ease; }
 body.bars-hidden header{ transform:translateY(-110%); }
@@ -280,14 +280,26 @@ body.hifz-on #hifzBar{display:flex}
 .khatam-dot.done{background:var(--accent);color:#fff;border-color:var(--accent)}
 .khatam-dot.today{box-shadow:0 0 0 2px var(--accent)}
 
-/* ===== STEP 3: OFFLINE AUDIO ===== */
+/* ===== STEP 3: OFFLINE DOWNLOAD MANAGER ===== */
 #dlBar{display:none;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
 #dlBar.show{display:flex;flex-wrap:wrap}
 #dlBar .dl-txt{flex:1;font-size:13px}
 #dlBar .dl-txt small{color:var(--muted);display:block}
-.dl-btn{border:1px solid var(--line);background:var(--accent);color:#fff;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.dl-btn{border:1px solid var(--line);background:var(--accent);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
 .dl-btn.ghost{background:var(--card);color:var(--text)}
+.dl-btn.danger{background:var(--card);color:#dc2626;border-color:#dc2626}
 .dl-btn:disabled{opacity:.6}
+.dl-pkg{border:1px solid var(--line);border-radius:12px;padding:11px;margin:8px 0;background:var(--card);font-size:13px}
+.dl-pkg-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.dl-pkg-meta{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.dl-pkg-prog{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}
+.dl-pkg-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .25s ease}
+.dl-pkg-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;justify-content:flex-end}
+.dl-st{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
+.dl-st.done{background:var(--accent);color:#fff}
+.dl-st.part{background:#f59e0b;color:#fff}
+.dl-st.run{background:#2563eb;color:#fff}
+.dl-st.none{background:var(--line);color:var(--muted)}
 .dl-item{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0;font-size:13px}
 .offline-badge2{display:inline-block;font-size:11px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px}
 
@@ -1214,6 +1226,13 @@ async function openTafseer(surahNo, ayahNo, label){
       body.innerHTML = safeHtml(cached);
       return;
     }
+    if (window.qxPkgStore && window.qxPkgStore.getTafsirAyah) {
+      const offlineTaf = await window.qxPkgStore.getTafsirAyah(tafsirId, surahNo, ayahNo);
+      if (offlineTaf) {
+        body.innerHTML = safeHtml(offlineTaf);
+        return;
+      }
+    }
     const r = await fetch(`https://api.quran.com/api/v4/verses/by_key/${surahNo}:${ayahNo}/tafsirs/${tafsirId}`);
     if (!r.ok) throw new Error("API error");
     const j = await r.json();
@@ -1291,6 +1310,10 @@ async function getQuranComTrans(endpoint, resourceId){
   const cacheKey = `qcom_tr:${resourceId}:${endpoint}`;
   const cached = cacheGet(cacheKey);
   if (cached) return cached;
+  if (window.qxPkgStore && window.qxPkgStore.getTransEndpoint) {
+    const offlineTr = await window.qxPkgStore.getTransEndpoint(resourceId, endpoint);
+    if (offlineTr) return offlineTr;
+  }
   const r = await fetch(`https://api.quran.com/api/v4/quran/translations/${resourceId}?${endpoint}`);
   if (!r.ok) throw new Error("HTTP " + r.status);
   const j = await r.json();
@@ -1581,15 +1604,7 @@ function ayahCard(label, ar, bn, a, removable){
   const ar_ = document.createElement("div"); ar_.className = "ar"; ar_.dataset.raw = ar; if(a){ ar_.dataset.surah = a.s.number; ar_.dataset.ayah = a.no; } if(window.renderAyahArabic){ ar_.innerHTML = window.renderAyahArabic(ar, a?a.s.number:0, a?a.no:0); } else { ar_.textContent = ar; }
   const b = document.createElement("div"); b.className = "bn"; b.textContent = bn;
   d.appendChild(no); d.appendChild(ar_); d.appendChild(b);
-  if (a) {
-    d.style.cursor = "pointer";
-    d.addEventListener("click", (e) => {
-      if (e.target.closest("button, .ayah-menu, .note-box")) return;
-      const sel = window.getSelection ? String(window.getSelection()) : "";
-      if (sel) return;
-      openTafseer(a.s.number, a.no, label);
-    });
-  }
+  // Ayah-card click no longer opens Tafsir; Tafsir remains available in the ... menu.
   return d;
 }
 
@@ -3200,97 +3215,534 @@ setInterval(checkPrayerAlerts, 5000);
 </script>
 
 <script>
-/* ===== STEP 3: OFFLINE AUDIO (IndexedDB) ===== */
+/* ===== STEP 3: FULL PACKAGE & SURAH OFFLINE DOWNLOAD MANAGER ===== */
 (function(){
-  var DB='quranix-audio', STORE='audio';
-  function db(){ return new Promise(function(res,rej){ var r=indexedDB.open(DB,1); r.onupgradeneeded=function(){ try{r.result.createObjectStore(STORE);}catch(e){} }; r.onsuccess=function(){res(r.result)}; r.onerror=function(){rej(r.error)}; }); }
-  function put(key, blob){ return db().then(function(d){ return new Promise(function(res,rej){ var tx=d.transaction(STORE,'readwrite'); tx.objectStore(STORE).put(blob,key); tx.oncomplete=function(){res()}; tx.onerror=function(){rej(tx.error)}; }); }); }
-  function get(key){ return db().then(function(d){ return new Promise(function(res,rej){ var q=d.transaction(STORE).objectStore(STORE).get(key); q.onsuccess=function(){res(q.result||null)}; q.onerror=function(){rej(q.error)}; }); }); }
-  function del(key){ return db().then(function(d){ return new Promise(function(res,rej){ var tx=d.transaction(STORE,'readwrite'); tx.objectStore(STORE).delete(key); tx.oncomplete=function(){res()}; tx.onerror=function(){rej(tx.error)}; }); }); }
-  function keys(){ return db().then(function(d){ return new Promise(function(res,rej){ var q=d.transaction(STORE).objectStore(STORE).getAllKeys(); q.onsuccess=function(){res(q.result||[])}; q.onerror=function(){rej(q.error)}; }); }); }
-  function meta(){ try{ return JSON.parse(localStorage.getItem('quranix_dl_meta')||'{}'); }catch(e){ return {}; } }
-  function saveMeta(m){ localStorage.setItem('quranix_dl_meta', JSON.stringify(m)); }
-  function pad(n){ return String(n).padStart(3,'0'); }
-  function urlFor(rec, s, a){ return 'https://everyayah.com/data/'+rec+'/'+pad(s)+pad(a)+'.mp3'; }
-  function keyFor(rec,s,a){ return rec+'/'+pad(s)+pad(a); }
+  var DB_AUDIO = 'quranix-audio', STORE_AUDIO = 'audio';
+  var DB_PKG = 'quranix-packages', STORE_DATA = 'data';
+  var TOTAL_SURAHS = 114;
+  var TOTAL_AYAHS = 6236;
+  var META_KEY = 'quranix_pkg_meta_v2';
+  var LEGACY_META_KEY = 'quranix_dl_meta';
+
+  var SURAH_COUNTS = [
+    7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,
+    112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,
+    54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,
+    14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,
+    29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,
+    11,8,3,9,5,4,7,3,6,3,5,4,5,6
+  ];
+
+  function openDb(name, store){
+    return new Promise(function(res, rej){
+      var r = indexedDB.open(name, 1);
+      r.onupgradeneeded = function(){ try{ r.result.createObjectStore(store); }catch(e){} };
+      r.onsuccess = function(){ res(r.result); };
+      r.onerror = function(){ rej(r.error); };
+    });
+  }
+  function dbPut(name, store, key, val){
+    return openDb(name, store).then(function(d){
+      return new Promise(function(res, rej){
+        var tx = d.transaction(store, 'readwrite');
+        tx.objectStore(store).put(val, key);
+        tx.oncomplete = function(){ res(); };
+        tx.onerror = function(){ rej(tx.error); };
+      });
+    });
+  }
+  function dbGet(name, store, key){
+    return openDb(name, store).then(function(d){
+      return new Promise(function(res, rej){
+        var q = d.transaction(store).objectStore(store).get(key);
+        q.onsuccess = function(){ res(q.result || null); };
+        q.onerror = function(){ rej(q.error); };
+      });
+    });
+  }
+  function dbDel(name, store, key){
+    return openDb(name, store).then(function(d){
+      return new Promise(function(res, rej){
+        var tx = d.transaction(store, 'readwrite');
+        tx.objectStore(store).delete(key);
+        tx.oncomplete = function(){ res(); };
+        tx.onerror = function(){ rej(tx.error); };
+      });
+    });
+  }
+  function dbDelPrefix(name, store, prefix){
+    return openDb(name, store).then(function(d){
+      return new Promise(function(res, rej){
+        var tx = d.transaction(store, 'readwrite');
+        var st = tx.objectStore(store);
+        var req = st.openCursor();
+        req.onsuccess = function(e){
+          var cur = e.target.result;
+          if(cur){
+            if(String(cur.key).indexOf(prefix) === 0) cur.delete();
+            cur.continue();
+          }
+        };
+        tx.oncomplete = function(){ res(); };
+        tx.onerror = function(){ rej(tx.error); };
+      });
+    });
+  }
+
+  function getPkgMeta(){
+    try{ return JSON.parse(localStorage.getItem(META_KEY) || '{}'); }catch(e){ return {}; }
+  }
+  function savePkgMeta(m){
+    try{ localStorage.setItem(META_KEY, JSON.stringify(m)); }catch(e){}
+  }
+  function getSurahMeta(){
+    try{ return JSON.parse(localStorage.getItem(LEGACY_META_KEY) || '{}'); }catch(e){ return {}; }
+  }
+  function saveSurahMeta(m){
+    try{ localStorage.setItem(LEGACY_META_KEY, JSON.stringify(m)); }catch(e){}
+  }
+
+  function pad(n){ return String(n).padStart(3, '0'); }
+  function bn(n){ return (typeof toBn === 'function') ? toBn(n) : String(n); }
+  function fmtBytes(bytes){
+    if(!bytes || bytes <= 0) return '০ MB';
+    if(bytes < 1024 * 1024) return bn((bytes / 1024).toFixed(0)) + ' KB';
+    if(bytes < 1024 * 1024 * 1024) return bn((bytes / (1024 * 1024)).toFixed(1)) + ' MB';
+    return bn((bytes / (1024 * 1024 * 1024)).toFixed(2)) + ' GB';
+  }
+  function audioUrl(rec, s, a){ return 'https://everyayah.com/data/' + rec + '/' + pad(s) + pad(a) + '.mp3'; }
+  function audioKey(rec, s, a){ return rec + '/' + pad(s) + pad(a); }
+  function reciterNow(){ try{ var v = localStorage.getItem('reciter'); return v ? JSON.parse(v) : 'Saood_ash-Shuraym_128kbps'; }catch(e){ return 'Saood_ash-Shuraym_128kbps'; } }
+  function reciterName(id){ var f = (window.RECITERS || []).find(function(r){ return r[0] === id; }); return f ? f[1] : id; }
+
+  function getAllPackages(){
+    var list = [
+      {
+        id: 'trans:213',
+        cat: 'trans',
+        title: 'ড. আবু বকর মুহাম্মাদ যাকারিয়া (অনুবাদ)',
+        sub: 'সম্পূর্ণ কুরআন · ১১৪ সূরা (৬,২৩৬ আয়াত)',
+        total: TOTAL_SURAHS,
+        unit: 'সূরা',
+        estBytes: 2.4 * 1024 * 1024,
+        resourceId: 213
+      }
+    ];
+    (typeof TAFSIRS !== 'undefined' ? TAFSIRS : [
+      [381,'তাফসির ফাতহুল মাজীদ'],[165,'তাফসির আহসানুল বায়ান'],
+      [166,'তাফসির আবু বকর যাকারিয়া'],[164,'তাফসীর ইবনে কাসীর']
+    ]).forEach(function(t){
+      list.push({
+        id: 'tafsir:' + t[0],
+        cat: 'tafsir',
+        title: t[1],
+        sub: 'সম্পূর্ণ কুরআনের তাফসির · ১১৪ সূরা',
+        total: TOTAL_SURAHS,
+        unit: 'সূরা',
+        estBytes: 18 * 1024 * 1024,
+        tafsirId: t[0]
+      });
+    });
+    (typeof RECITERS !== 'undefined' ? RECITERS : [
+      ['Saood_ash-Shuraym_128kbps', 'সৌদ আশ-শুরাইম'],
+      ['Alafasy_128kbps', 'মিশারি রশিদ আল-আফাসি'],
+      ['Abdul_Basit_Murattal_192kbps', 'আব্দুল বাসিত (মুরাত্তাল)'],
+      ['Abdurrahmaan_As-Sudais_192kbps', 'আব্দুর রহমান আস-সুদাইস'],
+      ['MaherAlMuaiqly128kbps', 'মাহের আল-মুআইকলি']
+    ]).forEach(function(r){
+      var is192 = r[0].indexOf('192') >= 0;
+      list.push({
+        id: 'audio:' + r[0],
+        cat: 'audio',
+        title: r[1],
+        sub: 'সম্পূর্ণ কুরআন তেলাওয়াত · ১১৪ সূরা (৬,২৩৬ আয়াত)',
+        total: TOTAL_AYAHS,
+        unit: 'আয়াত',
+        estBytes: (is192 ? 780 : 520) * 1024 * 1024,
+        reciterId: r[0]
+      });
+    });
+    return list;
+  }
+
+  var activeJobs = {};
+  var activeTab = 'trans';
+
+  function updateGlobalMiniBadge(){
+    var m = getPkgMeta();
+    var sm = getSurahMeta();
+    var completedPkgs = Object.keys(m).filter(function(k){ return m[k] && m[k].status === 'complete'; }).length;
+    var surahCount = Object.keys(sm).length;
+    var totalDone = completedPkgs + surahCount;
+    var mini = document.getElementById('gDlMini');
+    if(mini) mini.textContent = totalDone ? bn(totalDone) + 'টি ›' : '›';
+  }
+
+  function refreshPopupUI(){
+    var box = document.getElementById('gridPopupBox');
+    var overlay = document.getElementById('gridPopupOverlay');
+    if(overlay && overlay.classList.contains('open') && box && box.querySelector('#qxDlCenter')){
+      renderDownloadsPopup();
+    }
+    updateGlobalMiniBadge();
+  }
+
+  function getPkgState(pkg){
+    var m = getPkgMeta();
+    var rec = m[pkg.id] || { done: 0, bytes: 0, status: 'none', doneMap: {} };
+    var running = !!activeJobs[pkg.id];
+    var isComplete = (rec.done >= pkg.total) && (rec.status === 'complete');
+    if(!isComplete && rec.status === 'complete'){
+      rec.status = rec.done > 0 ? 'incomplete' : 'none';
+      m[pkg.id] = rec;
+      savePkgMeta(m);
+    }
+    var status = running ? 'downloading' : (isComplete ? 'complete' : (rec.done > 0 ? 'incomplete' : 'none'));
+    return {
+      done: Math.min(rec.done || 0, pkg.total),
+      bytes: rec.bytes || 0,
+      status: status,
+      doneMap: rec.doneMap || {},
+      error: rec.error || ''
+    };
+  }
+
+  async function fetchWithAbort(url, signal, asBlob){
+    var r = await fetch(url, { signal: signal });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return asBlob ? await r.blob() : await r.json();
+  }
+
+  async function startPackageDownload(pkgId){
+    if(activeJobs[pkgId]) return;
+    var pkg = getAllPackages().find(function(p){ return p.id === pkgId; });
+    if(!pkg) return;
+    if(!navigator.onLine){
+      if(typeof showToast === 'function') showToast('ডাউনলোডের জন্য ইন্টারনেট সংযোগ প্রয়োজন');
+      return;
+    }
+
+    var ac = new AbortController();
+    var job = { cancelled: false, controller: ac };
+    activeJobs[pkgId] = job;
+
+    var m = getPkgMeta();
+    var rec = m[pkgId] || { done: 0, bytes: 0, status: 'incomplete', doneMap: {} };
+    rec.status = 'downloading';
+    rec.error = '';
+    m[pkgId] = rec;
+    savePkgMeta(m);
+    refreshPopupUI();
+
+    var lastPaint = 0;
+    function tickUI(force){
+      var now = Date.now();
+      if(force || now - lastPaint > 350){
+        lastPaint = now;
+        refreshPopupUI();
+      }
+    }
+
+    try {
+      if(pkg.cat === 'trans'){
+        for(var s = 1; s <= TOTAL_SURAHS; s++){
+          if(job.cancelled) throw new Error('CANCELLED');
+          if(rec.doneMap[s]) continue;
+          var dbKey = 'tr:' + pkg.resourceId + ':ch:' + s;
+          var existing = await dbGet(DB_PKG, STORE_DATA, dbKey);
+          if(!existing){
+            var j = await fetchWithAbort('https://api.quran.com/api/v4/quran/translations/' + pkg.resourceId + '?chapter_number=' + s, ac.signal, false);
+            if(!j || !Array.isArray(j.translations) || !j.translations.length) throw new Error('INVALID_DATA');
+            var cleaned = j.translations.map(function(t){
+              return (t.text || '').replace(/<sup[^>]*>.*?<\/sup>/gi, '').replace(/<[^>]+>/g, '').trim();
+            });
+            var byteLen = new Blob([JSON.stringify(cleaned)]).size;
+            await dbPut(DB_PKG, STORE_DATA, dbKey, cleaned);
+            rec.bytes = (rec.bytes || 0) + byteLen;
+          }
+          rec.doneMap[s] = 1;
+          rec.done = Object.keys(rec.doneMap).length;
+          m[pkgId] = rec;
+          savePkgMeta(m);
+          tickUI(false);
+        }
+      } else if(pkg.cat === 'tafsir'){
+        for(var s = 1; s <= TOTAL_SURAHS; s++){
+          if(job.cancelled) throw new Error('CANCELLED');
+          if(rec.doneMap[s]) continue;
+          var dbKey = 'tf:' + pkg.tafsirId + ':ch:' + s;
+          var existing = await dbGet(DB_PKG, STORE_DATA, dbKey);
+          if(!existing){
+            var j = await fetchWithAbort('https://api.quran.com/api/v4/quran/tafsirs/' + pkg.tafsirId + '?chapter_number=' + s, ac.signal, false);
+            if(!j || !Array.isArray(j.tafsirs) || !j.tafsirs.length) throw new Error('INVALID_DATA');
+            var mapObj = {};
+            j.tafsirs.forEach(function(item, idx){
+              var vKey = item.verse_key || (s + ':' + (idx + 1));
+              mapObj[vKey] = item.text || '';
+            });
+            var byteLen = new Blob([JSON.stringify(mapObj)]).size;
+            await dbPut(DB_PKG, STORE_DATA, dbKey, mapObj);
+            rec.bytes = (rec.bytes || 0) + byteLen;
+          }
+          rec.doneMap[s] = 1;
+          rec.done = Object.keys(rec.doneMap).length;
+          m[pkgId] = rec;
+          savePkgMeta(m);
+          tickUI(false);
+        }
+      } else if(pkg.cat === 'audio'){
+        var queue = [];
+        for(var s = 1; s <= TOTAL_SURAHS; s++){
+          var cnt = SURAH_COUNTS[s - 1];
+          for(var a = 1; a <= cnt; a++){
+            var k = pad(s) + pad(a);
+            if(!rec.doneMap[k]) queue.push([s, a, k]);
+          }
+        }
+        var BATCH = 4;
+        for(var i = 0; i < queue.length; i += BATCH){
+          if(job.cancelled) throw new Error('CANCELLED');
+          var slice = queue.slice(i, i + BATCH);
+          await Promise.all(slice.map(async function(item){
+            var sNo = item[0], aNo = item[1], code = item[2];
+            var aKey = audioKey(pkg.reciterId, sNo, aNo);
+            var existing = await dbGet(DB_AUDIO, STORE_AUDIO, aKey);
+            if(!existing){
+              var blob = await fetchWithAbort(audioUrl(pkg.reciterId, sNo, aNo), ac.signal, true);
+              if(!blob || blob.size < 500) throw new Error('EMPTY_AUDIO');
+              await dbPut(DB_AUDIO, STORE_AUDIO, aKey, blob);
+              rec.bytes = (rec.bytes || 0) + blob.size;
+            }
+            rec.doneMap[code] = 1;
+          }));
+          rec.done = Object.keys(rec.doneMap).length;
+          m[pkgId] = rec;
+          savePkgMeta(m);
+          tickUI(false);
+        }
+      }
+
+      var finalCount = Object.keys(rec.doneMap).length;
+      rec.done = finalCount;
+      if(finalCount >= pkg.total){
+        rec.status = 'complete';
+        rec.completedAt = new Date().toISOString();
+        delete rec.doneMap;
+        if(typeof showToast === 'function') showToast('{{check_circle:f}} ' + pkg.title + ' সম্পূর্ণ ডাউনলোড হয়েছে!');
+      } else {
+        rec.status = 'incomplete';
+      }
+      m[pkgId] = rec;
+      savePkgMeta(m);
+    } catch(err){
+      var isAbort = job.cancelled || (err && err.name === 'AbortError') || String(err && err.message) === 'CANCELLED';
+      rec.done = rec.doneMap ? Object.keys(rec.doneMap).length : (rec.done || 0);
+      rec.status = rec.done > 0 ? 'incomplete' : 'none';
+      rec.error = isAbort ? 'বাতিল করা হয়েছে' : (!navigator.onLine ? 'ইন্টারনেট সংযোগ বিচ্ছিন্ন' : 'নেটওয়ার্ক ত্রুটি — পুনরায় চেষ্টা করুন');
+      m[pkgId] = rec;
+      savePkgMeta(m);
+      if(typeof showToast === 'function') showToast(isAbort ? 'ডাউনলোড বাতিল করা হয়েছে' : 'ডাউনলোড স্থগিত: ' + rec.error);
+    } finally {
+      delete activeJobs[pkgId];
+      tickUI(true);
+    }
+  }
+
+  function cancelPackageDownload(pkgId){
+    var job = activeJobs[pkgId];
+    if(job){
+      job.cancelled = true;
+      try{ job.controller.abort(); }catch(e){}
+    }
+  }
+
+  async function deletePackageDownload(pkgId){
+    if(activeJobs[pkgId]) cancelPackageDownload(pkgId);
+    var pkg = getAllPackages().find(function(p){ return p.id === pkgId; });
+    if(!pkg) return;
+    if(!confirm('“' + pkg.title + '” প্যাকেজের ডাউনলোড করা সব ডেটা মুছে ফেলবেন?')) return;
+
+    if(pkg.cat === 'trans'){
+      await dbDelPrefix(DB_PKG, STORE_DATA, 'tr:' + pkg.resourceId + ':');
+    } else if(pkg.cat === 'tafsir'){
+      await dbDelPrefix(DB_PKG, STORE_DATA, 'tf:' + pkg.tafsirId + ':');
+    } else if(pkg.cat === 'audio'){
+      await dbDelPrefix(DB_AUDIO, STORE_AUDIO, pkg.reciterId + '/');
+    }
+    var m = getPkgMeta();
+    delete m[pkgId];
+    savePkgMeta(m);
+    refreshPopupUI();
+    refreshDlBar();
+    if(typeof showToast === 'function') showToast('প্যাকেজ মুছে ফেলা হয়েছে');
+  }
+
+  window.qxPkgStore = {
+    getTransEndpoint: async function(resourceId, endpoint){
+      var chMatch = String(endpoint).match(/chapter_number=(\d+)/);
+      if(chMatch){
+        return await dbGet(DB_PKG, STORE_DATA, 'tr:' + resourceId + ':ch:' + chMatch[1]);
+      }
+      var juzMatch = String(endpoint).match(/juz_number=(\d+)/);
+      if(juzMatch && typeof LOCAL !== 'undefined' && LOCAL && LOCAL.juz){
+        var jNo = parseInt(juzMatch[1], 10);
+        var neededSurahs = [];
+        LOCAL.juz.forEach(function(arr, si){
+          if(arr.indexOf(jNo) >= 0) neededSurahs.push(si + 1);
+        });
+        var chCache = {};
+        for(var i = 0; i < neededSurahs.length; i++){
+          var sNo = neededSurahs[i];
+          var data = await dbGet(DB_PKG, STORE_DATA, 'tr:' + resourceId + ':ch:' + sNo);
+          if(!data) return null;
+          chCache[sNo] = data;
+        }
+        var out = [];
+        LOCAL.juz.forEach(function(arr, si){
+          arr.forEach(function(jj, ai){
+            if(jj === jNo) out.push((chCache[si + 1] && chCache[si + 1][ai]) || '');
+          });
+        });
+        return out.length ? out : null;
+      }
+      return null;
+    },
+    getTafsirAyah: async function(tId, surahNo, ayahNo){
+      var chMap = await dbGet(DB_PKG, STORE_DATA, 'tf:' + tId + ':ch:' + surahNo);
+      if(!chMap) return null;
+      return chMap[surahNo + ':' + ayahNo] || null;
+    }
+  };
+
   function currentSurah(){
-    var list=window._activeAyahList||[];
-    if(list.length && list[0] && list[0].s) return {n:list[0].s.number, name:list[0].s.englishName, count:list.length, list:list};
-    if(typeof reading!=='undefined' && reading && reading.t==='s'){ var s=(window.surahs||[]).find(function(x){return x.number===reading.n}); if(s) return {n:s.number,name:s.englishName,count:s.numberOfAyahs,list:null}; }
+    var list = window._activeAyahList || [];
+    if(list.length && list[0] && list[0].s) return { n: list[0].s.number, name: list[0].s.englishName, count: list.length, list: list };
+    if(typeof reading !== 'undefined' && reading && reading.t === 's'){
+      var s = (window.surahs || []).find(function(x){ return x.number === reading.n; });
+      if(s) return { n: s.number, name: s.englishName, count: s.numberOfAyahs, list: null };
+    }
     return null;
   }
-  function currentReciter(){ return (typeof currentReciter!=='undefined'?currentReciter:localStorage.getItem('reciter')) || 'Saood_ash-Shuraym_128kbps'; }
-  // NOTE: currentReciter is a let in main script; accessing it here via window may fail - read from ls instead
-  function reciterNow(){ try{ var v=localStorage.getItem('reciter'); return v?JSON.parse(v):'Saood_ash-Shuraym_128kbps'; }catch(e){ return 'Saood_ash-Shuraym_128kbps'; } }
-  function reciterName(id){ var f=(window.RECITERS||[]).find(function(r){return r[0]===id}); return f?f[1]:id; }
 
-  var downloading=false;
+  var surahDownloading = false;
   async function refreshDlBar(){
-    var bar=document.getElementById('dlBar'); if(!bar) return;
-    var cur=currentSurah();
-    // show only inside a surah reader (nav hidden = reader open)
-    var nav=document.getElementById('nav');
-    var inReader = nav && nav.style.display==='none' && cur;
+    var bar = document.getElementById('dlBar'); if(!bar) return;
+    var cur = currentSurah();
+    var nav = document.getElementById('nav');
+    var inReader = nav && nav.style.display === 'none' && cur;
     bar.classList.toggle('show', !!inReader);
     if(!inReader) return;
-    var rec=reciterNow(); var m=meta(); var k=cur.n+'|'+rec;
-    var info=m[k];
-    document.getElementById('dlTitle').textContent='{{download}} '+cur.name+' — তেলাওয়াত';
-    var btn=document.getElementById('dlBtn');
-    if(info){ document.getElementById('dlSub').innerHTML='<span class="offline-badge2">{{check_circle:f}} অফলাইন</span> '+info.count+' আয়াত · '+reciterName(rec)+' · ডাটা ছাড়াই চলবে'; btn.textContent='{{delete}} মুছুন'; btn.disabled=false; }
-    else { document.getElementById('dlSub').textContent=cur.count+' আয়াত · '+reciterName(rec)+' · একবার ডাউনলোড করলেই অফলাইনে চলবে'; btn.textContent='{{download}} ডাউনলোড'; btn.disabled=downloading; }
-  }
-  async function downloadCurrent(){
-    if(downloading) return; var cur=currentSurah(); if(!cur) return;
-    var rec=reciterNow(); var m=meta(); var k=cur.n+'|'+rec;
-    var btn=document.getElementById('dlBtn');
-    if(m[k]){ // delete
-      if(!confirm('এই সূরার ডাউনলোড মুছে ফেলবা?')) return;
-      var list=cur.list||[]; for(var i=0;i<list.length;i++){ try{ await del(keyFor(rec,list[i].s.number,list[i].no)); }catch(e){} }
-      // also delete by range using surah ayah count
-      delete m[k]; saveMeta(m); if(typeof showToast==='function') showToast('ডাউনলোড মুছে ফেলা হয়েছে'); refreshDlBar(); return;
+
+    var rec = reciterNow();
+    var fullMeta = getPkgMeta()['audio:' + rec];
+    var isFullOffline = fullMeta && fullMeta.status === 'complete';
+    var m = getSurahMeta();
+    var k = cur.n + '|' + rec;
+    var info = m[k];
+
+    document.getElementById('dlTitle').textContent = '{{download}} ' + cur.name + ' — তেলাওয়াত';
+    var btn = document.getElementById('dlBtn');
+
+    if(isFullOffline){
+      document.getElementById('dlSub').innerHTML = '<span class="offline-badge2">{{check_circle:f}} সম্পূর্ণ কুরআন অফলাইন</span> ' + reciterName(rec) + ' · ডাটা ছাড়াই চলবে';
+      btn.textContent = '{{check_circle:f}} ডাউনলোডকৃত';
+      btn.disabled = true;
+    } else if(info){
+      document.getElementById('dlSub').innerHTML = '<span class="offline-badge2">{{check_circle:f}} অফলাইন</span> ' + bn(info.count) + ' আয়াত · ' + reciterName(rec);
+      btn.textContent = '{{delete}} মুছুন';
+      btn.disabled = false;
+    } else {
+      document.getElementById('dlSub').textContent = bn(cur.count) + ' আয়াত · ' + reciterName(rec) + ' · অফলাইনে শুনতে ডাউনলোড করুন';
+      btn.textContent = '{{download}} ডাউনলোড';
+      btn.disabled = surahDownloading;
     }
-    if(!navigator.onLine){ if(typeof showToast==='function') showToast('ডাউনলোডের জন্য ইন্টারনেট লাগবে'); return; }
-    downloading=true; refreshDlBar();
-    try{
-      var list=cur.list||[];
-      // if list missing, build from surahs count (fetch ayahs via openSurah already loaded, so list should exist)
-      var done=0, failed=0;
-      for(var i=0;i<list.length;i++){
-        var a=list[i]; var key=keyFor(rec,a.s.number,a.no);
-        try{ var ex=await get(key); if(!ex){ var r=await fetch(urlFor(rec,a.s.number,a.no)); if(!r.ok) throw new Error('HTTP '+r.status); await put(key, await r.blob()); } done++; }
-        catch(e){ failed++; }
-        if(btn) btn.textContent='{{hourglass_top}} '+Math.round((i+1)/list.length*100)+'% ('+(window.toBn?toBn(i+1):i+1)+'/'+(window.toBn?toBn(list.length):list.length)+')';
-        if((i%5)===4) await new Promise(function(r){setTimeout(r,30)});
-      }
-      var mm=meta(); mm[k]={count:done, at:new Date().toISOString(), reciter:rec, name:cur.name}; saveMeta(mm);
-      if(typeof showToast==='function') showToast(failed?('ডাউনলোড শেষ — '+done+'টা হয়েছে, '+failed+'টা হয়নি'):'{{check_circle:f}} ডাউনলোড শেষ! এখন অফলাইনে চলবে');
-    }catch(e){ if(typeof showToast==='function') showToast('ডাউনলোড হয়নি, আবার চেষ্টা করো'); }
-    downloading=false; refreshDlBar();
   }
-  document.getElementById('dlBtn').onclick=downloadCurrent;
-  document.getElementById('dlManageBtn').onclick=function(){ if(window.openGridPopup) window.openGridPopup('downloads'); };
-  setInterval(refreshDlBar, 800);
+
+  async function downloadCurrent(){
+    if(surahDownloading) return;
+    var cur = currentSurah(); if(!cur) return;
+    var rec = reciterNow();
+    var m = getSurahMeta();
+    var k = cur.n + '|' + rec;
+    var btn = document.getElementById('dlBtn');
+
+    if(m[k]){
+      if(!confirm('এই সূরার ডাউনলোড মুছে ফেলবেন?')) return;
+      var cnt = SURAH_COUNTS[cur.n - 1] || cur.count;
+      for(var i = 1; i <= cnt; i++){
+        try{ await dbDel(DB_AUDIO, STORE_AUDIO, audioKey(rec, cur.n, i)); }catch(e){}
+      }
+      delete m[k];
+      saveSurahMeta(m);
+      if(typeof showToast === 'function') showToast('ডাউনলোড মুছে ফেলা হয়েছে');
+      refreshDlBar();
+      updateGlobalMiniBadge();
+      return;
+    }
+    if(!navigator.onLine){
+      if(typeof showToast === 'function') showToast('ডাউনলোডের জন্য ইন্টারনেট লাগবে');
+      return;
+    }
+    surahDownloading = true;
+    refreshDlBar();
+    try{
+      var cnt = SURAH_COUNTS[cur.n - 1] || cur.count;
+      var done = 0, failed = 0;
+      for(var i = 1; i <= cnt; i++){
+        var key = audioKey(rec, cur.n, i);
+        try{
+          var ex = await dbGet(DB_AUDIO, STORE_AUDIO, key);
+          if(!ex){
+            var r = await fetch(audioUrl(rec, cur.n, i));
+            if(!r.ok) throw new Error('HTTP ' + r.status);
+            await dbPut(DB_AUDIO, STORE_AUDIO, key, await r.blob());
+          }
+          done++;
+        }catch(e){ failed++; }
+        if(btn) btn.textContent = '{{hourglass_top}} ' + Math.round(i / cnt * 100) + '% (' + bn(i) + '/' + bn(cnt) + ')';
+        if((i % 5) === 4) await new Promise(function(r){ setTimeout(r, 25); });
+      }
+      if(failed === 0){
+        var mm = getSurahMeta();
+        mm[k] = { count: done, at: new Date().toISOString(), reciter: rec, name: cur.name };
+        saveSurahMeta(mm);
+        if(typeof showToast === 'function') showToast('{{check_circle:f}} সূরা ডাউনলোড সম্পন্ন!');
+      } else {
+        if(typeof showToast === 'function') showToast('অসম্পূর্ণ: ' + bn(done) + '/' + bn(cnt) + ' আয়াত ডাউনলোড হয়েছে। আবার চেষ্টা করুন।');
+      }
+    }catch(e){
+      if(typeof showToast === 'function') showToast('ডাউনলোড হয়নি, আবার চেষ্টা করুন');
+    }
+    surahDownloading = false;
+    refreshDlBar();
+    updateGlobalMiniBadge();
+  }
+
+  document.getElementById('dlBtn').onclick = downloadCurrent;
+  document.getElementById('dlManageBtn').onclick = function(){ if(window.openGridPopup) window.openGridPopup('downloads'); };
+  setInterval(refreshDlBar, 900);
   document.addEventListener('click', function(){ setTimeout(refreshDlBar, 400); });
 
-  // --- Playback: prefer offline blob ---
   var origPlay = window.playAyahAtIndex;
   window.playAyahAtIndex = async function(idx){
     try{
-      var list=window.currentPlaylist||[]; // may be let-scoped, fallback to _activeAyahList
-      if((!list||!list.length) && window._activeAyahList) list=window._activeAyahList;
-      var item=list[idx]; if(!item) return origPlay(idx);
-      var rec=reciterNow(); var blob=await get(keyFor(rec, item.s.number, item.no));
+      var list = (typeof currentPlaylist !== 'undefined' && currentPlaylist && currentPlaylist.length) ? currentPlaylist : (window._activeAyahList || []);
+      var item = list[idx];
+      if(!item) return origPlay(idx);
+      var rec = reciterNow();
+      var blob = await dbGet(DB_AUDIO, STORE_AUDIO, audioKey(rec, item.s.number, item.no));
       if(blob){
-        // call original but swap src afterwards: run original then override src
         origPlay(idx);
-        // wait a tick, then replace src with blob URL (keeps title/highlight logic)
         setTimeout(function(){
           try{
-            var u=URL.createObjectURL(blob);
-            var wasPaused = window.audioObj ? audioObj.paused : true;
-            if(window.audioObj){ audioObj.src=u; audioObj.play().catch(function(){}); }
-            var lbl=document.getElementById('audioReciterLabel'); if(lbl) lbl.textContent=reciterName(rec)+' · অফলাইন';
+            var u = URL.createObjectURL(blob);
+            if(typeof audioObj !== 'undefined' && audioObj){
+              audioObj.src = u;
+              audioObj.playbackRate = (typeof SPEEDS !== 'undefined' ? SPEEDS[audioSpeedIdx] : 1) || 1;
+              audioObj.play().catch(function(){});
+            }
+            var lbl = document.getElementById('audioReciterLabel');
+            if(lbl) lbl.textContent = reciterName(rec) + ' · অফলাইন';
           }catch(e){}
         }, 30);
         return;
@@ -3298,31 +3750,132 @@ setInterval(checkPrayerAlerts, 5000);
     }catch(e){}
     return origPlay(idx);
   };
-  // Keep global function binding in sync for direct calls (function declarations are mutable)
   try{ playAyahAtIndex = window.playAyahAtIndex; }catch(e){}
 
   function renderDownloadsPopup(){
-    var box=document.getElementById('gridPopupBox'), overlay=document.getElementById('gridPopupOverlay');
-    if(!box||!overlay) return; overlay.classList.add('open');
-    var m=meta(); var ks=Object.keys(m);
-    var html='<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>{{download}} ডাউনলোড</h3>';
-    if(!ks.length) html+='<div class="pp-mini">এখনো কিছু ডাউনলোড করা নেই। কোনো সূরা খুলে <b>{{download}} ডাউনলোড</b> চাপ দাও — একবার ডাউনলোড করলেই পরে ডাটা ছাড়া শুনতে পারবা।</div>';
-    else ks.forEach(function(k){
-      var info=m[k]; var parts=k.split('|'); var sn=parseInt(parts[0],10);
-      html+='<div class="dl-item"><div><b>'+(info.name||('সূরা '+sn))+'</b><br><small>'+reciterName(info.reciter)+' · '+info.count+' আয়াত</small></div><div><button class="dl-btn ghost" data-play="'+sn+'">{{play_arrow}} শুনুন</button> <button class="dl-btn ghost" data-del="'+k+'">{{delete}}</button></div></div>';
+    var box = document.getElementById('gridPopupBox');
+    var overlay = document.getElementById('gridPopupOverlay');
+    if(!box || !overlay) return;
+    overlay.classList.add('open');
+
+    var pkgs = getAllPackages();
+    var m = getPkgMeta();
+    var totalUsedBytes = Object.keys(m).reduce(function(sum, k){ return sum + ((m[k] && m[k].bytes) || 0); }, 0);
+
+    var html = '<div id="qxDlCenter">';
+    html += '<button class="pp-close" onclick="document.getElementById('gridPopupOverlay').classList.remove('open')">{{close}}</button>';
+    html += '<h3>{{download}} অফলাইন ডাউনলোড সেন্টার</h3>';
+    html += '<div class="pp-mini" style="margin-bottom:8px">মোট ব্যবহৃত স্টোরেজ: <b>' + fmtBytes(totalUsedBytes) + '</b> · অফলাইন প্যাকেজ ইন্টারনেট ছাড়াই চলবে।</div>';
+
+    html += '<div class="pp-tabs" id="qxDlTabs">';
+    html += '<button data-dtab="trans" class="' + (activeTab === 'trans' ? 'on' : '') + '">অনুবাদ</button>';
+    html += '<button data-dtab="tafsir" class="' + (activeTab === 'tafsir' ? 'on' : '') + '">তাফসির</button>';
+    html += '<button data-dtab="audio" class="' + (activeTab === 'audio' ? 'on' : '') + '">অডিও</button>';
+    html += '<button data-dtab="surahs" class="' + (activeTab === 'surahs' ? 'on' : '') + '">একক সূরা</button>';
+    html += '</div>';
+
+    if(activeTab === 'surahs'){
+      var sm = getSurahMeta();
+      var sks = Object.keys(sm);
+      if(!sks.length){
+        html += '<div class="pp-mini">কোনো একক সূরার অডিও ডাউনলোড করা নেই। সূরা খুলে ডাউনলোড বাটন চাপুন অথবা <b>অডিও</b> ট্যাব থেকে পুরো কুরআন একসাথে ডাউনলোড করুন।</div>';
+      } else {
+        sks.forEach(function(k){
+          var info = sm[k];
+          var sn = parseInt(k.split('|')[0], 10);
+          html += '<div class="dl-item"><div><b>' + (info.name || ('সূরা ' + sn)) + '</b><br><small>' + reciterName(info.reciter) + ' · ' + bn(info.count) + ' আয়াত</small></div>' +
+            '<div style="display:flex;gap:4px"><button class="dl-btn ghost" data-splay="' + sn + '">{{play_arrow}}</button><button class="dl-btn danger" data-sdel="' + k + '">{{delete}}</button></div></div>';
+        });
+      }
+    } else {
+      if(activeTab === 'trans'){
+        html += '<div class="pp-mini" style="margin-bottom:6px">{{check_circle:f}} মাওলানা মুহিউদ্দীন খানের অনুবাদ অ্যাপের সাথে বিল্ট-ইন অফলাইন আছে।</div>';
+      }
+      var filtered = pkgs.filter(function(p){ return p.cat === activeTab; });
+      filtered.forEach(function(pkg){
+        var st = getPkgState(pkg);
+        var pct = Math.min(100, Math.round((st.done / pkg.total) * 100));
+        var badgeHtml = '';
+        if(st.status === 'complete') badgeHtml = '<span class="dl-st done">{{check_circle:f}} সম্পূর্ণ</span>';
+        else if(st.status === 'downloading') badgeHtml = '<span class="dl-st run">{{hourglass_top}} ডাউনলোড হচ্ছে ' + bn(pct) + '%</span>';
+        else if(st.status === 'incomplete') badgeHtml = '<span class="dl-st part">{{warning}} অসম্পূর্ণ (' + bn(pct) + '%)</span>';
+        else badgeHtml = '<span class="dl-st none">ডাউনলোড নেই</span>';
+
+        var sizeTxt = st.bytes > 0
+          ? ('সাইজ: ' + fmtBytes(st.bytes) + (st.status !== 'complete' ? ' / ~' + fmtBytes(pkg.estBytes) : ''))
+          : ('আনুমানিক সাইজ: ~' + fmtBytes(pkg.estBytes));
+        var progTxt = bn(st.done) + '/' + bn(pkg.total) + ' ' + pkg.unit;
+
+        html += '<div class="dl-pkg">';
+        html += '<div class="dl-pkg-top"><div><b>' + pkg.title + '</b><div class="dl-pkg-meta">' + pkg.sub + '<br>' + sizeTxt + ' · ' + progTxt + '</div></div>' + badgeHtml + '</div>';
+
+        if(st.status === 'downloading' || st.status === 'incomplete'){
+          html += '<div class="dl-pkg-prog"><div class="dl-pkg-fill" style="width:' + pct + '%"></div></div>';
+          if(st.error && st.status === 'incomplete'){
+            html += '<div class="dl-pkg-meta" style="color:#dc2626">{{warning}} ' + st.error + '</div>';
+          }
+        }
+
+        html += '<div class="dl-pkg-acts">';
+        if(st.status === 'downloading'){
+          html += '<button class="dl-btn danger" data-pkg-cancel="' + pkg.id + '">{{close}} Cancel</button>';
+        } else if(st.status === 'incomplete'){
+          html += '<button class="dl-btn" data-pkg-start="' + pkg.id + '">{{refresh}} Retry (' + bn(pkg.total - st.done) + ' বাকি)</button>';
+          html += '<button class="dl-btn danger" data-pkg-del="' + pkg.id + '">{{delete}} Delete</button>';
+        } else if(st.status === 'complete'){
+          html += '<button class="dl-btn danger" data-pkg-del="' + pkg.id + '">{{delete}} প্যাকেজ মুছুন</button>';
+        } else {
+          html += '<button class="dl-btn" data-pkg-start="' + pkg.id + '">{{download}} সম্পূর্ণ ডাউনলোড</button>';
+        }
+        html += '</div></div>';
+      });
+    }
+
+    html += '<div class="pp-mini" style="margin-top:10px">{{lightbulb}} নেটওয়ার্ক বিচ্ছিন্ন হলে অসম্পূর্ণ প্যাকেজে <b>Retry</b> চাপলে যেখান থেকে থেমেছিল সেখান থেকেই বাকি অংশ ডাউনলোড হবে।</div>';
+    html += '</div>';
+    box.innerHTML = html;
+
+    box.querySelectorAll('[data-dtab]').forEach(function(btn){
+      btn.onclick = function(e){
+        e.stopPropagation();
+        activeTab = btn.dataset.dtab;
+        renderDownloadsPopup();
+      };
     });
-    html+='<div class="pp-mini" style="margin-top:10px">{{lightbulb}} টিপস: ডাউনলোড করা সূরা অফলাইনেও চলবে। রিসাইটার বদলালে নতুন করে ডাউনলোড করতে হবে। ফোনের স্টোরেজ কম থাকলে বড় সূরা (যেমন বাকারা) না ডাউনলোড করাই ভালো।</div>';
-    box.innerHTML=html;
-    box.querySelectorAll('[data-play]').forEach(function(b){ b.onclick=function(){ overlay.classList.remove('open'); if(typeof openSurah==='function') openSurah(parseInt(b.dataset.play,10)); }; });
-    box.querySelectorAll('[data-del]').forEach(function(b){ b.onclick=async function(){
-      var k=b.dataset.del; var info=m[k]; var sn=parseInt(k.split('|')[0],10);
-      var cnt=info.count||0; for(var i=1;i<=cnt+2;i++){ try{ await del(keyFor(info.reciter, sn, i)); }catch(e){} }
-      delete m[k]; saveMeta(m); renderDownloadsPopup(); refreshDlBar(); if(typeof showToast==='function') showToast('মুছে ফেলা হয়েছে');
-    }; });
-    var mini=document.getElementById('gDlMini'); if(mini) mini.textContent=ks.length? (window.toBn?toBn(ks.length):ks.length)+'টি ›':'›';
+    box.querySelectorAll('[data-pkg-start]').forEach(function(btn){
+      btn.onclick = function(e){ e.stopPropagation(); startPackageDownload(btn.dataset.pkgStart); };
+    });
+    box.querySelectorAll('[data-pkg-cancel]').forEach(function(btn){
+      btn.onclick = function(e){ e.stopPropagation(); cancelPackageDownload(btn.dataset.pkgCancel); };
+    });
+    box.querySelectorAll('[data-pkg-del]').forEach(function(btn){
+      btn.onclick = function(e){ e.stopPropagation(); deletePackageDownload(btn.dataset.pkgDel); };
+    });
+    box.querySelectorAll('[data-splay]').forEach(function(b){
+      b.onclick = function(){ overlay.classList.remove('open'); if(typeof openSurah === 'function') openSurah(parseInt(b.dataset.splay, 10)); };
+    });
+    box.querySelectorAll('[data-sdel]').forEach(function(b){
+      b.onclick = async function(){
+        var k = b.dataset.sdel;
+        var sm = getSurahMeta();
+        var info = sm[k];
+        var sn = parseInt(k.split('|')[0], 10);
+        var cnt = SURAH_COUNTS[sn - 1] || (info && info.count) || 0;
+        for(var i = 1; i <= cnt; i++){ try{ await dbDel(DB_AUDIO, STORE_AUDIO, audioKey(info.reciter, sn, i)); }catch(e){} }
+        delete sm[k];
+        saveSurahMeta(sm);
+        renderDownloadsPopup();
+        refreshDlBar();
+        if(typeof showToast === 'function') showToast('মুছে ফেলা হয়েছে');
+      };
+    });
+
+    updateGlobalMiniBadge();
   }
-  window.renderDownloadsPopup=renderDownloadsPopup;
-  window.quranixOffline={ refresh:refreshDlBar, download:downloadCurrent };
+
+  window.renderDownloadsPopup = renderDownloadsPopup;
+  window.quranixOffline = { refresh: refreshDlBar, download: downloadCurrent };
+  setTimeout(updateGlobalMiniBadge, 300);
 })();
 </script>
 
