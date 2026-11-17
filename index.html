@@ -1,23 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn" translate="no" class="notranslate">
+<html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="google" content="notranslate">
-<meta name="googlebot" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Quranix | বাংলা কুরআন</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="icon-32x32.png">
-<link rel="icon" type="image/png" sizes="48x48" href="icon-48x48.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f6b4f">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Quranix">
+<title>Quranix - কুরআনময়</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#faf8f3;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e6e2d8;--fs:30px}
@@ -364,6 +350,14 @@ body.ww-on .ayah .ar .ww-word{border-bottom:2px dotted var(--accent)}
 .hadith-item .ref{font-size:11px;color:var(--muted)}
 .hadith-item.done{border-color:var(--accent)}
 </style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f6b4f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Quranix">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0..1,0&icon_names=abc,arrow_back,auto_awesome,auto_stories,bar_chart,bedtime,bubble_chart,calendar_month,check,check_circle,close,content_copy,crop_portrait,crop_square,dark_mode,delete,download,edit,edit_note,event,explore,filter_list,folder_open,front_hand,headphones,help,history_edu,hourglass_top,image,info,light_mode,lightbulb,location_on,menu_book,mic,more_horiz,mosque,nights_stay,notifications,palette,pause,play_arrow,psychology,public,push_pin,radio_button_unchecked,refresh,repeat,save,search,share,skip_next,skip_previous,smartphone,star,stars,target,text_fields,translate,undo,visibility,volume_up,warning,wb_sunny,wb_twilight,wifi,wifi_off&display=block" rel="stylesheet">
 <style>
@@ -587,18 +581,12 @@ nav button span{line-height:1.15;text-align:center}
 })();
 </script>
 
-
-<style id="logo-fix">
-.app-logo{cursor:pointer}
-.app-logo:active{transform:scale(0.92)}
-</style>
-
 </head>
 <body>
 <header>
   <div class="bar">
     <button id="back" style="display:none">{{arrow_back}}</button>
-    <img class="app-logo" src="icon-192x192.png" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:8px" onclick="if(typeof goHome==='function')goHome();else location.href='./'" title="Home">
+    <img class="app-logo" src="icon-192.png" alt="" width="30" height="30">
     <h1 id="title">Quranix</h1>
     <div class="header-tools">
       <input id="q" placeholder="সূরা খুঁজুন...">
@@ -621,7 +609,7 @@ nav button span{line-height:1.15;text-align:center}
         <button class="g-menu-item" data-popup="hijri"><span>{{nights_stay}} &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
         <button class="g-menu-item" data-popup="pwa"><span>{{smartphone}} &nbsp; অ্যাপ ইনস্টল করো</span><small id="gPwaMini">›</small></button>
         <button class="g-menu-item" data-popup="hadith"><span>{{history_edu}} &nbsp; হাদিস প্যাকেজ</span><small>›</small></button>
-        <button class="g-menu-item" data-popup="backup"><span>{{save}} &nbsp; ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
+        <button class="g-menu-item" data-popup="backup"><span>{{save}} &nbsp; ডেটা ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
         <button class="g-menu-item" data-popup="source"><span>{{info}} &nbsp; উৎস ও তথ্যসূত্র</span><small>›</small></button>
       </div>
       <div id="gridPopupOverlay"><div id="gridPopupBox"></div></div>
@@ -2581,7 +2569,7 @@ document.getElementById("gridMenu").onclick = () => {
 
   // 3. Data Backup, Restore & Reset Section
   const dataSec = mk("div", "set-sec");
-  dataSec.appendChild(mk("div", "set-title", "{{save}} ব্যাকআপ ও রিস্টোর"));
+  dataSec.appendChild(mk("div", "set-title", "{{save}} ডেটা ব্যাকআপ ও রিস্টোর"));
   const dataGrid = mk("div", "set-grid");
 
   const expBtn = mk("button", null, "{{share}} ব্যাকআপ ডাউনলোড");
@@ -2865,7 +2853,7 @@ setInterval(checkPrayerAlerts, 5000);
   }
   // ---- BACKUP / SOURCE ----
   function renderBackupPopup(){
-    box.innerHTML=head('{{save}} ব্যাকআপ ও রিস্টোর') + '<button class="pp-btn" id="ppExport">{{share}} ব্যাকআপ ডাউনলোড</button><div style="height:8px"></div><button class="pp-btn" id="ppImport" style="background:var(--card);color:var(--text);border:1px solid var(--line)">{{download}} ব্যাকআপ রিস্টোর</button><input type="file" id="ppFile" accept=".json,application/json" style="display:none">';
+    box.innerHTML=head('{{save}} ডেটা ব্যাকআপ ও রিস্টোর') + '<button class="pp-btn" id="ppExport">{{share}} ব্যাকআপ ডাউনলোড</button><div style="height:8px"></div><button class="pp-btn" id="ppImport" style="background:var(--card);color:var(--text);border:1px solid var(--line)">{{download}} ব্যাকআপ রিস্টোর</button><input type="file" id="ppFile" accept=".json,application/json" style="display:none">';
     document.getElementById('ppExport').onclick=function(){ if(typeof exportUserBackup==='function') exportUserBackup(); };
     document.getElementById('ppImport').onclick=function(){ document.getElementById('ppFile').click(); };
     document.getElementById('ppFile').onchange=function(e){ if(typeof importUserBackup==='function') importUserBackup(e.target.files[0], function(){ closePopup(); }); };

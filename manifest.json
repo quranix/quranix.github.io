@@ -1,11 +1,15 @@
 {
-  "name": "Quranix - কুরআনময়",
+  "name": "Quranix | বাংলা কুরআন",
   "short_name": "Quranix",
   "description": "কুরআন, তাজউইদ, হিফজ, ট্র্যাকার, হিজরি ক্যালেন্ডার - সব একসাথে",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "browser"
+  ],
   "orientation": "any",
   "background_color": "#faf8f3",
   "theme_color": "#0f6b4f",
@@ -37,7 +41,7 @@
       "purpose": "any"
     },
     {
-      "src": "icon-192x192.png",
+      "src": "icon-192-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
@@ -49,7 +53,7 @@
       "purpose": "any"
     },
     {
-      "src": "icon-512x512.png",
+      "src": "icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -65,7 +69,12 @@
     {
       "name": "কুরআন পড়ুন",
       "url": "./index.html",
-      "icons": [{"src": "icon-192x192.png", "sizes": "192x192"}]
+      "icons": [
+        {
+          "src": "icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
