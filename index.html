@@ -11,7 +11,7 @@
 [data-theme="dark"]{--bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b}
 [data-theme="light"]{--bg:#faf8f3;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e6e2d8}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,"Kalpurush",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,"Noto Sans Bengali","Kalpurush",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 header{position:sticky;top:0;background:var(--bg);z-index:5;padding:12px 14px 8px;border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;gap:8px}
 h1{font-size:20px;margin:0;flex:1;color:var(--accent)}
@@ -127,7 +127,7 @@ select{font:inherit;width:100%;padding:9px 10px;border-radius:10px;border:1px so
 .switch-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer}
 .switch-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-:root{--ar-font:"Amiri Quran","Traditional Arabic",serif;--bn-font:system-ui,"Kalpurush",sans-serif;--bn-fs:16px}
+:root{--ar-font:"Amiri Quran","Traditional Arabic",serif;--bn-font:system-ui,"Noto Sans Bengali","Kalpurush",sans-serif;--bn-fs:16px}
 body{font-family:var(--bn-font);font-size:var(--bn-fs)}
 .ayah .ar,.ar-name,.bism,.aotd-ar{font-family:var(--ar-font)}
 .ayah .bn,.aotd-bn{font-size:var(--bn-fs)}
@@ -355,7 +355,7 @@ body.ww-on .ayah .ar .ww-word{border-bottom:2px dotted var(--accent)}
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Quranix">
+<meta name="apple-mobile-web-app-title" content="Quranix | বাংলা কুরআন">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -519,174 +519,6 @@ h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 </style>
 
-
-<style id="fix-hijri-whitebox">
-/* Fix hijri white vertical box - empty offset cells */
-.hijri-cal > div:not(.hijri-day):not(.trk-mini){
-  background: transparent !important;
-  border: 0 !important;
-  min-height: 0 !important;
-  padding: 0 !important;
-}
-.hijri-cal{
-  background: transparent;
-}
-</style>
-
-
-<style id="fix-tracker-redesign">
-/* ===== TRACKER REDESIGN - Mobile + Responsive ===== */
-.trk-head{
-  background: linear-gradient(135deg, #0f6b4f 0%, #0a4a36 100%) !important;
-  border-radius: 20px !important;
-  padding: 20px 16px !important;
-  margin: 12px 0 !important;
-  box-shadow: 0 4px 20px rgba(15,107,79,0.25);
-  position: relative;
-  overflow: hidden;
-}
-.trk-head::before{
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-  border-radius: 50%;
-}
-.trk-head .big{
-  font-size: 28px !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.5px;
-  position: relative;
-}
-.trk-cat{
-  background: var(--card) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 18px !important;
-  padding: 16px !important;
-  margin: 12px 0 !important;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-  transition: all 0.2s ease;
-}
-.trk-cat:hover{
-  border-color: color-mix(in srgb, var(--accent) 30%, var(--line)) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-}
-.trk-cat h3{
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  margin-bottom: 6px !important;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.trk-cat .sub{
-  font-size: 12px !important;
-  line-height: 1.5 !important;
-  margin-bottom: 12px !important;
-}
-.trk-row{
-  padding: 12px 10px !important;
-  border-radius: 12px !important;
-  margin: 4px 0 !important;
-  border: 1px solid transparent !important;
-  transition: all 0.15s ease;
-  background: color-mix(in srgb, var(--bg) 50%, var(--card));
-}
-.trk-row:hover{
-  background: var(--card) !important;
-  border-color: var(--line) !important;
-}
-.trk-tick{
-  width: 36px !important;
-  height: 36px !important;
-  border-width: 2px !important;
-  font-size: 18px !important;
-  transition: all 0.2s ease;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-}
-.trk-tick.on{
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(15,107,79,0.3);
-}
-.trk-dots{
-  gap: 6px !important;
-  margin: 10px 0 8px !important;
-  flex-wrap: wrap;
-}
-.trk-dot{
-  width: 30px !important;
-  height: 30px !important;
-  font-size: 11px !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-.trk-dot.done{
-  transform: scale(1.05);
-}
-.trk-mini{
-  font-size: 12px !important;
-  line-height: 1.5;
-}
-
-/* PC Responsive - Tracker grid layout */
-@media (min-width:900px){
-  #app:has(.trk-head){
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 14px !important;
-    align-items: start;
-  }
-  #app:has(.trk-head) > .trk-head{
-    grid-column: 1 / -1 !important;
-  }
-  #app:has(.trk-head) > .trk-cat{
-    margin: 0 !important;
-    height: fit-content;
-  }
-  .trk-head .big{
-    font-size: 32px !important;
-  }
-}
-
-@media (min-width:1280px){
-  #app:has(.trk-head){
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 16px !important;
-  }
-  .trk-cat{
-    padding: 20px !important;
-  }
-}
-
-/* Mobile optimization */
-@media (max-width:600px){
-  .trk-head{
-    padding: 16px 12px !important;
-    border-radius: 16px !important;
-  }
-  .trk-head .big{
-    font-size: 24px !important;
-  }
-  .trk-cat{
-    padding: 14px !important;
-    border-radius: 16px !important;
-  }
-  .trk-row{
-    padding: 10px 8px !important;
-    font-size: 13px !important;
-  }
-  .trk-tick{
-    width: 34px !important;
-    height: 34px !important;
-  }
-}
-</style>
-
 <style id="ui-v2">
 .app-logo{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:block}
 #gridMenu svg{display:block}
@@ -777,7 +609,7 @@ nav button span{line-height:1.15;text-align:center}
         <button class="g-menu-item" data-popup="hijri"><span>{{nights_stay}} &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
         <button class="g-menu-item" data-popup="pwa"><span>{{smartphone}} &nbsp; অ্যাপ ইনস্টল করো</span><small id="gPwaMini">›</small></button>
         <button class="g-menu-item" data-popup="hadith"><span>{{history_edu}} &nbsp; হাদিস প্যাকেজ</span><small>›</small></button>
-        <button class="g-menu-item" data-popup="backup"><span>{{save}} &nbsp; ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
+        <button class="g-menu-item" data-popup="backup"><span>{{save}} &nbsp; ডেটা ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
         <button class="g-menu-item" data-popup="source"><span>{{info}} &nbsp; উৎস ও তথ্যসূত্র</span><small>›</small></button>
       </div>
       <div id="gridPopupOverlay"><div id="gridPopupBox"></div></div>
@@ -2407,8 +2239,8 @@ const AR_FONTS = [
   ['system-ui,serif', "ডিভাইস ডিফল্ট আরবি"]
 ];
 const BN_FONTS = [
-  ['system-ui,"Kalpurush",sans-serif', "ডিভাইস ডিফল্ট বাংলা"],
-  ['"Hind Siliguri",sans-serif', "নোটো সান্স বাংলা"],
+  ['system-ui,"Noto Sans Bengali","Kalpurush",sans-serif', "ডিভাইস ডিফল্ট বাংলা"],
+  ['"Noto Sans Bengali","Hind Siliguri",sans-serif', "নোটো সান্স বাংলা"],
   ['"Kalpurush","SolaimanLipi",sans-serif', "কালপুরুষ / সোলাইমানলিপি"]
 ];
 
@@ -2737,7 +2569,7 @@ document.getElementById("gridMenu").onclick = () => {
 
   // 3. Data Backup, Restore & Reset Section
   const dataSec = mk("div", "set-sec");
-  dataSec.appendChild(mk("div", "set-title", "{{save}} ব্যাকআপ ও রিস্টোর"));
+  dataSec.appendChild(mk("div", "set-title", "{{save}} ডেটা ব্যাকআপ ও রিস্টোর"));
   const dataGrid = mk("div", "set-grid");
 
   const expBtn = mk("button", null, "{{share}} ব্যাকআপ ডাউনলোড");
@@ -3021,7 +2853,7 @@ setInterval(checkPrayerAlerts, 5000);
   }
   // ---- BACKUP / SOURCE ----
   function renderBackupPopup(){
-    box.innerHTML=head('{{save}} ব্যাকআপ ও রিস্টোর') + '<button class="pp-btn" id="ppExport">{{share}} ব্যাকআপ ডাউনলোড</button><div style="height:8px"></div><button class="pp-btn" id="ppImport" style="background:var(--card);color:var(--text);border:1px solid var(--line)">{{download}} ব্যাকআপ রিস্টোর</button><input type="file" id="ppFile" accept=".json,application/json" style="display:none">';
+    box.innerHTML=head('{{save}} ডেটা ব্যাকআপ ও রিস্টোর') + '<button class="pp-btn" id="ppExport">{{share}} ব্যাকআপ ডাউনলোড</button><div style="height:8px"></div><button class="pp-btn" id="ppImport" style="background:var(--card);color:var(--text);border:1px solid var(--line)">{{download}} ব্যাকআপ রিস্টোর</button><input type="file" id="ppFile" accept=".json,application/json" style="display:none">';
     document.getElementById('ppExport').onclick=function(){ if(typeof exportUserBackup==='function') exportUserBackup(); };
     document.getElementById('ppImport').onclick=function(){ document.getElementById('ppFile').click(); };
     document.getElementById('ppFile').onchange=function(e){ if(typeof importUserBackup==='function') importUserBackup(e.target.files[0], function(){ closePopup(); }); };
@@ -3433,7 +3265,7 @@ window.openAyahCard = function(label, ar, bn){
     ctx.direction='ltr'; ctx.textAlign='center';
     y+=18; ctx.fillStyle=th.accent; ctx.fillRect(W/2-60, y, 120, 3); y+=58;
     if(state.showBn){
-      ctx.font='28px system-ui,  sans-serif'; ctx.fillStyle=th.bn;
+      ctx.font='28px system-ui, "Noto Sans Bengali", sans-serif'; ctx.fillStyle=th.bn;
       var bnLines=wrap(ctx, bn, W-180);
       bnLines.forEach(function(l){ ctx.fillText(l, W/2, y); y+=44; });
       y+=20;
@@ -3894,7 +3726,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     for(var i=0;i<35;i++){ var hh=hijriParts(start); if(hh && hh.day===1) break; start.setDate(start.getDate()-1); }
     // Offset for weekday
     var offset=start.getDay();
-    for(var k=0;k<offset;k++){ var empty=document.createElement('div'); empty.style.background='transparent'; empty.style.border='0'; empty.style.minHeight='0'; cal.appendChild(empty); }
+    for(var k=0;k<offset;k++){ cal.appendChild(document.createElement('div')); }
     // Days of month (until next month starts, max 30)
     var cur=new Date(start);
     for(var dnum=1; dnum<=30; dnum++){
