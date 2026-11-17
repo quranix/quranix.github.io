@@ -35,9 +35,9 @@ QX FILE EDIT RULES
 [data-theme="light"]{--bg:#faf8f3;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e6e2d8;--tile-bg:#f8f7f4;--tile-hover:#efece3;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--text);font-family:"Hind Siliguri",system-ui,"Noto Sans Bengali","Kalpurush",sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-header{position:sticky;top:0;background:var(--bg);z-index:5;padding:0 14px;padding-top:env(safe-area-inset-top);height:calc(60px + env(safe-area-inset-top));display:flex;align-items:center;border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;gap:10px;width:100%;height:100%}
-h1{font-size:20px;margin:0;flex:1;color:var(--accent)}
+header{position:sticky;top:0;background:var(--bg);z-index:5;padding:calc(8px + env(safe-area-inset-top)) 14px 8px 14px;min-height:calc(60px + env(safe-area-inset-top));display:flex;align-items:center;border-bottom:1px solid var(--line);box-sizing:border-box}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:44px}
+h1{font-size:20px;margin:0;flex:1;color:var(--accent);line-height:1;display:flex;align-items:center}
 button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:6px 12px}
 input{width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit}
 .tabs{display:flex;gap:8px;margin-top:8px;overflow-x:auto}
@@ -2924,7 +2924,11 @@ setInterval(checkPrayerAlerts, 5000);
     try{ if(typeof last!=='undefined' && last){ var sn=(typeof surahs!=='undefined')?surahs.find(function(x){return x.number===last.n}):null; if(last.t==='s'){ lastNm=(sn?sn.englishName:'সূরা '+last.n); lastAction=function(){ openSurah(last.n, last.y); }; } else { lastNm='পারা '+toBn(last.n); lastAction=function(){ openJuz(last.n, last.y); }; } } }catch(e){}
     var cnt=0, tgt=10; try{ if(typeof goalData!=='undefined'){ cnt=goalData.readKeys?goalData.readKeys.length:0; tgt=goalData.target||10; } }catch(e){}
     var defs=[
-      ['bookmark','শেষ পড়া',lastNm,function(){ lastAction(); }],
+      ['menu_book','শেষ পড়া',lastNm,function(){ lastAction(); }],
+      ['lightbulb','আজকের পড়া',toBn(cnt)+'/'+toBn(tgt),function(){ openTodaySheet(); }],
+      ['auto_awesome','৯৯ নাম','আসমাউল হুসনা',function(){ if(typeof setMode==='function') setMode('asma'); }],
+      ['calendar_month','খতম প্ল্যান','পরিকল্পনা',function(){ openPopup('khatam'); }]
+    ];,
       ['auto_stories','আজকের পড়া',toBn(cnt)+'/'+toBn(tgt),function(){ openTodaySheet(); }],
       ['auto_awesome','৯৯ নাম','আসমাউল হুসনা',function(){ if(typeof setMode==='function') setMode('asma'); }],
       ['event_note','খতম প্ল্যান','পরিকল্পনা',function(){ openPopup('khatam'); }]
