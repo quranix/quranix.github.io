@@ -1,10 +1,11 @@
-const CACHE='quranix-v4-latest';
+const CACHE='quranix-v5-icons';
 const CORE_STATIC=[
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',
-  './quran-data.js'
+  './quran-data.js',
+  './fonts/material-symbols-rounded.woff2'
 ];
 self.addEventListener('install',e=>{
   e.waitUntil(
