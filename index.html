@@ -3,16 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Quranix</title>
-<link rel="icon" type="image/png" sizes="32x32" href="./icon-32x32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512x512.png">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#0f6b4f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Quranix">
+<title>Quranix — Hadith Packages</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#faf8f3;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e6e2d8;--fs:30px}
@@ -358,12 +349,6 @@ body.ww-on .ayah .ar .ww-word{border-bottom:2px dotted var(--accent)}
 .hadith-item b{font-size:14px}
 .hadith-item .ref{font-size:11px;color:var(--muted)}
 .hadith-item.done{border-color:var(--accent)}
-
-/* Fix: Netlify badge hide + bottom nav not covered */
-#netlify-badge, iframe[src*="netlify"], div[data-netlify-badge], a[href*="netlify.com"] img{ display:none !important; }
-nav{ padding-bottom: env(safe-area-inset-bottom) !important; }
-main{ padding-bottom: 110px !important; }
-
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0f6b4f">
@@ -476,10 +461,10 @@ main{ padding-bottom: 110px !important; }
 <script>
 /* {{icon}} / {{icon:f}} tokens in any text become Material icon spans (also for dynamically added text) */
 (function(){
-  var RX=/\{\{([a-z_0-9]+)(:f)?\}\}/g, SKIP={OPTION:1,TITLE:1,SCRIPT:1,STYLE:1,TEXTAREA:1};
+  var RX=/\{\{([a-z_0-9]+)(:f)?\}\}/g, SKIP={OPTION:1,TITLE:1,TEXTAREA:1}, NOCONV={SCRIPT:1,STYLE:1};
   function conv(n){
     var s=n.nodeValue; if(!s||s.indexOf('{{')<0) return;
-    var p=n.parentNode; if(!p) return;
+    var p=n.parentNode; if(!p||NOCONV[p.nodeName]) return;
     if(SKIP[p.nodeName]){ n.nodeValue=s.replace(RX,'').replace(/^\s+/,''); return; }
     var f=document.createDocumentFragment(), last=0, m; RX.lastIndex=0;
     while((m=RX.exec(s))){
