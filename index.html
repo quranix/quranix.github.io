@@ -253,6 +253,11 @@ h1{ color:var(--accent) !important; }
 .pp-font-row{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:13px; }
 .pp-font-row button{ padding:6px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--text); font:inherit; cursor:pointer; }
 .pp-mini{ font-size:12px; color:var(--muted); line-height:1.6; }
+.src-sec{ margin:0 0 14px; }
+.src-sec b{ display:block; margin:0 0 5px; color:var(--accent); font-size:13px; }
+.src-item{ margin:0 0 6px; padding-left:12px; text-indent:-12px; line-height:1.6; overflow-wrap:anywhere; }
+.src-sec a{ color:var(--accent); overflow-wrap:anywhere; }
+.src-note{ margin-top:4px; padding-top:8px; border-top:1px solid var(--line); }
 #transSel{ display:none !important; }
 
 
@@ -1305,6 +1310,40 @@ function safeHtml(html){
   return root.innerHTML;
 }
 
+/* Sources & references: one list used by the settings sheet and the menu popup. */
+window.qxSourcesHtml = function(){
+  const A = (u, t) => '<a href="' + u + '" target="_blank" rel="noopener">' + (t || u.replace(/^https:\/\//, '')) + '</a>';
+  const SECTIONS = [
+    ['কুরআনের পাঠ ও অনুবাদ', [
+      'আরবি পাঠ: Tanzil Project, AlQuran Cloud-এর মাধ্যমে · ' + A('https://tanzil.net') + ' · ' + A('https://alquran.cloud') + ' · অ্যাপের সাথে অফলাইন',
+      'বাংলা অনুবাদ (মাওলানা মুহিউদ্দীন খান): AlQuran Cloud সংস্করণ bn.bengali · অ্যাপের সাথে অফলাইন',
+      'বাংলা অনুবাদ (ড. আবু বকর মুহাম্মাদ যাকারিয়া): প্রকাশক King Fahd Glorious Quran Printing Complex, উৎস ' + A('https://quranenc.com') + ' · সংস্করণ V1.1.1 · ডাউনলোড করে অফলাইনে ব্যবহার করা যায়',
+      'শব্দে শব্দে অর্থ ও উচ্চারণ: Quran.com API v4 · ' + A('https://quran.com') + ' · ইন্টারনেট প্রয়োজন'
+    ]],
+    ['তাফসির', [
+      'তাফসির ফাতহুল মাজীদ: আব্দুর রহমান বিন হাসান আল-আলশেখ · Quran.com রিসোর্স ৩৮১ · ডিফল্ট তাফসির; ইন্টারনেট পেলে নিজে থেকে ডাউনলোড হয়ে অফলাইনে থাকে',
+      'তাফসির ইবনে কাসীর (বাংলা): তাওহীদ পাবলিকেশন্স · Quran.com রিসোর্স ১৬৪ · ডাউনলোডযোগ্য',
+      'ডেটা-উৎস: spa5k/tafsir_api (MIT লাইসেন্স) · ' + A('https://github.com/spa5k/tafsir_api')
+    ]],
+    ['হাদিস', [
+      'ছয় হাদিসগ্রন্থের বাংলা ও আরবি ডেটা: KafelaNetwork Hadith API (কমিউনিটি GitHub ডেটাসেট, অফিসিয়াল প্রকাশকের API নয়) · ' + A('https://github.com/kafelanetwork/hadith-api'),
+      'অ্যাপে বিল্ট-ইন হাদিস, ৯৯ নাম ও দোয়া: প্রতিটির সাথে দেওয়া রেফারেন্স মূল গ্রন্থে মিলিয়ে নিন'
+    ]],
+    ['অডিও তিলাওয়াত', [
+      'EveryAyah.com থেকে (অনলাইন, অথবা ডাউনলোড করে অফলাইন) · ' + A('https://everyayah.com'),
+      'কারি: সৌদ আশ-শুরাইম (ডিফল্ট), মিশারি আল-আফাসি, আব্দুল বাসিত (মুরাত্তাল), আব্দুর রহমান আস-সুদাইস, মাহের আল-মুআইকলি',
+      'প্রতিটি কারির সম্পূর্ণ অডিও ডাউনলোড ম্যানেজার থেকে আলাদাভাবে ডাউনলোড করা যায়'
+    ]],
+    ['ডাউনলোড করা ডেটা', [
+      'ডাউনলোড করা অনুবাদ, তাফসির, হাদিস ও অডিও শুধু এই ডিভাইসের অ্যাপ/ব্রাউজার স্টোরেজে থাকে। ডাউনলোড ম্যানেজার থেকে যেকোনো সময় মুছে ফেলা যায়।'
+    ]],
+    ['ফন্ট ও আইকন', [
+      'Amiri Quran, Hind Siliguri (Google Fonts) · Material Symbols Rounded (Google)'
+    ]]
+  ];
+  return SECTIONS.map(s => '<div class="src-sec"><b>' + s[0] + '</b>' + s[1].map(x => '<div class="src-item">• ' + x + '</div>').join('') + '</div>').join('') +
+    '<div class="src-note">তৃতীয় পক্ষের ডেটাসেটে ভুল বা অসম্পূর্ণতা থাকতে পারে। ধর্মীয় সিদ্ধান্তের আগে মূল গ্রন্থ বা যোগ্য আলেমের কাছে যাচাই করুন।</div>';
+};
 // Slugs come from the spa5k/tafsir_api edition list (ids 381 and 164 are Quran.com resource ids).
 // First item is the default tafsir; its package is installed offline automatically.
 const TAFSIRS = [[381,"তাফসির ফাতহুল মাজীদ","bn-tafisr-fathul-majid"],[164,"তাফসির ইবনে কাসীর","bn-tafseer-ibn-e-kaseer"]];
@@ -3003,13 +3042,7 @@ function openSettingsModal() {
 
   // 4. Source & License Verification
   const infoSec = mk("div", "set-sec");
-  infoSec.innerHTML = `<div style="font-size:12px; line-height:1.6; color:var(--muted);">
-    <b>উৎস ও তথ্যসূত্র:</b><br>
-    • আরবি পাঠ ও বাংলা অনুবাদ (মুহিউদ্দীন খান): Tanzil, AlQuran Cloud-এর মাধ্যমে (অফলাইন ডেটা)<br>
-    • বাংলা অনুবাদ (ড. আবু বকর মুহাম্মাদ যাকারিয়া): প্রকাশক King Fahd Glorious Quran Printing Complex, উৎস QuranEnc.com; সংস্করণ V1.1.1 (অনলাইন ও অফলাইন)<br>
-    • বাংলা তাফসির: spa5k/tafsir_api (নির্বাচিত বাংলা সংস্করণ; অনলাইন ও অফলাইন)<br>• হাদিস: KafelaNetwork Hadith API (কমিউনিটি ডেটাসেট)<br>
-    • অডিও তেলাওয়াত: EveryAyah.com (অনলাইন)
-  </div>`;
+  infoSec.innerHTML = '<div style="font-size:12px; line-height:1.6; color:var(--muted);"><b style="color:var(--text)">উৎস ও তথ্যসূত্র</b>' + window.qxSourcesHtml() + '</div>';
   body.appendChild(infoSec);
 
   content.appendChild(body);
@@ -3348,7 +3381,7 @@ setInterval(checkPrayerAlerts, 5000);
     document.getElementById('ppFile').onchange=function(e){ if(typeof importUserBackup==='function') importUserBackup(e.target.files[0], function(){ closePopup(); }); };
   }
   function renderSourcePopup(){
-    box.innerHTML=head('{{info}} উৎস ও তথ্যসূত্র') + '<div class="pp-mini"><b>উৎস:</b><br>• আরবি পাঠ ও বাংলা অনুবাদ: Tanzil, AlQuran Cloud<br>• বাংলা অনুবাদ (যাকারিয়া): QuranEnc.com, V1.1.1<br>• বাংলা তাফসির: spa5k/tafsir_api (Quran.com ও QUL-এ তালিকাভুক্ত মূল সংস্করণ)<br>• হাদিস: KafelaNetwork Hadith API (কমিউনিটি ডেটাসেট)<br>• অডিও: EveryAyah.com</div>';
+    box.innerHTML=head('{{info}} উৎস ও তথ্যসূত্র') + '<div class="pp-mini">' + window.qxSourcesHtml() + '</div>';
   }
   refreshMinis();
   // ---- Home Hero ----
