@@ -484,6 +484,7 @@ body.inside-page .ayah .more-btn:focus-visible{outline:2px solid var(--accent);o
 @font-face{font-family:'MSLocal';font-style:normal;font-weight:200;font-display:block;src:url(fonts/material-symbols-rounded.woff2) format('woff2')}
 .ms{font-family:'MSLocal','Material Symbols Rounded';font-weight:200;font-style:normal;font-size:1.25em;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;vertical-align:-.22em;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0;user-select:none;-webkit-user-select:none}
 .ms.f,nav button.on .ms,button:active .ms,.g-menu-item:active .ms{font-variation-settings:'FILL' 1}
+.ms-svg{width:1em;height:1em;font-size:1.25em;display:inline-block;vertical-align:-0.2em;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 </style>
 <style id="responsive-v1">
 /* ===== RESPONSIVE v1 (additive; keeps all existing classes) ===== */
@@ -652,31 +653,41 @@ nav button span{line-height:1.15;text-align:center}
 .home-browse-nav{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;padding:3px 1px 10px;margin:2px 0 10px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
 .home-browse-nav button{flex:0 0 auto;min-height:38px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 .home-browse-nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.home-browse-nav.is-sticky{position:sticky;top:var(--hdr-h,62px);z-index:4;margin:0 calc(-1 * var(--gut,12px)) 8px;padding:8px var(--gut,12px);background:var(--bg);border-bottom:1px solid var(--line);transition:transform .25s ease}
+body.bars-hidden .home-browse-nav.is-sticky{transform:translateY(calc(-100% - var(--hdr-h,62px)))}
 .home-browse-heading{padding:10px 2px 12px}
 .home-browse-heading h2{font-size:19px;line-height:1.4;margin:0 0 4px}
 .home-browse-heading p{font-size:13px;color:var(--muted);margin:0}
 @media(max-width:360px){.home-browse-nav{gap:6px}.home-browse-nav button{padding:7px 12px;font-size:12px;min-height:36px}}
 </style>
 <script id="fix-step4-logo-js">
-// Logo click -> Home
+// Logo + "Quranix" title tap -> Home (home = 4 tiles + label row). Not used inside reader/other pages (they have their own back button).
 (function(){
-  function activateLogo(){
-    var logo = document.querySelector('.app-logo');
-    if(!logo) return;
-    logo.style.cursor='pointer';
-    logo.title='Home - Quranix';
-    logo.onclick = function(){
-      try{
-        if(typeof setMode==='function'){ setMode('quran'); }
-        else if(typeof renderHome==='function'){ renderHome(); }
-        else if(typeof renderQuranHome==='function'){ renderQuranHome(); }
-        else { window.scrollTo(0,0); location.hash=''; }
-      }catch(e){ window.scrollTo(0,0); }
-    };
+  function goHome(){
+    try{
+      tab='home'; if(qEl) qEl.value='';
+      if(typeof renderTabs==='function') renderTabs();
+      if(typeof setMode==='function') setMode('quran'); else if(typeof renderHome==='function') renderHome();
+    }catch(e){}
+    window.scrollTo(0,0);
   }
-  document.addEventListener('DOMContentLoaded', activateLogo);
-  setTimeout(activateLogo, 500);
-  setTimeout(activateLogo, 1500);
+  window.goHome=goHome;
+  document.addEventListener('click',function(e){
+    var t=e.target.closest&&e.target.closest('.app-logo,#title');
+    if(!t || document.body.classList.contains('inside-page')) return;
+    goHome();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ') return;
+    var t=e.target.closest&&e.target.closest('.app-logo,#title');
+    if(!t || document.body.classList.contains('inside-page')) return;
+    e.preventDefault(); goHome();
+  });
+  // label row sticks right under the header: keep its offset equal to the real header height
+  var hd=document.querySelector('header');
+  function setHdr(){ if(hd) document.documentElement.style.setProperty('--hdr-h',hd.offsetHeight+'px'); }
+  setHdr(); window.addEventListener('resize',setHdr);
+  if(window.ResizeObserver && hd) new ResizeObserver(setHdr).observe(hd);
 })();
 </script>
 
@@ -684,6 +695,7 @@ nav button span{line-height:1.15;text-align:center}
 <style id="logo-fix">
 .app-logo{cursor:pointer}
 .app-logo:active{transform:scale(0.92)}
+body:not(.inside-page) #title{cursor:pointer}
 </style>
 
 <style id="reader-mobile-touch-refine">
@@ -708,7 +720,7 @@ nav button span{line-height:1.15;text-align:center}
 <header>
   <div class="bar">
     <button id="back" style="display:none">{{arrow_back}}</button>
-    <img class="app-logo" src="icon-192x192.png?v=8" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:8px" onclick="if(typeof goHome==='function')goHome();else location.href='./'" title="Home">
+    <img class="app-logo" src="icon-192x192.png?v=8" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:8px" role="button" tabindex="0" title="Home">
     <h1 id="title">Quranix</h1>
     <div class="header-tools">
       <input id="q" placeholder="সূরা খুঁজুন...">
@@ -724,7 +736,7 @@ nav button span{line-height:1.15;text-align:center}
         <button class="g-menu-item" data-popup="tafsir"><span>{{auto_stories}} &nbsp; তাফসির</span><small id="gTafsirMini">›</small></button>
         <button class="g-menu-item" data-popup="reciter"><span>{{headphones}} &nbsp; তেলাওয়াত</span><small id="gReciterMini">সৌদ আশ-শুরাইম ›</small></button>
         <button class="g-menu-item" data-popup="font"><span>{{text_fields}} &nbsp; ফন্ট কাস্টমাইজ</span><small>Aa ›</small></button>
-        <button class="g-menu-item" data-popup="settings"><span>{{settings}} &nbsp; সেটিংস ও সহজপাঠ্যতা</span><small>›</small></button>
+        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.18 10.21 L21.51 10.66 L21.51 13.34 L19.18 13.79 L18.34 15.81 L19.67 17.78 L17.78 19.67 L15.81 18.34 L13.79 19.18 L13.34 21.51 L10.66 21.51 L10.21 19.18 L8.19 18.34 L6.22 19.67 L4.33 17.78 L5.66 15.81 L4.82 13.79 L2.49 13.34 L2.49 10.66 L4.82 10.21 L5.66 8.19 L4.33 6.22 L6.22 4.33 L8.19 5.66 L10.21 4.82 L10.66 2.49 L13.34 2.49 L13.79 4.82 L15.81 5.66 L17.78 4.33 L19.67 6.22 L18.34 8.19Z"/><circle cx="12" cy="12" r="3"/></svg> &nbsp; সেটিংস ও সহজপাঠ্যতা</span><small>›</small></button>
         <button class="g-menu-item" data-popup="downloads"><span>{{download}} &nbsp; ডাউনলোড</span><small id="gDlMini">›</small></button>
         
         <button class="g-menu-item" data-popup="hijri"><span>{{nights_stay}} &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
@@ -1449,7 +1461,7 @@ let tmr = null;
 function stopTimer(){ if (tmr) { clearInterval(tmr); tmr = null; } }
 
 let surahs = [];
-let tab = "all";
+let tab = "home";
 let fs = 30;
 try { fs = parseInt(localStorage.getItem("fs")) || 30; } catch(e){}
 document.documentElement.style.setProperty("--fs", fs + "px");
@@ -1678,6 +1690,7 @@ function renderQuranHome(){
   qEl.style.display = (tab === "juz" || tab === "bm") ? "none" : "block";
   app.innerHTML = "";
   if (tab === "bm") return renderBookmarks();
+  if (tab === "home") return;   /* home = tiles + label row only (built by buildHero) */
   const qVal = qEl.value.trim();
   /* home top boxes are built by buildHero() (4 square tiles) */
   if (last && tab !== "juz" && tab !== "all") {
@@ -3161,7 +3174,7 @@ setInterval(checkPrayerAlerts, 5000);
       ? '<div class="pp-mini" style="text-align:center;padding:12px 4px">Quranix ইতিমধ্যে এই ডিভাইসে ইনস্টল করা আছে। হোম স্ক্রিন বা অ্যাপ তালিকা থেকে খুলুন।</div>'
       : '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 12px">'
         +'<div style="border:1px solid var(--line);border-radius:12px;padding:12px 9px;background:var(--card)"><div style="font-size:25px;text-align:center;color:var(--accent);margin-bottom:5px">{{smartphone}}</div><b style="display:block;text-align:center;font-size:13px;margin-bottom:6px">মোবাইল</b>'+mobileSteps+'</div>'
-        +'<div style="border:1px solid var(--line);border-radius:12px;padding:12px 9px;background:var(--card)"><div style="font-size:25px;text-align:center;color:var(--accent);margin-bottom:5px">{{monitor}}</div><b style="display:block;text-align:center;font-size:13px;margin-bottom:6px">PC / ল্যাপটপ</b>'+pcSteps+'</div>'
+        +'<div style="border:1px solid var(--line);border-radius:12px;padding:12px 9px;background:var(--card)"><div style="font-size:25px;text-align:center;color:var(--accent);margin-bottom:5px"><svg class="ms-svg" viewBox="0 0 24 24" style="font-size:1em" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><b style="display:block;text-align:center;font-size:13px;margin-bottom:6px">PC / ল্যাপটপ</b>'+pcSteps+'</div>'
         +'</div><p class="pp-mini" style="margin:0 0 10px">ইনস্টল বাটন কাজ করতে সাইটটি HTTPS-এ চালু এবং ব্রাউজারে PWA install সমর্থিত হতে হবে।</p>';
     box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:16px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:26px">{{download}}</div><b>দ্রুত খুলুন · অফলাইনে পড়ুন</b><p class="pp-mini">হোম স্ক্রিন বা ডেস্কটপে Quranix যোগ করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} এখনই ইনস্টল করুন</button>':'');
     var installButton=box.querySelector('#quranixPopupInstall');
@@ -3182,7 +3195,7 @@ setInterval(checkPrayerAlerts, 5000);
     document.getElementById('ppTabNum').onclick=function(){ searchMode='num'; renderSearchPopup(); };
     var body=document.getElementById('ppSearchBody');
     if(searchMode==='word'){
-      body.innerHTML='<label class="pp-mini" for="ppWordInput">সূরা, আরবি বা বাংলা শব্দ লিখুন</label><input class="pp-input" id="ppWordInput" type="search" autocomplete="off" aria-label="কুরআনের শব্দ বা সূরা খুঁজুন" placeholder="যেমন: রহমান, আল-বাকারা..."><div id="ppWordStatus" class="pp-mini" role="status" aria-live="polite" aria-atomic="true">শব্দ লিখলে সূরা ও আয়াতের মিল এখানে দেখাবে।</div><div id="ppWordResults" role="group" aria-label="সার্চের ফলাফল"></div>';
+      body.innerHTML='<input class="pp-input" id="ppWordInput" type="search" autocomplete="off" aria-label="যেকোনো শব্দ, সূরা বা আয়াত নম্বর দিয়ে সার্চ করুন" placeholder="যেকোনো শব্দ, সূরা বা আয়াত নম্বর দিয়ে সার্চ করুন"><div id="ppWordStatus" role="status" aria-live="polite" aria-atomic="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">শব্দ লিখলে সূরা ও আয়াতের মিল এখানে দেখাবে।</div><div id="ppWordResults" role="group" aria-label="সার্চের ফলাফল"></div>';
       var inp=document.getElementById('ppWordInput');
       inp.focus();
       inp.oninput=function(){ doWordSearch(inp.value.trim()); };
@@ -3220,50 +3233,15 @@ setInterval(checkPrayerAlerts, 5000);
     function norm(t){ return String(t).toLowerCase().replace(/[\s\-_'\u2019`.,:;\/]/g,''); }
     function bn(n){ return BN_SURAH[n-1]||''; }
     function num(n){ return typeof toBn==='function'?toBn(n):n; }
-    body.innerHTML='<label class="pp-mini" for="ppQuick">সূরা ও আয়াত নম্বর লিখুন</label><input class="pp-input" id="ppQuick" type="search" autocomplete="off" aria-label="সূরা ও আয়াত নম্বর দিয়ে খুঁজুন" placeholder="যেমন: বাকারা ২৫৫ বা ২:২৫৫"><div id="ppNumStatus" class="pp-mini" role="status" aria-live="polite" aria-atomic="true">সূরা নম্বর, নাম অথবা সূরা:আয়াত লিখুন।</div><div id="ppSug" role="group" aria-label="মিল পাওয়া সূরা ও আয়াত"></div>'+
-      '<div class="pp-mini" style="margin:8px 0 6px">অথবা তালিকা থেকে বেছে নিন</div>'+
-      '<div class="pp-row"><select class="pp-input" id="ppSurahSel" aria-label="সূরা নির্বাচন করুন" style="flex:2"></select><select class="pp-input" id="ppAyahSel" aria-label="আয়াত নির্বাচন করুন" style="flex:1"></select></div>'+
+    body.innerHTML='<div class="pp-row"><select class="pp-input" id="ppSurahSel" aria-label="সূরা নির্বাচন করুন" style="flex:2"></select><select class="pp-input" id="ppAyahSel" aria-label="আয়াত নির্বাচন করুন" style="flex:1"></select></div>'+
       '<button class="pp-btn" id="ppGoBtn" type="button">যান →</button>';
-    var qin=document.getElementById('ppQuick'), sug=document.getElementById('ppSug'), numStatus=document.getElementById('ppNumStatus'), ss=document.getElementById('ppSurahSel'), as=document.getElementById('ppAyahSel');
+    var ss=document.getElementById('ppSurahSel'), as=document.getElementById('ppAyahSel');
     ss.innerHTML=list.map(function(s){ return '<option value="'+s.number+'">'+s.number+'. '+(bn(s.number)||s.englishName)+' · '+s.englishName+'</option>'; }).join('');
-    function fillAyah(){ var selectedNumber=parseInt(ss.value,10); var s=list.find(function(item){return item.number===selectedNumber;}); var n=s?s.numberOfAyahs:286; var h='<option value="0">পুরো সূরা</option>'; for(var i=1;i<=n;i++) h+='<option value="'+i+'">আয়াত '+i+'</option>'; as.innerHTML=h; }
+    function fillAyah(){ var selectedNumber=parseInt(ss.value,10); var s=list.find(function(item){return item.number===selectedNumber;}); var n=s?s.numberOfAyahs:286; var h='<option value="0">আয়াত</option>'; for(var i=1;i<=n;i++) h+='<option value="'+i+'">আয়াত '+i+'</option>'; as.innerHTML=h; }
     ss.onchange=fillAyah; fillAyah();
     function go(s,a){ closePopup(); if(typeof openSurah!=='function') return; if(a) openSurah(s,0,a); else openSurah(s); }
     document.getElementById('ppGoBtn').onclick=function(){ go(parseInt(ss.value,10),parseInt(as.value,10)||0); };
-    var firstGo=null;
-    function suggest(){
-      firstGo=null;
-      var raw=toAscii(qin.value).trim(); if(!raw){ sug.innerHTML=''; if(numStatus) numStatus.textContent='সূরা নম্বর, নাম অথবা সূরা:আয়াত লিখুন।'; return; }
-      var nums=(raw.match(/\d+/g)||[]).map(Number);
-      var text=norm(raw.replace(/\d+/g,' '));
-      var cands=[], ay=null;
-      if(text){
-        list.forEach(function(s){ if(norm(s.englishName+' '+(s.englishNameTranslation||'')+' '+bn(s.number)+' '+(s.name||'')).indexOf(text)>-1) cands.push(s); });
-        if(nums.length) ay=nums[0];
-      } else if(nums.length>=2){
-        if(nums[0]>=1&&nums[0]<=list.length){ var exact=list.find(function(item){return item.number===nums[0];}); if(exact) cands.push(exact); } ay=nums[1];
-      } else if(nums.length===1){
-        var p=String(nums[0]); list.forEach(function(s){ if(String(s.number).indexOf(p)===0) cands.push(s); });
-        cands.sort(function(a,b){ return (String(a.number)===p?-1:0)-(String(b.number)===p?-1:0); });
-      }
-      var out='';
-      cands.slice(0,6).forEach(function(s){
-        var nm=s.number+'. '+(bn(s.number)||s.englishName)+' · '+s.englishName;
-        if(ay!==null){
-          if(ay>=1&&ay<=s.numberOfAyahs){ out+='<div class="pp-result" data-s="'+s.number+'" data-a="'+ay+'"><b>'+nm+'</b><small>আয়াত '+num(ay)+' এ যান</small></div>'; if(!firstGo) firstGo=[s.number,ay]; }
-          else out+='<div class="pp-result" data-s="'+s.number+'" data-a="0"><b>'+nm+'</b><small>এই সূরায় মাত্র '+num(s.numberOfAyahs)+'টি আয়াত — সূরাটি খুলুন</small></div>';
-        } else { out+='<div class="pp-result" data-s="'+s.number+'" data-a="0"><b>'+nm+'</b><small>'+(s.revelationType==='Meccan'?'মাক্কী':s.revelationType?'মাদানী':'')+(s.numberOfAyahs?' · আয়াত '+num(s.numberOfAyahs):'')+'</small></div>'; if(!firstGo) firstGo=[s.number,0]; }
-      });
-      if(!out) out='<div class="pp-mini">মিল পাওয়া যায়নি। সূরার নাম বা নম্বর লিখুন।</div>';
-      sug.innerHTML=out;
-      var resultItems=sug.querySelectorAll('[data-s]');
-      if(numStatus) numStatus.textContent=resultItems.length?num(resultItems.length)+'টি মিল পাওয়া গেছে।':'কোনো মিল পাওয়া যায়নি।';
-      function activateNumberResult(el){ go(parseInt(el.dataset.s,10),parseInt(el.dataset.a,10)||0); }
-      makeSearchResultsKeyboardAccessible(sug,activateNumberResult);
-      resultItems.forEach(function(el){ el.onclick=function(){ activateNumberResult(el); }; });
-    }
-    qin.oninput=suggest;
-    qin.onkeydown=function(e){ if(e.key==='Enter'&&firstGo){ e.preventDefault(); go(firstGo[0],firstGo[1]); } };
+
   }
   function doWordSearch(word){
     var resEl=document.getElementById('ppWordResults'); if(!resEl) return;
@@ -3271,6 +3249,24 @@ setInterval(checkPrayerAlerts, 5000);
     if(!word){ resEl.innerHTML=''; if(statusEl) statusEl.textContent='শব্দ লিখলে সূরা ও আয়াতের মিল এখানে দেখাবে।'; return; }
     var lw=normalizeQuranSearch(word);
     var out='';
+    // Direct surah:ayah jump: '2:255' or 'বাকারা 255' (logic moved here from the removed quick box)
+    try{
+      var asciiWord=String(word).replace(/[০-৯]/g,function(c){return String(c.charCodeAt(0)-0x09E6);}).replace(/[٠-٩]/g,function(c){return String(c.charCodeAt(0)-0x0660);}).replace(/[۰-۹]/g,function(c){return String(c.charCodeAt(0)-0x06F0);});
+      var directNums=(asciiWord.match(/\d+/g)||[]).map(Number);
+      var directText=asciiWord.replace(/\d+/g,' ').trim().toLowerCase();
+      var directSurah=null, directAyah=null;
+      if(directNums.length>=2 && directNums[0]>=1 && directNums[0]<=114){ directSurah=directNums[0]; directAyah=directNums[1]; }
+      else if(directNums.length===1 && directText){
+        var found=(typeof surahs!=='undefined'?surahs:[]).find(function(s){ return normalizeQuranSearch(s.englishName)===normalizeQuranSearch(directText) || normalizeQuranSearch(BN_SURAH[s.number-1]||'')===normalizeQuranSearch(directText) || normalizeQuranSearch(s.name||'')===normalizeQuranSearch(directText); });
+        if(found){ directSurah=found.number; directAyah=directNums[0]; }
+      }
+      if(directSurah){
+        var dsObj=(typeof surahs!=='undefined')?surahs.find(function(x){return x.number===directSurah;}):null;
+        var dsName=dsObj?dsObj.englishName:'সূরা '+directSurah;
+        var dsMax=dsObj?dsObj.numberOfAyahs:0;
+        if(directAyah>=1 && (!dsMax || directAyah<=dsMax)){ out+='<div class="pp-result" data-ayah="'+directSurah+':'+directAyah+'"><b>'+dsName+' · আয়াত '+directAyah+'</b><small>সরাসরি এই আয়াতে যান</small></div>'; }
+      }
+    }catch(e){}
     // Surah name matches
     var sList=(typeof surahs!=='undefined'?surahs:[]).filter(function(s){ return normalizeQuranSearch(s.number)===lw || normalizeQuranSearch(s.englishName).includes(lw) || normalizeQuranSearch(s.englishNameTranslation||'').includes(lw) || normalizeQuranSearch(s.name||'').includes(lw) || normalizeQuranSearch(BN_SURAH[s.number-1]||'').includes(lw); });
     sList.slice(0,8).forEach(function(s){
@@ -3387,22 +3383,23 @@ setInterval(checkPrayerAlerts, 5000);
   // ---- Home Hero ----
   var origRenderQuranHome = window.renderQuranHome;
   function buildHero(){
-    if(tab!=='all' && tab!=='juz') return;
+    if(tab==='bm') return;
     var qv=qEl?qEl.value.trim():''; if(qv) return;
     var appEl=document.getElementById('app'); if(!appEl) return;
     appEl.querySelectorAll('.home-tiles,.home-browse-nav,.home-browse-heading').forEach(function(el){el.remove();});
-    var browse=document.createElement('section'); browse.className='home-browse-nav'; browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
+    var browse=document.createElement('section'); browse.className='home-browse-nav'+(tab==='home'?'':' is-sticky'); browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
     var browseItems=[['all','সব সূরা'],['Meccan','মাক্কী'],['Medinan','মাদানী'],['juz','পারা']];
     browseItems.forEach(function(pair){
       var b=document.createElement('button'); b.type='button'; b.textContent=pair[1];
       if(tab===pair[0]){b.className='on';b.setAttribute('aria-current','page');}
-      b.onclick=function(){tab=pair[0];if(qEl)qEl.value='';if(typeof renderTabs==='function')renderTabs();if(typeof renderHome==='function')renderHome();};
+      b.onclick=function(){tab=pair[0];if(qEl)qEl.value='';if(typeof renderTabs==='function')renderTabs();if(typeof renderHome==='function')renderHome();window.scrollTo(0,0);};
       browse.appendChild(b);
     });
     if(tab==='juz'){
       var heading=document.createElement('div');heading.className='home-browse-heading';heading.innerHTML='<h2>পারা অনুযায়ী পড়ুন</h2><p>৩০টি পারার যেকোনোটি নির্বাচন করুন</p>';
-      appEl.prepend(browse);appEl.prepend(heading);return;
+      appEl.prepend(heading);appEl.prepend(browse);return;
     }
+    if(tab!=='home'){ appEl.prepend(browse); return; }
     var lastNm='আল-ফাতিহা'; var lastMeta='এখনই কুরআন পড়া শুরু করুন'; var lastAction=function(){ openSurah(1); };
     try{
       if(typeof last!=='undefined' && last){
@@ -3436,7 +3433,7 @@ setInterval(checkPrayerAlerts, 5000);
       }
       t.onclick=d[3]; row.appendChild(t);
     });
-    appEl.prepend(row); appEl.insertBefore(browse,row);
+    appEl.prepend(row); appEl.insertBefore(browse,row.nextSibling);
   }
   if(origRenderQuranHome){ window.renderQuranHome=function(){ origRenderQuranHome(); buildHero(); }; setTimeout(function(){ if(typeof renderHome==='function') renderHome(); }, 100); }
 })();
