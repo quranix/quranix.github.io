@@ -1,11 +1,12 @@
-// Quranix SW - v9 - precaches Quran data + icon font for offline use
-const CACHE='quranix-v9';
+// Quranix SW - v11 - precaches Quran data + icon font + Hind Siliguri + Noto Naskh Arabic for offline use
+const CACHE='quranix-v11';
 const ASSETS=[
   './','./index.html','./manifest.json','./favicon.ico',
   './icon-32x32.png','./icon-48x48.png','./icon-180x180.png',
   './icon-192x192.png','./icon-512x512.png',
   './icon-maskable-192x192.png','./icon-maskable-512x512.png','./apple-touch-icon.png',
-  './quran-data.js','./fonts/material-symbols-rounded.woff2'
+  './quran-data.js','./fonts/material-symbols-rounded.woff2',
+  './fonts/hind-siliguri-300.woff','./fonts/hind-siliguri-400.woff','./fonts/hind-siliguri-500.woff','./fonts/hind-siliguri-600.woff','./fonts/hind-siliguri-700.woff','./fonts/noto-naskh-arabic.woff'
 ];
 self.addEventListener('install',e=>{
   // one missing file must not break the whole install
