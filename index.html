@@ -29,10 +29,10 @@ QX FILE EDIT RULES
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f5f5;--outer-bg:#e5e7eb;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--fs:30px;--tile-bg:#f5f5f5;--tile-hover:#e5e7eb;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
+:root{--bg:#f5f5f5;--outer-bg:#f5f5f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--fs:30px;--tile-bg:#f5f5f5;--tile-hover:#e5e7eb;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
 @media (prefers-color-scheme:dark){:root{--bg:#121413;--outer-bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}}
 [data-theme="dark"]{--bg:#121413;--outer-bg:#121413;--card:#1b1e1c;--text:#ecebe6;--muted:#9a9a93;--accent:#4cc79b;--line:#2a2e2b;--tile-bg:#232825;--tile-hover:#2e3531;--tile-shadow:0 4px 14px rgba(0,0,0,0.22)}
-[data-theme="light"]{--bg:#f5f5f5;--outer-bg:#e5e7eb;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--tile-bg:#f5f5f5;--tile-hover:#e5e7eb;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
+[data-theme="light"]{--bg:#f5f5f5;--outer-bg:#f5f5f5;--card:#fff;--text:#1d1d1b;--muted:#6b6b66;--accent:#0f6b4f;--line:#e5e5e5;--tile-bg:#f5f5f5;--tile-hover:#e5e7eb;--tile-shadow:0 2px 10px rgba(0,0,0,0.05)}
 [data-hc=""]{--text:#000;--muted:#333;--line:#777;--accent:#005a40;--tile-bg:#fff;--tile-hover:#e5e7eb}
 [data-theme="dark"][data-hc=""]{--text:#fff;--muted:#e5e5e5;--line:#aaa;--accent:#7fffd0;--tile-bg:#111;--tile-hover:#333}
 [data-reduced-motion=""] *,[data-reduced-motion=""] *::before,[data-reduced-motion=""] *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -50,11 +50,11 @@ input{width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px 
 .tabs{display:flex;gap:8px;margin-top:8px;overflow-x:auto}
 .tabs button{white-space:nowrap}
 .tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-main{padding:clamp(12px,2.2vw,24px) clamp(12px,2.4vw,24px) 104px;max-width:1040px;width:100%;margin:0 auto;background:var(--bg);min-height:calc(100vh - 62px)}
-#app{width:100%;min-width:0}
-#app>.item{max-width:820px;margin:9px auto}
-#app>.ayah{max-width:900px;margin:12px auto}
-#app>.resume{max-width:820px;margin:10px auto}
+main{padding:clamp(12px,2.2vw,24px) clamp(12px,2.4vw,24px) 104px;max-width:100%;width:100%;margin:0 auto;background:var(--bg);min-height:calc(100vh - 62px)}
+#app{width:100%;min-width:0;max-width:100%;margin:0 auto}
+#app>.item{max-width:100%;margin:9px auto;width:100%}
+#app>.ayah{max-width:100%;margin:12px auto;width:100%}
+#app>.resume{max-width:100%;margin:10px auto;width:100%}
 .item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0;cursor:pointer}
 .num{min-width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
 .mid{flex:1}.mid b{display:block}.mid small{color:var(--muted)}
@@ -81,7 +81,12 @@ nav button.on{color:var(--accent);font-weight:600}
 @media (min-width:900px){
   nav{left:50%;right:auto;bottom:0;transform:translateX(-50%);width:min(760px,100%);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;padding:4px 8px calc(4px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.08)}
   nav button{min-height:48px;border-radius:12px}
-  main{padding-bottom:120px}
+  main{padding:clamp(16px,2.5vw,32px) clamp(16px,3vw,48px) 120px;max-width:100%}
+  #app{max-width:100%}
+  #app>.item{max-width:100%}
+  #app>.ayah{max-width:100%}
+  .home-tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:100%;width:100%}
+  .item{padding:16px}
 }
 select{font:inherit;width:100%;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
@@ -100,6 +105,8 @@ select{font:inherit;width:100%;padding:9px 10px;border-radius:10px;border:1px so
 
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
 .modal-content{background:var(--card);color:var(--text);border-radius:14px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;padding:20px;border:1px solid var(--line);box-shadow:0 10px 25px rgba(0,0,0,0.2)}
+.settings-overlay{background:rgba(0,0,0,0.15)!important;align-items:flex-start!important;justify-content:flex-end!important;padding:0!important;}
+.settings-content{background:var(--tile-bg)!important;border:1px solid var(--line)!important;border-radius:12px!important;box-shadow:0 10px 25px rgba(0,0,0,.25)!important;padding:8px!important;width:min(320px,calc(100vw - 24px))!important;max-width:none!important;max-height:none!important;position:fixed!important;top:calc(62px + env(safe-area-inset-top) + 8px)!important;right:12px!important;left:auto!important;bottom:calc(70px + env(safe-area-inset-bottom) + 12px)!important;height:auto!important;overflow-y:auto!important;z-index:70!important;box-sizing:border-box!important;text-align:left!important;}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:8px}
 .modal-header h3{margin:0;color:var(--accent);font-size:18px}
 .close-btn{background:none;border:0;font-size:20px;cursor:pointer;color:var(--muted)}
@@ -213,7 +220,7 @@ h1{ color:var(--accent) !important; }
 .num{ min-width:48px !important; height:48px !important; font-size:18px !important; }
 /* Grid dropdown - only list, no collapsible expansion */
 .header-tools{ position:relative; }
-#gridDropdown{ display:none; position:absolute; top:52px; right:0; width:280px; max-height:calc(100vh - 150px - env(safe-area-inset-bottom)); overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; z-index:60; background:var(--tile-bg); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.25); padding:8px; text-align:left; }
+#gridDropdown{ display:none; position:fixed; top:calc(62px + env(safe-area-inset-top) + 8px); right:12px; left:auto; bottom:calc(70px + env(safe-area-inset-bottom) + 12px); width:min(320px,calc(100vw - 24px)); height:auto; max-height:none; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; z-index:70; background:var(--tile-bg); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.25); padding:8px; text-align:left; box-sizing:border-box; }
 #gridDropdown.open{ display:block; }
 .g-menu-item{ display:flex; align-items:center; justify-content:space-between; width:100%; min-height:48px; padding:13px 12px; border:1px solid transparent; border-bottom:1px solid var(--line); background:var(--tile-bg); color:var(--text); font:inherit; font-size:14px; cursor:pointer; text-align:left; border-radius:10px; margin:4px 0; box-sizing:border-box; transition:background 0.2s ease, border-color 0.2s ease, transform 0.15s ease; }
 .g-menu-item:last-child{ border-bottom:none; }
@@ -595,7 +602,7 @@ body.inside-page h1{display:flex;align-items:center;gap:8px}
 .dua-ic{width:21px;height:21px;display:block}
 nav button.on .dua-ic{stroke-width:1.7}
 nav button span{line-height:1.15;text-align:center}
-.home-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px auto 18px;max-width:820px}
+.home-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px auto 18px;max-width:100%;width:100%}
 .home-tile{min-width:0;min-height:104px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;padding:10px;text-align:left;background:var(--tile-bg);border:1px solid var(--line);border-radius:16px;cursor:pointer;box-shadow:var(--tile-shadow);transition:background 0.22s ease,transform 0.18s ease,box-shadow 0.22s ease,border-color 0.22s ease}
 .home-tile:hover{background:var(--tile-hover);border-color:var(--accent);box-shadow:0 6px 18px rgba(0,0,0,0.08);transform:translateY(-2px)}
 .home-tile:active{border-color:var(--accent);transform:translateY(0) scale(.985)}
@@ -665,7 +672,7 @@ body.bars-hidden .home-browse-nav.is-sticky{transform:translateY(calc(-100% - va
 (function(){
   function goHome(){
     try{
-      tab='home'; if(qEl) qEl.value='';
+      tab='all'; if(qEl) qEl.value='';
       if(typeof renderTabs==='function') renderTabs();
       if(typeof setMode==='function') setMode('quran'); else if(typeof renderHome==='function') renderHome();
     }catch(e){}
@@ -732,10 +739,6 @@ body:not(.inside-page) #title{cursor:pointer}
 
       <div id="gridDropdown">
         <div class="g-quick" id="gQuick"></div>
-        <button class="g-menu-item" data-popup="trans"><span>{{translate}} &nbsp; অনুবাদ</span><small id="gTransMini">মুহিউদ্দীন খান ›</small></button>
-        <button class="g-menu-item" data-popup="tafsir"><span>{{auto_stories}} &nbsp; তাফসির</span><small id="gTafsirMini">›</small></button>
-        <button class="g-menu-item" data-popup="reciter"><span>{{headphones}} &nbsp; তেলাওয়াত</span><small id="gReciterMini">সৌদ আশ-শুরাইম ›</small></button>
-        <button class="g-menu-item" data-popup="font"><span>{{text_fields}} &nbsp; ফন্ট কাস্টমাইজ</span><small>Aa ›</small></button>
         <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.18 10.21 L21.51 10.66 L21.51 13.34 L19.18 13.79 L18.34 15.81 L19.67 17.78 L17.78 19.67 L15.81 18.34 L13.79 19.18 L13.34 21.51 L10.66 21.51 L10.21 19.18 L8.19 18.34 L6.22 19.67 L4.33 17.78 L5.66 15.81 L4.82 13.79 L2.49 13.34 L2.49 10.66 L4.82 10.21 L5.66 8.19 L4.33 6.22 L6.22 4.33 L8.19 5.66 L10.21 4.82 L10.66 2.49 L13.34 2.49 L13.79 4.82 L15.81 5.66 L17.78 4.33 L19.67 6.22 L18.34 8.19Z"/><circle cx="12" cy="12" r="3"/></svg> &nbsp; সেটিংস ও সহজপাঠ্যতা</span><small>›</small></button>
         <button class="g-menu-item" data-popup="downloads"><span>{{download}} &nbsp; ডাউনলোড</span><small id="gDlMini">›</small></button>
         
@@ -1461,7 +1464,7 @@ let tmr = null;
 function stopTimer(){ if (tmr) { clearInterval(tmr); tmr = null; } }
 
 let surahs = [];
-let tab = "home";
+let tab = "all";
 let fs = 30;
 try { fs = parseInt(localStorage.getItem("fs")) || 30; } catch(e){}
 document.documentElement.style.setProperty("--fs", fs + "px");
@@ -2891,8 +2894,10 @@ function openHelpModal(isFirstTime){
 // Comprehensive Settings Modal (Phase 4)
 function openSettingsModal() {
   const previousFocus = document.activeElement;
-  const overlay = document.createElement("div"); overlay.className = "modal-overlay";
-  const content = document.createElement("div"); content.className = "modal-content"; content.setAttribute("role", "dialog"); content.setAttribute("aria-modal", "true"); content.setAttribute("aria-labelledby", "tafseerDialogTitle"); content.tabIndex = -1;
+  const overlay = document.createElement("div"); overlay.className = "modal-overlay settings-overlay";
+  overlay.style.cssText = "position:fixed;inset:0;z-index:70;background:rgba(0,0,0,0.15);display:block;";
+  const content = document.createElement("div"); content.className = "modal-content settings-content"; content.setAttribute("role", "dialog"); content.setAttribute("aria-modal", "true"); content.setAttribute("aria-labelledby", "tafseerDialogTitle"); content.tabIndex = -1;
+  content.style.cssText = "position:fixed;top:calc(62px + env(safe-area-inset-top) + 8px);right:12px;left:auto;bottom:calc(70px + env(safe-area-inset-bottom) + 12px);width:min(320px,calc(100vw - 24px));height:auto;max-height:none;max-width:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:var(--tile-bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.25);padding:8px;text-align:left;box-sizing:border-box;";
   
   const header = document.createElement("div"); header.className = "modal-header";
   const h3 = document.createElement("h3"); h3.textContent = "সেটিংস ও অ্যাপ অভিজ্ঞতা"; h3.id = "quranixSettingsTitle";
@@ -2917,47 +2922,56 @@ function openSettingsModal() {
   `;
   body.appendChild(statusSec);
 
-  // 1. Font Size & Accessibility Section
+  // 1. Font & Accessibility Section (p5 - moved from grid nav)
   const accSec = mk("div", "set-sec");
-  accSec.appendChild(mk("div", "set-title", "{{text_fields}} ফন্ট ও সহজপাঠ্যতা (Accessibility)"));
+  accSec.appendChild(mk("div", "set-title", "{{text_fields}} ফন্ট কাস্টমাইজ ও সহজপাঠ্যতা"));
 
+  // Arabic size with grid-menu style
   const arSizeRow = mk("div", "set-row");
-  arSizeRow.appendChild(mk("span", null, `আরবি লেখার আকার (${toBn(fs)}px)`));
+  arSizeRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--tile-bg);margin-bottom:8px;box-sizing:border-box;";
+  arSizeRow.appendChild(mk("span", null, `আরবি আকার (${toBn(fs)}px)`));
   const arBtns = document.createElement("div");
   arBtns.style.cssText = "display:flex;gap:6px";
   const sBtn = mk("button", null, "A−");
-  sBtn.onclick = () => { setFs(-2); arSizeRow.firstChild.textContent = `আরবি লেখার আকার (${toBn(fs)}px)`; };
+  sBtn.style.cssText = "min-width:36px;min-height:32px;border-radius:8px;";
+  sBtn.onclick = () => { setFs(-2); arSizeRow.firstChild.textContent = `আরবি আকার (${toBn(fs)}px)`; };
   const bBtn = mk("button", null, "A+");
-  bBtn.onclick = () => { setFs(2); arSizeRow.firstChild.textContent = `আরবি লেখার আকার (${toBn(fs)}px)`; };
+  bBtn.style.cssText = "min-width:36px;min-height:32px;border-radius:8px;";
+  bBtn.onclick = () => { setFs(2); arSizeRow.firstChild.textContent = `আরবি আকার (${toBn(fs)}px)`; };
   arBtns.appendChild(sBtn); arBtns.appendChild(bBtn);
   arSizeRow.appendChild(arBtns);
   accSec.appendChild(arSizeRow);
 
   const bnSizeRow = mk("div", "set-row");
-  bnSizeRow.appendChild(mk("span", null, `বাংলা লেখার আকার (${toBn(appPrefs.bnFs || 16)}px)`));
+  bnSizeRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--tile-bg);margin-bottom:8px;box-sizing:border-box;";
+  bnSizeRow.appendChild(mk("span", null, `বাংলা আকার (${toBn(appPrefs.bnFs || 16)}px)`));
   const bnBtns = document.createElement("div");
   bnBtns.style.cssText = "display:flex;gap:6px";
   const bnS = mk("button", null, "অ−");
+  bnS.style.cssText = "min-width:36px;min-height:32px;border-radius:8px;";
   bnS.onclick = () => {
     appPrefs.bnFs = Math.max(13, (appPrefs.bnFs || 16) - 1);
     lsSet("appPrefs", appPrefs); applyAppPrefs();
-    bnSizeRow.firstChild.textContent = `বাংলা লেখার আকার (${toBn(appPrefs.bnFs)}px)`;
+    bnSizeRow.firstChild.textContent = `বাংলা আকার (${toBn(appPrefs.bnFs)}px)`;
   };
   const bnB = mk("button", null, "অ+");
+  bnB.style.cssText = "min-width:36px;min-height:32px;border-radius:8px;";
   bnB.onclick = () => {
     appPrefs.bnFs = Math.min(24, (appPrefs.bnFs || 16) + 1);
     lsSet("appPrefs", appPrefs); applyAppPrefs();
-    bnSizeRow.firstChild.textContent = `বাংলা লেখার আকার (${toBn(appPrefs.bnFs)}px)`;
+    bnSizeRow.firstChild.textContent = `বাংলা আকার (${toBn(appPrefs.bnFs)}px)`;
   };
   bnBtns.appendChild(bnS); bnBtns.appendChild(bnB);
   bnSizeRow.appendChild(bnBtns);
   accSec.appendChild(bnSizeRow);
 
-  // Arabic & Bangla Font Selectors
+  // Font selectors with grid-menu style
   const fontGrid = mk("div", "set-grid");
+  fontGrid.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;";
   const arFontWrap = document.createElement("div");
-  arFontWrap.innerHTML = `<small style="color:var(--muted)">আরবি ফন্ট</small>`;
+  arFontWrap.innerHTML = `<small style="color:var(--muted);display:block;margin-bottom:4px;">আরবি ফন্ট</small>`;
   const arFontSel = document.createElement("select");
+  arFontSel.style.cssText = "width:100%;padding:10px;border-radius:10px;";
   AR_FONTS.forEach(([val, lbl]) => {
     const o = document.createElement("option"); o.value = val; o.textContent = lbl;
     if (appPrefs.arFont === val) o.selected = true;
@@ -2967,8 +2981,9 @@ function openSettingsModal() {
   arFontWrap.appendChild(arFontSel);
 
   const bnFontWrap = document.createElement("div");
-  bnFontWrap.innerHTML = `<small style="color:var(--muted)">বাংলা ফন্ট</small>`;
+  bnFontWrap.innerHTML = `<small style="color:var(--muted);display:block;margin-bottom:4px;">বাংলা ফন্ট</small>`;
   const bnFontSel = document.createElement("select");
+  bnFontSel.style.cssText = "width:100%;padding:10px;border-radius:10px;";
   BN_FONTS.forEach(([val, lbl]) => {
     const o = document.createElement("option"); o.value = val; o.textContent = lbl;
     if (appPrefs.bnFont === val) o.selected = true;
@@ -2982,81 +2997,102 @@ function openSettingsModal() {
   accSec.appendChild(fontGrid);
 
   const contrastRow = mk("label", "set-row");
-  contrastRow.style.cssText = "cursor:pointer;min-height:42px";
-  const contrastText = mk("span", null, "উচ্চ কনট্রাস্ট (High contrast)");
+  contrastRow.style.cssText = "cursor:pointer;min-height:44px;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--tile-bg);margin-bottom:8px;box-sizing:border-box;";
+  const contrastText = mk("span", null, "উচ্চ কনট্রাস্ট");
   const contrastToggle = document.createElement("input");
   contrastToggle.type = "checkbox"; contrastToggle.checked = !!appPrefs.highContrast;
-  contrastToggle.setAttribute("aria-label", "উচ্চ কনট্রাস্ট চালু বা বন্ধ করুন");
   contrastToggle.style.cssText = "width:20px;height:20px;margin:0;accent-color:var(--accent)";
   contrastToggle.onchange = () => { appPrefs.highContrast = contrastToggle.checked; lsSet("appPrefs", appPrefs); applyAppPrefs(); };
   contrastRow.appendChild(contrastText); contrastRow.appendChild(contrastToggle); accSec.appendChild(contrastRow);
 
   const motionRow = mk("label", "set-row");
-  motionRow.style.cssText = "cursor:pointer;min-height:42px";
-  const motionText = mk("span", null, "অ্যানিমেশন কমিয়ে দিন");
+  motionRow.style.cssText = "cursor:pointer;min-height:44px;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--tile-bg);margin-bottom:8px;box-sizing:border-box;";
+  const motionText = mk("span", null, "অ্যানিমেশন কম");
   const motionToggle = document.createElement("input");
   motionToggle.type = "checkbox"; motionToggle.checked = !!appPrefs.reducedMotion;
-  motionToggle.setAttribute("aria-label", "অ্যানিমেশন কমিয়ে দিন");
   motionToggle.style.cssText = "width:20px;height:20px;margin:0;accent-color:var(--accent)";
   motionToggle.onchange = () => { appPrefs.reducedMotion = motionToggle.checked; lsSet("appPrefs", appPrefs); applyAppPrefs(); };
   motionRow.appendChild(motionText); motionRow.appendChild(motionToggle); accSec.appendChild(motionRow);
 
   body.appendChild(accSec);
 
-  // 2. Reciter Selection Section
-  const recSec = mk("div", "set-sec");
-  recSec.appendChild(mk("div", "set-title", "{{mic}} তেলাওয়াতকারী (ক্বারী)"));
-  const recSel = document.createElement("select");
-  RECITERS.forEach(([id, nm]) => {
-    const opt = document.createElement("option");
-    opt.value = id; opt.textContent = nm;
-    if (id === currentReciter) opt.selected = true;
-    recSel.appendChild(opt);
+  // 2. Translation Selection (p5 - moved from grid nav)
+  const transSec = mk("div", "set-sec");
+  transSec.appendChild(mk("div", "set-title", "{{translate}} অনুবাদ"));
+  const transSelNew = document.createElement("select");
+  const transOptions = [
+    ["bn.bengali", "মাওলানা মুহিউদ্দীন খান"],
+    ["bn.zakaria", "ড. আবু বকর মুহাম্মাদ যাকারিয়া"]
+  ];
+  transOptions.forEach(([val, label]) => {
+    const o = document.createElement("option");
+    o.value = val; o.textContent = label;
+    if (val === currentEdition) o.selected = true;
+    transSelNew.appendChild(o);
   });
+  transSelNew.onchange = (e) => {
+    currentEdition = e.target.value;
+    lsSet("edition", currentEdition);
+    const origSel = document.getElementById("transSel");
+    if (origSel) { origSel.value = currentEdition; origSel.dispatchEvent(new Event('change')); }
+    if (typeof refreshMinis === 'function') refreshMinis();
+    showToast("অনুবাদ পরিবর্তন করা হয়েছে");
+  };
+  transSec.appendChild(transSelNew);
+  body.appendChild(transSec);
+
+  // 3. Tafsir Selection (p5 - moved from grid nav)
+  const tafsirSec = mk("div", "set-sec");
+  tafsirSec.appendChild(mk("div", "set-title", "{{auto_stories}} তাফসির"));
+  const tafsirSel = document.createElement("select");
+  if (typeof TAFSIRS !== 'undefined') {
+    TAFSIRS.forEach(([id, name]) => {
+      const o = document.createElement("option");
+      o.value = id; o.textContent = name;
+      if (id === (typeof tafsirId !== 'undefined' ? tafsirId : 381)) o.selected = true;
+      tafsirSel.appendChild(o);
+    });
+  }
+  tafsirSel.onchange = (e) => {
+    if (typeof tafsirId !== 'undefined') {
+      tafsirId = parseInt(e.target.value, 10);
+      lsSet('tafsirId', tafsirId);
+      if (typeof refreshMinis === 'function') refreshMinis();
+      showToast("তাফসির পরিবর্তন করা হয়েছে");
+    }
+  };
+  tafsirSec.appendChild(tafsirSel);
+  const tafsirNote = mk("div", "pp-mini", "আয়াতে ট্যাপ করলে এই তাফসির খুলবে। তাফসির লোড করতে ইন্টারনেট লাগে।");
+  tafsirNote.style.marginTop = "6px";
+  tafsirSec.appendChild(tafsirNote);
+  body.appendChild(tafsirSec);
+
+  // 4. Reciter / Audio Selection (p5 - moved from grid nav)
+  const recSec = mk("div", "set-sec");
+  recSec.appendChild(mk("div", "set-title", "{{headphones}} তেলাওয়াতকারী / অডিও"));
+  const recSel = document.createElement("select");
+  if (typeof RECITERS !== 'undefined') {
+    RECITERS.forEach(([id, nm]) => {
+      const opt = document.createElement("option");
+      opt.value = id; opt.textContent = nm;
+      if (id === currentReciter) opt.selected = true;
+      recSel.appendChild(opt);
+    });
+  }
   recSel.onchange = (e) => {
     currentReciter = e.target.value;
     lsSet("reciter", currentReciter);
-    audioReciterLabel.textContent = getReciterName(currentReciter);
-    if (currentPlayIdx >= 0 && !audioObj.paused) playAyahAtIndex(currentPlayIdx);
+    try { localStorage.setItem('reciter', JSON.stringify(currentReciter)); } catch(err){}
+    const labelEl = document.getElementById('audioReciterLabel');
+    if (labelEl && typeof getReciterName === 'function') labelEl.textContent = getReciterName(currentReciter);
+    if (currentPlayIdx >= 0 && typeof audioObj !== 'undefined' && !audioObj.paused && typeof playAyahAtIndex === 'function') playAyahAtIndex(currentPlayIdx);
+    if (typeof refreshMinis === 'function') refreshMinis();
     showToast("ক্বারী পরিবর্তন করা হয়েছে");
   };
   recSec.appendChild(recSel);
   body.appendChild(recSec);
 
-  // 3. Data Backup, Restore & Reset Section
-  const dataSec = mk("div", "set-sec");
-  dataSec.appendChild(mk("div", "set-title", "{{save}} ব্যাকআপ ও রিস্টোর"));
-  const dataGrid = mk("div", "set-grid");
-
-  const expBtn = mk("button", null, "{{share}} ব্যাকআপ ডাউনলোড");
-  expBtn.onclick = exportUserBackup;
-
-  const impBtn = mk("button", null, "{{download}} ব্যাকআপ রিস্টোর");
-  const fileInp = document.createElement("input");
-  fileInp.type = "file"; fileInp.accept = ".json,application/json"; fileInp.style.display = "none";
-  fileInp.onchange = (e) => importUserBackup(e.target.files[0], () => overlay.remove());
-  impBtn.onclick = () => fileInp.click();
-
-  dataGrid.appendChild(expBtn);
-  dataGrid.appendChild(impBtn);
-  dataSec.appendChild(dataGrid);
-  dataSec.appendChild(fileInp);
-
-  const utilGrid = mk("div", "set-grid");
-  utilGrid.style.marginTop = "8px";
-  const helpBtn = mk("button", null, "{{help}} ব্যবহার নির্দেশিকা");
-  helpBtn.onclick = () => { overlay.remove(); openHelpModal(false); };
-  const resetBtn = mk("button", "btn-danger", "{{delete}} ডেটা রিসেট");
-  resetBtn.onclick = resetAllAppData;
-  utilGrid.appendChild(helpBtn);
-  utilGrid.appendChild(resetBtn);
-  dataSec.appendChild(utilGrid);
-  body.appendChild(dataSec);
-
-  // 4. Source & License Verification
-  const infoSec = mk("div", "set-sec");
-  infoSec.innerHTML = '<div style="font-size:12px; line-height:1.6; color:var(--muted);"><b style="color:var(--text)">উৎস ও তথ্যসূত্র</b>' + window.qxSourcesHtml() + '</div>';
-  body.appendChild(infoSec);
+  // 3 & 4 removed per p4: Backup & Restore and Source & References removed (redundant)
 
   content.appendChild(body);
   overlay.appendChild(content);
@@ -3387,7 +3423,7 @@ setInterval(checkPrayerAlerts, 5000);
     var qv=qEl?qEl.value.trim():''; if(qv) return;
     var appEl=document.getElementById('app'); if(!appEl) return;
     appEl.querySelectorAll('.home-tiles,.home-browse-nav,.home-browse-heading').forEach(function(el){el.remove();});
-    var browse=document.createElement('section'); browse.className='home-browse-nav'+(tab==='home'?'':' is-sticky'); browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
+    var browse=document.createElement('section'); browse.className='home-browse-nav'+(tab==='home'||tab==='all'?'':' is-sticky'); browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
     var browseItems=[['all','সব সূরা'],['Meccan','মাক্কী'],['Medinan','মাদানী'],['juz','পারা']];
     browseItems.forEach(function(pair){
       var b=document.createElement('button'); b.type='button'; b.textContent=pair[1];
@@ -3399,7 +3435,7 @@ setInterval(checkPrayerAlerts, 5000);
       var heading=document.createElement('div');heading.className='home-browse-heading';heading.innerHTML='<h2>পারা অনুযায়ী পড়ুন</h2><p>৩০টি পারার যেকোনোটি নির্বাচন করুন</p>';
       appEl.prepend(heading);appEl.prepend(browse);return;
     }
-    if(tab!=='home'){ appEl.prepend(browse); return; }
+    if(tab!=='home' && tab!=='all'){ appEl.prepend(browse); return; }
     var lastNm='আল-ফাতিহা'; var lastMeta='এখনই কুরআন পড়া শুরু করুন'; var lastAction=function(){ openSurah(1); };
     try{
       if(typeof last!=='undefined' && last){
