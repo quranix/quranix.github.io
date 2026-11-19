@@ -530,6 +530,7 @@ select {
 }
 
 .hero {
+  position: relative;
   background: var(--accent);
   color: #fff;
   border-radius: 14px;
@@ -540,6 +541,30 @@ select {
 
 .hero small {
   opacity: .85;
+}
+
+.hero-date {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 44px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(255,255,255,.18);
+  line-height: 1;
+}
+
+.hero-date .hd-m {
+  display: block;
+  padding: 3px 0;
+  background: rgba(255,255,255,.28);
+  font-size: 10px;
+}
+
+.hero-date .hd-d {
+  display: block;
+  padding: 5px 0 6px;
+  font-size: 18px;
 }
 
 .hero .big {
@@ -652,31 +677,13 @@ select {
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-.settings-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  display: block;
-  padding: 0;
-  background: transparent; /* click-outside only, no dimming */
+.g-settings-panel {
+  color: var(--text);
+  text-align: left;
 }
 
-.settings-content {
-  position: fixed;
-  top: calc(62px + env(safe-area-inset-top) + 8px);
-  right: 12px;
-  width: min(340px, calc(100vw - 24px));
-  max-height: calc(100% - 152px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  box-sizing: border-box;
-  background: var(--tile-bg);
-  color: var(--text);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(0,0,0,.18);
-  text-align: left;
+#gridDropdown.g-settings-view > :not(.g-settings-panel) {
+  display: none;
 }
 
 .settings-modal-header {
@@ -687,9 +694,8 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 12px 12px 10px 16px;
+  padding: 4px 2px 8px;
   background: var(--tile-bg);
-  border-bottom: 1px solid var(--line);
 }
 
 .settings-modal-title {
@@ -728,8 +734,8 @@ select {
 .settings-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px;
+  gap: 6px;
+  padding: 4px 2px 6px;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -1077,11 +1083,14 @@ select {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .p3-tabs button {
-  flex: 1;
-  padding: 8px;
+  flex: 1 0 auto;
+  white-space: nowrap;
+  padding: 8px 12px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
@@ -1270,10 +1279,7 @@ html,body,button,input,select,textarea {
 }
 
 .set-sec {
-  padding: 12px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  padding: 8px 4px;
 }
 
 .set-title {
@@ -1629,7 +1635,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   -webkit-overflow-scrolling: touch;
   z-index: 70;
   background: var(--tile-bg);
-  border: none;
+  border: 1px solid var(--line);
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,.22);
   padding: 6px;
@@ -1666,6 +1672,8 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 
 .g-menu-item {
   margin: 4px 0;
+  border: 0;
+  background: transparent;
 }
 
 .g-menu-item small {
@@ -1761,7 +1769,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   overflow-x: hidden;
   overflow-y: auto;
   background: var(--tile-bg);
-  border: none;
+  border: 1px solid var(--line);
   border-radius: 16px;
   padding: 12px;
   box-shadow: 0 20px 40px rgba(0,0,0,.3);
@@ -2871,6 +2879,15 @@ body.ww-on .ayah .ar .ww-word {
   box-shadow: inset 0 0 0 1px #e67e22;
 }
 
+.hijri-day.event { background: color-mix(in srgb,#e67e22 16%,var(--card)); }
+
+.hijri-day { transition: background .18s ease,border-color .18s ease,transform .15s ease; }
+
+.hijri-day:hover { background: var(--tile-hover); border-color: var(--accent); transform: translateY(-2px); }
+
+.hijri-day.today:hover { background: var(--accent); }
+
+
 .hijri-day .hnum {
   font-weight: 700;
   font-size: 13px;
@@ -2892,6 +2909,39 @@ body.ww-on .ayah .ar .ww-word {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent);
 }
+
+.hijri-upcoming { gap: 12px; padding: 20px 14px; }
+
+.hijri-upcoming .he-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.hijri-upcoming .he-name { font-size: 17px; line-height: 1.3; }
+
+.hijri-upcoming .trk-mini { font-size: 12px; line-height: 1.4; }
+
+.hijri-upcoming .he-date { color: var(--accent); }
+
+.hijri-upcoming .he-side { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.he-ring { position: relative; width: 62px; height: 62px; }
+
+.he-ring svg { display: block; width: 100%; height: 100%; }
+
+.he-ring circle { fill: none; stroke-width: 4; }
+
+.he-ring .he-track { stroke: var(--line); }
+
+.he-ring .he-arc { stroke: var(--accent); stroke-linecap: round; }
+
+.he-ring .he-days { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; font-size: 11px; font-weight: 700; color: var(--accent); }
+
+.he-ring .he-days b { font-size: 16px; }
+
+.he-ring .he-days small { font-size: 8px; font-weight: 400; color: var(--muted); }
+
+.he-ic { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 12px; background: color-mix(in srgb,var(--accent) 12%,transparent); }
+
+.he-ic .ms { font-size: 22px; color: var(--accent); }
+
 
 #pwaBanner {
   display: none;
@@ -5354,7 +5404,7 @@ let calcMethodKey = lsGet("calcMethod", "karachi");
 if (!CALC_METHODS[calcMethodKey]) calcMethodKey = "karachi";
 let tzMode = lsGet("tzMode", "auto"); // "auto" or numeric offset e.g. 6, 5.5, 0
 let dstAdd = lsGet("dstAdd", 0); // 0 or 1 hour
-let prayerSubTab = "times"; // "times" | "qibla" | "alerts"
+let prayerSubTab = "learn"; // "learn" | "times" | "qibla" | "alerts"
 
 /* নামাজের নোটিফিকেশন ও আজান সেটিংস */
 let alertCfg = lsGet("prayerAlerts", {
@@ -5441,6 +5491,23 @@ function calcDay(date, lat, lng, asrF){
   return out;
 }
 
+/* বিভাগ → জেলা (জেলা সদরের আনুমানিক স্থানাঙ্ক) */
+const BD_DISTRICTS = {
+  "ঢাকা": [["ঢাকা", 23.8103, 90.4125], ["গাজীপুর", 24.0023, 90.4264], ["নারায়ণগঞ্জ", 23.6238, 90.5], ["নরসিংদী", 23.9322, 90.7151], ["মুন্সিগঞ্জ", 23.5422, 90.5305], ["মানিকগঞ্জ", 23.8617, 90.0003], ["টাঙ্গাইল", 24.2513, 89.9167], ["কিশোরগঞ্জ", 24.4449, 90.7766], ["ফরিদপুর", 23.607, 89.8429], ["গোপালগঞ্জ", 23.005, 89.8266], ["মাদারীপুর", 23.1641, 90.1897], ["রাজবাড়ী", 23.7574, 89.6445], ["শরীয়তপুর", 23.2423, 90.4348]],
+  "চট্টগ্রাম": [["চট্টগ্রাম", 22.3569, 91.7832], ["কক্সবাজার", 21.4272, 92.0058], ["কুমিল্লা", 23.4607, 91.1809], ["ফেনী", 23.0159, 91.3976], ["ব্রাহ্মণবাড়িয়া", 23.9571, 91.1115], ["নোয়াখালী", 22.8696, 91.0995], ["চাঁদপুর", 23.2332, 90.6713], ["লক্ষ্মীপুর", 22.9425, 90.8412], ["খাগড়াছড়ি", 23.1193, 91.9847], ["রাঙ্গামাটি", 22.7324, 92.2985], ["বান্দরবান", 22.1953, 92.2184]],
+  "রাজশাহী": [["রাজশাহী", 24.3745, 88.6042], ["বগুড়া", 24.8465, 89.3773], ["জয়পুরহাট", 25.0968, 89.0227], ["নওগাঁ", 24.7936, 88.9318], ["নাটোর", 24.4206, 89.0], ["চাঁপাইনবাবগঞ্জ", 24.5965, 88.2775], ["পাবনা", 24.0064, 89.2372], ["সিরাজগঞ্জ", 24.4534, 89.7007]],
+  "খুলনা": [["খুলনা", 22.8456, 89.5403], ["বাগেরহাট", 22.6602, 89.7895], ["চুয়াডাঙ্গা", 23.6401, 88.8418], ["যশোর", 23.1634, 89.2182], ["ঝিনাইদহ", 23.545, 89.1726], ["কুষ্টিয়া", 23.9013, 89.1205], ["মাগুরা", 23.4873, 89.4199], ["মেহেরপুর", 23.7622, 88.6318], ["নড়াইল", 23.1725, 89.5126], ["সাতক্ষীরা", 22.7185, 89.0705]],
+  "বরিশাল": [["বরিশাল", 22.701, 90.3535], ["বরগুনা", 22.1591, 90.1256], ["ভোলা", 22.6859, 90.6482], ["ঝালকাঠি", 22.6406, 90.1987], ["পটুয়াখালী", 22.3596, 90.3298], ["পিরোজপুর", 22.5841, 89.972]],
+  "সিলেট": [["সিলেট", 24.8949, 91.8687], ["হবিগঞ্জ", 24.3745, 91.4156], ["মৌলভীবাজার", 24.4829, 91.7774], ["সুনামগঞ্জ", 25.0658, 91.4073]],
+  "রংপুর": [["রংপুর", 25.7439, 89.2752], ["দিনাজপুর", 25.6217, 88.6354], ["গাইবান্ধা", 25.3297, 89.543], ["কুড়িগ্রাম", 25.8054, 89.6361], ["লালমনিরহাট", 25.9923, 89.2847], ["নীলফামারী", 25.9318, 88.856], ["পঞ্চগড়", 26.3411, 88.5541], ["ঠাকুরগাঁও", 26.0337, 88.4616]],
+  "ময়মনসিংহ": [["ময়মনসিংহ", 24.7471, 90.4203], ["জামালপুর", 24.9375, 89.9378], ["নেত্রকোনা", 24.87, 90.7279], ["শেরপুর", 25.0204, 90.0153]]
+};
+
+/* জেলা → থানা/উপজেলা [নাম, lat, lng]; তথ্য থাকলে থানা অপশন চালু হয় */
+const BD_THANAS = {
+  "ঢাকা": [["মিরপুর",23.8069,90.3687],["গুলশান",23.7925,90.4078],["ধানমন্ডি",23.7461,90.3742],["উত্তরা",23.8759,90.3795],["মতিঝিল",23.7330,90.4172],["মোহাম্মদপুর",23.7662,90.3589],["তেজগাঁও",23.7590,90.3930],["যাত্রাবাড়ী",23.7104,90.4349],["ডেমরা",23.7184,90.4929],["সাভার",23.8583,90.2667],["কেরানীগঞ্জ",23.6981,90.3540]]
+};
+
 const CITIES = [
   ["ঢাকা",23.8103,90.4125],
   ["চট্টগ্রাম",22.3569,91.7832],
@@ -5482,7 +5549,7 @@ function renderPrayerSelectReset(){
   if (!prayerSel) return;
   if (loc.gps) prayerSel.value = "cur";
   else if (loc.manual) prayerSel.value = "manual";
-  else prayerSel.value = String(Math.max(0, CITIES.findIndex(c => c[0] === loc.n)));
+  else prayerSel.value = String(Math.max(0, CITIES.findIndex(c => c[0] === (loc.div || loc.n))));
 }
 
 /* --- কিবলা দিক ও দূরত্ব গণনা (Great Circle Bearing) --- */
@@ -5658,19 +5725,27 @@ function renderAlertsView(){
   app.appendChild(listCard);
 }
 
+function renderPrayerLearnView(){
+  const card = mk("div", "p3-card");
+  card.innerHTML = "<b>{{menu_book}} নামাজ শিক্ষা</b>";
+  card.appendChild(mk("div", "note", "বিষয়বস্তু শীঘ্রই যোগ করা হবে।"));
+  app.appendChild(card);
+}
+
 function renderPrayer(){
   stopCompass();
   showOther("নামাজ ও কিবলা");
 
   // Sub-navigation tabs for Prayer Times, Qibla Compass, and Adhan Alerts
   const subTabs = mk("div", "p3-tabs");
-  [["times","{{mosque}} নামাজের সময়"],["qibla","{{explore}} কিবলা কম্পাস"],["alerts","{{notifications}} আজান অ্যালার্ট"]].forEach(([k, label]) => {
+  [["learn","{{menu_book}} নামাজ শিক্ষা"],["times","{{mosque}} নামাজের সময়"],["qibla","{{explore}} কিবলা কম্পাস"],["alerts","{{notifications}} আজান অ্যালার্ট"]].forEach(([k, label]) => {
     const b = mk("button", prayerSubTab === k ? "on" : "", label);
     b.onclick = () => { prayerSubTab = k; renderPrayer(); };
     subTabs.appendChild(b);
   });
   app.appendChild(subTabs);
 
+  if (prayerSubTab === "learn") return renderPrayerLearnView();
   if (prayerSubTab === "qibla") return renderQiblaView();
   if (prayerSubTab === "alerts") return renderAlertsView();
 
@@ -5681,7 +5756,10 @@ function renderPrayer(){
   hero.appendChild(mk("div","big", nx.l + (nx.at ? " · " + fmtTime(nx.at) : "")));
   const cd = mk("div","cd", nx.at ? "আর " + fmtCd(nx.at - now) + " বাকি" : "");
   hero.appendChild(cd);
-  if (ds) hero.appendChild(mk("small", null, ds));
+  const chip = mk("div", "hero-date"); chip.title = ds; chip.setAttribute("aria-label", ds);
+  chip.appendChild(mk("span", "hd-m", now.toLocaleDateString("bn-BD", { month: "short" })));
+  chip.appendChild(mk("b", "hd-d", now.toLocaleDateString("bn-BD", { day: "numeric" })));
+  hero.appendChild(chip);
   app.appendChild(hero);
 
   // Location & Asr method row
@@ -5702,7 +5780,9 @@ function renderPrayer(){
       return;
     }
     if (v === "cur" || v === "manual") return;
-    const c = CITIES[+v]; loc = { n:c[0], lat:c[1], lng:c[2] }; lsSet("loc", loc); renderPrayer();
+    const c = CITIES[+v]; loc = { n:c[0], lat:c[1], lng:c[2] };
+    if (BD_DISTRICTS[c[0]]) loc.div = c[0];
+    lsSet("loc", loc); renderPrayer();
   };
   const as = document.createElement("select");
   addOpt(as, 2, "আসর: হানাফি"); addOpt(as, 1, "আসর: শাফেয়ি");
@@ -5710,6 +5790,39 @@ function renderPrayer(){
   as.onchange = () => { asrF = +as.value; lsSet("asr", asrF); renderPrayer(); };
   row.appendChild(sel); row.appendChild(as);
   app.appendChild(row);
+
+  // District & Thana (Bangladesh divisions only)
+  if (loc.div && BD_DISTRICTS[loc.div]) {
+    const divC = CITIES.find(c => c[0] === loc.div), dists = BD_DISTRICTS[loc.div];
+    const row3 = mk("div", "row2");
+    const dSel = document.createElement("select");
+    addOpt(dSel, "", "জেলা: বিভাগীয় সদর");
+    dists.forEach((d, i) => addOpt(dSel, i, d[0]));
+    dSel.value = loc.dist ? String(dists.findIndex(d => d[0] === loc.dist)) : "";
+    dSel.onchange = () => {
+      if (dSel.value === "") loc = { n: divC[0], lat: divC[1], lng: divC[2], div: loc.div };
+      else { const d = dists[+dSel.value]; loc = { n: d[0], lat: d[1], lng: d[2], div: loc.div, dist: d[0] }; }
+      lsSet("loc", loc); renderPrayer();
+    };
+    const tSel = document.createElement("select");
+    const ths = loc.dist ? BD_THANAS[loc.dist] : null;
+    if (ths) {
+      addOpt(tSel, "", "থানা: জেলা সদর");
+      ths.forEach((t, i) => addOpt(tSel, i, t[0]));
+      tSel.value = loc.thana ? String(ths.findIndex(t => t[0] === loc.thana)) : "";
+      tSel.onchange = () => {
+        const dd0 = dists.find(d => d[0] === loc.dist);
+        if (tSel.value === "") loc = { n: dd0[0], lat: dd0[1], lng: dd0[2], div: loc.div, dist: loc.dist };
+        else { const t = ths[+tSel.value]; loc = { n: t[0], lat: t[1], lng: t[2], div: loc.div, dist: loc.dist, thana: t[0] }; }
+        lsSet("loc", loc); renderPrayer();
+      };
+    } else {
+      addOpt(tSel, "", loc.dist ? "থানা: তথ্য নেই" : "থানা: আগে জেলা বাছুন");
+      tSel.disabled = true;
+    }
+    row3.appendChild(dSel); row3.appendChild(tSel);
+    app.appendChild(row3);
+  }
   renderPrayerSelectReset();
 
   // Manual Location input box (hidden by default unless selected)
@@ -6229,28 +6342,31 @@ function openHelpModal(isFirstTime){
 
 // Comprehensive Settings Modal (Phase 4)
 function openSettingsModal() {
-  // Remove any existing settings overlay so it never opens twice
-  document.querySelectorAll('.modal-overlay.settings-overlay').forEach(function(el){ el.remove(); });
-  const previousFocus = document.activeElement;
-  const overlay = document.createElement("div"); overlay.className = "modal-overlay settings-overlay";
-  const content = document.createElement("div"); content.className = "settings-content"; content.setAttribute("role", "dialog"); content.setAttribute("aria-modal", "true"); content.setAttribute("aria-label", "কাস্টমাইজেশন"); content.tabIndex = -1;
+  const dd = document.getElementById("gridDropdown"), gm = document.getElementById("gridMenu");
+  if (!dd) return;
+  dd.querySelectorAll(".g-settings-panel").forEach(function(el){ el.remove(); });
+  if (!dd.classList.contains("open") && gm) gm.click();
+  const content = document.createElement("div"); content.className = "g-settings-panel"; content.setAttribute("role", "group"); content.setAttribute("aria-label", "কাস্টমাইজেশন");
 
   const header = document.createElement("div"); header.className = "settings-modal-header";
   const backBtn = document.createElement("button"); backBtn.type = "button"; backBtn.className = "close-btn"; backBtn.textContent = "{{arrow_back}}"; backBtn.setAttribute("aria-label", "পেছনে যান");
   header.appendChild(backBtn);
-  header.appendChild(mk("h3", "settings-modal-title", "কাস্টমাইজেশন"));
+  const sTitle = mk("h3", "settings-modal-title", " কাস্টমাইজেশন");
+  const gearSrc = dd.querySelector('[data-popup="settings"] svg');
+  if (gearSrc) sTitle.insertBefore(gearSrc.cloneNode(true), sTitle.firstChild);
+  header.appendChild(sTitle);
   const close = document.createElement("button"); close.type = "button"; close.className = "close-btn"; close.textContent = "{{close}}";
+  const backToMenu = () => { content.remove(); dd.classList.remove("g-settings-view"); };
   const dismissSettings = () => {
-    if (!overlay.isConnected) return;
-    overlay.remove();
     document.removeEventListener("keydown", onSettingsKeydown);
-    if (previousFocus && previousFocus.isConnected) previousFocus.focus();
+    backToMenu();
+    if (dd.classList.contains("open") && gm) gm.click();
   };
   const onSettingsKeydown = (e) => {
     if (e.key === "Escape") { e.preventDefault(); dismissSettings(); }
   };
-  close.setAttribute("aria-label", "সেটিংস বন্ধ করুন"); close.onclick = dismissSettings;
-  backBtn.onclick = () => { dismissSettings(); const gm = document.getElementById("gridMenu"); if (gm) gm.click(); };
+  close.setAttribute("aria-label", "বন্ধ করুন"); close.onclick = dismissSettings;
+  backBtn.onclick = backToMenu;
   header.appendChild(close);
   content.appendChild(header);
 
@@ -6380,9 +6496,10 @@ function openSettingsModal() {
   body.appendChild(recSec);
 
   content.appendChild(body);
-  overlay.appendChild(content);
-  overlay.onclick = (e) => { if (e.target === overlay) dismissSettings(); };
-  document.body.appendChild(overlay); document.addEventListener("keydown", onSettingsKeydown); close.focus();
+  dd.classList.add("g-settings-view");
+  dd.appendChild(content);
+  dd.scrollTop = 0;
+  document.addEventListener("keydown", onSettingsKeydown);
 }
 
 function checkPrayerAlerts(){
@@ -6450,6 +6567,7 @@ setInterval(checkPrayerAlerts, 5000);
   window.closeGridPopup=closePopup;
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && overlay.classList.contains('open')) closePopup(); });
   function openPopup(type){
+    if(type==='settings'){ openSettingsModal(); return; }
     closeDropdown();
     box.classList.remove('wide','wide-fixed');
     overlay.classList.add('open');
@@ -6480,7 +6598,7 @@ setInterval(checkPrayerAlerts, 5000);
     var ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
     var android=/Android/i.test(navigator.userAgent);
     var mobile=ios||android;
-    var title=installed?'Quranix ইনস্টল করা আছে':'Quranix অ্যাপ ইনস্টল';
+    var title='{{smartphone}} Quranix অ্যাপ';
     var mobileSteps=ios
       ? '<div class="pp-mini">Safari-তে Share <b>{{share}}</b> → Add to Home Screen → Add চাপুন। iPhone-এ ব্রাউজারের নিজস্ব নিয়মে ইনস্টল করতে হয়।</div>'
       : '<div class="pp-mini">Install বাটনে চাপুন। প্রম্পট না এলে Chrome-এর ⋮ মেনু → Add to Home screen নির্বাচন করুন।</div>';
@@ -7522,7 +7640,7 @@ setInterval(checkPrayerAlerts, 5000);
       if(packages[k].status==='downloading' && (!packageJob || packageJob.finished)) packages[k].status='incomplete';
     });
     savePackageMeta(packages);
-    var html='<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>{{download}} ডাউনলোড ম্যানেজার</h3>'+ 
+    var html='<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>{{download}} ডাউনলোড</h3>'+ 
       '<span id="qxDlMarker" hidden></span><div class="pp-mini">আরবি পাঠ ও মুহিউদ্দীন খানের অনুবাদ অ্যাপের সাথেই অফলাইনে আছে। ডিফল্ট তাফসির (ফাতহুল মাজীদ) ইন্টারনেট পেলে নিজে থেকেই ডাউনলোড হয়। নিচের প্যাকেজগুলো ডাউনলোড করলে অনুবাদ, তাফসির, তিলাওয়াত ও হাদিস ইন্টারনেট ছাড়াই চলবে। ডাউনলোড মাঝপথে থামলে পরে "আবার চেষ্টা" দিয়ে বাকি অংশ চালানো যাবে।</div>';
     var isDone=function(k){return packages[k]&&packages[k].status==='complete';};
     var card=function(btnId,title,note,btnText){return '<div class="dl-item" style="display:block"><b>'+title+'</b><small style="display:block;margin:4px 0 8px">'+note+'</small><button class="pp-btn" id="'+btnId+'">{{download}} '+btnText+'</button></div>';};
@@ -8061,7 +8179,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
   }
   window.quranixHijriParts=hijriParts;
   function bnNum(n){ return (typeof toBn==='function'?toBn(n):String(n)); }
-  function fmtGreg(d){ return d.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'}); }
+  function fmtGreg(d){ return d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }
   function hijriStr(date){ var h=hijriParts(date); if(!h) return '—'; return bnNum(h.day)+' '+MONTHS_BN[h.month-1]+' '+bnNum(h.year)+' হিজরি'; }
   function findNextHijri(m, day){
     var today=new Date(); today.setHours(0,0,0,0);
@@ -8072,16 +8190,16 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     return null;
   }
   var EVENTS=[
-    {m:1,d:1,name:'হিজরি নববর্ষ',desc:'নতুন হিজরি বছরের শুরু'},
-    {m:1,d:10,name:'আশুরা',desc:'মুহাররমের ১০ তারিখ — রমজান রাখা সুন্নত'},
-    {m:3,d:12,name:'ঈদে মিলাদুন্নবী ﷺ',desc:'রাসূল ﷺ-এর জন্মদিন'},
-    {m:7,d:27,name:'লাইলাতুল মেরাজ',desc:'মেরাজের রাত — ২৭ রজব'},
-    {m:8,d:15,name:'লাইলাতুল বরাত',desc:'১৫ শাবান — ক্ষমার রাত'},
-    {m:9,d:1,name:'রমজান শুরু',desc:'রহমত, মাগফিরাত, নাজাতের মাস'},
-    {m:9,d:27,name:'লাইলাতুল কদর',desc:'২৭ রমজান — হাজার মাসের চেয়ে উত্তম'},
-    {m:10,d:1,name:'ঈদুল ফিতর',desc:'রমজান শেষে ঈদ'},
-    {m:12,d:9,name:'আরাফার দিন',desc:'৯ জিলহজ — হজের মূল দিন, রমজান সুন্নত'},
-    {m:12,d:10,name:'ঈদুল আজহা',desc:'কুরবানির ঈদ'},
+    {m:1,d:1,ic:'event',name:'হিজরি নববর্ষ',desc:'নতুন হিজরি বছরের শুরু'},
+    {m:1,d:10,ic:'wb_twilight',name:'আশুরা',desc:'মুহাররমের ১০ তারিখ — রমজান রাখা সুন্নত'},
+    {m:3,d:12,ic:'auto_awesome',name:'ঈদে মিলাদুন্নবী ﷺ',desc:'রাসূল ﷺ-এর জন্মদিন'},
+    {m:7,d:27,ic:'nights_stay',name:'লাইলাতুল মেরাজ',desc:'মেরাজের রাত — ২৭ রজব'},
+    {m:8,d:15,ic:'bedtime',name:'লাইলাতুল বরাত',desc:'১৫ শাবান — ক্ষমার রাত'},
+    {m:9,d:1,ic:'calendar_month',name:'রমজান শুরু',desc:'রহমত, মাগফিরাত, নাজাতের মাস'},
+    {m:9,d:27,ic:'stars',name:'লাইলাতুল কদর',desc:'২৭ রমজান — হাজার মাসের চেয়ে উত্তম'},
+    {m:10,d:1,ic:'star',name:'ঈদুল ফিতর',desc:'রমজান শেষে ঈদ'},
+    {m:12,d:9,ic:'wb_sunny',name:'আরাফার দিন',desc:'৯ জিলহজ — হজের মূল দিন, রমজান সুন্নত'},
+    {m:12,d:10,ic:'mosque',name:'ঈদুল আজহা',desc:'কুরবানির ঈদ'},
   ];
   function nextEvent(){
     var best=null;
@@ -8112,7 +8230,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
       return;
     }
     var top=document.createElement('div'); top.className='hijri-top';
-    top.innerHTML='<small>আজ · '+fmtGreg(new Date())+'</small><div class="big">{{nights_stay}} '+hijriStr(new Date())+'</div><div><small>হিজরি ক্যালেন্ডার (উম্মুল কুরা) — চাঁদ দেখার উপর ১ দিন এদিক-ওদিক হতে পারে</small></div>';
+    top.innerHTML='<small>আজ · '+fmtGreg(new Date())+'</small><div class="big">{{nights_stay}} '+hijriStr(new Date())+'</div>';
     appEl.appendChild(top);
     // Next event
     var ne=nextEvent();
@@ -8140,21 +8258,25 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
       var cell=document.createElement('div'); cell.className='hijri-day'+(hh2.day===h.day?' today':'');
       var evToday=EVENTS.filter(function(ev){ return ev.m===hh2.month && ev.d===hh2.day; });
       if(evToday.length) cell.classList.add('event');
-      cell.innerHTML='<div class="hnum">'+bnNum(hh2.day)+'</div><div>'+cur.toLocaleDateString('bn-BD',{day:'numeric',month:'short'})+'</div>'+(evToday.length?'<div style="font-size:9px;color:#e67e22">● '+evToday[0].name+'</div>':'');
+      cell.innerHTML='<div class="hnum">'+bnNum(hh2.day)+'</div><div>'+cur.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</div>'+(evToday.length?'<div style="font-size:9px;color:#e67e22">● '+evToday[0].name+'</div>':'');
       (function(evList, date){ cell.onclick=function(){ if(evList.length){ if(typeof showToast==='function') showToast(evList[0].name+' — '+fmtGreg(date)+' · '+evList[0].desc); } }; })(evToday, new Date(cur));
       cal.appendChild(cell);
       cur.setDate(cur.getDate()+1);
     }
     appEl.appendChild(cal);
-    var note=document.createElement('div'); note.className='trk-mini'; note.style.textAlign='center'; note.textContent='ক্যালেন্ডারের তারিখ চাঁদ দেখার উপর নির্ভর করে ১ দিন এদিক-ওদিক হতে পারে — রমজান / ঈদের চূড়ান্ত তারিখের জন্য স্থানীয় ঘোষণা দেখো।';
+    var note=document.createElement('div'); note.className='trk-mini'; note.style.textAlign='center'; note.textContent='আরবি মাসের তারিখ চাঁদ দেখার উপর নির্ভরশীল — রমজান / ঈদের চূড়ান্ত তারিখের জন্য স্থানীয় ঘোষণা দেখো।';
     appEl.appendChild(note);
     // All events sorted
-    var evHead=document.createElement('h3'); evHead.style.cssText='margin:14px 0 4px;color:var(--accent)'; evHead.textContent='{{event}} আসছে ইসলামিক দিনগুলো';
+    var evHead=document.createElement('h3'); evHead.style.cssText='margin:14px 0 4px;color:var(--accent)'; evHead.textContent='{{event}} গুরুত্বপূর্ণ আগামী দিনগুলো';
     appEl.appendChild(evHead);
     var sorted=EVENTS.map(function(ev){ var f=findNextHijri(ev.m, ev.d); return {ev:ev, date:f?f.date:null, days:f?f.days:999}; }).sort(function(a,b){ return a.days-b.days; });
     sorted.forEach(function(it){
-      var row=document.createElement('div'); row.className='hijri-event'+(it.days===0?' next':'');
-      row.innerHTML='<div><b>'+it.ev.name+'</b><div class="trk-mini">'+it.ev.desc+' · হিজরি '+bnNum(it.ev.d)+' '+MONTHS_BN[it.ev.m-1]+'</div></div><div style="text-align:center"><b>'+(it.date?fmtGreg(it.date):'তারিখ অনুপলব্ধ')+'</b><div class="trk-mini">'+(it.days===0?'আজই!':bnNum(it.days)+' দিন বাকি')+'</div></div>';
+      var row=document.createElement('div'); row.className='hijri-event hijri-upcoming'+(it.days===0?' next':'');
+      var C=119.38, frac=Math.min(it.days,354)/354;
+      row.innerHTML='<div class="he-main"><b class="he-name">'+it.ev.name+'</b><div class="trk-mini">'+it.ev.desc+'</div><div class="trk-mini he-date">'+(it.date?fmtGreg(it.date):'—')+' · হিজরি '+bnNum(it.ev.d)+' '+MONTHS_BN[it.ev.m-1]+'</div></div>'
+        +'<div class="he-side"><div class="he-ring"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="he-track" cx="22" cy="22" r="19"/><circle class="he-arc" cx="22" cy="22" r="19" transform="translate(44,0) scale(-1,1) rotate(-90 22 22)" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-frac)).toFixed(2)+'"/></svg>'
+        +'<span class="he-days">'+(it.days===0?'আজই!':'<b>'+bnNum(it.days)+'</b><small>দিন বাকি</small>')+'</span></div>'
+        +'<span class="he-ic">{{'+it.ev.ic+'}}</span></div>';
       appEl.appendChild(row);
     });
     const mini = document.getElementById('gHijriMini'); if(mini) mini.textContent=h?hijriStr(new Date()).slice(0,12)+' ›':'›';
