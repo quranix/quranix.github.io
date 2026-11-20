@@ -4013,6 +4013,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 
 
+/* Hijri special-day details popup */
+.hijri-day.event { cursor:pointer; }
+.hijri-upcoming { cursor:pointer; }
+.hijri-info-overlay{position:fixed;inset:0;z-index:10050;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(3px)}
+.hijri-info-overlay.open{display:flex}
+.hijri-info-box{position:relative;width:min(100%,560px);max-height:min(84dvh,760px);overflow:auto;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:18px;padding:22px 20px 20px;box-shadow:0 18px 60px rgba(0,0,0,.32);overscroll-behavior:contain}
+.hijri-info-close{position:absolute;top:12px;right:12px;margin:0;width:34px;height:34px;border:1px solid var(--line);border-radius:50%;background:var(--tile-hover);color:var(--text);font-size:20px;line-height:1;display:grid;place-items:center;cursor:pointer}
+.hijri-info-title{font-size:21px;font-weight:800;color:var(--accent);margin:2px 42px 5px 0;line-height:1.35}
+.hijri-info-date{font-size:12px;color:var(--muted);margin-bottom:14px}
+.hijri-info-section{margin:13px 0 0;padding-top:11px;border-top:1px solid var(--line)}
+.hijri-info-section b{display:block;font-size:13px;color:var(--accent);margin-bottom:5px}
+.hijri-info-section p{font-size:13px;line-height:1.75;margin:0;white-space:pre-line}
+.hijri-info-source{font-size:11px!important;color:var(--muted);font-style:italic;line-height:1.65!important}
+.hijri-day.event:focus-visible,.hijri-upcoming:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:420px){.hijri-info-overlay{padding:10px;align-items:flex-end}.hijri-info-box{max-height:88dvh;border-radius:18px 18px 12px 12px;padding:17px}.hijri-info-title{font-size:19px}}
+
+
 </style>
 <meta name="theme-color" content="#0f6b4f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -4711,7 +4728,7 @@ window.qxSourcesHtml = function(){
       'EveryAyah.com থেকে (অনলাইন, অথবা ডাউনলোড করে অফলাইন) · ' + A('https://everyayah.com'),
       'কারি: সৌদ আশ-শুরাইম (ডিফল্ট), মিশারি আল-আফাসি, আব্দুল বাসিত (মুরাত্তাল), আব্দুর রহমান আস-সুদাইস, মাহের আল-মুআইকলি',
       'প্রতিটি কারির সম্পূর্ণ অডিও ডাউনলোড ম্যানেজার থেকে আলাদাভাবে ডাউনলোড করা যায়'
-    ]],
+        ]],
     ['ডাউনলোড করা ডেটা', [
       'ডাউনলোড করা অনুবাদ, তাফসির, হাদিস ও অডিও শুধু এই ডিভাইসের অ্যাপ/ব্রাউজার স্টোরেজে থাকে। ডাউনলোড ম্যানেজার থেকে যেকোনো সময় মুছে ফেলা যায়।'
     ]],
@@ -5796,12 +5813,417 @@ function renderAlertsView(){
   app.appendChild(listCard);
 }
 
+
+// ===== NAMAZ-E-NABVI (S) - Sheikh Albani - Chapter Wise Data for Quranix =====
+// Only Text Mode - CHOCR not needed - using FULL TEXT concept
+// ===== NAMAZ-E-NABVI (S) - 15 + 1 Source = 16 Chapters =====
+const NAMAZ_NABVI_DATA = [
+{
+    id: "vumika",
+    no: 1,
+    title: "ভূমিকা",
+    subtitle: "গ্রন্থ পরিচিতি ও সালাতের গুরুত্ব",
+    topics: ["গ্রন্থের পরিচয়", "লেখক ও সংক্ষিপ্ত গ্রন্থের পরিচিতি", "সালাতের গুরুত্ব", "রাসূল ﷺ-এর সালাত অনুসরণের ভিত্তি"],
+    ar: "صَلُّوا كَمَا رَأَيْتُمُونِي أُصَلِّي",
+    bn_meaning: "তোমরা সেভাবে সালাত আদায় করো যেভাবে আমাকে দেখেছো",
+    content: [
+      "শায়খ আলবানী (রহঃ) বড় গ্রন্থ 'সিফাতু সালাতিন নবী ﷺ' এর সংক্ষিপ্ত রূপ করেছেন যাতে সাধারণ মানুষ বুঝতে পারে।",
+      "বৈশিষ্ট্য: কোনো মাযহাব নয়, প্রতিটি সহীহ হাদীস গ্রহণ। প্রতিটি মাসআলায় রুকন, শর্ত, ওয়াজিব, সুন্নাত উল্লেখ।",
+      "আল্লাহ বলেন: 'নিশ্চয়ই সালাত মুমিনদের উপর নির্দিষ্ট সময়ে ফরজ' (নিসা ১০৩)।",
+      "বিষয়বস্তু ১৫টি মূল অধ্যায়ে সাজানো হয়েছে; ১৬তম অংশে তথ্যসূত্র ও উৎসের নোট রয়েছে।"
+    ],
+    hadith: { text: "صَلُّوا كَمَا رَأَيْتُمُونِي أُصَلِّي", ref: "বুখারী ৬৩১" }
+  },
+{
+    id: "qibla",
+    no: 2,
+    title: "কিবলা ও সুতরাহ",
+    subtitle: "সালাতে কিবলামুখী হওয়া ও সুতরাহ",
+    topics: ["কিবলামুখী হওয়া", "সুতরাহর বিধান ও অবস্থান", "সুতরাহ ও সিজদার স্থানের দূরত্ব", "সুতরাহর সামনে দিয়ে অতিক্রমের আলোচনা"],
+    ar: "فَوَلِّ وَجْهَكَ شَطْرَ الْمَسْجِدِ الْحَرَامِ",
+    bn_meaning: "তোমার মুখ মসজিদে হারামের দিকে ফেরাও",
+    content: [
+      "ফরজ-নফল সর্বাবস্থায় কা'বার দিকে মুখ করা রুকন। কা'বা দেখলে সরাসরি, না দেখলে দিকের দিকে।",
+      "সুতরাহ ওয়াজিব — 'لَا تُصَلُّوا إِلَّا إِلَى سُتْرَةٍ'। সুতরাহ ও সিজদার মাঝে ছাগল যাওয়ার ফাঁক।",
+      "সামনে দিয়ে যাওয়া হারাম, এমনকি মসজিদে হারামেও।"
+    ],
+    hadith: { text: "لَا تُصَلُّوا إِلَّا إِلَى سُتْرَةٍ", ref: "ইবনে খুযাইমা সহীহ ৭৪" }
+  },
+{
+    id: "qiyam",
+    no: 3,
+    title: "দাঁড়ানো (কিয়াম)",
+    subtitle: "ফরজ সালাতে কিয়াম ও অক্ষমতার অবস্থা",
+    topics: ["ফরজ সালাতে দাঁড়ানো", "অসুস্থতা বা অক্ষমতায় সালাত", "নফল সালাতে বসে আদায়", "জুতা পরে বা খালি পায়ে সালাত"],
+    ar: "وَقُومُوا لِلَّهِ قَانِتِينَ",
+    content: [
+      "ফরজে দাঁড়ানো রুকন। অসুস্থ, ভয়, জাহাজ/প্লেনে বসা জায়েজ।",
+      "নফলে বসে জায়েজ, দাঁড়িয়ে উত্তম।",
+      "জুতা পরে/খালি পায়ে দুইটাই জায়েজ।"
+    ],
+    hadith: { text: "صَلِّ قَائِمًا فَإِنْ لَمْ تَسْتَطِعْ فَقَاعِدًا", ref: "বুখারী ১১১৭" }
+  },
+{
+    id: "niyyah",
+    no: 4,
+    title: "নিয়ত",
+    subtitle: "নিয়তের স্থান ও সালাতে তার ভূমিকা",
+    topics: ["নিয়তের অর্থ ও গুরুত্ব", "নিয়তের স্থান: অন্তর", "মুখে নিয়ত উচ্চারণের আলোচনা"],
+    ar: "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ",
+    content: [
+      "নিয়ত ফরজ, স্থান অন্তরে। 'নাওয়াইতুয়ান' বিদআত।",
+      "রাসূল ﷺ, সাহাবী, চার ইমাম কেউ মুখে নিয়ত পড়েন নি।"
+    ],
+    hadith: { text: "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ", ref: "বুখারী ১" }
+  },
+{
+    id: "takbir",
+    no: 5,
+    title: "তাকবীরে তাহরীমা ও হাত বাঁধা",
+    subtitle: "তাকবীর, রাফউল ইয়াদাইন ও হাতের অবস্থান",
+    topics: ["তাকবীরে তাহরীমা", "তাকবীরের সময় হাত তোলা", "রুকুতে যাওয়া ও ওঠার সময় রাফউল ইয়াদাইন", "দাঁড়ানো অবস্থায় হাত বাঁধা"],
+    ar: "اللَّهُ أَكْبَرُ",
+    content: [
+      "তাকবীর রুকন। রাফউল ইয়াদাইন কাঁধ/কান বরাবর সুন্নাত।",
+      "হাত বাঁধা বুকের উপর — নাভির নিচের হাদীস জঈফ।"
+    ],
+    hadith: { text: "كَانَ يَرْفَعُ يَدَيْهِ حَذْوَ مَنْكِبَيْهِ", ref: "বুখারী ২৫৬" }
+  },
+{
+    id: "qiraah",
+    no: 6,
+    title: "কিরাত ও আমীন",
+    subtitle: "সূরা ফাতিহা, অন্যান্য কিরাত ও আমীন",
+    topics: ["সানা ও কিরাতের শুরু", "সূরা ফাতিহা পাঠ", "আমীন বলার পদ্ধতি", "ইমাম ও মুক্তাদির কিরাত", "বিভিন্ন সালাতে কিরাত"],
+    ar: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
+    content: [
+      "ফাতিহা প্রতি রাকাতে রুকন। থেমে থেমে পড়া সুন্নাত।",
+      "আমীন জোরে বলা সুন্নাত, ফেরেশতার আমীনের সাথে মিললে গুনাহ মাফ।",
+      "জোরে কেরাতে মুক্তাদী চুপ, আস্তে কেরাতে ফাতিহা পড়বে।"
+    ],
+    hadith: { text: "لَا صَلَاةَ لِمَنْ لَمْ يَقْرَأْ بِفَاتِحَةِ الْكِتَابِ", ref: "বুখারী ৭৫৬" }
+  },
+{
+    id: "ruku",
+    no: 7,
+    title: "রুকু ও রুকু থেকে ওঠা",
+    subtitle: "রুকু, কওমা ও সংশ্লিষ্ট যিকর",
+    topics: ["রুকুতে যাওয়ার পদ্ধতি", "রুকুর অবস্থান ও স্থিরতা", "রুকুর তাসবীহ ও দোয়া", "রুকু থেকে ওঠা", "রুকুর পর সোজা দাঁড়ানো (কওমা)"],
+    ar: "سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+    content: [
+      "রুকু রুকন, পিঠ-মাথা সমান্তরাল, হাত হাঁটুতে দৃঢ়।",
+      "তাসবীহ: সুবহানা রব্বিয়াল আজীম ৩ বার ওয়াজিব।",
+      "রুকুতে কুরআন নিষিদ্ধ। স্থিরতা ফরজ।"
+    ],
+    hadith: { text: "سَوَّى ظَهْرَهُ حَتَّى لَو صُبَّ عَلَيْهِ الْمَاءُ لَاسْتَقَرَّ", ref: "ইবনে মাজাহ সহীহ" }
+  },
+{
+    id: "sujud",
+    no: 8,
+    title: "সিজদা ও দুই সিজদার মাঝের বসা",
+    subtitle: "সিজদার অঙ্গ, ভঙ্গি ও যিকর",
+    topics: ["সাত অঙ্গে সিজদা", "হাত, কনুই ও শরীরের অবস্থান", "সিজদার তাসবীহ ও দোয়া", "দুই সিজদার মধ্যবর্তী বসা", "দুই সিজদার মাঝের দোয়া"],
+    ar: "سُبْحَانَ رَبِّيَ الْأَعْلَى",
+    content: [
+      "৭ অঙ্গ: কপাল+নাক, দুই হাত, দুই হাঁটু, দুই পায়ের আঙ্গুল।",
+      "হাত কাঁধ বরাবর, কনুই উঁচু, পেট উরু থেকে আলাদা।",
+      "সুবহানা রব্বিয়াল আ'লা ৩ বার ওয়াজিব, সিজদায় বেশি দু'আ সুন্নাত।"
+    ],
+    hadith: { text: "أُمِرْتُ أَنْ أَسْجُدَ عَلَى سَبْعَةِ أَعْظُمٍ", ref: "বুখারী ৮০৯" }
+  },
+{
+    id: "second_rakah",
+    no: 9,
+    title: "দ্বিতীয় রাকাত ও প্রথম বৈঠক",
+    subtitle: "প্রথম তাশাহহুদ ও বৈঠকের পদ্ধতি",
+    topics: ["দ্বিতীয় রাকাতের কিরাত", "প্রথম তাশাহহুদ", "ইফতিরাশ পদ্ধতিতে বসা", "তাশাহহুদের পাঠ", "বৈঠকে আঙুলের ইশারা"],
+    ar: "التَّحِيَّاتُ لِلَّهِ",
+    content: [
+      "দ্বিতীয় রাকাত প্রথমের মতো, ছোট।",
+      "ইফতিরাশ: বাম পা বিছিয়ে বসা, ডান পা খাড়া।",
+      "দুই সিজদার মাঝে দু'আ: রব্বিগফিরলী।"
+    ],
+    hadith: { text: "يَفْرِشُ رِجْلَهُ الْيُسْرَى", ref: "বুখারী ৮২৮" }
+  },
+{
+    id: "third_fourth",
+    no: 10,
+    title: "তৃতীয় ও চতুর্থ রাকাত",
+    subtitle: "পরবর্তী রাকাতে ওঠা ও কিরাত",
+    topics: ["তৃতীয় রাকাতে ওঠা", "চতুর্থ রাকাত", "শেষ দুই রাকাতের কিরাত", "রাকাতে ওঠার সময় হাত তোলার আলোচনা"],
+    ar: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+    content: [
+      "শুধু ফাতিহা সুন্নাত, অন্য সূরা না। কখনো পড়েছেন তাই মাঝে মাঝে জায়েজ।",
+      "তাকবীর দিয়ে উঠবে, হাত তোলা সুন্নাত।"
+    ],
+    hadith: { text: "يَجْعَلُ فِي الْأُخْرَيَيْنِ فَاتِحَةَ الْكِتَابِ", ref: "মুসলিম ৪৫১" }
+  },
+{
+    id: "qunut",
+    no: 11,
+    title: "কুনুতে নাযেলা",
+    subtitle: "বিপদ-আপদে ফরজ সালাতে কুনুতের আলোচনা",
+    topics: ["কুনুতে নাযেলার পরিচয়", "কোন পরিস্থিতিতে কুনুতে নাযেলা পড়া হয়", "ফরজ সালাতে কুনুতের অবস্থান", "কুনুতের সময়কাল ও সংশ্লিষ্ট মতামত"],
+    ar: "اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ",
+    content: [
+      "উর্দু পাঠের সূচিতে পাঁচ ওয়াক্ত সালাতের মধ্যে কুনুতে নাযেলার আলোচনা উল্লেখ আছে।",
+      "এই অধ্যায়ে কুনুতে নাযেলার প্রেক্ষাপট, সালাতে এর অবস্থান এবং সংশ্লিষ্ট আলোচনাগুলো থাকবে।",
+      "বিতরের কুনুত আলাদা বিষয়; সেটি ১৫তম অধ্যায়ে রাখা হয়েছে।"
+    ],
+  },
+{
+    id: "final_tashahhud",
+    no: 12,
+    title: "শেষ তাশাহহুদ ও তাওয়াররুক",
+    subtitle: "শেষ বৈঠক, বসার ধরন ও তাশাহহুদ",
+    topics: ["শেষ বৈঠক", "তাওয়াররুক পদ্ধতিতে বসা", "আত্তাহিয়্যাতু ও তাশাহহুদের পাঠ", "শাহাদাত আঙুলের ইশারা ও দৃষ্টির অবস্থান"],
+    ar: "التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ",
+    content: [
+      "তাওয়াররুক: বাম পা ডান পায়ের নিচে, নিতম্বে বসা। ৩/৪ রাকাতে, ২ রাকাতে ইফতিরাশ।",
+      "আত্তাহিয়্যাতু, শাহাদাত আঙ্গুলে ইশারা, দৃষ্টি আঙ্গুলে।"
+    ],
+    hadith: { text: "قَدَّمَ رِجْلَهُ الْيُسْرَى", ref: "বুখারী ৮২৮" }
+  },
+{
+    id: "durood",
+    no: 13,
+    title: "দরূদ ও সালামের আগের দোয়া",
+    subtitle: "দরূদে ইবরাহীম ও মাসনূন আশ্রয় প্রার্থনা",
+    topics: ["তাশাহহুদের পর দরূদ", "দরূদে ইবরাহীমের পাঠ", "চার বিষয় থেকে আল্লাহর কাছে আশ্রয় প্রার্থনা", "সালামের আগে অন্যান্য দোয়া"],
+    ar: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ",
+    content: [
+      "দরূদে ইবরাহীম এবং জাহান্নাম, কবর, জীবন-মৃত্যুর ফিতনা ও দাজ্জালের ফিতনা থেকে আশ্রয় প্রার্থনার আলোচনা।",
+      "এরপর যেকোনো দু'আ জায়েজ।"
+    ],
+    hadith: { text: "فَلْيَتَعَوَّذْ بِاللَّهِ مِنْ أَرْبَعٍ", ref: "মুসলিম ৫৮৮" }
+  },
+{
+    id: "salam",
+    no: 14,
+    title: "সালাম",
+    subtitle: "সালাত সমাপ্ত করার পদ্ধতি",
+    topics: ["সালাম ফেরানোর পাঠ", "ডানে ও বামে সালাম", "সালামের সময় মুখ ফেরানোর পদ্ধতি", "সালামের পরের যিকর"],
+    ar: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+    content: [
+      "ডানে ও বামে সালাম ফেরানোর পদ্ধতি এবং এ বিষয়ে বর্ণিত মতামত।",
+      "মুখ ঘুরানো সুন্নাত, হাত দিয়ে ইশারা নিষিদ্ধ। সালামের পর যিকর।"
+    ],
+    hadith: { text: "تَحْرِيمُهَا التَّكْبِيرُ وَتَحْلِيلُهَا التَّسْلِيمُ", ref: "আবু দাউদ সহীহ" }
+  },
+{
+    id: "witr",
+    no: 15,
+    title: "বিতর ও সাহু সিজদা",
+    subtitle: "বিতর সালাত ও ভুলের জন্য সাহু সিজদা",
+    topics: ["বিতর সালাতের রাকাত ও পদ্ধতি", "বিতরের কুনুত", "সাহু সিজদার কারণ", "সাহু সিজদার পদ্ধতি"],
+    ar: "الْوِتْرُ حَقٌّ",
+    content: [
+      "বিতর ১/৩/৫/৭/৯, উত্তম ৩/৫। একটানা ৩, মাঝে তাশাহহুদ নেই — বেশি সহীহ।",
+      "সাহু সিজদার কারণ, সময় ও আদায়ের পদ্ধতি—গ্রন্থে আলোচিত বিবরণ অনুযায়ী।"
+    ],
+    hadith: { text: "الْوِتْرُ حَقٌّ", ref: "আবু দাউদ ১৪১৬ সহীহ" }
+  },
+{
+    id: "source",
+    no: 16,
+    title: "তথ্যসূত্র ও উৎস",
+    subtitle: "মূল গ্রন্থ, উর্দু পাঠ ও যাচাই-সংক্রান্ত নোট",
+    topics: ["মূল গ্রন্থ ও লেখক", "উর্দু অনুবাদ/সংস্করণের পরিচয়", "ব্যবহৃত ডিজিটাল পাঠ ও OCR-এর সীমাবদ্ধতা", "হাদিস ও অন্যান্য রেফারেন্স"],
+    ar: "وَمَا آتَاكُمُ الرَّسُولُ فَخُذُوهُ",
+    bn_meaning: "রাসূল যা দেন তা গ্রহণ করো — হাশর ৭",
+    content: [
+      "মূল গ্রন্থ: صفة صلاة النبي من التكبير إلى التسليم كأنك تراها — শায়খ মুহাম্মদ নাসিরুদ্দীন আলবানী (রহঃ)।",
+      "পর্যালোচনার ভিত্তি: সরবরাহ করা উর্দু OCR টেক্সট (Untitled 1.txt) এবং তার সঙ্গে দেওয়া Verification-Report।",
+      "উর্দু OCR পাঠে সুতরাহ, নিয়ত, রাফউল ইয়াদাইন, ফাতিহা, আমীন, রুকু, সিজদা, তাশাহহুদ, দরূদ, সালাম, বিতর ও কুনুতে নাযেলার মতো বিষয়ের শিরোনাম/উল্লেখ পাওয়া যায়।",
+      "OCR পাঠে অক্ষর ও শব্দের বিকৃতি আছে। তাই বিষয়ের উপস্থিতি শনাক্ত করা গেলেও প্রতিটি বাংলা বাক্য, হাদিসের নম্বর, আরবি হরকত বা ফিকহি সিদ্ধান্তের শতভাগ মিল এই পাঠ দিয়ে নিশ্চিত করা যায় না।",
+      "এই HTML-এর অধ্যায় বিন্যাসটি পাঠযোগ্যতার জন্য সাজানো সম্পাদকীয় কাঠামো; এটি উর্দু বইয়ের সূচির হুবহু প্রতিলিপি নয়।",
+      "হাদিসের রেফারেন্স ও ফিকহি বিধান প্রকাশের আগে নির্ভরযোগ্য মুদ্রিত সংস্করণ/মূল হাদিসগ্রন্থের সঙ্গে আলাদাভাবে যাচাই করা প্রয়োজন।"
+    ]
+  }
+];
+
 function renderPrayerLearnView(){
-  const card = mk("div", "p3-card");
-  card.innerHTML = "<b>{{menu_book}} নামাজ শিক্ষা</b>";
-  card.appendChild(mk("div", "note", "বিষয়বস্তু শীঘ্রই যোগ করা হবে।"));
-  app.appendChild(card);
+  const currentChapterId = window.qxNamazChapter || null;
+
+  if(currentChapterId){
+    const ch = NAMAZ_NABVI_DATA.find(c=>c.id===currentChapterId);
+    if(ch){
+      showOther('{{menu_book}} ' + ch.title);
+      const wrap = mk('div','');
+      wrap.style.maxWidth='900px';
+      wrap.style.margin='0 auto';
+
+      const back = mk('button','', '← সব অধ্যায়');
+      back.style.marginBottom='12px';
+      back.onclick = ()=>{ window.qxNamazChapter=null; renderPrayerLearnView(); };
+      wrap.appendChild(back);
+
+      const card = mk('div','ayah');
+      const titleRow = mk('div','no');
+      const numBadge = mk('span','ayah-number', 'অধ্যায় ' + ch.no);
+      titleRow.appendChild(numBadge);
+      const titleText = mk('span','', ch.title + ' - ' + ch.subtitle);
+      titleText.style.fontWeight='700';
+      titleText.style.color='var(--accent)';
+      titleRow.appendChild(titleText);
+      card.appendChild(titleRow);
+
+      if(ch.ar){
+        const arDiv = mk('div','ar', ch.ar);
+        arDiv.dir='rtl';
+        arDiv.lang='ar';
+        if(ch.bn_ar_meaning){
+          const small = mk('div','bn', ch.bn_ar_meaning);
+          small.style.fontSize='13px';
+          small.style.color='var(--muted)';
+          card.appendChild(arDiv);
+          card.appendChild(small);
+        }else{
+          card.appendChild(arDiv);
+        }
+      }
+
+      if(ch.topics && ch.topics.length){
+        const topicBox = mk('div','');
+        topicBox.style.margin='12px 0 14px';
+        topicBox.style.padding='12px';
+        topicBox.style.border='1px solid var(--line)';
+        topicBox.style.borderRadius='10px';
+        topicBox.style.background='var(--card)';
+        const topicTitle = mk('b','', 'এই অধ্যায়ের বিষয়');
+        topicTitle.style.display='block';
+        topicTitle.style.marginBottom='7px';
+        topicBox.appendChild(topicTitle);
+        const topicList = mk('div','');
+        topicList.style.display='grid';
+        topicList.style.gap='6px';
+        ch.topics.forEach((topic,i)=>{
+          const topicRow = mk('div','', '• ' + topic);
+          topicRow.style.fontSize='14px';
+          topicRow.style.color='var(--muted)';
+          topicList.appendChild(topicRow);
+        });
+        topicBox.appendChild(topicList);
+        card.appendChild(topicBox);
+      }
+
+      ch.content.forEach(p=>{
+        const bnDiv = mk('div','bn', p);
+        bnDiv.style.textAlign='justify';
+        card.appendChild(bnDiv);
+      });
+
+      if(ch.hadith){
+        const hadithBox = mk('div','');
+        hadithBox.style.marginTop='14px';
+        hadithBox.style.padding='12px';
+        hadithBox.style.borderRadius='10px';
+        hadithBox.style.background='var(--accent-soft)';
+        hadithBox.style.borderLeft='4px solid var(--accent)';
+        const arH = ch.hadith.text ? mk('div','ar', ch.hadith.text) : null;
+        if(arH){ arH.dir='rtl'; hadithBox.appendChild(arH); }
+        const ref = mk('div','', '📖 ' + ch.hadith.ref);
+        ref.style.fontSize='13px';
+        ref.style.marginTop='6px';
+        ref.style.color='var(--muted)';
+        hadithBox.appendChild(ref);
+        card.appendChild(hadithBox);
+      }
+
+      const navRow = mk('div','');
+      navRow.style.display='flex';
+      navRow.style.justifyContent='space-between';
+      navRow.style.gap='10px';
+      navRow.style.marginTop='16px';
+      const idx = NAMAZ_NABVI_DATA.findIndex(c=>c.id===ch.id);
+      if(idx>0){
+        const prev = mk('button','', '← ' + NAMAZ_NABVI_DATA[idx-1].title);
+        prev.onclick = ()=>{ window.qxNamazChapter=NAMAZ_NABVI_DATA[idx-1].id; renderPrayerLearnView(); };
+        navRow.appendChild(prev);
+      }else{ navRow.appendChild(mk('div','')); }
+      if(idx < NAMAZ_NABVI_DATA.length-1){
+        const next = mk('button','', NAMAZ_NABVI_DATA[idx+1].title + ' →');
+        next.style.background='var(--accent)';
+        next.style.color='#fff';
+        next.style.borderColor='var(--accent)';
+        next.onclick = ()=>{ window.qxNamazChapter=NAMAZ_NABVI_DATA[idx+1].id; renderPrayerLearnView(); };
+        navRow.appendChild(next);
+      }
+      card.appendChild(navRow);
+
+      wrap.appendChild(card);
+      app.appendChild(wrap);
+      return;
+    }
+  }
+
+  // List view
+  showOther('{{menu_book}} নামাজ শিক্ষা - নববী পদ্ধতি');
+  const container = mk('div','');
+  container.style.maxWidth='900px';
+  container.style.margin='0 auto';
+
+  const introCard = mk('div','ayah');
+  const introNo = mk('div','no');
+  introNo.innerHTML = '<span class="ayah-number" style="background:var(--accent-soft);color:var(--accent)">নামাজে নববী ﷺ - শায়খ আলবানী</span><span style="font-size:12px;color:var(--muted)">Only Text Mode - CHOCR লাগবে না</span>';
+  introCard.appendChild(introNo);
+  const introBn = mk('div','bn');
+  introBn.innerHTML = 'এটি শায়খ নাসিরুদ্দীন আলবানী (রহঃ)-এর <b>সিফাতু সালাতিন নবী ﷺ</b> গ্রন্থের বিষয়ভিত্তিক বাংলা পাঠ-সহায়িকা। সরবরাহ করা উর্দু OCR পাঠের বিষয়সূচি ও উল্লেখ ধরে অধ্যায়গুলো সাজানো হয়েছে। OCR-এ পাঠভ্রংশ থাকায় প্রতিটি বাক্য বা হাদিসের রেফারেন্সের পূর্ণ মিল আলাদাভাবে যাচাই করা প্রয়োজন।';
+  introCard.appendChild(introBn);
+  container.appendChild(introCard);
+
+  const grid = mk('div','');
+  grid.style.display='grid';
+  grid.style.gridTemplateColumns='1fr';
+  grid.style.gap='10px';
+  grid.style.marginTop='14px';
+
+  NAMAZ_NABVI_DATA.forEach(ch=>{
+    const item = mk('div','item');
+    item.style.cursor='pointer';
+    item.style.borderRadius='14px';
+    const num = mk('div','num', String(ch.no));
+    num.style.minWidth='44px';
+    num.style.height='44px';
+    num.style.fontSize='16px';
+    const mid = mk('div','mid');
+    const b = mk('b','', ch.title);
+    const small = mk('small','', ch.subtitle);
+    mid.appendChild(b);
+    mid.appendChild(small);
+    const arrow = mk('div','', '→');
+    arrow.style.color='var(--muted)';
+    item.appendChild(num);
+    item.appendChild(mid);
+    item.appendChild(arrow);
+    item.onclick = ()=>{ window.qxNamazChapter=ch.id; renderPrayerLearnView(); window.scrollTo(0,0); };
+    grid.appendChild(item);
+  });
+
+  container.appendChild(grid);
+
+  const dev = mk('details','');
+  dev.style.marginTop='20px';
+  dev.style.background='var(--card)';
+  dev.style.border='1px solid var(--line)';
+  dev.style.borderRadius='12px';
+  dev.style.padding='12px';
+  const sum = mk('summary','', 'Developer Info - OCR PAGE INDEX');
+  sum.style.cursor='pointer';
+  sum.style.fontWeight='600';
+  dev.appendChild(sum);
+  const pre = mk('div','');
+  pre.style.fontSize='12px';
+  pre.style.color='var(--muted)';
+  pre.style.marginTop='10px';
+  pre.style.whiteSpace='pre-wrap';
+  pre.textContent = 'File: Namaz-e-Nabvi_By_Sheikh_Albani_hocr_pageindex.json\nEntries: 208\nTotal Lines: 0-327804\nTotal Bytes: 553-10281458 (10.28 MB)\nFormat: [line_start, line_end, byte_start, byte_end]\n\nCHOCR = Cleaned HOCR (corrected)\nHOCR = Raw with bbox\nFULL TEXT = Only text\nFor only text site -> FULL TEXT + PAGE NUMBERS JSON enough\nCHOCR not needed for this implementation.';
+  dev.appendChild(pre);
+  container.appendChild(dev);
+
+  app.appendChild(container);
 }
+
 
 function renderPrayer(){
   stopCompass();
@@ -8343,6 +8765,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
 </script>
 
 <script>
+
 /* ===== HIJRI CALENDAR ===== */
 (function(){
   var MONTHS_BN=['মুহাররম','সফর','রবিউল আউয়াল','রবিউল আখির','জুমাদাল উলা','জুমাদাল আখিরা','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'];
@@ -8375,15 +8798,117 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
   var EVENTS=[
     {m:1,d:1,ic:'event',name:'হিজরি নববর্ষ',desc:'নতুন হিজরি বছরের শুরু'},
     {m:1,d:10,ic:'wb_twilight',name:'আশুরা',desc:'মুহাররমের ১০ তারিখ — রোজা রাখা সুন্নত'},
-    {m:3,d:12,ic:'auto_awesome',name:'ঈদে মিলাদুন্নবী ﷺ',desc:'রাসূল ﷺ-এর জন্মদিন'},
-    {m:7,d:27,ic:'nights_stay',name:'লাইলাতুল মেরাজ',desc:'মেরাজের রাত — হিজরি ২৭ রজব'},
-    {m:8,d:15,ic:'bedtime',name:'লাইলাতুল বরাত',desc:'ক্ষমার রাত — হিজরি ১৫ শাবান'},
+    {m:3,d:12,ic:'auto_awesome',name:'ঈদে মিলাদুন্নবী ﷺ',desc:'নবী ﷺ-এর জন্মস্মরণ — জন্মতারিখ নিয়ে ঐতিহাসিক মতভেদ আছে'},
+    {m:7,d:27,ic:'nights_stay',name:'লাইলাতুল মেরাজ',desc:'ইসরা ও মেরাজের স্মরণ — ২৭ রজব তারিখটি প্রমাণিত নয়'},
+    {m:8,d:15,ic:'bedtime',name:'লাইলাতুল বরাত',desc:'১৫ শাবানের রাত — এর বিশেষ ফজিলত ও আমল নিয়ে আলেমদের মতভেদ আছে'},
     {m:9,d:1,ic:'calendar_month',name:'রমজান শুরু',desc:'রহমত, মাগফিরাত, নাজাতের মাস'},
-    {m:9,d:27,ic:'stars',name:'লাইলাতুল কদর',desc:'হাজার মাসের চেয়ে উত্তম — হিজরি ২৭ রমজান'},
+    {m:9,d:27,ic:'stars',name:'লাইলাতুল কদর',desc:'শেষ দশকের বেজোড় রাতগুলোতে খুঁজুন — ২৭ তারিখ নিশ্চিত নয়'},
     {m:10,d:1,ic:'star',name:'ঈদুল ফিতর',desc:'রমজান শেষে ঈদ'},
     {m:12,d:9,ic:'wb_sunny',name:'আরাফার দিন',desc:'হজের মূল দিন — হিজরি ৯ জিলহজ'},
     {m:12,d:10,ic:'mosque',name:'ঈদুল আজহা',desc:'কুরবানির ঈদ'},
   ];
+  // Concise, source-based notes. Where a date/virtue is disputed, the popup says so explicitly.
+  var EVENT_INFO={
+    'হিজরি নববর্ষ':{
+      about:'১ মুহাররম হিজরি বর্ষপঞ্জির প্রথম দিন। এটি নতুন চন্দ্রবর্ষের সূচনা; দিনটিকে ঘিরে নির্দিষ্ট বিশেষ নামাজ, রোজা বা দোয়া সহিহ সূত্রে নির্ধারিত নয়।',
+      quran:'আল্লাহর কাছে মাসের সংখ্যা বারো — সূরা আত-তাওবা ৯:৩৬।',
+      hadith:'বছরের চারটি মাস সম্মানিত — সহিহ আল-বুখারি, ৪৬৬২; সহিহ মুসলিম, ১৬৭৯। তবে ১ মুহাররমের জন্য আলাদা ইবাদত নির্দিষ্ট করা হয়নি।',
+      source:'কুরআন: আত-তাওবা ৯:৩৬। হাদিস: সহিহ আল-বুখারি ৪৬৬২; সহিহ মুসলিম ১৬৭৯।'
+    },
+    'আশুরা':{
+      about:'১০ মুহাররমকে আশুরা বলা হয়। মূসা (আ.) ও বনী ইসরাঈলকে ফিরআউনের হাত থেকে মুক্তি দেওয়ার ঘটনার কৃতজ্ঞতায় রাসূল ﷺ এ দিনে রোজা রেখেছেন।',
+      quran:'মূসা (আ.)-কে তাঁর সম্প্রদায়সহ সমুদ্র পার করানোর ঘটনা — সূরা আল-বাকারা ২:৫০; সূরা ইউনুস ১০:৯০–৯২। আয়াতগুলো ঘটনাটি বর্ণনা করে; আশুরার রোজার নির্দেশ হাদিসে এসেছে।',
+      hadith:'আশুরার রোজায় আগের বছরের গুনাহ মোচনের আশা — সহিহ মুসলিম, ১১৬২। পরের বছর বেঁচে থাকলে ৯ তারিখেও রোজা রাখার ইচ্ছা রাসূল ﷺ প্রকাশ করেছিলেন — সহিহ মুসলিম, ১১৩৪।',
+      source:'কুরআন: আল-বাকারা ২:৫০; ইউনুস ১০:৯০–৯২। হাদিস: সহিহ মুসলিম ১১৬২, ১১৩৪; সহিহ আল-বুখারি ২০০৪।'
+    },
+    'ঈদে মিলাদুন্নবী ﷺ':{
+      about:'এ দিনটি অনেক মুসলিম নবী মুহাম্মদ ﷺ-এর জন্মস্মরণে পালন করেন। তবে ১২ রবিউল আউয়াল জন্মতারিখ হিসেবে সর্বসম্মতভাবে প্রমাণিত নয়; ঐতিহাসিক মতভেদ রয়েছে। এ উপলক্ষে নির্দিষ্ট বার্ষিক উৎসব পালনের নির্দেশ কুরআন বা সহিহ হাদিসে নেই।',
+      quran:'রাসূল ﷺ-কে সমগ্র জগতের জন্য রহমত হিসেবে পাঠানো হয়েছে — সূরা আল-আম্বিয়া ২১:১০৭।',
+      hadith:'সোমবারের রোজা সম্পর্কে রাসূল ﷺ বলেছেন, এ দিনেই তিনি জন্মগ্রহণ করেছেন এবং তাঁর ওপর ওহি নাজিল হয়েছে — সহিহ মুসলিম, ১১৬২। হাদিসটি সোমবারের রোজার প্রসঙ্গে; বার্ষিক জন্মোৎসবের নির্দেশ নয়।',
+      source:'কুরআন: আল-আম্বিয়া ২১:১০৭। হাদিস: সহিহ মুসলিম ১১৬২।'
+    },
+    'লাইলাতুল মেরাজ':{
+      about:'ইসরা হলো মসজিদুল হারাম থেকে মসজিদুল আকসা পর্যন্ত রাতের সফর; মেরাজে ঊর্ধ্বলোকে আরোহণের বিষয়টি মুসলিম ঐতিহ্যে বর্ণিত। ২৭ রজব তারিখটি নির্ভরযোগ্য সহিহ দলিলে নির্দিষ্ট নয়।',
+      quran:'রাতের সফরের উল্লেখ — সূরা আল-ইসরা ১৭:১।',
+      hadith:'মেরাজের ঘটনায় পাঁচ ওয়াক্ত সালাত ফরজ হওয়ার বিবরণ — সহিহ আল-বুখারি, ৩৪৯; সহিহ মুসলিম, ১৬২।',
+      source:'কুরআন: আল-ইসরা ১৭:১। হাদিস: সহিহ আল-বুখারি ৩৪৯; সহিহ মুসলিম ১৬২।'
+    },
+    'লাইলাতুল বরাত':{
+      about:'১৫ শাবানের রাতকে অনেকে লাইলাতুল বরাত বলেন। এ রাতের বিশেষ ফজিলত সম্পর্কে কিছু বর্ণনা আছে, কিন্তু সেগুলোর গ্রহণযোগ্যতা ও এ রাতে নির্দিষ্ট ইবাদতের বিধান নিয়ে মুহাদ্দিস ও আলেমদের মধ্যে মতভেদ রয়েছে।',
+      quran:'কুরআনে ১৫ শাবানের রাতকে লাইলাতুল বরাত নামে নির্দিষ্ট করা হয়নি। সূরা আদ-দুখান ৪৪:৩-কে এ রাতের সঙ্গে যুক্ত করার ব্যাখ্যা প্রচলিত, তবে বহু মুফাসসির আয়াতটিকে লাইলাতুল কদরের সঙ্গে সম্পর্কিত করেছেন।',
+      hadith:'১৫ শাবানের রাতের বর্ণনা — সুনান ইবন মাজাহ, ১৩৯০; এ বর্ণনার সনদ ও গ্রহণযোগ্যতা নিয়ে আলেমদের মতভেদ রয়েছে। এ রাতে নির্দিষ্ট ১০০ রাকাত বা বিশেষ পদ্ধতির নামাজের সহিহ প্রমাণ নেই।',
+      source:'কুরআন: আদ-দুখান ৪৪:৩ (ব্যাখ্যায় মতভেদ)। হাদিস: সুনান ইবন মাজাহ ১৩৯০ (গ্রেডিং বিষয়ে মতভেদ)।'
+    },
+    'রমজান শুরু':{
+      about:'রমজান ইসলামের নবম মাস। এ মাসে প্রাপ্তবয়স্ক, সক্ষম মুসলিমদের ওপর রোজা ফরজ; কুরআন নাজিলের সূচনাও এ মাসের সঙ্গে সম্পর্কিত।',
+      quran:'রমজান মাসেই কুরআন নাজিল করা হয়েছে এবং তোমাদের মধ্যে যে এ মাস পাবে সে যেন রোজা রাখে — সূরা আল-বাকারা ২:১৮৩–১৮৫।',
+      hadith:'ঈমান ও সওয়াবের আশায় রমজানের রোজা রাখলে পূর্বের গুনাহ ক্ষমার আশা — সহিহ আল-বুখারি, ১৯০১; সহিহ মুসলিম, ৭৬০।',
+      source:'কুরআন: আল-বাকারা ২:১৮৩–১৮৫। হাদিস: সহিহ আল-বুখারি ১৯০১; সহিহ মুসলিম ৭৬০।'
+    },
+    'লাইলাতুল কদর':{
+      about:'লাইলাতুল কদর এমন এক মহিমান্বিত রাত, যা হাজার মাসের চেয়েও উত্তম। এটি রমজানের শেষ দশকে খুঁজতে বলা হয়েছে; ২৭তম রাতেই নিশ্চিত—এমন কথা বলা যায় না।',
+      quran:'লাইলাতুল কদর হাজার মাসের চেয়ে উত্তম — সূরা আল-কদর ৯৭:১–৫।',
+      hadith:'রমজানের শেষ দশকের বেজোড় রাতগুলোতে লাইলাতুল কদর খুঁজতে নির্দেশ — সহিহ আল-বুখারি, ২০১৭; সহিহ মুসলিম, ১১৬৯।',
+      source:'কুরআন: আল-কদর ৯৭:১–৫। হাদিস: সহিহ আল-বুখারি ২০১৭; সহিহ মুসলিম ১১৬৯।'
+    },
+    'ঈদুল ফিতর':{
+      about:'১ শাওয়াল হলো রমজানের রোজা শেষের ঈদুল ফিতর। এ দিন মুসলিমরা ঈদের সালাত আদায় করেন এবং আল্লাহর দেওয়া রোজা পালনের তাওফিকের জন্য কৃতজ্ঞতা প্রকাশ করেন।',
+      quran:'রোজার নির্ধারিত দিন পূর্ণ করা এবং আল্লাহর মহিমা ঘোষণা করার নির্দেশ — সূরা আল-বাকারা ২:১৮৫।',
+      hadith:'ঈদের সালাতে যাওয়ার আগে রাসূল ﷺ বিজোড় সংখ্যক খেজুর খেতেন — সহিহ আল-বুখারি, ৯৫৩। ফিতরা ঈদের সালাতের আগে আদায়ের নির্দেশ — সহিহ আল-বুখারি, ১৫০৩।',
+      source:'কুরআন: আল-বাকারা ২:১৮৫। হাদিস: সহিহ আল-বুখারি ৯৫৩, ১৫০৩।'
+    },
+    'আরাফার দিন':{
+      about:'৯ জিলহজ হজের গুরুত্বপূর্ণ দিন। হাজিরা আরাফার ময়দানে অবস্থান করেন। যারা হজে নেই, তাদের জন্য এ দিনের রোজার বিশেষ ফজিলত বর্ণিত হয়েছে।',
+      quran:'হজের বিধান ও আরাফা থেকে ফিরে আল্লাহকে স্মরণের উল্লেখ — সূরা আল-বাকারা ২:১৯৮।',
+      hadith:'আরাফার দিনের রোজা আগের ও পরের বছরের গুনাহ মোচনের কারণ হবে বলে আশা — সহিহ মুসলিম, ১১৬২।',
+      source:'কুরআন: আল-বাকারা ২:১৯৮। হাদিস: সহিহ মুসলিম ১১৬২।'
+    },
+    'ঈদুল আজহা':{
+      about:'১০ জিলহজ ঈদুল আজহা। এ দিন ঈদের সালাতের পর সামর্থ্যবান মুসলিমরা কুরবানি করেন; এটি ইবরাহিম (আ.)-এর আনুগত্য ও আল্লাহর সন্তুষ্টির জন্য ত্যাগের স্মারক।',
+      quran:'কুরবানির পশুর রক্ত-মাংস নয়, আল্লাহর কাছে পৌঁছে তাকওয়া — সূরা আল-হজ ২২:৩৪–৩৭।',
+      hadith:'ঈদের সালাতের আগে কুরবানি করলে তা যথাযথ কুরবানি হয় না; সালাতের পর করলে সুন্নাহ অনুযায়ী হয় — সহিহ আল-বুখারি, ৫৫৪৫।',
+      source:'কুরআন: আল-হজ ২২:৩৪–৩৭। হাদিস: সহিহ আল-বুখারি ৫৫৪৫।'
+    }
+  };
+  var EVENT_LABELS={
+    'হিজরি নববর্ষ':['পরিচিতি','কুরআনের আলোকে','হাদিসের বর্ণনা'],
+    'আশুরা':['আশুরার তাৎপর্য','কুরআনে ঘটনার উল্লেখ','রাসূল ﷺ-এর সুন্নাহ'],
+    'ঈদে মিলাদুন্নবী ﷺ':['দিনটির পরিচয়','কুরআনের দিকনির্দেশ','হাদিসে যা পাওয়া যায়'],
+    'লাইলাতুল মেরাজ':['ইসরা ও মেরাজ','কুরআনের প্রমাণ','হাদিসের বিবরণ'],
+    'লাইলাতুল বরাত':['রাতটির পরিচয়','কুরআনের ব্যাখ্যা','বর্ণিত হাদিস'],
+    'রমজান শুরু':['রমজানের মাহাত্ম্য','কুরআনের নির্দেশ','নবী ﷺ-এর বাণী'],
+    'লাইলাতুল কদর':['মহিমান্বিত রাত','কুরআনে লাইলাতুল কদর','হাদিসের নির্দেশনা'],
+    'ঈদুল ফিতর':['ঈদের পরিচয়','কুরআনের নির্দেশনা','ঈদসংক্রান্ত হাদিস'],
+    'আরাফার দিন':['আরাফার গুরুত্ব','কুরআনের উল্লেখ','রোজার ফজিলত'],
+    'ঈদুল আজহা':['কুরবানির ঈদ','কুরআনের শিক্ষা','সুন্নাহর নির্দেশ']
+  };
+  var infoOverlay=null;
+  function closeEventInfo(){ if(infoOverlay) infoOverlay.classList.remove('open'); }
+  function ensureEventInfo(){
+    if(infoOverlay) return infoOverlay;
+    infoOverlay=document.createElement('div'); infoOverlay.className='hijri-info-overlay'; infoOverlay.setAttribute('role','presentation');
+    infoOverlay.innerHTML='<section class="hijri-info-box" role="dialog" aria-modal="true" aria-labelledby="hijriInfoTitle"><button type="button" class="hijri-info-close" aria-label="বন্ধ করুন">×</button><div class="hijri-info-content"></div></section>';
+    document.body.appendChild(infoOverlay);
+    infoOverlay.addEventListener('click',function(e){ if(e.target===infoOverlay) closeEventInfo(); });
+    infoOverlay.querySelector('.hijri-info-close').addEventListener('click',closeEventInfo);
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape' && infoOverlay.classList.contains('open')) closeEventInfo(); });
+    return infoOverlay;
+  }
+  function openEventInfo(ev,date){
+    var data=EVENT_INFO[ev.name]; if(!data) return;
+    var ov=ensureEventInfo(), content=ov.querySelector('.hijri-info-content');
+    content.innerHTML='';
+    function section(label,value,cls){ var wrap=document.createElement('div'); wrap.className='hijri-info-section'; var b=document.createElement('b'); b.textContent=label; var p=document.createElement('p'); if(cls) p.className=cls; p.textContent=value; wrap.appendChild(b); wrap.appendChild(p); content.appendChild(wrap); }
+    var title=document.createElement('div'); title.className='hijri-info-title'; title.id='hijriInfoTitle'; title.textContent=ev.name; content.appendChild(title);
+    var dt=document.createElement('div'); dt.className='hijri-info-date'; dt.textContent=(date?fmtGreg(date)+' · ':'')+bnNum(ev.d)+' '+MONTHS_BN[ev.m-1]; content.appendChild(dt);
+    var labels=EVENT_LABELS[ev.name]||['পরিচিতি','কুরআনের উল্লেখ','হাদিসের বর্ণনা'];
+    section(labels[0],data.about);
+    section(labels[1],data.quran);
+    section(labels[2],data.hadith);
+    section('তথ্যসূত্র',data.source,'hijri-info-source');
+    ov.classList.add('open');
+    var close=ov.querySelector('.hijri-info-close'); if(close) close.focus();
+  }
   function nextEvent(){
     var best=null;
     EVENTS.forEach(function(ev){
@@ -8447,7 +8972,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
       var evToday=EVENTS.filter(function(ev){ return ev.m===hh2.month && ev.d===hh2.day; });
       if(evToday.length) cell.classList.add('event');
       cell.innerHTML='<div class="hnum">'+bnNum(hh2.day)+'</div><div>'+cur.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</div>'+(evToday.length?'<div style="font-size:9px;color:#e67e22">● '+evToday[0].name+'</div>':'');
-      (function(evList, date){ cell.onclick=function(){ if(evList.length){ if(typeof showToast==='function') showToast(evList[0].name+' — '+fmtGreg(date)+' · '+evList[0].desc); } }; })(evToday, new Date(cur));
+      (function(evList, date){ if(evList.length){ cell.setAttribute('role','button'); cell.setAttribute('tabindex','0'); cell.setAttribute('aria-label',evList[0].name+' সম্পর্কে জানুন'); cell.onclick=function(){ openEventInfo(evList[0],date); }; cell.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openEventInfo(evList[0],date); } }; } })(evToday, new Date(cur));
       cal.appendChild(cell);
       cur.setDate(cur.getDate()+1);
     }
@@ -8466,6 +8991,9 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
         +'<div class="he-main"><b class="he-name">'+it.ev.name+'</b><div class="trk-mini">'+it.ev.desc+'</div><div class="he-date-en">'+enDate+'</div></div>'
         +'<div class="he-side"><div class="he-ring"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="he-track" cx="22" cy="22" r="19"/><circle class="he-arc" cx="22" cy="22" r="19" transform="translate(44,0) scale(-1,1) rotate(-90 22 22)" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-frac)).toFixed(2)+'"/></svg>'
         +'<span class="he-days">'+(it.days===0?'আজই!':'<b>'+bnNum(it.days)+'</b><small>দিন বাকি</small>')+'</span></div></div>';
+      row.setAttribute('role','button'); row.setAttribute('tabindex','0'); row.setAttribute('aria-label',it.ev.name+' সম্পর্কে জানুন');
+      row.onclick=function(){ openEventInfo(it.ev,it.date); };
+      row.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openEventInfo(it.ev,it.date); } };
       appEl.appendChild(row);
     });
     const mini = document.getElementById('gHijriMini'); if(mini) mini.textContent=h?hijriStr(new Date()).slice(0,12)+' ›':'›';
