@@ -98,11 +98,30 @@ QX FILE EDIT RULES
   --qx-highlight: #cfd3d8;
   --qx-danger: #d32f2f;
   --qx-success: #2e7d32;
+  --qx-event: #e67e22;
+  --qx-tj-ghunnah: #e67e22;
+  --qx-tj-qalqalah: #2563eb;
+  --qx-tj-ikhfa: var(--qx-success);
+  --qx-tj-idgham: #9333ea;
+  --qx-tj-iqlab: #db2777;
+  --qx-tj-madd: var(--qx-danger);
+  --qx-tj-lam: #0891b2;
 
   /* size, font, layout */
+  --qx-pad-sm: 10px;
+  --qx-pad-item: 14px 18px;
+  --qx-pad: 20px;
+  --qx-pad-xl: 60px 0;
+  --qx-gap: 10px;
   --qx-radius: 8px;
   --qx-radius-lg: 12px;
   --qx-radius-pill: 999px;
+  --qx-fs-xs: 11px;
+  --qx-fs-sm: 12px;
+  --qx-fs-md: 13px;
+  --qx-fs: 14px;
+  --qx-fs-lg: 16px;
+  --qx-fs-xl: 18px;
   --qx-fs-ar: 30px;
   --qx-fs-bn: 16px;
   --qx-font-arabic: "Amiri Quran","Noto Naskh Arabic","Traditional Arabic",serif;
@@ -131,6 +150,11 @@ QX FILE EDIT RULES
   --qx-hover: var(--qx-c-night-raise);
   --qx-shadow: 0 4px 14px rgba(0,0,0,0.22);
   --qx-highlight: #4b544e;
+  --qx-danger: #f87171;
+  --qx-success: #4ade80;
+  --qx-tj-qalqalah: #60a5fa;
+  --qx-tj-idgham: #c084fc;
+  --qx-tj-iqlab: #f472b6;
 }
 
 [data-hc=""] {
@@ -224,7 +248,7 @@ body.reader-active .reader-progress {
 }
 
 h1 {
-  font-size: 18px;
+  font-size: var(--qx-fs-xl);
   margin: 0;
   flex: 1;
   color: var(--qx-main-color);
@@ -311,7 +335,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: var(--qx-fs-xl);
 }
 
 .mid {
@@ -363,7 +387,7 @@ main {
 }
 
 .ayah .no {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   margin-bottom: 8px;
   display: flex;
@@ -414,7 +438,7 @@ main {
 .icon-btn {
   border: 0;
   background: var(--qx-tile-bg);
-  font-size: 17px;
+  font-size: var(--qx-fs-xl);
   cursor: pointer;
   padding: 8px;
   min-width: 40px;
@@ -454,7 +478,7 @@ main {
   color: var(--qx-bg);
   padding: 6px 14px;
   border-radius: var(--qx-radius-lg);
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   z-index: 99;
   animation: fadeInOut 2s ease;
   max-width: 90vw;
@@ -522,7 +546,7 @@ nav button {
   gap: 4px;
   padding: 6px 2px 8px;
   min-height: 52px;
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   text-align: center;
 }
@@ -539,7 +563,7 @@ nav button b {
 }
 
 nav button span {
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
   line-height: 1.15;
   white-space: nowrap;
   text-align: center;
@@ -610,13 +634,13 @@ select {
   display: block;
   padding: 3px 0;
   background: rgba(255,255,255,.28);
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
 }
 
 .hero-date .hd-d {
   display: block;
   padding: 5px 0 6px;
-  font-size: 18px;
+  font-size: var(--qx-fs-xl);
 }
 
 .hero .big {
@@ -651,7 +675,7 @@ select {
 }
 
 .note {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   line-height: 1.6;
   margin-top: 14px;
@@ -697,7 +721,7 @@ select {
 }
 
 .src {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   margin-top: 8px;
 }
@@ -753,7 +777,7 @@ select {
 .settings-modal-title {
   flex: 1;
   margin: 0;
-  font-size: 15px;
+  font-size: var(--qx-fs-lg);
   font-weight: 600;
   color: var(--qx-text-color);
 }
@@ -788,7 +812,7 @@ select {
   flex-direction: column;
   gap: 6px;
   padding: 4px 2px 6px;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   line-height: 1.4;
 }
 
@@ -804,7 +828,7 @@ select {
 .modal-header h3 {
   margin: 0;
   color: var(--qx-main-color);
-  font-size: 18px;
+  font-size: var(--qx-fs-xl);
 }
 
 .close-btn {
@@ -817,7 +841,7 @@ select {
 
 .tafseer-body {
   line-height: 1.8;
-  font-size: 15px;
+  font-size: var(--qx-fs-lg);
 }
 
 .header-tools {
@@ -833,7 +857,7 @@ select {
   margin: 0;
   width: 115px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   border-radius: var(--qx-radius);
 }
 
@@ -847,7 +871,7 @@ select {
   color: var(--qx-text-color);
   border-radius: var(--qx-radius-lg);
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
   width: 44px;
   height: 44px;
   min-width: 44px;
@@ -899,7 +923,7 @@ select {
 
 .audio-info b {
   display: block;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   color: var(--qx-main-color);
   white-space: nowrap;
   overflow: hidden;
@@ -908,7 +932,7 @@ select {
 
 .audio-info small {
   display: block;
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   white-space: nowrap;
   overflow: hidden;
@@ -927,7 +951,7 @@ select {
   padding: 6px 8px;
   border-radius: var(--qx-radius);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -950,7 +974,7 @@ select {
   align-items: center;
   gap: 8px;
   width: 100%;
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   font-variant-numeric: tabular-nums;
 }
@@ -965,7 +989,7 @@ select {
 
 .audio-status {
   width: 100%;
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   min-height: 12px;
 }
@@ -993,7 +1017,7 @@ select {
 }
 
 .aotd-badge {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   font-weight: 600;
   color: var(--qx-main-color);
   display: flex;
@@ -1002,7 +1026,7 @@ select {
 }
 
 .aotd-ref {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
 }
 
@@ -1015,7 +1039,7 @@ select {
 }
 
 .aotd-bn {
-  font-size: 14px;
+  font-size: var(--qx-fs);
   line-height: 1.65;
   color: var(--qx-text-color);
   margin-top: 6px;
@@ -1031,7 +1055,7 @@ select {
 }
 
 .aotd-link {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-main-color);
   background: none;
   border: 0;
@@ -1050,14 +1074,14 @@ select {
 .quick-jump select,.quick-jump input {
   margin: 0;
   padding: 7px 9px;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   border-radius: var(--qx-radius);
   height: 36px;
 }
 
 .quick-jump button {
   padding: 6px 12px;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   border-radius: var(--qx-radius);
   background: var(--qx-main-color);
   color: var(--qx-on-main);
@@ -1082,7 +1106,7 @@ select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .goal-track {
@@ -1105,7 +1129,7 @@ select {
   background: color-mix(in srgb, var(--qx-main-color) 7%, var(--qx-card-bg));
   border-left: 3px solid var(--qx-main-color);
   border-radius: var(--qx-radius);
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   line-height: 1.6;
   color: var(--qx-text-color);
 }
@@ -1114,7 +1138,7 @@ select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-main-color);
   font-weight: 600;
   margin-bottom: 4px;
@@ -1125,7 +1149,7 @@ select {
 }
 
 .speed-btn {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   font-weight: 600;
   min-width: 42px;
 }
@@ -1169,7 +1193,7 @@ select {
 }
 
 .p3-grid label {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   display: flex;
   flex-direction: column;
@@ -1216,7 +1240,7 @@ select {
 
 .compass-mark {
   position: absolute;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   font-weight: 700;
   color: var(--qx-meta-color);
 }
@@ -1261,7 +1285,7 @@ select {
   color: var(--qx-on-main);
   padding: 3px 8px;
   border-radius: var(--qx-radius-lg);
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   font-weight: 700;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
@@ -1306,7 +1330,7 @@ select {
 .switch-btn {
   padding: 5px 12px;
   border-radius: var(--qx-radius-lg);
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   font-weight: 600;
   cursor: pointer;
 }
@@ -1338,7 +1362,7 @@ html,body,button,input,select,textarea {
   align-items: center;
   gap: 10px;
   margin: 0 0 8px;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   font-weight: 600;
   color: var(--qx-text-color);
 }
@@ -1352,7 +1376,7 @@ html,body,button,input,select,textarea {
   border-radius: var(--qx-radius);
   background: var(--qx-main-soft);
   color: var(--qx-main-color);
-  font-size: 18px;
+  font-size: var(--qx-fs-xl);
   vertical-align: baseline;
 }
 
@@ -1367,7 +1391,7 @@ html,body,button,input,select,textarea {
   gap: 12px;
   min-height: 48px;
   padding: 6px 0;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   color: var(--qx-text-color);
 }
 
@@ -1384,7 +1408,7 @@ label.set-row {
 
 .set-label small {
   color: var(--qx-meta-color);
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
 }
 
 .set-field {
@@ -1397,7 +1421,7 @@ label.set-row {
 .set-field .set-label {
   flex: none;
   color: var(--qx-meta-color);
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .set-select {
@@ -1410,7 +1434,7 @@ label.set-row {
   background: var(--qx-tile-bg);
   color: var(--qx-text-color);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   cursor: pointer;
   transition: border-color .18s ease, box-shadow .18s ease;
 }
@@ -1443,7 +1467,7 @@ label.set-row {
   border-radius: 0;
   background: transparent;
   color: var(--qx-text-color);
-  font-size: 14px;
+  font-size: var(--qx-fs);
   font-weight: 600;
   cursor: pointer;
   transition: background-color .18s ease, color .18s ease;
@@ -1521,7 +1545,7 @@ label.set-row {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   padding: 3px 8px;
   border-radius: var(--qx-radius-lg);
   background: color-mix(in srgb, var(--qx-main-color) 12%, var(--qx-card-bg));
@@ -1535,7 +1559,7 @@ label.set-row {
   border-radius: var(--qx-radius-lg);
   padding: 10px 12px;
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   line-height: 1.6;
 }
 
@@ -1579,7 +1603,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   background: var(--qx-bg);
   color: var(--qx-text-color);
   font: inherit;
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
 }
 
 #controls select,
@@ -1628,12 +1652,12 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .home-hero-left .lbl {
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   opacity: .9;
 }
 
 .home-hero-left .val {
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
   font-weight: 700;
   line-height: 1.3;
 }
@@ -1648,12 +1672,12 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   color: var(--qx-main-color);
 }
 
 .home-hero-right .val {
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
   font-weight: 700;
   color: var(--qx-text-color);
   margin: 6px 0 8px;
@@ -1711,7 +1735,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   background: var(--qx-tile-bg);
   color: var(--qx-text-color);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   font-weight: 400;
   cursor: pointer;
   text-align: left;
@@ -1755,7 +1779,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   justify-content: center;
   gap: 4px;
   padding: 8px 4px;
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   text-align: center;
 }
 
@@ -1789,7 +1813,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .install-menu-copy small {
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   font-weight: 400;
 }
@@ -1828,7 +1852,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 
 #gridPopupBox h3 {
   margin: 0 0 12px;
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
   min-height: 36px;
   padding: 5px 48px 0 0;
   display: flex;
@@ -1869,7 +1893,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   background: var(--qx-card-bg);
   color: var(--qx-text-color);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   cursor: pointer;
 }
 
@@ -1915,7 +1939,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   background: var(--qx-main-color);
   color: var(--qx-on-main);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   font-weight: 600;
   line-height: 1.35;
   cursor: pointer;
@@ -1958,7 +1982,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   border-radius: var(--qx-radius-lg);
   margin-bottom: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   background: var(--qx-tile-bg);
 }
 
@@ -1995,12 +2019,12 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .pp-result b {
-  font-size: 14px;
+  font-size: var(--qx-fs);
 }
 
 .pp-result small {
   color: var(--qx-meta-color);
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   line-height: 1.5;
   display: block;
 }
@@ -2017,7 +2041,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .pp-font-row button {
@@ -2031,7 +2055,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .pp-mini {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   line-height: 1.6;
 }
@@ -2044,7 +2068,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   display: block;
   margin: 0 0 5px;
   color: var(--qx-main-color);
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .src-item {
@@ -2068,10 +2092,6 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 
 #transSel {
   display: none;
-}
-
-[data-theme="dark"] .home-hero-left {
-  color: #0b1f18;
 }
 
 .sheet-ov {
@@ -2168,7 +2188,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   background: var(--qx-tile-bg);
   padding: 12px 14px;
   min-height: 44px;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   word-spacing: 2px;
   border-radius: var(--qx-radius);
   color: var(--qx-text-color);
@@ -2226,13 +2246,13 @@ body.bars-hidden .audio-bar.with-nav {
 .pp-empty {
   padding: 32px 12px;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   line-height: 1.6;
   color: var(--qx-meta-color);
 }
 
 #gridPopupBox.wide .pp-input {
-  font-size: 15px;
+  font-size: var(--qx-fs-lg);
   margin-bottom: 8px;
 }
 
@@ -2242,7 +2262,7 @@ body.bars-hidden .audio-bar.with-nav {
   justify-content: space-between;
   gap: 8px;
   margin: 2px 0 14px;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .fsz {
@@ -2299,7 +2319,7 @@ body.hifz-on #hifzBar {
 }
 
 #hifzBar b {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-main-color);
 }
 
@@ -2309,7 +2329,7 @@ body.hifz-on #hifzBar {
   color: var(--qx-text-color);
   border-radius: var(--qx-radius-pill);
   padding: 6px 11px;
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   font-weight: 600;
   cursor: pointer;
 }
@@ -2344,7 +2364,7 @@ body.hifz-on #hifzBar {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   color: var(--qx-meta-color);
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   font-family: var(--qx-font);
   padding: 4px 10px;
   border-radius: var(--qx-radius-pill);
@@ -2362,7 +2382,7 @@ body.hifz-on #hifzBar {
 .hifz-eye {
   border: 0;
   background: none;
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
   cursor: pointer;
   padding: 4px 6px;
   border-radius: var(--qx-radius);
@@ -2378,7 +2398,7 @@ body.hifz-on #hifzBar {
 }
 
 .hifz-progress {
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   text-align: center;
   padding: 2px 0 0;
@@ -2401,12 +2421,12 @@ body.hifz-on #hifzBar {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   margin: 4px 0;
 }
 
 .khatam-setup label {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   display: block;
   margin: 10px 0 4px;
@@ -2427,7 +2447,7 @@ body.hifz-on #hifzBar {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
   background: var(--qx-card-bg);
 }
 
@@ -2459,7 +2479,7 @@ body.hifz-on #hifzBar {
 
 #dlBar .dl-txt {
   flex: 1;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 #dlBar .dl-txt small {
@@ -2473,7 +2493,7 @@ body.hifz-on #hifzBar {
   color: var(--qx-on-main);
   border-radius: var(--qx-radius-lg);
   padding: 10px 12px;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   font-weight: 600;
   line-height: 1.35;
   cursor: pointer;
@@ -2505,12 +2525,12 @@ body.hifz-on #hifzBar {
   border-radius: var(--qx-radius-lg);
   padding: 10px;
   margin: 8px 0;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .offline-badge2 {
   display: inline-block;
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   background: var(--qx-main-color);
   color: var(--qx-on-main);
   padding: 2px 8px;
@@ -2574,7 +2594,7 @@ body.hifz-on #hifzBar {
   color: var(--qx-text-color);
   border-radius: var(--qx-radius-pill);
   padding: 7px 12px;
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   font-weight: 600;
   cursor: pointer;
 }
@@ -2601,7 +2621,7 @@ body.hifz-on #hifzBar {
   color: var(--qx-on-main);
   border-radius: var(--qx-radius-lg);
   padding: 11px;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   font-weight: 600;
   cursor: pointer;
 }
@@ -2615,7 +2635,7 @@ body.hifz-on #hifzBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   padding: 8px 0;
   border-bottom: 1px solid var(--qx-border);
 }
@@ -2650,12 +2670,12 @@ body.hifz-on #hifzBar {
 
 .trk-cat h3 {
   margin: 0 0 4px;
-  font-size: 15px;
+  font-size: var(--qx-fs-lg);
   color: var(--qx-main-color);
 }
 
 .trk-cat .sub {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   margin-bottom: 8px;
 }
@@ -2666,7 +2686,7 @@ body.hifz-on #hifzBar {
   align-items: center;
   padding: 9px 6px;
   border-bottom: 1px solid var(--qx-border);
-  font-size: 14px;
+  font-size: var(--qx-fs);
 }
 
 .trk-row:last-child {
@@ -2679,7 +2699,7 @@ body.hifz-on #hifzBar {
   border-radius: 50%;
   border: 2px solid var(--qx-border);
   background: var(--qx-card-bg);
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -2704,7 +2724,7 @@ body.hifz-on #hifzBar {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
   background: var(--qx-card-bg);
 }
 
@@ -2715,7 +2735,7 @@ body.hifz-on #hifzBar {
 }
 
 .trk-mini {
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
 }
 
@@ -2744,13 +2764,13 @@ body.hifz-on #hifzBar {
 
 .asma-card b {
   display: block;
-  font-size: 14px;
+  font-size: var(--qx-fs);
   margin-top: 4px;
 }
 
 .asma-card small {
   color: var(--qx-meta-color);
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
 }
 
 .asma-card.fav {
@@ -2785,37 +2805,37 @@ body.hifz-on #hifzBar {
 }
 
 .tj-ghunnah {
-  color: #e67e22;
+  color: var(--qx-tj-ghunnah);
   font-weight: 700;
 }
 
 .tj-qalqalah {
-  color: #2563eb;
+  color: var(--qx-tj-qalqalah);
   font-weight: 700;
 }
 
 .tj-ikhfa {
-  color: var(--qx-success);
+  color: var(--qx-tj-ikhfa);
   font-weight: 700;
 }
 
 .tj-idgham {
-  color: #9333ea;
+  color: var(--qx-tj-idgham);
   font-weight: 700;
 }
 
 .tj-iqlab {
-  color: #db2777;
+  color: var(--qx-tj-iqlab);
   font-weight: 700;
 }
 
 .tj-madd {
-  color: var(--qx-danger);
+  color: var(--qx-tj-madd);
   font-weight: 700;
 }
 
 .tj-lam {
-  color: #0891b2;
+  color: var(--qx-tj-lam);
   font-weight: 700;
 }
 
@@ -2829,7 +2849,7 @@ body.hifz-on #hifzBar {
   border-radius: var(--qx-radius-lg);
   padding: 8px 10px;
   margin: 8px 0;
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
 }
 
 #tajweedLegend.show {
@@ -2912,7 +2932,7 @@ body.ww-on .ayah .ar .ww-word {
   border-radius: var(--qx-radius-lg);
   padding: 8px 10px;
   margin: 8px 0;
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
 }
 
@@ -2921,7 +2941,7 @@ body.ww-on .ayah .ar .ww-word {
 }
 
 .hijri-top {
-  background: linear-gradient(135deg,var(--qx-main-color),#083a2b);
+  background: linear-gradient(135deg,var(--qx-c-teal),var(--qx-c-teal-deep));
   color: #fff;
   border-radius: var(--qx-radius-lg);
   padding: 16px 12px;
@@ -2947,7 +2967,7 @@ body.ww-on .ayah .ar .ww-word {
   border-radius: var(--qx-radius);
   padding: 6px 2px;
   text-align: center;
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   min-height: 40px;
 }
 
@@ -2958,11 +2978,11 @@ body.ww-on .ayah .ar .ww-word {
 }
 
 .hijri-day.event {
-  border-color: #e67e22;
-  box-shadow: inset 0 0 0 1px #e67e22;
+  border-color: var(--qx-event);
+  box-shadow: inset 0 0 0 1px var(--qx-event);
 }
 
-.hijri-day.event { background: color-mix(in srgb,#e67e22 16%,var(--qx-card-bg)); }
+.hijri-day.event { background: color-mix(in srgb,var(--qx-event) 16%,var(--qx-card-bg)); }
 
 .hijri-day { transition: background .18s ease,border-color .18s ease,transform .15s ease; }
 
@@ -2973,7 +2993,7 @@ body.ww-on .ayah .ar .ww-word {
 
 .hijri-day .hnum {
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .hijri-event {
@@ -2985,7 +3005,7 @@ body.ww-on .ayah .ar .ww-word {
   padding: 10px;
   margin: 8px 0;
   background: var(--qx-card-bg);
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 .hijri-event.next {
@@ -2997,13 +3017,13 @@ body.ww-on .ayah .ar .ww-word {
 
 .hijri-upcoming .he-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
 
-.hijri-upcoming .he-name { font-size: 18px; line-height: 1.3; font-weight: 700; }
+.hijri-upcoming .he-name { font-size: var(--qx-fs-xl); line-height: 1.3; font-weight: 700; }
 
-.hijri-upcoming .trk-mini { font-size: 12px; line-height: 1.4; }
+.hijri-upcoming .trk-mini { font-size: var(--qx-fs-sm); line-height: 1.4; }
 
 .he-date-en {
   display: inline-block;
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   background: color-mix(in srgb, var(--qx-meta-color) 16%, transparent);
   padding: 3px 10px;
@@ -3027,9 +3047,9 @@ body.ww-on .ayah .ar .ww-word {
 
 .he-ring .he-arc { stroke: var(--qx-main-color); stroke-linecap: round; }
 
-.he-ring .he-days { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; font-size: 11px; font-weight: 700; color: var(--qx-main-color); }
+.he-ring .he-days { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; font-size: var(--qx-fs-xs); font-weight: 700; color: var(--qx-main-color); }
 
-.he-ring .he-days b { font-size: 16px; }
+.he-ring .he-days b { font-size: var(--qx-fs-lg); }
 
 .he-ring .he-days small { font-size: 8px; font-weight: 400; color: var(--qx-meta-color); }
 
@@ -3047,7 +3067,7 @@ body.ww-on .ayah .ar .ww-word {
   border-radius: var(--qx-radius-lg);
   padding: 10px 12px;
   margin: 8px 0;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
 }
 
 #pwaBanner.show {
@@ -3067,7 +3087,7 @@ body.ww-on .ayah .ar .ww-word {
 #pwaBanner .x {
   background: none;
   color: var(--qx-on-main);
-  font-size: 16px;
+  font-size: var(--qx-fs-lg);
   padding: 4px;
 }
 
@@ -3086,7 +3106,7 @@ body.ww-on .ayah .ar .ww-word {
 }
 
 .hadith-pkg .sub {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   margin-top: 4px;
 }
@@ -3109,11 +3129,11 @@ body.ww-on .ayah .ar .ww-word {
 }
 
 .hadith-item b {
-  font-size: 14px;
+  font-size: var(--qx-fs);
 }
 
 .hadith-item .ref {
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
 }
 
@@ -3158,12 +3178,12 @@ body.ww-on .ayah .ar .ww-word {
 }
 
 .surah-list-heading b {
-  font-size: 15px;
+  font-size: var(--qx-fs-lg);
   font-weight: 600;
 }
 
 .surah-list-heading span {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   white-space: nowrap;
 }
@@ -3193,7 +3213,7 @@ body.ww-on .ayah .ar .ww-word {
 }
 
 .surah-item .mid b {
-  font-size: 15px;
+  font-size: var(--qx-fs-lg);
   line-height: 1.35;
 }
 
@@ -3201,7 +3221,7 @@ body.ww-on .ayah .ar .ww-word {
   display: block;
   margin-top: 3px;
   line-height: 1.45;
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
 }
 
 .surah-item .ar-name {
@@ -3329,7 +3349,7 @@ body.inside-page h1 {
   width: 100%;
   margin: 0 0 10px;
   padding: 11px;
-  font-size: 15px;
+  font-size: var(--qx-fs-lg);
   border-radius: var(--qx-radius-lg);
 }
 
@@ -3344,7 +3364,7 @@ nav button.on .dua-ic {
 nav button span {
   line-height: 1.15;
   text-align: center;
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
 }
 
 /* theme flip: no colour fades, so every element changes together (no blink) */
@@ -3416,7 +3436,7 @@ html.theme-switching *,html.theme-switching *::before,html.theme-switching *::af
   transform: scale(1.08);
 }
 
-[data-theme="dark"] [data-theme="dark"] [data-theme="dark"] [data-theme="dark"] .home-tile .tile-copy {
+.home-tile .tile-copy {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -3425,13 +3445,13 @@ html.theme-switching *,html.theme-switching *::before,html.theme-switching *::af
 }
 
 .home-tile .tile-copy b {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-meta-color);
   font-weight: 600;
 }
 
 .home-tile .tile-copy strong {
-  font-size: 14px;
+  font-size: var(--qx-fs);
   line-height: 1.35;
   color: var(--qx-text-color);
   max-width: 100%;
@@ -3441,7 +3461,7 @@ html.theme-switching *,html.theme-switching *::before,html.theme-switching *::af
 }
 
 .home-tile .tile-copy small {
-  font-size: 10px;
+  font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   line-height: 1.35;
 }
@@ -3456,13 +3476,13 @@ html.theme-switching *,html.theme-switching *::before,html.theme-switching *::af
 }
 
 .surah-meta span {
-  font-size: 11px;
+  font-size: var(--qx-fs-xs);
   line-height: 1.35;
   color: var(--qx-meta-color);
 }
 
 .surah-meta .surah-meaning {
-  font-size: 12px;
+  font-size: var(--qx-fs-sm);
   color: var(--qx-text-color);
   opacity: .78;
   min-width: 0;
@@ -3509,7 +3529,7 @@ html.theme-switching *,html.theme-switching *::before,html.theme-switching *::af
   background: var(--qx-card-bg);
   color: var(--qx-text-color);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   font-weight: 600;
   cursor: pointer;
 }
@@ -3540,13 +3560,13 @@ body.bars-hidden .home-browse-nav.is-sticky {
 }
 
 .home-browse-heading h2 {
-  font-size: 19px;
+  font-size: var(--qx-fs-xl);
   line-height: 1.4;
   margin: 0 0 4px;
 }
 
 .home-browse-heading p {
-  font-size: 13px;
+  font-size: var(--qx-fs-md);
   color: var(--qx-meta-color);
   margin: 0;
 }
@@ -3698,13 +3718,13 @@ body:not(.inside-page) #title {
   }
   .surah-meta .surah-meaning {
     flex-basis: 100%;
-    font-size: 11px;
+    font-size: var(--qx-fs-xs);
   }
   .surah-meta .surah-revelation,.surah-meta .surah-ayah-count {
-    font-size: 10px;
+    font-size: var(--qx-fs-xs);
   }
   .surah-item .ar-name {
-    font-size: 19px;
+    font-size: var(--qx-fs-xl);
   }
   body.inside-page .ayah .no {
     align-items: flex-start;
@@ -3720,7 +3740,7 @@ body:not(.inside-page) #title {
     gap: 5px;
   }
   .quick-jump select,.quick-jump input {
-    font-size: 12px;
+    font-size: var(--qx-fs-sm);
     padding-left: 7px;
     padding-right: 9px;
   }
@@ -3741,7 +3761,7 @@ body:not(.inside-page) #title {
   }
   .pp-row select {
     min-width: 0;
-    font-size: 13px;
+    font-size: var(--qx-fs-md);
   }
   .pp-result {
     overflow-wrap: anywhere;
@@ -3794,16 +3814,16 @@ body:not(.inside-page) #title {
     flex-basis: 32px;
     min-width: 32px;
     height: 32px;
-    font-size: 12px;
+    font-size: var(--qx-fs-sm);
   }
   .surah-item .mid b {
-    font-size: 14px;
+    font-size: var(--qx-fs);
   }
   .surah-item .mid small {
-    font-size: 11px;
+    font-size: var(--qx-fs-xs);
   }
   .surah-item .ar-name {
-    font-size: 19px;
+    font-size: var(--qx-fs-xl);
     max-width: 31%;
   }
 }
@@ -3833,13 +3853,13 @@ body:not(.inside-page) #title {
   }
   .hijri-day {
     min-height: 56px;
-    font-size: 12px;
+    font-size: var(--qx-fs-sm);
   }
   .ac-box {
     max-width: 600px;
   }
   nav button {
-    font-size: 12px;
+    font-size: var(--qx-fs-sm);
     flex: 0 1 150px;
   }
   .tbtn {
@@ -3911,7 +3931,7 @@ body:not(.inside-page) #title {
   }
   .home-browse-nav button {
     padding: 7px 12px;
-    font-size: 12px;
+    font-size: var(--qx-fs-sm);
     min-height: 36px;
   }
   body.inside-page .ayah {
@@ -3926,10 +3946,6 @@ body:not(.inside-page) #title {
 }
 
 /* The app sets an explicit data-theme during startup; OS preference must not override it. */
-:root:not([data-theme="light"]) .home-hero-left {
-  color: #0b1f18;
-}
-
 @keyframes fadeInOut {
   0% {
     opacity: 0;
@@ -3967,7 +3983,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     gap: 8px;
   }
   header h1#title {
-    font-size: 18px;
+    font-size: var(--qx-fs-xl);
   }
   .home-tiles {
     gap: 10px;
@@ -4004,15 +4020,89 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .hijri-info-box{position:relative;width:min(100%,560px);max-height:min(84dvh,760px);overflow:auto;background:var(--qx-card-bg);color:var(--qx-text-color);border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:22px 20px 20px;box-shadow:0 18px 60px rgba(0,0,0,.32);overscroll-behavior:contain}
 .hijri-info-close{position:absolute;top:12px;right:12px;margin:0;width:34px;height:34px;border:1px solid var(--qx-border);border-radius:50%;background:var(--qx-hover);color:var(--qx-text-color);font-size:20px;line-height:1;display:grid;place-items:center;cursor:pointer}
 .hijri-info-title{font-size:21px;font-weight:800;color:var(--qx-main-color);margin:2px 42px 5px 0;line-height:1.35}
-.hijri-info-date{font-size:12px;color:var(--qx-meta-color);margin-bottom:14px}
+.hijri-info-date{font-size:var(--qx-fs-sm);color:var(--qx-meta-color);margin-bottom:14px}
 .hijri-info-section{margin:13px 0 0;padding-top:11px;border-top:1px solid var(--qx-border)}
-.hijri-info-section b{display:block;font-size:13px;color:var(--qx-main-color);margin-bottom:5px}
-.hijri-info-section p{font-size:13px;line-height:1.75;margin:0;white-space:pre-line}
-.hijri-info-section p.hijri-info-source{font-size:11px;color:var(--qx-meta-color);font-style:italic;line-height:1.65}
+.hijri-info-section b{display:block;font-size:var(--qx-fs-md);color:var(--qx-main-color);margin-bottom:5px}
+.hijri-info-section p{font-size:var(--qx-fs-md);line-height:1.75;margin:0;white-space:pre-line}
+.hijri-info-section p.hijri-info-source{font-size:var(--qx-fs-xs);color:var(--qx-meta-color);font-style:italic;line-height:1.65}
 .hijri-day.event:focus-visible,.hijri-upcoming:focus-visible{outline:2px solid var(--qx-main-color);outline-offset:2px}
-@media(max-width:420px){.hijri-info-overlay{padding:10px;align-items:flex-end}.hijri-info-box{max-height:88dvh;border-radius:var(--qx-radius-lg);padding:17px}.hijri-info-title{font-size:19px}}
+@media(max-width:420px){.hijri-info-overlay{padding:10px;align-items:flex-end}.hijri-info-box{max-height:88dvh;border-radius:var(--qx-radius-lg);padding:17px}.hijri-info-title{font-size:var(--qx-fs-xl)}}
 
 
+
+/* --- তালিকা প্যাটার্ন: একটা বর্ডারওয়ালা বাক্সে সারি --- */
+.qx-list {
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  border-radius: var(--qx-radius);
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.qx-row {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: var(--qx-gap);
+  width: 100%;
+  padding: var(--qx-pad-item);
+  text-align: left;
+  background: none;
+  color: var(--qx-text-color);
+  cursor: pointer;
+  border-top: 1px solid var(--qx-border);
+}
+
+.qx-row:first-child {
+  border-top: 0;
+}
+
+.qx-row:hover {
+  background: var(--qx-hover);
+}
+
+.qx-row-ic {
+  display: flex;
+  color: var(--qx-main-color);
+}
+
+.qx-row-tx {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.qx-row-tx b {
+  font-size: var(--qx-fs);
+}
+
+.qx-row-tx small {
+  font-size: var(--qx-fs-sm);
+  color: var(--qx-meta-color);
+}
+
+.qx-row-go {
+  color: var(--qx-meta-color);
+}
+
+.qx-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: var(--qx-pad-xl);
+  text-align: center;
+}
+
+.qx-empty b {
+  font-size: var(--qx-fs);
+}
+
+.qx-empty small {
+  font-size: var(--qx-fs-sm);
+  color: var(--qx-meta-color);
+}
 </style>
 <meta name="theme-color" content="#0f6b4f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -4114,7 +4204,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 <span id="hifzProgress" class="hifz-progress"></span></div>
 
 <div id="wwBar" class="ww-bar">{{abc}} <b>শব্দে শব্দে মোড</b><span>যেকোনো আরবি শব্দে ট্যাপ করো — অর্থ দেখাবে</span><span id="wwBarClose" style="margin-left:auto;cursor:pointer">{{close}}</span></div>
-<div id="tajweedLegend"><b>{{palette}} তাজভিদ:</b><span><i class="tj-dot" style="background:#e67e22"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:#2563eb"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:#16a34a"></i>ইখফা</span><span><i class="tj-dot" style="background:#9333ea"></i>ইদগাম</span><span><i class="tj-dot" style="background:#db2777"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:#dc2626"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto">{{close}}</span></div>
+<div id="tajweedLegend"><b>{{palette}} তাজভিদ:</b><span><i class="tj-dot" style="background:var(--qx-tj-ghunnah)"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-qalqalah)"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-ikhfa)"></i>ইখফা</span><span><i class="tj-dot" style="background:var(--qx-tj-idgham)"></i>ইদগাম</span><span><i class="tj-dot" style="background:var(--qx-tj-iqlab)"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:var(--qx-tj-madd)"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto">{{close}}</span></div>
 <div id="dlBar"><div class="dl-txt"><b id="dlTitle">{{download}} এই সূরার তেলাওয়াত</b><small id="dlSub">অফলাইনে শোনার জন্য ডাউনলোড করে রাখো</small></div><button class="dl-btn" id="dlBtn">{{download}} ডাউনলোড</button><button class="dl-btn ghost" id="dlManageBtn">{{folder_open}} ম্যানেজ</button></div>
 <div id="audioBar" class="audio-bar">
   <div class="audio-inner">
@@ -4140,11 +4230,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 </div>
 
 <nav id="nav">
-  <button data-m="quran" class="on"><b>{{menu_book}}</b><span>কুরআন</span></button>
   <button data-m="prayer"><b>{{mosque}}</b><span>নামাজ</span></button>
+  <button data-m="quran" class="on"><b>{{menu_book}}</b><span>কুরআন</span></button>
   <button data-m="hadith"><b>{{history_edu}}</b><span>হাদিস</span></button>
   <button data-m="dua"><b><svg class="dua-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.2c-4.6 0-7.7-2.6-8.9-7.2-.2-.8.9-1.2 1.4-.5l1.5 2.2"/><path d="M12 20.2c4.6 0 7.7-2.6 8.9-7.2.2-.8-.9-1.2-1.4-.5l-1.5 2.2"/><path d="M6 14.7 4.6 9.4c-.2-.8 1-1.1 1.3-.4l1.6 4.2"/><path d="M7.5 13.2 6.6 7.2c-.1-.8 1.1-1 1.3-.2l1.2 5.6"/><path d="M9.2 12.6 8.9 6.6c0-.8 1.2-.9 1.3-.1l.6 5.4"/><path d="M18 14.7l1.4-5.3c.2-.8-1-1.1-1.3-.4l-1.6 4.2"/><path d="M16.5 13.2l.9-6c.1-.8-1.1-1-1.3-.2l-1.2 5.6"/><path d="M14.8 12.6l.3-6c0-.8-1.2-.9-1.3-.1l-.6 5.4"/></svg></b><span>দোয়া ও তাসবিহ</span></button>
-  <button data-m="tracker"><b>{{bar_chart}}</b><span>ট্র্যাকার</span></button>
+  <button data-m="more"><b>{{more_horiz}}</b><span>আরও</span></button>
 </nav>
 <div id="gridPopupOverlay"><div id="gridPopupBox"></div></div>
 
@@ -4311,7 +4401,7 @@ function buildGoalCard(){
 
   const editBtn = document.createElement("button");
   editBtn.textContent = "লক্ষ্য পরিবর্তন";
-  editBtn.style.cssText = "padding:3px 8px;font-size:11px;border-radius:var(--qx-radius);cursor:pointer;";
+  editBtn.style.cssText = "padding:3px 8px;font-size:var(--qx-fs-xs);border-radius:var(--qx-radius);cursor:pointer;";
   editBtn.onclick = () => {
     const val = prompt("প্রতিদিন কয়টি আয়াত পড়ার লক্ষ্য রাখতে চান? (যেমন: ১০, ২০, ৫০)", String(target));
     const num = parseInt(val, 10);
@@ -5065,6 +5155,8 @@ function renderHome(){
   if (mode === "asma") return renderAsma();
   if (mode === "hijri") return renderHijri();
   if (mode === "hadith") return renderHadith();
+  if (mode === "more") return renderMore();
+  if (QX_SECTIONS[mode]) return renderSection(mode);
   renderQuranHome();
 }
 
@@ -5431,7 +5523,7 @@ async function openJuz(n, y){
 /* ===== নামাজের সময়, তাসবিহ, দোয়া ===== */
 function setMode(m){
   mode = m; qEl.value = "";
-  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.m === m || (m === "tasbih" && b.dataset.m === "dua")));
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.m === m || (m === "tasbih" && b.dataset.m === "dua") || (m === "tracker" && b.dataset.m === "more")));
   renderHome();
 }
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
@@ -5453,6 +5545,37 @@ function showOther(title){
   updateAudioBarPos();
   app.innerHTML = "";
   window.scrollTo(0,0);
+}
+
+/* --- আরও পেইজ ও নতুন বিভাগের পেইজ (তালিকা প্যাটার্ন) --- */
+var QX_SECTIONS = {
+  ramadan: { icon: "bedtime", title: "রমজান", sub: "রোজা ও রমজানের আমল" },
+  kalima: { icon: "stars", title: "কালিমা", sub: "ঈমানের ঘোষণা" },
+  hajj: { icon: "explore", title: "হজ্জ", sub: "হজ্জের পরিচিতি" },
+  zakat: { icon: "package_2", title: "যাকাত", sub: "যাকাতের পরিচিতি" },
+  books: { icon: "edit_note", title: "বই ও অনুচ্ছেদ", sub: "বই ও লেখা" }
+};
+function qxRow(icon, title, sub, onclick){
+  const b = mk("button", "qx-row");
+  b.type = "button";
+  b.innerHTML = '<span class="qx-row-ic">{{' + icon + '}}</span><span class="qx-row-tx"><b>' + title + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span><span class="qx-row-go">›</span>';
+  b.onclick = onclick;
+  return b;
+}
+function renderMore(){
+  showOther("{{more_horiz}} আরও");
+  const box = mk("div", "qx-list");
+  box.appendChild(qxRow("bar_chart", "ট্র্যাকার", "প্রতিদিনের হিসাব", function(){ setMode("tracker"); }));
+  app.appendChild(box);
+}
+function renderSection(key){
+  const sc = QX_SECTIONS[key];
+  showOther("{{" + sc.icon + "}} " + sc.title);
+  const box = mk("div", "qx-list");
+  const empty = mk("div", "qx-empty");
+  empty.innerHTML = "<b>এই বিভাগে এখনো কিছু যোগ হয়নি</b><small>কনটেন্ট যুক্ত হলে এখানে তালিকা আকারে দেখা যাবে।</small>";
+  box.appendChild(empty);
+  app.appendChild(box);
 }
 
 /* --- নামাজের সময় ও ইউটিলিটি (Phase 3) --- */
@@ -6148,7 +6271,7 @@ function renderPrayerLearnView(){
 
   const introCard = mk('div','ayah');
   const introNo = mk('div','no');
-  introNo.innerHTML = '<span class="ayah-number" style="background:var(--qx-main-soft);color:var(--qx-main-color)">নামাজে নববী ﷺ - শায়খ আলবানী</span><span style="font-size:12px;color:var(--qx-meta-color)">Only Text Mode - CHOCR লাগবে না</span>';
+  introNo.innerHTML = '<span class="ayah-number" style="background:var(--qx-main-soft);color:var(--qx-main-color)">নামাজে নববী ﷺ - শায়খ আলবানী</span><span style="font-size:var(--qx-fs-sm);color:var(--qx-meta-color)">Only Text Mode - CHOCR লাগবে না</span>';
   introCard.appendChild(introNo);
   const introBn = mk('div','bn');
   introBn.innerHTML = 'এটি শায়খ নাসিরুদ্দীন আলবানী (রহঃ)-এর <b>সিফাতু সালাতিন নবী ﷺ</b> গ্রন্থের বিষয়ভিত্তিক বাংলা পাঠ-সহায়িকা। সরবরাহ করা উর্দু OCR পাঠের বিষয়সূচি ও উল্লেখ ধরে অধ্যায়গুলো সাজানো হয়েছে। OCR-এ পাঠভ্রংশ থাকায় প্রতিটি বাক্য বা হাদিসের রেফারেন্সের পূর্ণ মিল আলাদাভাবে যাচাই করা প্রয়োজন।';
@@ -7084,10 +7207,10 @@ setInterval(checkPrayerAlerts, 5000);
     var content=installed
       ? '<div class="pp-mini" style="text-align:center;padding:12px 4px">Quranix ইতিমধ্যে এই ডিভাইসে ইনস্টল করা আছে। হোম স্ক্রিন বা অ্যাপ তালিকা দেখুন।</div>'
       : '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 12px">'
-        +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px">{{smartphone}}</div><b style="display:block;text-align:center;font-size:13px;margin-bottom:6px">মোবাইল</b>'+mobileSteps+'</div>'
-        +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px"><svg class="ms-svg" viewBox="0 0 24 24" style="font-size:1em" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><b style="display:block;text-align:center;font-size:13px;margin-bottom:6px">ল্যাপটপ</b>'+pcSteps+'</div>'
+        +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px">{{smartphone}}</div><b style="display:block;text-align:center;font-size:var(--qx-fs-md);margin-bottom:6px">মোবাইল</b>'+mobileSteps+'</div>'
+        +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px"><svg class="ms-svg" viewBox="0 0 24 24" style="font-size:1em" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><b style="display:block;text-align:center;font-size:var(--qx-fs-md);margin-bottom:6px">ল্যাপটপ</b>'+pcSteps+'</div>'
         +'</div><p class="pp-mini" style="margin:0 0 10px">*ইনস্টল বাটন কাজ করতে ব্রাউজারে PWA install সমর্থিত হতে হবে।</p>';
-    box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:var(--qx-radius-lg);background:var(--qx-main-color);color:#fff;display:grid;place-items:center;font-size:26px">{{download}}</div><b>অফলাইনে পড়ুন</b><p class="pp-mini">মোবাইল বা ডেস্কটপে Quranix ইনস্টল করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} এখনই ইনস্টল করুন</button>':'');
+    box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:var(--qx-radius-lg);background:var(--qx-main-color);color:var(--qx-on-main);display:grid;place-items:center;font-size:26px">{{download}}</div><b>অফলাইনে পড়ুন</b><p class="pp-mini">মোবাইল বা ডেস্কটপে Quranix ইনস্টল করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} এখনই ইনস্টল করুন</button>':'');
     var installButton=box.querySelector('#quranixPopupInstall');
     if(installButton){
       installButton.onclick=function(){ if(window.quranixInstall) window.quranixInstall(); };
@@ -7395,7 +7518,26 @@ setInterval(checkPrayerAlerts, 5000);
       t.innerHTML='<span class="t-ic">{{'+d[0]+'}}</span><span class="tile-copy"><b>'+d[1]+'</b><strong>'+d[2]+'</strong>'+(d[4]?'<small>'+d[4]+'</small>':'')+'</span>';
       t.onclick=d[3]; row.appendChild(t);
     });
-    appEl.prepend(row); appEl.insertBefore(browse,row.nextSibling);
+    var navGo=function(m){ return function(){ var nb=document.querySelector('#nav [data-m="'+m+'"]'); if(nb) nb.click(); else setMode(m); }; };
+    var cats=[
+      ['menu_book','কুরআন','সূরা ও পারা',navGo('quran')],
+      ['history_edu','হাদিস','হাদিস প্যাকেজ',navGo('hadith')],
+      ['mosque','নামাজ','সময় ও শিক্ষা',navGo('prayer')],
+      ['front_hand','দোয়া ও তাসবিহ','দোয়া ও যিকির',navGo('dua')],
+      ['bedtime','রমজান','রোজা ও আমল',function(){ setMode('ramadan'); }],
+      ['stars','কালিমা','ঈমানের ঘোষণা',function(){ setMode('kalima'); }],
+      ['explore','হজ্জ','পরিচিতি',function(){ setMode('hajj'); }],
+      ['package_2','যাকাত','পরিচিতি',function(){ setMode('zakat'); }],
+      ['edit_note','বই ও অনুচ্ছেদ','বই ও লেখা',function(){ setMode('books'); }],
+      ['bar_chart','ট্র্যাকার','প্রতিদিনের হিসাব',function(){ setMode('tracker'); }]
+    ];
+    cats.forEach(function(d){
+      var t=document.createElement('button'); t.type='button'; t.className='home-tile';
+      t.setAttribute('aria-label',d[1]+': '+d[2]);
+      t.innerHTML='<span class="t-ic">{{'+d[0]+'}}</span><span class="tile-copy"><strong>'+d[1]+'</strong><small>'+d[2]+'</small></span>';
+      t.onclick=d[3]; row.appendChild(t);
+    });
+    appEl.prepend(row);
   }
   if(origRenderQuranHome){ window.renderQuranHome=function(){ origRenderQuranHome(); buildHero(); }; setTimeout(function(){ if(typeof renderHome==='function') renderHome(); }, 100); }
 })();
@@ -7583,7 +7725,7 @@ setInterval(checkPrayerAlerts, 5000);
       +'<div class="pp-mini">দিনগুলো — সবুজ = শেষ, বর্ডার = আজ</div><div class="khatam-dots">'+dots+'</div>'
       +'<button class="pp-btn" id="khGo">{{play_arrow}} আজকের পড়া শুরু করো</button><div style="height:8px"></div>'
       +'<button class="pp-btn" id="khDone" style="background:var(--qx-card-bg);color:var(--qx-text-color);border:1px solid var(--qx-border)">'+(p.doneDays&&p.doneDays[todayStr2()]?'{{undo}} আজকের টিক সরাও':'{{check_circle:f}} আজকের পড়া শেষ বলে মার্ক করো')+'</button><div style="height:8px"></div>'
-      +'<button class="pp-btn" id="khReset" style="background:none;color:#dc2626;border:1px solid #dc2626">{{delete}} প্ল্যান মুছে ফেলো</button>';
+      +'<button class="pp-btn" id="khReset" style="background:none;color:var(--qx-danger);border:1px solid var(--qx-danger)">{{delete}} প্ল্যান মুছে ফেলো</button>';
     document.getElementById('khGo').onclick=function(){ overlay.classList.remove('open'); var r=fromGlobal(st.todayStart); if(typeof openSurah==='function') openSurah(r.s,0,r.a); };
     document.getElementById('khDone').onclick=function(){
       var td=todayStr2(); p.doneDays=p.doneDays||{};
@@ -8139,10 +8281,10 @@ setInterval(checkPrayerAlerts, 5000);
     var pendingHadith=HADITH_CORPUS.filter(function(c){return !isDone(packageKey('hadith',c.id));});
     if(pendingHadith.length){
       html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{history_edu}}</span><b>হাদিসের কিতাব</b></div><small style="display:block;margin:4px 0 8px">বাংলা ও আরবি ডেটা অধ্যায়ভিত্তিক সংরক্ষণ</small><div class="dl-grid cols-2">';
-      pendingHadith.forEach(function(c){html+='<button class="pp-btn" data-hadith-dl="'+c.id+'">'+c.name+' <span class="ms" style="font-size:18px;margin-left:4px">{{download}}</span></button>';});
+      pendingHadith.forEach(function(c){html+='<button class="pp-btn" data-hadith-dl="'+c.id+'">'+c.name+' <span class="ms" style="font-size:var(--qx-fs-xl);margin-left:4px">{{download}}</span></button>';});
       html+='</div></div>';
     }
-    html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:18px">{{queue_music}}</span> সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
+    html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{queue_music}}</span> সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
     var m=meta(), ks=Object.keys(m);
     var hasSurahAudio = ks.length>0;
     if(ks.length){
@@ -8151,7 +8293,7 @@ setInterval(checkPrayerAlerts, 5000);
     if(packageJob && !packageJob.finished){
       html+='<div class="dl-item" style="display:block;background:color-mix(in srgb,var(--qx-main-color) 8%, var(--qx-card-bg));border-color:var(--qx-main-color)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b id="qxPackageStatus">'+packageJob.message+'</b><small id="qxPackagePct" class="pp-mini">0%</small></div><div style="width:100%;height:10px;background:var(--qx-border);border-radius:var(--qx-radius-pill);overflow:hidden;margin:10px 0"><div id="qxPackageProgressBar" style="height:100%;width:0%;background:var(--qx-main-color);border-radius:var(--qx-radius-pill);transition:width .2s"></div></div><progress id="qxPackageProgress" max="100" value="0" style="width:100%;height:4px;opacity:0;position:absolute;pointer-events:none"></progress><div style="display:flex;gap:8px"><button class="dl-btn" id="qxPackageAction">বিরতি</button><button class="dl-btn ghost" id="qxPackageCancel">বাতিল</button></div></div>';
     }
-    html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:18px">{{package_2}}</span> ডাউনলোড করা প্যাকেজ</h4>';
+    html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{package_2}}</span> ডাউনলোড করা প্যাকেজ</h4>';
     var entries=Object.keys(packages).filter(function(k){return ['complete','incomplete','paused'].includes(packages[k].status);});
     var hasPackages = entries.length>0;
     if(entries.length){
@@ -8319,8 +8461,8 @@ setInterval(checkPrayerAlerts, 5000);
 /* ===== STEP 4: AYAH IMAGE CARD ===== */
 window.openAyahCard = function(label, ar, bn){
   const THEMES =[
-    {name:'সবুজ', bg:'#0f6b4f', bg2:'#083a2b', ar:'#ffffff', bn:'#e8f5ee', muted:'#bfe3d0', accent:'#ffd98a'},
-    {name:'ক্রিম', bg:'#faf6ec', bg2:'#f0e6cc', ar:'#123f2c', bn:'#3a3a32', muted:'#7a7a68', accent:'#0f6b4f'},
+    {name:'সবুজ', bg:'#0f766e', bg2:'#0b5c56', ar:'#ffffff', bn:'#e8f5ee', muted:'#bfe3d0', accent:'#ffd98a'},
+    {name:'ক্রিম', bg:'#faf6ec', bg2:'#f0e6cc', ar:'#0b5c56', bn:'#3a3a32', muted:'#7a7a68', accent:'#0f766e'},
     {name:'মধ্যরাত', bg:'#101820', bg2:'#1d2f3a', ar:'#ffffff', bn:'#cfe3e8', muted:'#8fa8b0', accent:'#ffd98a'},
     {name:'গোলাপি', bg:'#3b1f3a', bg2:'#5a2d57', ar:'#ffffff', bn:'#f5d9e8', muted:'#d9a8c8', accent:'#ffd98a'},
   ];
@@ -8511,7 +8653,7 @@ function renderTracker(){
     var streak=0; for (let i=0;i<30;i++){ if(h.days && h.days[trkDateOffset(-i)]) streak++; else if(i>0) break; }
     var row=trkRow((h.icon||'{{star:f}}')+' '+h.name, 'স্ট্রিক: '+trkBn(streak)+' দিন', !!(h.days&&h.days[td]), function(v){ h.days=h.days||{}; if(v) h.days[td]=1; else delete h.days[td]; trkSave(d); renderTracker(); });
     // delete button
-    var del=document.createElement('button'); del.textContent='{{delete}}'; del.style.cssText='border:0;background:none;font-size:16px;cursor:pointer'; del.onclick=function(){ if(confirm('“'+h.name+'” হ্যাবিটটা মুছে ফেলবা?')){ d.habits=d.habits.filter(function(x){return x.id!==h.id}); trkSave(d); renderTracker(); } };
+    var del=document.createElement('button'); del.textContent='{{delete}}'; del.style.cssText='border:0;background:none;font-size:var(--qx-fs-lg);cursor:pointer'; del.onclick=function(){ if(confirm('“'+h.name+'” হ্যাবিটটা মুছে ফেলবা?')){ d.habits=d.habits.filter(function(x){return x.id!==h.id}); trkSave(d); renderTracker(); } };
     row.appendChild(del); c6.appendChild(row);
   });
   var add=document.createElement('button'); add.className='dl-btn ghost'; add.style.marginTop='8px'; add.textContent='+ নিজের হ্যাবিট যোগ করো';
@@ -8534,7 +8676,7 @@ var ASMA_DATA=[["الله", "আল্লাহ", "একমাত্র উপ�
 function asmaToday(){var d=new Date();return ASMA_DATA[(d.getDate()-1)%99];}
 function buildAsmaCard(){var t=asmaToday();var idx=ASMA_DATA.indexOf(t);var box=document.createElement('div');box.className='khatam-card';box.innerHTML='<div class="khatam-row"><b>{{auto_awesome}} আজকের নাম</b><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯</span></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:30px;color:var(--qx-main-color)">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div class="trk-mini">'+t[4]+'</div></div><div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">৯৯ নাম দেখো →</span><span>সূরা '+t[3]+'</span></div>';box.onclick=function(){if(typeof setMode==='function')setMode('asma');};return box;}
 function renderAsma(){if(typeof showOther==='function')showOther('{{auto_awesome}} আসমাউল হুসনা');const appEl = document.getElementById('app');var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var t=asmaToday();var top=document.createElement('div');top.className='asma-top';top.innerHTML='<small>{{auto_awesome}} আজকের নাম · '+(ASMA_DATA.indexOf(t)+1)+' / ৯৯</small><div class="ar">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div><small>রেফারেন্স: সূরা '+t[3]+' · '+t[4]+'</small></div>';top.onclick=function(){openAsmaDetail(ASMA_DATA.indexOf(t));};appEl.appendChild(top);var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='৯৯টি নাম মুখস্থ করো, প্রতিটা নামে ট্যাপ করে অর্থ + কুরআনের রেফারেন্স দেখো। {{star:f}} প্রিয় করো, {{bubble_chart}} জিকির করো।';appEl.appendChild(info);var search=document.createElement('input');search.className='asma-search';search.placeholder='নাম খুঁজুন... যেমন: রহমান, গাফুর, রজ্জাক';appEl.appendChild(search);var grid=document.createElement('div');grid.className='asma-grid';appEl.appendChild(grid);function draw(filter){grid.innerHTML='';ASMA_DATA.forEach(function(item,i){var txt=(item[1]+' '+item[2]+' '+item[0]).toLowerCase();if(filter&&txt.indexOf(filter.toLowerCase())<0)return;var c=document.createElement('div');c.className='asma-card'+(favs[i]?' fav':'');c.innerHTML='<div class="ar">'+item[0]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+item[1]+'</b><small>'+item[2]+'</small><div class="trk-mini">সূরা '+item[3]+(counts[i]?' · {{bubble_chart}} '+counts[i]+' বার':'')+'</div>';c.onclick=function(){openAsmaDetail(i);};grid.appendChild(c);});}search.oninput=function(){draw(search.value);};draw('');}
-function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:48px;color:var(--qx-main-color);direction:rtl;line-height:1.6">'+item[0]+'</div><b style="font-size:18px">'+item[1]+'</b><div style="color:var(--qx-meta-color)">'+item[2]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{bubble_chart}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">← আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম →</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';if(navigator.share){try{await navigator.share({title:item[1],text:text});}catch(e){}}else if(typeof copyText==='function')copyText(text,'কপি হয়েছে!');};}
+function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:48px;color:var(--qx-main-color);direction:rtl;line-height:1.6">'+item[0]+'</div><b style="font-size:var(--qx-fs-xl)">'+item[1]+'</b><div style="color:var(--qx-meta-color)">'+item[2]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{bubble_chart}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">← আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম →</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';if(navigator.share){try{await navigator.share({title:item[1],text:text});}catch(e){}}else if(typeof copyText==='function')copyText(text,'কপি হয়েছে!');};}
 window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaDetail=openAsmaDetail;
 </script>
 
@@ -8711,7 +8853,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     // close existing
     var old=document.querySelector('.ww-sheet'); if(old) old.remove();
     var sheet=document.createElement('div'); sheet.className='ww-sheet';
-    sheet.innerHTML='<button class="ww-close" id="wwX">{{close}}</button><div class="ww-ar">'+esc(wordText)+'</div><div style="text-align:center;color:var(--qx-meta-color);font-size:13px">সূরা '+s+' · আয়াত '+a+' · শব্দ '+(idx+1)+'</div><div id="wwBody" style="text-align:center;margin-top:10px">লোড হচ্ছে...</div>';
+    sheet.innerHTML='<button class="ww-close" id="wwX">{{close}}</button><div class="ww-ar">'+esc(wordText)+'</div><div style="text-align:center;color:var(--qx-meta-color);font-size:var(--qx-fs-md)">সূরা '+s+' · আয়াত '+a+' · শব্দ '+(idx+1)+'</div><div id="wwBody" style="text-align:center;margin-top:10px">লোড হচ্ছে...</div>';
     document.body.appendChild(sheet);
     sheet.querySelector('#wwX').onclick=function(){ sheet.remove(); };
     var body=sheet.querySelector('#wwBody');
@@ -8725,9 +8867,9 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     if(!meaning || /^[A-Za-z]/.test(meaning)) { if(dictMean) meaning=dictMean; }
     if(!meaning) meaning='এই শব্দের বাংলা অর্থ ডাটাবেসে পাওয়া যায়নি — পুরো আয়াতের অনুবাদ দেখো।';
     var html='';
-    if(translit) html+='<div style="font-size:15px;color:var(--qx-main-color);font-weight:700">'+esc(translit)+'</div>';
+    if(translit) html+='<div style="font-size:var(--qx-fs-lg);color:var(--qx-main-color);font-weight:700">'+esc(translit)+'</div>';
     html+='<div style="font-size:20px;font-weight:700;margin:8px 0">'+esc(meaning)+'</div>';
-    html+='<div style="font-size:12px;color:var(--qx-meta-color)">{{lightbulb}} টিপস: এই শব্দটা মনে রাখতে পুরো আয়াতটা ৩ বার পড়ো, তারপর শুধু এই শব্দটা ৩ বার বলো।</div>';
+    html+='<div style="font-size:var(--qx-fs-sm);color:var(--qx-meta-color)">{{lightbulb}} টিপস: এই শব্দটা মনে রাখতে পুরো আয়াতটা ৩ বার পড়ো, তারপর শুধু এই শব্দটা ৩ বার বলো।</div>';
     html+='<div style="margin-top:12px;display:flex;gap:8px"><button class="ac-btn ghost" id="wwPrev">← আগের শব্দ</button><button class="ac-btn" id="wwNext">পরের শব্দ →</button></div>';
     body.innerHTML=html;
     var prevBtn=body.querySelector('#wwPrev'), nextBtn=body.querySelector('#wwNext');
@@ -8906,7 +9048,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
     var h=hijriParts(new Date()); var ne=nextEvent();
     var box=document.createElement('div'); box.className='khatam-card';
     box.innerHTML='<div class="khatam-row"><b>{{nights_stay}} হিজরি ক্যালেন্ডার</b><span>আজ</span></div>'
-      +'<div style="text-align:center;font-size:18px;font-weight:700;color:var(--qx-main-color)">'+(h?hijriStr(new Date()):'—')+'</div>'
+      +'<div style="text-align:center;font-size:var(--qx-fs-xl);font-weight:700;color:var(--qx-main-color)">'+(h?hijriStr(new Date()):'—')+'</div>'
       +(ne?'<div class="khatam-row"><span>{{hourglass_top}} পরের ইভেন্ট: <b>'+ne.ev.name+'</b></span><span>'+(ne.days===0?'আজই!':bnNum(ne.days)+' দিন বাকি')+'</span></div>':'')
       +'<div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">হিজরি ক্যালেন্ডার দেখো →</span><span>রমজান / ঈদ কবে?</span></div>';
     box.onclick=function(){ if(typeof setMode==='function') setMode('hijri'); };
@@ -8956,7 +9098,7 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
       var cell=document.createElement('div'); cell.className='hijri-day'+(hh2.day===h.day?' today':'');
       var evToday=EVENTS.filter(function(ev){ return ev.m===hh2.month && ev.d===hh2.day; });
       if(evToday.length) cell.classList.add('event');
-      cell.innerHTML='<div class="hnum">'+bnNum(hh2.day)+'</div><div>'+cur.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</div>'+(evToday.length?'<div style="font-size:9px;color:#e67e22">● '+evToday[0].name+'</div>':'');
+      cell.innerHTML='<div class="hnum">'+bnNum(hh2.day)+'</div><div>'+cur.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</div>'+(evToday.length?'<div style="font-size:9px;color:var(--qx-event)">● '+evToday[0].name+'</div>':'');
       (function(evList, date){ if(evList.length){ cell.setAttribute('role','button'); cell.setAttribute('tabindex','0'); cell.setAttribute('aria-label',evList[0].name+' সম্পর্কে জানুন'); cell.onclick=function(){ openEventInfo(evList[0],date); }; cell.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openEventInfo(evList[0],date); } }; } })(evToday, new Date(cur));
       cal.appendChild(cell);
       cur.setDate(cur.getDate()+1);
@@ -9057,12 +9199,12 @@ async function openOfflineHadithCollection(collection){
   var search=document.createElement('input');search.className='asma-search';search.placeholder='হাদিস খুঁজুন...';appEl.appendChild(search);
   var list=document.createElement('div');appEl.appendChild(list);var rows=[];var hadithMeta=await window.quranixPackageStore.getHadithMeta(collection.id)||{};
   for (let i=1;i<=collection.chapters;i++){var chapter=await window.quranixPackageStore.getHadithChapter(collection.id,i);var chapterInfo=hadithMeta[collection.id==='Ibne-Mazah'?String(i-1):String(i)]||{};if(Array.isArray(chapter))chapter.forEach(function(h){var copy=Object.assign({},h);copy._qxChapterTitle=chapterInfo.title||'';rows.push(copy);});}
-  function draw(q){list.innerHTML='';var term=(q||'').toLowerCase();rows.forEach(function(h){var ar=h.ar||h.arabic||'',bn=h.bn||h.text||h.translation||'',narrator=h.narrator||'',grade=h.grade||'',chapterTitle=h._qxChapterTitle||'';var hay=(ar+' '+bn+' '+narrator+' '+grade+' '+chapterTitle).toLowerCase();if(term&&hay.indexOf(term)<0)return;var card=document.createElement('div');card.className='hadith-item';var title=document.createElement('b');title.textContent='হাদিস '+(h.hadith_id||h.id||'');var arabic=document.createElement('div');arabic.className='ar';arabic.textContent=ar;var body=document.createElement('div');body.style.cssText='font-size:14px;line-height:1.7;margin:5px 0';body.textContent=bn;var ref=document.createElement('div');ref.className='ref';ref.textContent=[narrator,grade,chapterTitle||('অধ্যায় '+((h.chapter&&h.chapter.chapter_number)||''))].filter(Boolean).join(' · ');card.appendChild(title);if(ar)card.appendChild(arabic);card.appendChild(body);card.appendChild(ref);list.appendChild(card);});if(!list.children.length)list.textContent='এই অনুসন্ধানে কোনো হাদিস পাওয়া যায়নি।';}
+  function draw(q){list.innerHTML='';var term=(q||'').toLowerCase();rows.forEach(function(h){var ar=h.ar||h.arabic||'',bn=h.bn||h.text||h.translation||'',narrator=h.narrator||'',grade=h.grade||'',chapterTitle=h._qxChapterTitle||'';var hay=(ar+' '+bn+' '+narrator+' '+grade+' '+chapterTitle).toLowerCase();if(term&&hay.indexOf(term)<0)return;var card=document.createElement('div');card.className='hadith-item';var title=document.createElement('b');title.textContent='হাদিস '+(h.hadith_id||h.id||'');var arabic=document.createElement('div');arabic.className='ar';arabic.textContent=ar;var body=document.createElement('div');body.style.cssText='font-size:var(--qx-fs);line-height:1.7;margin:5px 0';body.textContent=bn;var ref=document.createElement('div');ref.className='ref';ref.textContent=[narrator,grade,chapterTitle||('অধ্যায় '+((h.chapter&&h.chapter.chapter_number)||''))].filter(Boolean).join(' · ');card.appendChild(title);if(ar)card.appendChild(arabic);card.appendChild(body);card.appendChild(ref);list.appendChild(card);});if(!list.children.length)list.textContent='এই অনুসন্ধানে কোনো হাদিস পাওয়া যায়নি।';}
   search.oninput=function(){draw(search.value);};draw('');
 }
-function renderHadith(){if(typeof showOther==='function')showOther('{{history_edu}} হাদিস প্যাকেজ');const appEl = document.getElementById('app');var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='একে একে পড়ো, মুখস্থ হলে {{check_circle:f}} মার্ক করো।';appEl.appendChild(info);var pkgs=[{k:'nawawi',icon:'{{menu_book}}',name:'৪০ হাদিস (ইমাম নববী)',desc:'ইমাম নববীর সংকলন থেকে সোর্স-যাচাইকৃত নির্বাচিত হাদিস',count:HADITH_DATA.nawawi.length},{k:'qudsi',icon:'{{auto_awesome}}',name:'হাদিসে কুদসি',desc:'আল্লাহর কথা, রাসূল ﷺ-এর ভাষায় — হাদিস কুদসি থেকে সোর্স-যাচাইকৃত',count:HADITH_DATA.qudsi.length},{k:'short',icon:'{{lightbulb}}',name:'ছোট হাদিস — দৈনন্দিন জীবন',desc:'ছোট ছোট হাদিস, মুখস্থ করা সহজ — প্রতিদিন ১টা',count:HADITH_DATA.short.length}];pkgs.forEach(function(pk){var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var done=0;for (let i=0;i<pk.count;i++){if(mem[pk.k+':'+i])done++;}var card=document.createElement('div');card.className='hadith-pkg';card.innerHTML='<h3>'+pk.icon+' '+pk.name+'</h3><div class="sub">'+pk.desc+'</div><div class="khatam-row" style="margin-top:8px"><span>'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'টি হাদিস</span><span>মুখস্থ: '+(typeof toBn==='function'?toBn(done):done)+'/'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'</span><span style="color:var(--qx-main-color);font-weight:700">খোলো →</span></div><div class="goal-track"><div class="goal-fill" style="width:'+Math.round(done/pk.count*100)+'%" ></div></div>';card.onclick=function(){renderHadithList(pk.k,pk.name);};appEl.appendChild(card);});var today=hadithToday();var tc=document.createElement('div');tc.className='hadith-pkg';tc.innerHTML='<h3>{{history_edu}} আজকের হাদিস</h3><div class="ar" style="font-family:var(--qx-font-arabic);font-size:22px;direction:rtl;text-align:right;color:var(--qx-main-color)">'+today.ar+'</div><b>'+today.title+'</b><div class="trk-mini">'+today.bn+'</div><div class="ref" style="font-size:11px;color:var(--qx-meta-color)">{{auto_stories}} '+today.ref+'</div>';tc.onclick=function(){openHadithDetail(today.pkg,today.idx);};appEl.appendChild(tc);renderOfflineHadithCollections(appEl);}
-function renderHadithList(pkgKey,pkgName){if(typeof showOther==='function')showOther('{{history_edu}} '+pkgName);const appEl = document.getElementById('app');var back=document.createElement('button');back.className='dl-btn ghost';back.textContent='← সব প্যাকেজ';back.onclick=function(){renderHadith();};appEl.appendChild(back);var search=document.createElement('input');search.className='asma-search';search.placeholder='হাদিস খুঁজুন... যেমন: নিয়ত, রাগ, ধৈর্য';appEl.appendChild(search);var list=document.createElement('div');appEl.appendChild(list);function draw(f){list.innerHTML='';var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}HADITH_DATA[pkgKey].forEach(function(h,i){if(f&&(h[0]+h[2]+h[3]).toLowerCase().indexOf(f.toLowerCase())<0)return;var item=document.createElement('div');item.className='hadith-item'+(mem[pkgKey+':'+i]?' done':'');item.innerHTML='<div class="ar">'+h[1]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+h[0]+'</b><div style="font-size:13px;margin:4px 0">'+h[2]+'</div><div class="ref">{{auto_stories}} '+h[3]+(mem[pkgKey+':'+i]?' · {{check_circle:f}} মুখস্থ':'')+'</div>';item.onclick=function(){openHadithDetail(pkgKey,i);};list.appendChild(item);});}search.oninput=function(){draw(search.value);};draw('');}
-function openHadithDetail(pkgKey,idx){var h=HADITH_DATA[pkgKey][idx];var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var key=pkgKey+':'+idx;var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>{{history_edu}} '+(pkgKey==='nawawi'?'৪০ হাদিস':pkgKey==='qudsi'?'হাদিসে কুদসি':'ছোট হাদিস')+' · '+(typeof toBn==='function'?toBn(idx+1):idx+1)+'</span><button id="hX">{{close}}</button></div><div class="ar" style="font-family:var(--qx-font-arabic);font-size:26px;direction:rtl;text-align:center;color:var(--qx-main-color);line-height:1.8">'+h[1]+'</div><b style="font-size:18px">'+h[0]+'</b><div style="line-height:1.7;margin:10px 0">'+h[2]+'</div><div class="trk-mini">{{auto_stories}} রেফারেন্স: '+h[3]+'</div><div class="trk-mini" style="margin-top:6px">{{lightbulb}} এই হাদিসটা আজকের দিনে কীভাবে আমল করবা, একটু ভেবে নাও। মুখস্থ হলে {{check_circle:f}} চাপ দাও।</div><div class="ac-row"><button class="ac-btn ghost" id="hMem">'+(mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো')+'</button><button class="ac-btn" id="hShare">{{share}} শেয়ার করো</button></div><div class="ac-row"><button class="ac-btn ghost" id="hPrev">← আগের হাদিস</button><button class="ac-btn ghost" id="hNext">পরের হাদিস →</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='hadith'){};};box.querySelector('#hX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#hMem').onclick=function(){if(mem[key])delete mem[key];else mem[key]=1;localStorage.setItem('quranix_hadith_mem',JSON.stringify(mem));this.textContent=mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো';if(typeof showToast==='function')showToast(mem[key]?'মুখস্থ মার্ক হয়েছে':'মার্ক সরানো হয়েছে');};box.querySelector('#hShare').onclick=async function(){var text=''+h[0]+'\n'+h[1]+'\n'+h[2]+'\n'+h[3]+'\n— Quranix · হাদিস প্যাকেজ';if(navigator.share){try{await navigator.share({title:h[0],text:text});}catch(e){}}else if(typeof copyText==='function')copyText(text,'কপি হয়েছে!');};box.querySelector('#hPrev').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+HADITH_DATA[pkgKey].length-1)%HADITH_DATA[pkgKey].length);};box.querySelector('#hNext').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+1)%HADITH_DATA[pkgKey].length);};}
+function renderHadith(){if(typeof showOther==='function')showOther('{{history_edu}} হাদিস প্যাকেজ');const appEl = document.getElementById('app');var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='একে একে পড়ো, মুখস্থ হলে {{check_circle:f}} মার্ক করো।';appEl.appendChild(info);var pkgs=[{k:'nawawi',icon:'{{menu_book}}',name:'৪০ হাদিস (ইমাম নববী)',desc:'ইমাম নববীর সংকলন থেকে সোর্স-যাচাইকৃত নির্বাচিত হাদিস',count:HADITH_DATA.nawawi.length},{k:'qudsi',icon:'{{auto_awesome}}',name:'হাদিসে কুদসি',desc:'আল্লাহর কথা, রাসূল ﷺ-এর ভাষায় — হাদিস কুদসি থেকে সোর্স-যাচাইকৃত',count:HADITH_DATA.qudsi.length},{k:'short',icon:'{{lightbulb}}',name:'ছোট হাদিস — দৈনন্দিন জীবন',desc:'ছোট ছোট হাদিস, মুখস্থ করা সহজ — প্রতিদিন ১টা',count:HADITH_DATA.short.length}];pkgs.forEach(function(pk){var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var done=0;for (let i=0;i<pk.count;i++){if(mem[pk.k+':'+i])done++;}var card=document.createElement('div');card.className='hadith-pkg';card.innerHTML='<h3>'+pk.icon+' '+pk.name+'</h3><div class="sub">'+pk.desc+'</div><div class="khatam-row" style="margin-top:8px"><span>'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'টি হাদিস</span><span>মুখস্থ: '+(typeof toBn==='function'?toBn(done):done)+'/'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'</span><span style="color:var(--qx-main-color);font-weight:700">খোলো →</span></div><div class="goal-track"><div class="goal-fill" style="width:'+Math.round(done/pk.count*100)+'%" ></div></div>';card.onclick=function(){renderHadithList(pk.k,pk.name);};appEl.appendChild(card);});var today=hadithToday();var tc=document.createElement('div');tc.className='hadith-pkg';tc.innerHTML='<h3>{{history_edu}} আজকের হাদিস</h3><div class="ar" style="font-family:var(--qx-font-arabic);font-size:22px;direction:rtl;text-align:right;color:var(--qx-main-color)">'+today.ar+'</div><b>'+today.title+'</b><div class="trk-mini">'+today.bn+'</div><div class="ref" style="font-size:var(--qx-fs-xs);color:var(--qx-meta-color)">{{auto_stories}} '+today.ref+'</div>';tc.onclick=function(){openHadithDetail(today.pkg,today.idx);};appEl.appendChild(tc);renderOfflineHadithCollections(appEl);}
+function renderHadithList(pkgKey,pkgName){if(typeof showOther==='function')showOther('{{history_edu}} '+pkgName);const appEl = document.getElementById('app');var back=document.createElement('button');back.className='dl-btn ghost';back.textContent='← সব প্যাকেজ';back.onclick=function(){renderHadith();};appEl.appendChild(back);var search=document.createElement('input');search.className='asma-search';search.placeholder='হাদিস খুঁজুন... যেমন: নিয়ত, রাগ, ধৈর্য';appEl.appendChild(search);var list=document.createElement('div');appEl.appendChild(list);function draw(f){list.innerHTML='';var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}HADITH_DATA[pkgKey].forEach(function(h,i){if(f&&(h[0]+h[2]+h[3]).toLowerCase().indexOf(f.toLowerCase())<0)return;var item=document.createElement('div');item.className='hadith-item'+(mem[pkgKey+':'+i]?' done':'');item.innerHTML='<div class="ar">'+h[1]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+h[0]+'</b><div style="font-size:var(--qx-fs-md);margin:4px 0">'+h[2]+'</div><div class="ref">{{auto_stories}} '+h[3]+(mem[pkgKey+':'+i]?' · {{check_circle:f}} মুখস্থ':'')+'</div>';item.onclick=function(){openHadithDetail(pkgKey,i);};list.appendChild(item);});}search.oninput=function(){draw(search.value);};draw('');}
+function openHadithDetail(pkgKey,idx){var h=HADITH_DATA[pkgKey][idx];var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var key=pkgKey+':'+idx;var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>{{history_edu}} '+(pkgKey==='nawawi'?'৪০ হাদিস':pkgKey==='qudsi'?'হাদিসে কুদসি':'ছোট হাদিস')+' · '+(typeof toBn==='function'?toBn(idx+1):idx+1)+'</span><button id="hX">{{close}}</button></div><div class="ar" style="font-family:var(--qx-font-arabic);font-size:26px;direction:rtl;text-align:center;color:var(--qx-main-color);line-height:1.8">'+h[1]+'</div><b style="font-size:var(--qx-fs-xl)">'+h[0]+'</b><div style="line-height:1.7;margin:10px 0">'+h[2]+'</div><div class="trk-mini">{{auto_stories}} রেফারেন্স: '+h[3]+'</div><div class="trk-mini" style="margin-top:6px">{{lightbulb}} এই হাদিসটা আজকের দিনে কীভাবে আমল করবা, একটু ভেবে নাও। মুখস্থ হলে {{check_circle:f}} চাপ দাও।</div><div class="ac-row"><button class="ac-btn ghost" id="hMem">'+(mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো')+'</button><button class="ac-btn" id="hShare">{{share}} শেয়ার করো</button></div><div class="ac-row"><button class="ac-btn ghost" id="hPrev">← আগের হাদিস</button><button class="ac-btn ghost" id="hNext">পরের হাদিস →</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='hadith'){};};box.querySelector('#hX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#hMem').onclick=function(){if(mem[key])delete mem[key];else mem[key]=1;localStorage.setItem('quranix_hadith_mem',JSON.stringify(mem));this.textContent=mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো';if(typeof showToast==='function')showToast(mem[key]?'মুখস্থ মার্ক হয়েছে':'মার্ক সরানো হয়েছে');};box.querySelector('#hShare').onclick=async function(){var text=''+h[0]+'\n'+h[1]+'\n'+h[2]+'\n'+h[3]+'\n— Quranix · হাদিস প্যাকেজ';if(navigator.share){try{await navigator.share({title:h[0],text:text});}catch(e){}}else if(typeof copyText==='function')copyText(text,'কপি হয়েছে!');};box.querySelector('#hPrev').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+HADITH_DATA[pkgKey].length-1)%HADITH_DATA[pkgKey].length);};box.querySelector('#hNext').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+1)%HADITH_DATA[pkgKey].length);};}
 window.renderHadith=renderHadith;window.openOfflineHadithCollection=openOfflineHadithCollection;window.buildHadithCard=buildHadithCard;window.openHadithDetail=openHadithDetail;window.renderHadithList=renderHadithList;
 </script>
 
