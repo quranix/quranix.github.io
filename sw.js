@@ -1,4 +1,6 @@
+
 const CACHE = 'quranix-v13';
+
 const ASSETS = [
   './',
   './index.html',
@@ -15,6 +17,103 @@ const ASSETS = [
   './fonts/material-symbols-rounded.woff2',
   './manifest.json'
 ];
-self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); });
-self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))); });
-self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
+
+// INSTALL
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.add('./index.html');
+    await Promise.all(
+      ASSETS
+        .filter(url => url !== './index.html')
+        .map(async url => {
+          try {
+            await cache.add(url);
+          } catch (error) {
+            console.warn('Cache failed:', url, error);
+          }
+        })
+    );
+
+    await self.skipWaiting();
+  })());
+});
+
+
+// ACTIVATE
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter(key =>
+          /^quranix(?:[-_]|$)/i.test(key) &&
+          key !== CACHE
+        )
+        .map(key => caches.delete(key))
+    );
+
+    await self.clients.claim();
+  })());
+});
+
+
+// FETCH: NETWORK FIRST, OFFLINE FALLBACK
+self.addEventListener('fetch', event => {
+  const request = event.request;
+
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  const allowedTypes = [
+    'document',
+    'script',
+    'style',
+    'font',
+    'image',
+    'manifest'
+  ];
+
+  if (!allowedTypes.includes(request.destination)) return;
+
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+
+    try {
+      const response = await fetch(request, {
+        cache: 'no-cache'
+      });
+
+      if (response.ok && response.type === 'basic') {
+        try {
+          await cache.put(request, response.clone());
+        } catch (error) {
+          console.warn('Cache update failed:', error);
+        }
+      }
+
+      return response;
+
+    } catch (error) {
+      const cached = await cache.match(request);
+
+      if (cached) return cached;
+      if (request.mode === 'navigate') {
+        const fallback = await cache.match(
+          new URL('./index.html', self.registration.scope).href
+        );
+
+        if (fallback) return fallback;
+      }
+
+      return new Response('Offline - Content unavailable', {
+        status: 503,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8'
+        }
+      });
+    }
+  })());
+});
