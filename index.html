@@ -2,7 +2,7 @@
 <html lang="bn" translate="no" class="notranslate">
 <head>
 <!--
-QURANIX VERSION: v8
+QURANIX VERSION: v9
 QX FILE EDIT RULES
 1. NO OVERRIDE RULE - Do not add duplicate rules that override previous ones. Edit existing rule directly.
 2. NO !important - Never use !important in any CSS.
@@ -596,8 +596,7 @@ nav button .ms {
   line-height: 1;
 }
 
-.dua-ic,
-.home-ic {
+.dua-ic {
   width: 22px;
   height: 22px;
   display: block;
@@ -3352,12 +3351,6 @@ body.inside-page .ayah .icon-btn:focus-visible, body.inside-page .ayah .star:foc
   -webkit-user-select: none;
 }
 
-.ms.qx-svg svg {
-  width: 1em;
-  height: 1em;
-  display: block;
-}
-
 .ms.f,nav button.on .ms,button:active .ms,.g-menu-item:active .ms {
   font-variation-settings: 'FILL' 1;
 }
@@ -4379,7 +4372,7 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
 <meta name="apple-mobile-web-app-title" content="Quranix">
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0..1,0&icon_names=abc,add,alarm,arrow_back,arrow_downward,arrow_forward,arrow_upward,auto_awesome,auto_stories,backup,bar_chart,bedtime,block,book,bookmark,bookmark_add,bookmark_added,bookmark_border,bookmarks,bubble_chart,calendar_month,celebration,check,check_box,check_box_outline_blank,check_circle,chevron_left,chevron_right,close,cloud_download,cloud_off,collections_bookmark,content_copy,create_new_folder,crop_portrait,crop_square,dark_mode,date_range,delete,delete_forever,done,done_all,download,download_done,edit,edit_note,error,event,expand_less,expand_more,explore,favorite,file_download,filter_alt,filter_list,flag,folder,folder_open,format_size,front_hand,fullscreen,fullscreen_exit,headphones,help,history_edu,home,hourglass_empty,hourglass_top,image,import_contacts,info,keyboard_arrow_down,keyboard_arrow_up,label,language,library_books,light_mode,lightbulb,link,location_on,lock,mail,map,menu,menu_book,mic,more_horiz,more_vert,mosque,near_me,nightlight,nights_stay,no_meals,notifications,notifications_active,notifications_off,palette,pause,pause_circle,place,play_arrow,play_circle,psychology,public,push_pin,radio_button_unchecked,refresh,remove,repeat,repeat_one,restaurant,restore,save,schedule,search,select_all,send,settings,share,shuffle,skip_next,skip_previous,smartphone,snooze,sort,star,stars,stop,sync,tag,target,text_decrease,text_fields,text_increase,thumb_up,timer,toggle_off,toggle_on,translate,tune,undo,upload,vibration,visibility,visibility_off,volume_down,volume_off,volume_up,warning,water_drop,wb_sunny,wb_twilight,wifi,wifi_off,zoom_in,zoom_out&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0..1,0&icon_names=abc,add,alarm,arrow_back,arrow_downward,arrow_forward,arrow_upward,auto_awesome,auto_stories,backup,bar_chart,bedtime,block,book,bookmark,bookmark_add,bookmark_added,bookmark_border,bookmarks,bubble_chart,calendar_month,celebration,check,check_box,check_box_outline_blank,check_circle,chevron_left,chevron_right,close,cloud_download,cloud_off,collections_bookmark,content_copy,create_new_folder,crop_portrait,crop_square,dark_mode,date_range,delete,delete_forever,done,done_all,download,download_done,edit,edit_note,error,event,expand_less,expand_more,explore,favorite,file_download,filter_alt,filter_list,flag,folder,folder_open,format_size,front_hand,fullscreen,fullscreen_exit,headphones,help,history_edu,home,hourglass_empty,hourglass_top,image,import_contacts,info,keyboard_arrow_down,keyboard_arrow_up,label,language,library_books,light_mode,lightbulb,link,location_on,lock,mail,map,menu,menu_book,mic,more_horiz,more_vert,mosque,near_me,nightlight,nights_stay,no_meals,notifications,notifications_active,notifications_off,paid,palette,pause,pause_circle,payments,place,play_arrow,play_circle,psychology,public,push_pin,radio_button_unchecked,refresh,remove,repeat,repeat_one,restaurant,restore,save,savings,schedule,search,select_all,send,settings,share,shuffle,skip_next,skip_previous,smartphone,snooze,sort,star,stars,stop,sync,tag,target,text_decrease,text_fields,text_increase,thumb_up,timer,toggle_off,toggle_on,toll,translate,tune,undo,upload,vibration,view_in_ar,visibility,visibility_off,volume_down,volume_off,volume_up,warning,water_drop,wb_sunny,wb_twilight,wifi,wifi_off,zoom_in,zoom_out&display=block" rel="stylesheet">
 
 
 
@@ -4549,7 +4542,7 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
 </div>
 
 <nav id="nav">
-  <button id="navHome" type="button" aria-label="হোম"><b><svg class="home-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg></b><span>হোম</span></button>
+  <button id="navHome" type="button" aria-label="হোম"><b>{{home}}</b><span>হোম</span></button>
   <button data-m="prayer"><b>{{mosque}}</b><span>নামাজ</span></button>
   <button data-m="quran" class="on"><b>{{menu_book}}</b><span>কুরআন</span></button>
   <button data-m="hadith"><b>{{history_edu}}</b><span>হাদিস</span></button>
@@ -4562,16 +4555,6 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
 /* {{icon}} / {{icon:f}} tokens in any text become Material icon spans (also for dynamically added text) */
 (function(){
   var RX=/\{\{([a-z_0-9]+)(:f)?\}\}/g, SKIP={OPTION:1,TITLE:1,TEXTAREA:1}, NOCONV={SCRIPT:1,STYLE:1};
-  /* Icons that Material Symbols does not have: drawn as SVG, used the same way as {{kaaba}} */
-  var SVG_HEAD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
-  var SVG_ICONS={
-    kaaba: SVG_HEAD+'<path d="M5 7h14v13H5z"/><path d="M5 7l2-2.5h10L19 7"/><path d="M5 10.5h14"/><path d="M14 20v-5h3v5"/></svg>',
-    zakat_coin: SVG_HEAD+'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5"/><path d="M12 9.5v5"/></svg>'
-  };
-  window.qxIconHtml=function(name, filled){
-    if(SVG_ICONS[name]) return '<span class="ms qx-svg" aria-hidden="true">'+SVG_ICONS[name]+'</span>';
-    return '<span class="ms'+(filled?' f':'')+'" aria-hidden="true">'+name+'</span>';
-  };
   function conv(n){
     var s=n.nodeValue; if(!s||s.indexOf('{{')<0) return;
     var p=n.parentNode; if(!p||NOCONV[p.nodeName]) return;
@@ -4579,10 +4562,7 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
     var f=document.createDocumentFragment(), last=0, m; RX.lastIndex=0;
     while((m=RX.exec(s))){
       if(m.index>last) f.appendChild(document.createTextNode(s.slice(last,m.index)));
-      var i=document.createElement('span'); i.setAttribute('aria-hidden','true');
-      if(SVG_ICONS[m[1]]){ i.className='ms qx-svg'; i.innerHTML=SVG_ICONS[m[1]]; }
-      else { i.className='ms'+(m[2]?' f':''); i.textContent=m[1]; }
-      f.appendChild(i);
+      var i=document.createElement('span'); i.className='ms'+(m[2]?' f':''); i.setAttribute('aria-hidden','true'); i.textContent=m[1]; f.appendChild(i);
       last=RX.lastIndex;
     }
     if(last<s.length) f.appendChild(document.createTextNode(s.slice(last)));
@@ -5944,7 +5924,7 @@ function showOther(title){
   document.body.classList.remove("reader-active");
   document.body.classList.add("inside-page");
   titleEl.innerHTML = String(title).replace(/\{\{([a-z_0-9]+)(:f)?\}\}/g, function(match, name, filled){
-    return qxIconHtml(name, filled);
+    return '<span class="ms' + (filled ? ' f' : '') + '" aria-hidden="true">' + name + '</span>';
   });
   backBtn.style.display = "none";
   controls.style.display = "none";
@@ -5976,8 +5956,8 @@ var KALIMA_DATA = [
 var QX_SECTIONS = {
   ramadan: { icon: "no_meals", title: "রমজান", sub: "রোজা ও রমজানের আমল" },
   kalima: { icon: "auto_awesome", title: "কালিমা", sub: "ঈমানের ঘোষণা" },
-  hajj: { icon: "kaaba", title: "হজ্জ", sub: "হজ্জের পরিচিতি" },
-  zakat: { icon: "zakat_coin", title: "যাকাত", sub: "যাকাতের পরিচিতি" },
+  hajj: { icon: "view_in_ar", title: "হজ্জ", sub: "হজ্জের পরিচিতি" },
+  zakat: { icon: "toll", title: "যাকাত", sub: "যাকাতের পরিচিতি" },
   books: { icon: "edit_note", title: "বই ও অনুচ্ছেদ", sub: "বই ও লেখা" }
 };
 function qxRow(icon, title, sub, onclick){
@@ -8220,8 +8200,8 @@ setInterval(checkPrayerAlerts, 5000);
       ['front_hand','দোয়া ও তাসবিহ','দোয়া ও যিকির',navGo('dua')],
       ['no_meals','রমজান','রোজা ও আমল',function(){ setMode('ramadan'); }],
       ['auto_awesome','কালিমা','ঈমানের ঘোষণা',function(){ setMode('kalima'); }],
-      ['kaaba','হজ্জ','পরিচিতি',function(){ setMode('hajj'); }],
-      ['zakat_coin','যাকাত','পরিচিতি',function(){ setMode('zakat'); }],
+      ['view_in_ar','হজ্জ','পরিচিতি',function(){ setMode('hajj'); }],
+      ['toll','যাকাত','পরিচিতি',function(){ setMode('zakat'); }],
       ['edit_note','বই ও অনুচ্ছেদ','বই ও লেখা',function(){ setMode('books'); }],
       ['bar_chart','ট্র্যাকার','প্রতিদিনের হিসাব',function(){ setMode('tracker'); }],
       ['star','সংরক্ষিত','বুকমার্ক ও ফেভারিট',function(){ setMode('saved'); }]
