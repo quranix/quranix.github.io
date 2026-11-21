@@ -58,6 +58,10 @@ QX FILE EDIT RULES
 }
 
 @font-face {
+  font-family:"Kalpurush";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/kalpurush.woff2) format("woff2")
+}
+
+@font-face {
   font-family:'MSLocal';font-style:normal;font-weight:200;font-display:block;src:url(fonts/material-symbols-rounded.woff2) format('woff2')
 }
 
@@ -90,9 +94,9 @@ QX FILE EDIT RULES
   --qx-meta-color: var(--qx-c-meta);
   --qx-main-color: var(--qx-c-teal);
   --qx-main-soft: rgba(15,118,110,.10);
-    --qx-on-teal: #fff;
+  --qx-on-main: var(--qx-c-white);
+  --qx-on-teal: #fff;
   --qx-knob: #fff;
-}-qx-on-main: var(--qx-c-white);
   --qx-border: var(--qx-c-gray);
   --qx-tile-bg: var(--qx-c-offwhite);
   --qx-hover: var(--qx-c-mist);
@@ -1617,7 +1621,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   border-radius: var(--qx-radius-lg);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   #controls {
     width: calc(100vw - 24px);
     max-height: 84vh;
@@ -1978,7 +1982,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 .dl-grid.cols-2 {
   grid-template-columns: repeat(2, minmax(0,1fr));
 }
-@media (max-width: 600px) {
+@media (max-width: 520px) {
   .dl-grid.cols-2 {
     grid-template-columns: 1fr;
   }
@@ -3638,7 +3642,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width:900px) {
   nav {
     left: 50%;
     right: auto;
@@ -3706,7 +3710,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media(max-width: 600px) {
+@media(max-width:520px) {
   .audio-progress {
     order: 3;
   }
@@ -3763,7 +3767,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media(max-width: 600px) {
+@media(max-width:480px) {
   #gridPopupOverlay {
     padding: 10px;
   }
@@ -3809,7 +3813,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media(max-width: 600px) {
+@media(max-width:380px) {
   .quick-jump {
     gap: 5px;
   }
@@ -3831,7 +3835,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media(max-width: 600px) {
+@media(max-width:420px) {
   .surah-item {
     gap: 9px;
     padding: 10px;
@@ -3882,13 +3886,13 @@ body:not(.inside-page) #title {
   }
 }
 
-@media(max-width: 600px) {
+@media(max-width:340px) {
   .surah-item .ar-name {
     display: none;
   }
 }
 
-@media (min-width: 601px) {
+@media (min-width:600px) {
   .asma-grid {
     grid-template-columns: repeat(3,1fr);
   }
@@ -3909,7 +3913,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media (min-width: 601px) {
+@media (min-width:700px) {
   #app {
     display: block;
   }
@@ -3931,7 +3935,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media (min-width: 601px) {
+@media (min-width:520px) {
   .home-tiles {
     gap: 12px;
   }
@@ -3948,7 +3952,7 @@ body:not(.inside-page) #title {
   }
 }
 
-@media(max-width: 600px) {
+@media(max-width:360px) {
   .home-browse-nav {
     gap: 6px;
   }
@@ -4035,7 +4039,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .hijri-info-section p{font-size:var(--qx-fs-md);line-height:1.75;margin:0;white-space:pre-line}
 .hijri-info-section p.hijri-info-source{font-size:var(--qx-fs-xs);color:var(--qx-meta-color);font-style:italic;line-height:1.65}
 .hijri-day.event:focus-visible,.hijri-upcoming:focus-visible{outline:2px solid var(--qx-main-color);outline-offset:2px}
-@media(max-width: 600px){.hijri-info-overlay{padding:10px;align-items:flex-end}.hijri-info-box{max-height:88dvh;border-radius:var(--qx-radius-lg);padding:17px}.hijri-info-title{font-size:var(--qx-fs-xl)}}
+@media(max-width:420px){.hijri-info-overlay{padding:10px;align-items:flex-end}.hijri-info-box{max-height:88dvh;border-radius:var(--qx-radius-lg);padding:17px}.hijri-info-title{font-size:var(--qx-fs-xl)}}
 
 
 
@@ -4249,7 +4253,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 #widthToggle .wt-narrow { display: none; }
 body.read-wide #widthToggle .wt-wide { display: none; }
 body.read-wide #widthToggle .wt-narrow { display: block; }
-@media (min-width: 1024px) {
+@media (min-width:900px) {
   #widthToggle { display: flex; }
   body:not(.read-wide) #app,
   body:not(.read-wide).inside-page #app { max-width: 720px; }
@@ -4261,17 +4265,17 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
 .surah-grid .surah-item .num { order: 1; flex: 0 0 32px; min-width: 32px; height: 32px; font-size: var(--qx-fs-sm); }
 .surah-grid .surah-item .ar-name { order: 2; margin-left: auto; max-width: none; font-size: var(--qx-fs-xl); }
 .surah-grid .surah-item .mid { order: 3; flex: 1 1 100%; }
-@media (min-width: 1024px) {
+@media (min-width:900px) {
   .surah-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
 }
 
 /* B6: kalima/ramadan section cards — formerly repeated inline styles */
-.qx-sec-card { border: none; box-shadow: none; background: color-mix(in srgb, var(--qx-main-color) 4%, var(--qx-card-bg)); border-radius: 14px; padding: 14px 16px; }
-.qx-sec-head { border-bottom: none; padding-bottom: 0; display: flex; justify-content: space-between; gap: 8px; align-items: center; cursor: pointer; }
-.qx-num-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #d9d9d9; color: var(--qx-main-color); font-weight: 700; font-size: 15px; flex: none; padding: 0; }
-.qx-tri-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #d9d9d9; color: var(--qx-main-color); font-weight: 700; font-size: 13px; flex: none; padding: 0 0 0 2px; }
-.qx-sec-title { border: none; background: none; color: var(--qx-main-color); padding: 0; font-size: 18px; font-weight: 700; min-height: 0; flex: 1; text-align: left; }
-.qx-sec-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+html body .ayah.qx-sec-card { border: none; box-shadow: none; background: color-mix(in srgb, var(--qx-main-color) 4%, var(--qx-card-bg)); border-radius: 14px; padding: 14px 16px; }
+html body .ayah.qx-sec-card .qx-sec-head { border-bottom: none; padding-bottom: 0; display: flex; justify-content: space-between; gap: 8px; align-items: center; cursor: pointer; }
+html body .ayah.qx-sec-card .qx-sec-head .qx-num-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #d9d9d9; color: var(--qx-main-color); font-weight: 700; font-size: 15px; flex: none; padding: 0; }
+html body .ayah.qx-sec-card .qx-sec-head .qx-tri-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #d9d9d9; color: var(--qx-main-color); font-weight: 700; font-size: 13px; flex: none; padding: 0 0 0 2px; }
+html body .ayah.qx-sec-card .qx-sec-head .qx-sec-title { border: none; background: none; color: var(--qx-main-color); padding: 0; font-size: 18px; font-weight: 700; min-height: 0; flex: 1; text-align: left; }
+html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 </style>
 <meta name="theme-color" content="#0f6b4f">
 <meta name="mobile-web-app-capable" content="yes">
