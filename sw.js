@@ -8,7 +8,6 @@ const ASSETS = [
   './fonts/hind-siliguri-600.woff',
   './fonts/hind-siliguri-700.woff',
   './fonts/noto-naskh-arabic.woff',
-  './fonts/amiri-quran.woff',
   './fonts/amiri-quran.woff2',
   './fonts/noto-serif-bengali-400.woff',
   './fonts/noto-serif-bengali-400.woff2',
