@@ -9,9 +9,7 @@ const ASSETS = [
   './fonts/hind-siliguri-700.woff',
   './fonts/noto-naskh-arabic.woff',
   './fonts/amiri-quran.woff2',
-  './fonts/noto-serif-bengali-400.woff',
   './fonts/noto-serif-bengali-400.woff2',
-  './fonts/noto-serif-bengali-700.woff',
   './fonts/noto-serif-bengali-700.woff2',
   './fonts/material-symbols-rounded.woff2',
   './manifest.json'
