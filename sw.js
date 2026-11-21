@@ -1,4 +1,4 @@
-const CACHE = 'quranix-v12';
+const CACHE = 'quranix-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   './fonts/hind-siliguri-700.woff',
   './fonts/noto-naskh-arabic.woff',
   './fonts/amiri-quran.woff2',
+  './fonts/kalpurush.woff2',
   './fonts/noto-serif-bengali-400.woff2',
   './fonts/noto-serif-bengali-700.woff2',
   './fonts/material-symbols-rounded.woff2',
