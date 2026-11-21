@@ -2,6 +2,7 @@
 <html lang="bn" translate="no" class="notranslate">
 <head>
 <!--
+QURANIX VERSION: v8
 QX FILE EDIT RULES
 1. NO OVERRIDE RULE - Do not add duplicate rules that override previous ones. Edit existing rule directly.
 2. NO !important - Never use !important in any CSS.
@@ -12,6 +13,15 @@ QX FILE EDIT RULES
 <meta name="google" content="notranslate">
 <meta name="googlebot" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Apply the saved theme before styles are painted (prevents theme flash). -->
+<script>
+(function(){
+  var theme = "dark";
+  try { theme = localStorage.getItem("theme") === "light" ? "light" : "dark"; } catch(e) {}
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+<link rel="preload" href="material-symbols-rounded.woff2" as="font" type="font/woff2" crossorigin>
 <title>Quranix | বাংলা কুরআন</title>
 <link rel="icon" href="favicon.ico?v=8" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32x32.png?v=8">
@@ -22,27 +32,27 @@ QX FILE EDIT RULES
 <style>
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:300;font-display:swap;src:url(fonts/hind-siliguri-300.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:300;font-display:swap;src:url(fonts/hind-siliguri-300.woff2) format("woff2"), url(fonts/hind-siliguri-300.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/hind-siliguri-400.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/hind-siliguri-400.woff2) format("woff2"), url(fonts/hind-siliguri-400.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/hind-siliguri-500.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/hind-siliguri-500.woff2) format("woff2"), url(fonts/hind-siliguri-500.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/hind-siliguri-600.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/hind-siliguri-600.woff2) format("woff2"), url(fonts/hind-siliguri-600.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/hind-siliguri-700.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/hind-siliguri-700.woff2) format("woff2"), url(fonts/hind-siliguri-700.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Noto Naskh Arabic";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/noto-naskh-arabic.woff) format("woff")
+  font-family:"Noto Naskh Arabic";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/noto-naskh-arabic.woff2) format("woff2"), url(fonts/noto-naskh-arabic.woff) format("woff")
 }
 
 @font-face {
@@ -58,11 +68,11 @@ QX FILE EDIT RULES
 }
 
 @font-face {
-  font-family:"Kalpurush";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/kalpurush.woff2) format("woff2")
+  font-family:"Kalpurush";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/kalpurush.woff2) format("woff2"), url(fonts/kalpurush.woff) format("woff")
 }
 
 @font-face {
-  font-family:'MSLocal';font-style:normal;font-weight:200;font-display:block;src:url(fonts/material-symbols-rounded.woff2) format('woff2')
+  font-family:'MSLocal';font-style:normal;font-weight:200;font-display:swap;src:url(material-symbols-rounded.woff2) format('woff2')
 }
 
 :root {
@@ -97,6 +107,7 @@ QX FILE EDIT RULES
   --qx-on-main: var(--qx-c-white);
   --qx-on-teal: #fff;
   --qx-knob: #fff;
+  --qx-badge-bg: #d9d9d9;
   --qx-border: var(--qx-c-gray);
   --qx-tile-bg: var(--qx-c-offwhite);
   --qx-hover: var(--qx-c-mist);
@@ -131,7 +142,7 @@ QX FILE EDIT RULES
   --qx-fs-ar: 30px;
   --qx-fs-bn: 16px;
   --qx-font-arabic: "Amiri Quran","Noto Naskh Arabic","Traditional Arabic",serif;
-  --qx-font: "Hind Siliguri",sans-serif;
+  --qx-font: "Hind Siliguri","Noto Serif Bengali","Kalpurush","Noto Sans Bengali",sans-serif;
   --qx-content-max: 720px;
   --qx-gutter: 14px;
   --qx-z-header: 50;
@@ -154,6 +165,7 @@ QX FILE EDIT RULES
   --qx-border: var(--qx-c-night-border);
   --qx-tile-bg: var(--qx-c-night-chip);
   --qx-hover: var(--qx-c-night-raise);
+  --qx-badge-bg: var(--qx-c-night-raise);
   --qx-shadow: 0 4px 14px rgba(0,0,0,0.22);
   --qx-highlight: #4b544e;
   --qx-danger: #f87171;
@@ -584,7 +596,8 @@ nav button .ms {
   line-height: 1;
 }
 
-.dua-ic {
+.dua-ic,
+.home-ic {
   width: 22px;
   height: 22px;
   display: block;
@@ -594,6 +607,18 @@ nav button .ms {
 nav button.on {
   color: var(--qx-main-color);
   font-weight: 600;
+}
+
+@keyframes qxMorePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: .7; }
+}
+
+/* More button pulse: mobile only (not on tablet/PC), off when reduced motion is on */
+@media (max-width: 599px) {
+  html:not([data-reduced-motion]) nav button[data-m="more"]:not(.on) b {
+    animation: qxMorePulse 2.4s ease-in-out infinite;
+  }
 }
 
 select {
@@ -734,6 +759,16 @@ select {
   margin-top: 8px;
 }
 
+html.qx-modal-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.qx-modal-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -754,8 +789,10 @@ select {
   border-radius: var(--qx-radius-lg);
   max-width: 600px;
   width: 100%;
-  max-height: 80vh;
+  max-height: min(84dvh,760px);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 20px;
   border: 1px solid var(--qx-border);
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -1353,7 +1390,7 @@ html,body,button,input,select,textarea {
   font-family: var(--qx-font);
 }
 
-.ayah .ar,.ar-name,.bism,.aotd-ar,.asma-card .ar,.asma-top .ar,.ww-sheet .ww-ar,.hadith-item .ar,.surah-item .ar-name {
+.ar,.ayah .ar,.ar-name,.bism,.aotd-ar,.asma-card .ar,.asma-top .ar,.ww-sheet .ww-ar,.hadith-item .ar,.surah-item .ar-name {
   font-family: var(--qx-font-arabic), "Noto Naskh Arabic", serif;
 }
 
@@ -1518,7 +1555,7 @@ label.set-row {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--qx-knob);
   box-shadow: 0 1px 3px rgba(0,0,0,.3);
   transition: transform .2s ease;
 }
@@ -1861,9 +1898,11 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   box-sizing: border-box;
   width: min(440px,calc(100vw - 24px));
   max-width: 440px;
-  max-height: 88vh;
+  max-height: min(88vh, 760px);
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   background: var(--qx-tile-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
@@ -1871,13 +1910,22 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   box-shadow: 0 20px 40px rgba(0,0,0,.3);
 }
 
-#gridPopupBox h3 {
-  margin: 0 0 12px;
-  font-size: var(--qx-fs-lg);
-  min-height: 36px;
-  padding: 5px 48px 0 0;
+.pp-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 36px;
+  margin-bottom: 12px;
+}
+
+#gridPopupBox .pp-header h3 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  font-size: var(--qx-fs-lg);
+  line-height: 1.35;
 }
 
 .pp-close {
@@ -1898,6 +1946,11 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   cursor: pointer;
   color: var(--qx-text-color);
   padding: 0;
+}
+
+.pp-header .pp-close {
+  position: static;
+  flex: 0 0 36px;
 }
 
 .pp-tabs {
@@ -1998,12 +2051,16 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
   padding: 12px 10px;
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
   margin-bottom: 8px;
   cursor: pointer;
+  color: var(--qx-text-color);
+  font: inherit;
   font-size: var(--qx-fs);
+  text-align: left;
   background: var(--qx-tile-bg);
 }
 
@@ -2573,6 +2630,8 @@ body.hifz-on #hifzBar {
   max-width: 560px;
   max-height: 92vh;
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   background: var(--qx-bg);
   border-radius: var(--qx-radius-lg) var(--qx-radius-lg) 0 0;
   padding: 14px 14px calc(18px + env(safe-area-inset-bottom));
@@ -2786,12 +2845,18 @@ body.hifz-on #hifzBar {
 .asma-card b {
   display: block;
   font-size: var(--qx-fs);
-  margin-top: 4px;
+  line-height: 1.5;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
 }
 
 .asma-card small {
+  display: block;
   color: var(--qx-meta-color);
   font-size: var(--qx-fs-sm);
+  line-height: 1.55;
+  margin-top: 2px;
+  overflow-wrap: anywhere;
 }
 
 .asma-card.fav {
@@ -2963,7 +3028,7 @@ body.ww-on .ayah .ar .ww-word {
 
 .hijri-top {
   background: linear-gradient(135deg,var(--qx-c-teal),var(--qx-c-teal-deep));
-  color: #fff;
+  color: var(--qx-on-teal);
   border-radius: var(--qx-radius-lg);
   padding: 16px 12px;
   text-align: center;
@@ -3101,7 +3166,7 @@ body.ww-on .ayah .ar .ww-word {
   padding: 8px 12px;
   font-weight: 700;
   cursor: pointer;
-  background: #fff;
+  background: var(--qx-on-teal);
   color: var(--qx-main-color);
 }
 
@@ -3280,11 +3345,17 @@ body.inside-page .ayah .icon-btn:focus-visible, body.inside-page .ayah .star:foc
   white-space: nowrap;
   direction: ltr;
   vertical-align: -.22em;
-  font-feature-settings: 'liga';
+  font-feature-settings: 'liga' 1, 'calt' 1;
   -webkit-font-smoothing: antialiased;
   font-variation-settings: 'FILL' 0;
   user-select: none;
   -webkit-user-select: none;
+}
+
+.ms.qx-svg svg {
+  width: 1em;
+  height: 1em;
+  display: block;
 }
 
 .ms.f,nav button.on .ms,button:active .ms,.g-menu-item:active .ms {
@@ -3794,7 +3865,7 @@ body:not(.inside-page) #title {
 
 @supports (height:100dvh) {
   #gridPopupBox {
-    max-height: 88dvh;
+    max-height: min(88dvh, 760px);
   }
   #gridDropdown {
     max-height: calc(100dvh - 80px);
@@ -4270,12 +4341,35 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
 }
 
 /* B6: kalima/ramadan section cards — formerly repeated inline styles */
-html body .ayah.qx-sec-card { border: none; box-shadow: none; background: color-mix(in srgb, var(--qx-main-color) 4%, var(--qx-card-bg)); border-radius: 14px; padding: 14px 16px; }
-html body .ayah.qx-sec-card .qx-sec-head { border-bottom: none; padding-bottom: 0; display: flex; justify-content: space-between; gap: 8px; align-items: center; cursor: pointer; }
-html body .ayah.qx-sec-card .qx-sec-head .qx-num-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #d9d9d9; color: var(--qx-main-color); font-weight: 700; font-size: 15px; flex: none; padding: 0; }
-html body .ayah.qx-sec-card .qx-sec-head .qx-tri-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #d9d9d9; color: var(--qx-main-color); font-weight: 700; font-size: 13px; flex: none; padding: 0 0 0 2px; }
-html body .ayah.qx-sec-card .qx-sec-head .qx-sec-title { border: none; background: none; color: var(--qx-main-color); padding: 0; font-size: 18px; font-weight: 700; min-height: 0; flex: 1; text-align: left; }
-html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.qx-sec-page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.qx-sec-page .item { margin: 0; border-radius: var(--qx-radius-lg); }
+.ayah.qx-sec-card { margin: 0; padding: 14px 16px; box-shadow: none; }
+.ayah.qx-sec-card .no { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.ayah.qx-sec-card .bn { margin-top: 8px; padding-top: 0; border-top: none; }
+.ayah.qx-sec-card .qx-sec-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; cursor: pointer; }
+.ayah.qx-sec-card .qx-sec-head .qx-num-badge,
+.ayah.qx-sec-card .qx-sec-head .qx-tri-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--qx-badge-bg); color: var(--qx-main-color); font-weight: 700; font-size: var(--qx-fs-md); }
+.ayah.qx-sec-card .qx-sec-head .qx-sec-title { border: none; background: none; color: var(--qx-main-color); padding: 0; font-size: var(--qx-fs-xl); font-weight: 700; min-height: 0; flex: 1; text-align: left; }
+.ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.ayah.qx-sec-card .qx-sec-body { display: none; }
+.ayah.qx-sec-card.open .qx-sec-body { display: block; }
+
+/* namaz shikkha: arrows, source chip, nav buttons (scoped under .qx-nm) */
+.qx-nm .qx-nm-ic { display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
+.qx-nm .qx-nm-chev { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: 0 0 32px; border-radius: 50%; background: var(--qx-main-soft); color: var(--qx-main-color); transition: transform .15s ease, background .15s ease; }
+.qx-nm .item:hover .qx-nm-chev { transform: translateX(2px); background: var(--qx-main-color); color: var(--qx-on-main); }
+.qx-nm .qx-nm-back, .qx-nm .qx-nm-prev, .qx-nm .qx-nm-next { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px 0 10px; border-radius: var(--qx-radius-pill); font-weight: 600; font-size: var(--qx-fs-md); cursor: pointer; background: var(--qx-main-soft); color: var(--qx-main-color); border: 1px solid transparent; }
+.qx-nm .qx-nm-back { margin-bottom: 12px; }
+.qx-nm .qx-nm-next { padding: 0 10px 0 14px; background: var(--qx-main-color); color: var(--qx-on-main); }
+.qx-nm .qx-nm-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 16px; }
+.qx-nm .qx-nm-nav .qx-nm-lbl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 36vw; }
+.qx-nm .qx-nm-src { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--qx-border); }
+.qx-nm .qx-nm-src-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 12px 0 9px; border-radius: var(--qx-radius-pill); background: var(--qx-card-bg); border: 1px solid var(--qx-border); color: var(--qx-main-color); font-size: var(--qx-fs-md); }
+.qx-nm .qx-nm-src-chip b { font-weight: 600; color: var(--qx-text-color); }
+.qx-nm .qx-nm-src-chip svg { width: 15px; height: 15px; }
+.qx-nm .qx-nm-src-no { padding-left: 8px; margin-left: 2px; border-left: 1px solid var(--qx-border); color: var(--qx-meta-color); font-weight: 600; }
+.qx-nm .qx-nm-grade { display: inline-flex; align-items: center; gap: 4px; min-height: 30px; padding: 0 12px 0 8px; border-radius: var(--qx-radius-pill); background: color-mix(in srgb, var(--qx-success) 14%, transparent); color: var(--qx-success); font-size: var(--qx-fs-md); font-weight: 700; }
+.qx-nm .qx-nm-grade svg { width: 15px; height: 15px; }
 </style>
 <meta name="theme-color" content="#0f6b4f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -4285,7 +4379,7 @@ html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; g
 <meta name="apple-mobile-web-app-title" content="Quranix">
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0..1,0&icon_names=abc,arrow_back,auto_awesome,auto_stories,bar_chart,bedtime,bubble_chart,calendar_month,check,check_circle,close,content_copy,crop_portrait,crop_square,dark_mode,delete,download,edit,edit_note,event,explore,filter_list,folder_open,front_hand,headphones,help,history_edu,hourglass_top,image,info,light_mode,lightbulb,location_on,menu_book,mic,more_horiz,mosque,nights_stay,notifications,palette,pause,play_arrow,psychology,public,push_pin,radio_button_unchecked,refresh,repeat,save,search,share,skip_next,skip_previous,smartphone,star,stars,target,text_fields,translate,undo,visibility,volume_up,warning,wb_sunny,wb_twilight,wifi,wifi_off&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0..1,0&icon_names=abc,add,alarm,arrow_back,arrow_downward,arrow_forward,arrow_upward,auto_awesome,auto_stories,backup,bar_chart,bedtime,block,book,bookmark,bookmark_add,bookmark_added,bookmark_border,bookmarks,bubble_chart,calendar_month,celebration,check,check_box,check_box_outline_blank,check_circle,chevron_left,chevron_right,close,cloud_download,cloud_off,collections_bookmark,content_copy,create_new_folder,crop_portrait,crop_square,dark_mode,date_range,delete,delete_forever,done,done_all,download,download_done,edit,edit_note,error,event,expand_less,expand_more,explore,favorite,file_download,filter_alt,filter_list,flag,folder,folder_open,format_size,front_hand,fullscreen,fullscreen_exit,headphones,help,history_edu,home,hourglass_empty,hourglass_top,image,import_contacts,info,keyboard_arrow_down,keyboard_arrow_up,label,language,library_books,light_mode,lightbulb,link,location_on,lock,mail,map,menu,menu_book,mic,more_horiz,more_vert,mosque,near_me,nightlight,nights_stay,no_meals,notifications,notifications_active,notifications_off,palette,pause,pause_circle,place,play_arrow,play_circle,psychology,public,push_pin,radio_button_unchecked,refresh,remove,repeat,repeat_one,restaurant,restore,save,schedule,search,select_all,send,settings,share,shuffle,skip_next,skip_previous,smartphone,snooze,sort,star,stars,stop,sync,tag,target,text_decrease,text_fields,text_increase,thumb_up,timer,toggle_off,toggle_on,translate,tune,undo,upload,vibration,visibility,visibility_off,volume_down,volume_off,volume_up,warning,water_drop,wb_sunny,wb_twilight,wifi,wifi_off,zoom_in,zoom_out&display=block" rel="stylesheet">
 
 
 
@@ -4327,6 +4421,54 @@ html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; g
 
 </head>
 <body translate="no" class="notranslate">
+<script>
+// Keep the page behind dialogs and sheets from scrolling (including on mobile Safari).
+(function(){
+  var body = document.body;
+  var root = document.documentElement;
+  var locked = false;
+  var savedScrollY = 0;
+  var savedStyles = null;
+  var overlaySelector = ".modal-overlay, .ac-ov, .sheet-ov, #gridPopupOverlay.open";
+
+  function syncScrollLock(){
+    var shouldLock = !!document.querySelector(overlaySelector);
+    if (shouldLock && !locked) {
+      locked = true;
+      savedScrollY = window.scrollY || window.pageYOffset || 0;
+      savedStyles = {
+        position: body.style.position,
+        top: body.style.top,
+        left: body.style.left,
+        right: body.style.right,
+        width: body.style.width
+      };
+      root.classList.add("qx-modal-open");
+      body.classList.add("qx-modal-open");
+      body.style.position = "fixed";
+      body.style.top = (-savedScrollY) + "px";
+      body.style.left = "0";
+      body.style.right = "0";
+      body.style.width = "100%";
+    } else if (!shouldLock && locked) {
+      locked = false;
+      root.classList.remove("qx-modal-open");
+      body.classList.remove("qx-modal-open");
+      body.style.position = savedStyles.position;
+      body.style.top = savedStyles.top;
+      body.style.left = savedStyles.left;
+      body.style.right = savedStyles.right;
+      body.style.width = savedStyles.width;
+      window.scrollTo(0, savedScrollY);
+      savedStyles = null;
+    }
+  }
+
+  var observer = new MutationObserver(syncScrollLock);
+  observer.observe(body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  syncScrollLock();
+})();
+</script>
 <header>
   <div class="bar">
     <button id="back" class="back-btn-hidden">{{arrow_back}}</button>
@@ -4335,11 +4477,11 @@ html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; g
     <div class="header-tools">
       
       <button id="headerSearchBtn" class="header-btn" title="সার্চ" aria-label="সূরা খুঁজুন">{{search}}</button>
-      <button id="themeToggle" class="header-btn" title="ডার্ক/লাইট মোড" aria-label="ডার্ক লাইট মোড বদলান">{{dark_mode}}</button>
       <button id="widthToggle" class="header-btn" title="পড়ার প্রস্থ: সংকীর্ণ/প্রশস্ত" aria-label="পড়ার প্রস্থ বদলান" aria-pressed="false">
         <svg class="wt-wide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>
         <svg class="wt-narrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h6M15 12h6M6 9l3 3-3 3M18 9l-3 3 3 3"/></svg>
       </button>
+      <button id="themeToggle" class="header-btn" title="ডার্ক/লাইট মোড" aria-label="ডার্ক লাইট মোড বদলান">{{dark_mode}}</button>
       <button id="gridMenu" class="header-btn" title="মেনু" aria-label="মেনু খুলুন">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
       </button>
@@ -4407,6 +4549,7 @@ html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; g
 </div>
 
 <nav id="nav">
+  <button id="navHome" type="button" aria-label="হোম"><b><svg class="home-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg></b><span>হোম</span></button>
   <button data-m="prayer"><b>{{mosque}}</b><span>নামাজ</span></button>
   <button data-m="quran" class="on"><b>{{menu_book}}</b><span>কুরআন</span></button>
   <button data-m="hadith"><b>{{history_edu}}</b><span>হাদিস</span></button>
@@ -4419,6 +4562,16 @@ html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; g
 /* {{icon}} / {{icon:f}} tokens in any text become Material icon spans (also for dynamically added text) */
 (function(){
   var RX=/\{\{([a-z_0-9]+)(:f)?\}\}/g, SKIP={OPTION:1,TITLE:1,TEXTAREA:1}, NOCONV={SCRIPT:1,STYLE:1};
+  /* Icons that Material Symbols does not have: drawn as SVG, used the same way as {{kaaba}} */
+  var SVG_HEAD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  var SVG_ICONS={
+    kaaba: SVG_HEAD+'<path d="M5 7h14v13H5z"/><path d="M5 7l2-2.5h10L19 7"/><path d="M5 10.5h14"/><path d="M14 20v-5h3v5"/></svg>',
+    zakat_coin: SVG_HEAD+'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5"/><path d="M12 9.5v5"/></svg>'
+  };
+  window.qxIconHtml=function(name, filled){
+    if(SVG_ICONS[name]) return '<span class="ms qx-svg" aria-hidden="true">'+SVG_ICONS[name]+'</span>';
+    return '<span class="ms'+(filled?' f':'')+'" aria-hidden="true">'+name+'</span>';
+  };
   function conv(n){
     var s=n.nodeValue; if(!s||s.indexOf('{{')<0) return;
     var p=n.parentNode; if(!p||NOCONV[p.nodeName]) return;
@@ -4426,7 +4579,10 @@ html body .ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; g
     var f=document.createDocumentFragment(), last=0, m; RX.lastIndex=0;
     while((m=RX.exec(s))){
       if(m.index>last) f.appendChild(document.createTextNode(s.slice(last,m.index)));
-      var i=document.createElement('span'); i.className='ms'+(m[2]?' f':''); i.setAttribute('aria-hidden','true'); i.textContent=m[1]; f.appendChild(i);
+      var i=document.createElement('span'); i.setAttribute('aria-hidden','true');
+      if(SVG_ICONS[m[1]]){ i.className='ms qx-svg'; i.innerHTML=SVG_ICONS[m[1]]; }
+      else { i.className='ms'+(m[2]?' f':''); i.textContent=m[1]; }
+      f.appendChild(i);
       last=RX.lastIndex;
     }
     if(last<s.length) f.appendChild(document.createTextNode(s.slice(last)));
@@ -4999,20 +5155,71 @@ const TAFSIR_CDN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@v1.2.3/tafsir/"
 const TAFSIR_CDN_MAIN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/";
 function getTafsirSlug(id){ const item=TAFSIRS.find(t=>Number(t[0])===Number(id)); return item?item[2]:""; }
 let tafsirId = lsGet("tafsirId", 381);
-function copyText(text, okMsg){
-  const done = () => showToast(okMsg || "কপি হয়েছে!");
-  const fallback = () => {
+async function shareTextOrCopy(text, title, copyMessage){
+  if (typeof navigator.share === "function") {
     try {
-      const t = document.createElement("textarea");
-      t.value = text; t.setAttribute("readonly", "");
-      t.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
-      document.body.appendChild(t); t.select(); t.setSelectionRange(0, text.length);
-      const ok = document.execCommand("copy"); t.remove();
-      ok ? done() : showToast("কপি করা যায়নি।");
-    } catch(e) { showToast("কপি করা যায়নি।"); }
+      await navigator.share({ title: title || "Quranix", text: text });
+      return true;
+    } catch (error) {
+      // A user-cancelled share is not a failure; do not unexpectedly copy instead.
+      if (error && error.name === "AbortError") return false;
+      if (typeof copyText === "function") {
+        return await copyText(text, copyMessage || "শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!");
+      }
+      if (typeof showToast === "function") showToast("শেয়ার করা যায়নি।");
+      return false;
+    }
+  }
+  if (typeof copyText === "function") {
+    return await copyText(text, copyMessage || "শেয়ার সমর্থিত নয়, টেক্সট কপি করা হয়েছে!");
+  }
+  return false;
+}
+
+async function copyText(text, okMsg){
+  const notify = function(message){
+    if (typeof showToast === "function") showToast(message);
   };
-  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done).catch(fallback);
-  else fallback();
+  const done = function(){ notify(okMsg || "কপি হয়েছে!"); return true; };
+  const manualCopy = function(){
+    try {
+      const copied = window.prompt("স্বয়ংক্রিয়ভাবে কপি করা যায়নি। নিচের লেখাটি ম্যানুয়ালি কপি করুন:", String(text));
+      if (copied !== null) {
+        notify("টেক্সটটি নির্বাচন করে কপি করুন।");
+        return true;
+      }
+    } catch(e) {}
+    notify("কপি করা যায়নি।");
+    return false;
+  };
+  const legacyCopy = function(){
+    let field = null;
+    try {
+      field = document.createElement("textarea");
+      field.value = String(text);
+      field.setAttribute("readonly", "");
+      field.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:0;opacity:0;";
+      document.body.appendChild(field);
+      field.focus();
+      field.select();
+      field.setSelectionRange(0, field.value.length);
+      if (document.execCommand("copy")) return done();
+    } catch(e) {
+      // Continue to the visible manual-copy fallback.
+    } finally {
+      if (field && field.parentNode) field.parentNode.removeChild(field);
+    }
+    return manualCopy();
+  };
+  if (navigator.clipboard && window.isSecureContext && typeof navigator.clipboard.writeText === "function") {
+    try {
+      await navigator.clipboard.writeText(String(text));
+      return done();
+    } catch(e) {
+      return legacyCopy();
+    }
+  }
+  return legacyCopy();
 }
 async function openTafseer(surahNo, ayahNo, label){
   const tfName = (TAFSIRS.find(t => t[0] === tafsirId) || TAFSIRS[0])[1];
@@ -5333,12 +5540,33 @@ function stripBismillah(text, surahNo, ayahNo){
 }
 
 function renderTabs(){
+  const selectedTab = TABS.some(([key]) => key === tab) ? tab : "all";
+  tabsEl.setAttribute("role", "tablist");
+  tabsEl.setAttribute("aria-label", "কুরআন ব্রাউজের ধরন");
   tabsEl.innerHTML = "";
   TABS.forEach(([k,label]) => {
     const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", k === selectedTab ? "true" : "false");
+    b.setAttribute("tabindex", k === selectedTab ? "0" : "-1");
+    b.setAttribute("aria-controls", "app");
     b.textContent = label;
-    if (k === tab) b.className = "on";
+    if (k === selectedTab) b.className = "on";
     b.onclick = () => { tab = k; qEl.value = ""; renderTabs(); renderHome(); };
+    b.onkeydown = (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Home" && event.key !== "End") return;
+      event.preventDefault();
+      const current = TABS.findIndex(([key]) => key === selectedTab);
+      const next = event.key === "Home" ? 0 : event.key === "End" ? TABS.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + TABS.length) % TABS.length;
+      const nextTab = TABS[next][0];
+      tab = nextTab;
+      qEl.value = "";
+      renderTabs();
+      renderHome();
+      const nextButton = tabsEl.querySelectorAll('[role="tab"]')[next];
+      if (nextButton) nextButton.focus();
+    };
     tabsEl.appendChild(b);
   });
 }
@@ -5503,11 +5731,7 @@ function ayahCard(label, ar, bn, a, removable){
   shareBtn.textContent = "{{share}}";
   shareBtn.onclick = async () => {
     const text = `[${label}]\n${ar}\n\n${bn}\n— Quranix`;
-    if (navigator.share) {
-      try { await navigator.share({ title: label, text: text }); } catch(e){}
-    } else {
-      copyText(text, "শেয়ার সমর্থিত নয়, টেক্সট কপি করা হয়েছে!");
-    }
+    await shareTextOrCopy(text, label, "শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!");
   };
   menuItems.push([() => "{{share}} শেয়ার করুন", () => shareBtn.onclick()]);
   menuItems.push([() => "{{image}} ছবি বানাও", () => { if(window.openAyahCard) window.openAyahCard(label, ar, bn); }]);
@@ -5710,7 +5934,7 @@ function setMode(m){
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.m === m || (m === "tasbih" && b.dataset.m === "dua") || ((m === "tracker" || m === "saved") && b.dataset.m === "more")));
   renderHome();
 }
-document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
+document.querySelectorAll("#nav button[data-m]").forEach(b => b.onclick = () => {
   if (b.dataset.m === "quran") { tab = "all"; renderTabs(); }
   setMode(b.dataset.m);
 });
@@ -5720,7 +5944,7 @@ function showOther(title){
   document.body.classList.remove("reader-active");
   document.body.classList.add("inside-page");
   titleEl.innerHTML = String(title).replace(/\{\{([a-z_0-9]+)(:f)?\}\}/g, function(match, name, filled){
-    return '<span class="ms' + (filled ? ' f' : '') + '" aria-hidden="true">' + name + '</span>';
+    return qxIconHtml(name, filled);
   });
   backBtn.style.display = "none";
   controls.style.display = "none";
@@ -5750,10 +5974,10 @@ var KALIMA_DATA = [
 ];
 
 var QX_SECTIONS = {
-  ramadan: { icon: "bedtime", title: "রমজান", sub: "রোজা ও রমজানের আমল" },
+  ramadan: { icon: "no_meals", title: "রমজান", sub: "রোজা ও রমজানের আমল" },
   kalima: { icon: "auto_awesome", title: "কালিমা", sub: "ঈমানের ঘোষণা" },
-  hajj: { icon: "explore", title: "হজ্জ", sub: "হজ্জের পরিচিতি" },
-  zakat: { icon: "package_2", title: "যাকাত", sub: "যাকাতের পরিচিতি" },
+  hajj: { icon: "kaaba", title: "হজ্জ", sub: "হজ্জের পরিচিতি" },
+  zakat: { icon: "zakat_coin", title: "যাকাত", sub: "যাকাতের পরিচিতি" },
   books: { icon: "edit_note", title: "বই ও অনুচ্ছেদ", sub: "বই ও লেখা" }
 };
 function qxRow(icon, title, sub, onclick){
@@ -5770,90 +5994,64 @@ function renderMore(){
   box.appendChild(qxRow("bar_chart", "ট্র্যাকার", "প্রতিদিনের হিসাব", function(){ setMode("tracker"); }));
   app.appendChild(box);
 }
+function qxSecSource(card, ref){
+  if(!ref) return;
+  card.appendChild(qxNmSource(String(ref).replace(/^সূত্র:\s*/, "")));
+}
+function qxSecQuote(card, q){
+  const ar = mk("div", "ar", q.ar);
+  ar.dir = "rtl"; ar.lang = "ar";
+  card.appendChild(ar);
+  card.appendChild(mk("div", "bn", q.bn));
+  qxSecSource(card, q.ref);
+}
 function renderSection(key){
   const sc = QX_SECTIONS[key];
   showOther("{{" + sc.icon + "}} " + sc.title);
-  const box = mk("div", "qx-list");
+  const page = mk("div", "qx-nm qx-sec-page");
   if(key === "ramadan"){
-    const card = mk("div", "ayah qx-sec-card");
-    const h = mk("div", "no");
-    h.style.borderBottom = "1px solid var(--qx-border)";
-    h.style.paddingBottom = "8px";
-    const rt = mk("span", "ayah-number", "🌙  রমজান — রোজা ও রমজানের আমল");
-    rt.style.border = "none";
-    rt.style.background = "none";
-    h.appendChild(rt);
-    card.appendChild(h);
-    const rIntro = mk("div", "bn", "🌙  " + RAMADAN_ARTICLE.intro);
-    rIntro.style.borderTop = "none";
-    rIntro.style.padding = "12px 14px";
-    rIntro.style.background = "color-mix(in srgb, var(--qx-main-color) 4%, var(--qx-card-bg))";
-    rIntro.style.borderRadius = "12px";
-    rIntro.style.borderLeft = "3px solid var(--qx-main-color)";
-    card.appendChild(rIntro);
-    RAMADAN_ARTICLE.quotes.forEach(function(q, qi){
-      const qb2 = mk("div", "");
-      qb2.style.cssText = "background:var(--qx-card-bg);border-left:3px solid var(--qx-main-color);border-radius:12px;padding:12px 14px;margin-top:12px;";
-      card.appendChild(qb2);
-      const qh = mk("div", "no");
-      qh.style.marginTop = "14px";
-      qh.style.borderBottom = "1px solid var(--qx-border)";
-      qh.style.paddingBottom = "6px";
-      const qb = mk("span", "ayah-number", q.kind + " — " + q.ref);
-      qb.style.border = "none";
-      qh.appendChild(qb);
-      qb2.appendChild(qh);
-      const arDiv = mk("div", "ar", q.ar);
-      arDiv.dir = "rtl"; arDiv.lang = "ar";
-      qb2.appendChild(arDiv);
-      const qBn = mk("div", "bn", q.bn);
-      qBn.style.borderTop = "none";
-      qBn.style.paddingTop = "4px";
-      qb2.appendChild(qBn);
+    const intro = mk("div", "ayah qx-sec-card");
+    const head = mk("div", "no");
+    head.appendChild(mk("span", "ayah-number", "রমজান — রোজা ও রমজানের আমল"));
+    intro.appendChild(head);
+    intro.appendChild(mk("div", "bn", RAMADAN_ARTICLE.intro));
+    page.appendChild(intro);
+    RAMADAN_ARTICLE.quotes.forEach(function(q){
+      const card = mk("div", "ayah qx-sec-card");
+      const h = mk("div", "no");
+      h.appendChild(mk("span", "ayah-number", q.kind));
+      card.appendChild(h);
+      qxSecQuote(card, q);
+      page.appendChild(card);
     });
-    box.appendChild(card);
-    app.appendChild(box);
-    return;
-  }
-  if(key === "kalima"){
-    box.style.border = "none";
-    KALIMA_DATA.forEach(function(k, idx){
+  } else if(key === "kalima"){
+    KALIMA_DATA.forEach(function(k){
       const card = mk("div", "ayah qx-sec-card");
       const h = mk("div", "no qx-sec-head");
       const left = mk("div", "qx-sec-left");
-      const num = mk("span", "qx-num-badge", k.num);
-      left.appendChild(num);
-      const badge = mk("span", "ayah-number qx-sec-title", k.title);
-      left.appendChild(badge);
+      left.appendChild(mk("span", "qx-num-badge", k.num));
+      left.appendChild(mk("span", "ayah-number qx-sec-title", k.title));
       h.appendChild(left);
       const arrow = mk("span", "qx-tri-badge", "▽");
       h.appendChild(arrow);
-      const body = mk("div", "");
-      body.style.display = "none";
-      h.onclick = function(){ const isOpen = body.style.display !== "none"; body.style.display = isOpen ? "none" : ""; arrow.textContent = isOpen ? "▽" : "▼"; };
+      h.onclick = function(){
+        const isOpen = card.classList.toggle("open");
+        arrow.textContent = isOpen ? "▼" : "▽";
+      };
       card.appendChild(h);
+      const body = mk("div", "qx-sec-body");
+      qxSecQuote(body, k);
       card.appendChild(body);
-      const _append = function(el){ body.appendChild(el); };
-      const arDiv = mk("div", "ar", k.ar);
-      arDiv.dir = "rtl"; arDiv.lang = "ar";
-      _append(arDiv);
-      const bnDiv = mk("div", "bn", k.bn);
-      bnDiv.style.borderTop = "none";
-      bnDiv.style.paddingTop = "4px";
-      _append(bnDiv);
-      const ref = mk("div", "trk-mini", "* " + k.ref);
-      ref.style.marginTop = "16px";
-      ref.style.fontStyle = "italic";
-      _append(ref);
-      box.appendChild(card);
+      page.appendChild(card);
     });
-    app.appendChild(box);
-    return;
+  } else {
+    const card = mk("div", "ayah qx-sec-card");
+    const empty = mk("div", "qx-empty");
+    empty.innerHTML = "<b>এই বিভাগে এখনো কিছু যোগ হয়নি</b><small>কনটেন্ট যুক্ত হলে এখানে তালিকা আকারে দেখা যাবে।</small>";
+    card.appendChild(empty);
+    page.appendChild(card);
   }
-  const empty = mk("div", "qx-empty");
-  empty.innerHTML = "<b>এই বিভাগে এখনো কিছু যোগ হয়নি</b><small>কনটেন্ট যুক্ত হলে এখানে তালিকা আকারে দেখা যাবে।</small>";
-  box.appendChild(empty);
-  app.appendChild(box);
+  app.appendChild(page);
 }
 
 /* --- সংরক্ষিত পেইজ --- */
@@ -6558,6 +6756,33 @@ const NAMAZ_NABVI_DATA = [
   }
 ];
 
+function qxNmIcon(kind){
+  const p = { left:'M15 5l-7 7 7 7', right:'M9 5l7 7-7 7', book:'M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 20.5A2.5 2.5 0 0 0 6.5 23H20', check:'M5 12.5l4.5 4.5L19 7.5' }[kind];
+  const s = document.createElement('span'); s.className = 'qx-nm-ic';
+  s.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + p + '"/></svg>';
+  return s;
+}
+function qxNmBtn(cls, label, side, onclick){
+  const b = mk('button', cls); b.type = 'button';
+  if(side === 'left') b.appendChild(qxNmIcon('left'));
+  b.appendChild(mk('span', 'qx-nm-lbl', label));
+  if(side === 'right') b.appendChild(qxNmIcon('right'));
+  b.onclick = onclick; return b;
+}
+function qxNmSource(ref){
+  const GR = ['সহীহ','হাসান','যঈফ','সহিহ'];
+  const parts = String(ref||'').trim().split(/\s+/);
+  let grade = ''; if(parts.length > 1 && GR.indexOf(parts[parts.length-1]) >= 0) grade = parts.pop();
+  let num = ''; if(parts.length > 1 && /^[০-৯0-9]+$/.test(parts[parts.length-1])) num = parts.pop();
+  const row = mk('div', 'qx-nm-src');
+  const chip = mk('span', 'qx-nm-src-chip');
+  chip.appendChild(qxNmIcon('book'));
+  chip.appendChild(mk('b', '', parts.join(' ')));
+  if(num) chip.appendChild(mk('span', 'qx-nm-src-no', num));
+  row.appendChild(chip);
+  if(grade){ const g = mk('span', 'qx-nm-grade'); g.appendChild(qxNmIcon('check')); g.appendChild(mk('span', '', grade)); row.appendChild(g); }
+  return row;
+}
 function renderPrayerLearnView(){
   const currentChapterId = window.qxNamazChapter || null;
 
@@ -6565,16 +6790,12 @@ function renderPrayerLearnView(){
     const ch = NAMAZ_NABVI_DATA.find(c=>c.id===currentChapterId);
     if(ch){
       showOther('{{menu_book}} ' + ch.title);
-      const wrap = mk('div','');
-      wrap.style.maxWidth='900px';
-      wrap.style.margin='0 auto';
+      const wrap = mk('div','qx-nm qx-sec-page');
 
-      const back = mk('button','', '← সব অধ্যায়');
-      back.style.marginBottom='12px';
-      back.onclick = ()=>{ window.qxNamazChapter=null; renderPrayerLearnView(); };
+      const back = qxNmBtn('qx-nm-back', 'সব অধ্যায়', 'left', ()=>{ window.qxNamazChapter=null; renderPrayerLearnView(); });
       wrap.appendChild(back);
 
-      const card = mk('div','ayah');
+      const card = mk('div','ayah qx-sec-card');
       const titleRow = mk('div','no');
       const numBadge = mk('span','ayah-number', 'অধ্যায় ' + ch.no);
       titleRow.appendChild(numBadge);
@@ -6599,30 +6820,6 @@ function renderPrayerLearnView(){
         }
       }
 
-      if(ch.topics && ch.topics.length){
-        const topicBox = mk('div','');
-        topicBox.style.margin='12px 0 14px';
-        topicBox.style.padding='12px';
-        topicBox.style.border='1px solid var(--qx-border)';
-        topicBox.style.borderRadius='10px';
-        topicBox.style.background='var(--qx-card-bg)';
-        const topicTitle = mk('b','', 'এই অধ্যায়ের বিষয়');
-        topicTitle.style.display='block';
-        topicTitle.style.marginBottom='7px';
-        topicBox.appendChild(topicTitle);
-        const topicList = mk('div','');
-        topicList.style.display='grid';
-        topicList.style.gap='6px';
-        ch.topics.forEach((topic,i)=>{
-          const topicRow = mk('div','', '• ' + topic);
-          topicRow.style.fontSize='14px';
-          topicRow.style.color='var(--qx-meta-color)';
-          topicList.appendChild(topicRow);
-        });
-        topicBox.appendChild(topicList);
-        card.appendChild(topicBox);
-      }
-
       ch.content.forEach(p=>{
         const bnDiv = mk('div','bn', p);
         bnDiv.style.textAlign='justify';
@@ -6638,32 +6835,17 @@ function renderPrayerLearnView(){
         hadithBox.style.borderLeft='4px solid var(--qx-main-color)';
         const arH = ch.hadith.text ? mk('div','ar', ch.hadith.text) : null;
         if(arH){ arH.dir='rtl'; hadithBox.appendChild(arH); }
-        const ref = mk('div','', '📖 ' + ch.hadith.ref);
-        ref.style.fontSize='13px';
-        ref.style.marginTop='6px';
-        ref.style.color='var(--qx-meta-color)';
-        hadithBox.appendChild(ref);
+        hadithBox.appendChild(qxNmSource(ch.hadith.ref));
         card.appendChild(hadithBox);
       }
 
-      const navRow = mk('div','');
-      navRow.style.display='flex';
-      navRow.style.justifyContent='space-between';
-      navRow.style.gap='10px';
-      navRow.style.marginTop='16px';
+      const navRow = mk('div','qx-nm-nav');
       const idx = NAMAZ_NABVI_DATA.findIndex(c=>c.id===ch.id);
       if(idx>0){
-        const prev = mk('button','', '← ' + NAMAZ_NABVI_DATA[idx-1].title);
-        prev.onclick = ()=>{ window.qxNamazChapter=NAMAZ_NABVI_DATA[idx-1].id; renderPrayerLearnView(); };
-        navRow.appendChild(prev);
+        navRow.appendChild(qxNmBtn('qx-nm-prev', NAMAZ_NABVI_DATA[idx-1].title, 'left', ()=>{ window.qxNamazChapter=NAMAZ_NABVI_DATA[idx-1].id; renderPrayerLearnView(); window.scrollTo(0,0); }));
       }else{ navRow.appendChild(mk('div','')); }
       if(idx < NAMAZ_NABVI_DATA.length-1){
-        const next = mk('button','', NAMAZ_NABVI_DATA[idx+1].title + ' →');
-        next.style.background='var(--qx-main-color)';
-        next.style.color='var(--qx-on-main)';
-        next.style.borderColor='var(--qx-main-color)';
-        next.onclick = ()=>{ window.qxNamazChapter=NAMAZ_NABVI_DATA[idx+1].id; renderPrayerLearnView(); };
-        navRow.appendChild(next);
+        navRow.appendChild(qxNmBtn('qx-nm-next', NAMAZ_NABVI_DATA[idx+1].title, 'right', ()=>{ window.qxNamazChapter=NAMAZ_NABVI_DATA[idx+1].id; renderPrayerLearnView(); window.scrollTo(0,0); }));
       }
       card.appendChild(navRow);
 
@@ -6675,11 +6857,9 @@ function renderPrayerLearnView(){
 
   // List view
   showOther('{{menu_book}} নামাজ শিক্ষা - নববী পদ্ধতি');
-  const container = mk('div','');
-  container.style.maxWidth='900px';
-  container.style.margin='0 auto';
+  const container = mk('div','qx-nm qx-sec-page');
 
-  const introCard = mk('div','ayah');
+  const introCard = mk('div','ayah qx-sec-card');
   const introNo = mk('div','no');
   introNo.innerHTML = '<span class="ayah-number" style="background:var(--qx-main-soft);color:var(--qx-main-color)">নামাজে নববী ﷺ - শায়খ আলবানী</span>';
   introCard.appendChild(introNo);
@@ -6688,21 +6868,12 @@ function renderPrayerLearnView(){
   introCard.appendChild(introBn);
   container.appendChild(introCard);
   const credit = mk('div','trk-mini');
-  credit.style.marginTop='10px';
   credit.style.textAlign='center';
   credit.textContent='মূল গ্রন্থ: সিফাতু সালাতিন নবী ﷺ — শায়খ নাসিরুদ্দীন আলবানী (রহঃ)';
   container.appendChild(credit);
 
-  const grid = mk('div','');
-  grid.style.display='grid';
-  grid.style.gridTemplateColumns='1fr';
-  grid.style.gap='10px';
-  grid.style.marginTop='14px';
-
   NAMAZ_NABVI_DATA.forEach(ch=>{
     const item = mk('div','item');
-    item.style.cursor='pointer';
-    item.style.borderRadius='14px';
     const num = mk('div','num', String(ch.no));
     num.style.minWidth='44px';
     num.style.height='44px';
@@ -6712,16 +6883,13 @@ function renderPrayerLearnView(){
     const small = mk('small','', ch.subtitle);
     mid.appendChild(b);
     mid.appendChild(small);
-    const arrow = mk('div','', '→');
-    arrow.style.color='var(--qx-meta-color)';
+    const arrow = mk('div','qx-nm-chev'); arrow.appendChild(qxNmIcon('right'));
     item.appendChild(num);
     item.appendChild(mid);
     item.appendChild(arrow);
     item.onclick = ()=>{ window.qxNamazChapter=ch.id; renderPrayerLearnView(); window.scrollTo(0,0); };
-    grid.appendChild(item);
+    container.appendChild(item);
   });
-
-  container.appendChild(grid);
 
 
   app.appendChild(container);
@@ -7104,12 +7272,17 @@ window.addEventListener("online", () => showToast("ইন্টারনেট �
 
 // Android WebView / Browser Back Button Navigation Handling
 function handleBackNavigation(){
-  const openModal = document.querySelector(".modal-overlay");
-  if (openModal) { openModal.remove(); return true; }
+  if (qxNav.closeTopOverlay()) return true;
   if (reading) {
     saveScroll();
     reading = null;
     renderHome();
+    return true;
+  }
+  if (window.qxNamazChapter) {
+    window.qxNamazChapter = null;
+    if (typeof renderPrayerLearnView === "function") renderPrayerLearnView();
+    qxNav.pushMode();
     return true;
   }
   if (mode !== "quran") {
@@ -7124,12 +7297,111 @@ function pushReaderState(){
   if (readerPushed) return;
   try { history.pushState({ qx: "reader" }, ""); readerPushed = true; } catch(e){}
 }
-window.addEventListener("popstate", () => { readerPushed = false; handleBackNavigation(); });
+
+/* In-app history: one entry per open popup, one for any non-home page, one for the reader.
+   Browser back, Android back and the swipe gesture all go through this. */
+var qxNav = {
+  overlaySelector: ".modal-overlay, .ac-ov, .sheet-ov, #gridPopupOverlay.open, .hijri-info-overlay.open",
+  ovPushed: 0,
+  stale: 0,
+  ignore: 0,
+  modePushed: false,
+  overlays: function(){ return document.querySelectorAll(this.overlaySelector); },
+  closeTopOverlay: function(){
+    const list = this.overlays();
+    if (!list.length) return false;
+    const el = list[list.length - 1];
+    if (el.id === "gridPopupOverlay" || el.classList.contains("hijri-info-overlay")) el.classList.remove("open");
+    else el.remove();
+    return true;
+  },
+  pushMode: function(){
+    if (this.modePushed) return;
+    try { history.pushState({ qx: "mode" }, ""); this.modePushed = true; } catch(e){}
+  },
+  popTo: function(n){
+    if (n <= 0) return;
+    this.ignore++;
+    try { history.go(-n); } catch(e){ this.ignore--; }
+  },
+  syncOverlays: function(){
+    const count = this.overlays().length;
+    while (this.ovPushed < count) {
+      try { history.pushState({ qx: "ov" }, ""); } catch(e){ break; }
+      this.ovPushed++;
+    }
+    if (this.ovPushed > count) {
+      const diff = this.ovPushed - count;
+      this.ovPushed = count;
+      if (history.state && history.state.qx === "ov") this.popTo(diff);
+      else this.stale += diff;
+    }
+  },
+  swipeBack: function(){
+    if (this.ovPushed > 0 || readerPushed || this.modePushed) { history.back(); return; }
+    handleBackNavigation();
+  }
+};
+new MutationObserver(function(){ qxNav.syncOverlays(); })
+  .observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+
+window.addEventListener("popstate", (e) => {
+  if (qxNav.ignore > 0) { qxNav.ignore--; return; }
+  if (qxNav.ovPushed > 0) { qxNav.ovPushed--; qxNav.closeTopOverlay(); return; }
+  if (readerPushed) readerPushed = false;
+  else if (qxNav.modePushed) qxNav.modePushed = false;
+  handleBackNavigation();
+  if (qxNav.stale > 0 && e.state && e.state.qx === "ov") { qxNav.stale--; qxNav.popTo(1); }
+});
+
+const _origSetMode = setMode;
+setMode = function(m){
+  if (m !== "quran") qxNav.pushMode();
+  else {
+    const n = (qxNav.modePushed ? 1 : 0) + (readerPushed ? 1 : 0);
+    qxNav.modePushed = false; readerPushed = false;
+    qxNav.popTo(n);
+  }
+  return _origSetMode(m);
+};
 
 const _origOpenSurah = openSurah;
 openSurah = async function(n, y, targetAyah){ pushReaderState(); return _origOpenSurah(n, y, targetAyah); };
 const _origOpenJuz = openJuz;
 openJuz = async function(n, y){ pushReaderState(); return _origOpenJuz(n, y); };
+
+/* Swipe back: installed app only (home-screen web app or Capacitor), phone-size screens.
+   A swipe in either direction goes back; ignored on inputs, sliders and sideways-scrolling areas. */
+(function(){
+  const standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true || !!window.Capacitor;
+  if (!standalone) return;
+  const MIN_DX = 80, MAX_MS = 600;
+  let sx = 0, sy = 0, st = 0, track = false;
+  function blocked(el){
+    for (; el && el !== document.body; el = el.parentElement) {
+      const tag = el.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "AUDIO") return true;
+      if (el.hasAttribute && el.hasAttribute("data-no-swipe")) return true;
+      if (el.scrollWidth > el.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(el).overflowX)) return true;
+    }
+    return false;
+  }
+  document.addEventListener("touchstart", function(e){
+    track = e.touches.length === 1 && window.innerWidth < 900 && !blocked(e.target);
+    if (!track) return;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+  }, { passive: true });
+  document.addEventListener("touchend", function(e){
+    if (!track) return;
+    track = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Date.now() - st > MAX_MS || Math.abs(dx) < MIN_DX || Math.abs(dy) > Math.abs(dx) * 0.5) return;
+    const sel = window.getSelection && window.getSelection();
+    if (sel && String(sel).length) return;
+    qxNav.swipeBack();
+  }, { passive: true });
+})();
 
 // Capacitor (Android) হার্ডওয়্যার back বাটন
 try {
@@ -7612,7 +7884,7 @@ setInterval(checkPrayerAlerts, 5000);
   }
   dd.querySelectorAll('[data-popup]').forEach(function(btn){ btn.onclick=function(e){ e.stopPropagation(); openPopup(btn.dataset.popup); }; });
   window.openGridPopup=openPopup;
-  function head(title){ return '<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>'+title+'</h3>'; }
+  function head(title){ return '<div class="pp-header"><h3>'+title+'</h3><button type="button" class="pp-close" aria-label="বন্ধ করুন" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button></div>'; }
   function renderPwaPopup(){
     var installed=window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
     var ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -7818,14 +8090,17 @@ setInterval(checkPrayerAlerts, 5000);
     var labels={all:'সব সূরা',Meccan:'মাক্কী',Medinan:'মাদানী',juz:'পারা',bm:'সংরক্ষিত'};
     var html=head('{{filter_list}} সূরা ফিল্টার');
     ['all','Meccan','Medinan','juz','bm'].forEach(function(k){
-      html+='<div class="pp-opt'+(tab===k?' on':'')+'" data-tab="'+k+'">'+labels[k]+'<span>'+(tab===k?'{{check}}':'')+'</span></div>';
+      html+='<button type="button" class="pp-opt'+(tab===k?' on':'')+'" data-tab="'+k+'" aria-pressed="'+(tab===k?'true':'false')+'">'+labels[k]+'<span aria-hidden="true">'+(tab===k?'{{check}}':'')+'</span></button>';
     });
     box.innerHTML=html;
     box.querySelectorAll('[data-tab]').forEach(function(el){ el.onclick=function(){ tab=el.dataset.tab; if(qEl) qEl.value=''; if(typeof renderTabs==='function') renderTabs(); if(typeof renderHome==='function') renderHome(); refreshMinis(); closePopup(); }; });
+    var selectedOption=box.querySelector('[data-tab="'+tab+'"]');
+    if(selectedOption) selectedOption.focus();
   }
   function refreshMinis(){
     var labels={all:'সব সূরা',Meccan:'মাক্কী',Medinan:'মাদানী',juz:'পারা',bm:'সংরক্ষিত'};
-    const f = document.getElementById('gFilterMini'); if(f) f.textContent=(labels[tab]||'সব সূরা')+' ›';
+    const activeTab=(typeof mode!=='undefined'&&mode==='saved')?'bm':tab;
+    const f = document.getElementById('gFilterMini'); if(f) f.textContent=(labels[activeTab]||'সব সূরা')+' ›';
     var v=transOrig?transOrig.value:'bn.bengali'; const t = document.getElementById('gTransMini'); if(t) t.textContent=(v==='bn.zakaria'?'ড. আবু বকর যাকারিয়া':'মুহিউদ্দীন খান')+' ›';
     var tf=TAFSIRS.find(function(x){return x[0]===tafsirId}); const tm = document.getElementById('gTafsirMini'); if(tm) tm.textContent=(tf?tf[1]:'')+' ›';
     var cur=(typeof currentReciter!=='undefined')?currentReciter:'Saood_ash-Shuraym_128kbps'; try{cur=JSON.parse(cur);}catch(e){} var rn=(typeof getReciterName==='function')?getReciterName(cur):cur; const r = document.getElementById('gReciterMini'); if(r) r.textContent=rn+' ›';
@@ -7895,10 +8170,10 @@ setInterval(checkPrayerAlerts, 5000);
     var qv=qEl?qEl.value.trim():''; if(qv) return;
     const appEl = document.getElementById('app'); if(!appEl) return;
     appEl.querySelectorAll('.home-tiles,.home-browse-nav,.home-browse-heading').forEach(function(el){el.remove();});
-    var browse=document.createElement('section'); browse.className='home-browse-nav'+(tab==='home'?'':' is-sticky'); browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
+    var browse=document.createElement('section'); browse.className='home-browse-nav'+(tab==='home'?'':' is-sticky'); browse.setAttribute('role','group'); browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
     var browseItems=[['all','সব সূরা'],['Meccan','মাক্কী'],['Medinan','মাদানী'],['juz','পারা']];
     browseItems.forEach(function(pair){
-      var b=document.createElement('button'); b.type='button'; b.textContent=pair[1];
+      var b=document.createElement('button'); b.type='button'; b.textContent=pair[1]; b.setAttribute('aria-pressed',tab===pair[0]?'true':'false');
       if(tab===pair[0]){b.className='on';b.setAttribute('aria-current','page');}
       b.onclick=function(){tab=pair[0];if(qEl)qEl.value='';if(typeof renderTabs==='function')renderTabs();if(typeof renderHome==='function')renderHome();window.scrollTo(0,0);};
       browse.appendChild(b);
@@ -7943,10 +8218,10 @@ setInterval(checkPrayerAlerts, 5000);
       ['history_edu','হাদিস','হাদিস প্যাকেজ',navGo('hadith')],
       ['mosque','নামাজ','সময় ও শিক্ষা',navGo('prayer')],
       ['front_hand','দোয়া ও তাসবিহ','দোয়া ও যিকির',navGo('dua')],
-      ['bedtime','রমজান','রোজা ও আমল',function(){ setMode('ramadan'); }],
+      ['no_meals','রমজান','রোজা ও আমল',function(){ setMode('ramadan'); }],
       ['auto_awesome','কালিমা','ঈমানের ঘোষণা',function(){ setMode('kalima'); }],
-      ['explore','হজ্জ','পরিচিতি',function(){ setMode('hajj'); }],
-      ['package_2','যাকাত','পরিচিতি',function(){ setMode('zakat'); }],
+      ['kaaba','হজ্জ','পরিচিতি',function(){ setMode('hajj'); }],
+      ['zakat_coin','যাকাত','পরিচিতি',function(){ setMode('zakat'); }],
       ['edit_note','বই ও অনুচ্ছেদ','বই ও লেখা',function(){ setMode('books'); }],
       ['bar_chart','ট্র্যাকার','প্রতিদিনের হিসাব',function(){ setMode('tracker'); }],
       ['star','সংরক্ষিত','বুকমার্ক ও ফেভারিট',function(){ setMode('saved'); }]
@@ -8115,7 +8390,7 @@ setInterval(checkPrayerAlerts, 5000);
     overlay.classList.add('open');
     var p=getPlan();
     if(!p){
-      box.innerHTML='<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>{{calendar_month}} খতম প্ল্যান বানাও</h3>'
+      box.innerHTML='<div class="pp-header"><h3>{{calendar_month}} খতম প্ল্যান বানাও</h3><button type="button" class="pp-close" aria-label="বন্ধ করুন" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button></div>'
         +'<div class="khatam-setup"><label>কত দিনে শেষ করবা?</label>'
         +'<div class="pp-tabs" id="khDays"><button data-d="30" class="on">৩০ দিন</button><button data-d="60">৬০ দিন</button><button data-d="90">৯০ দিন</button><button data-d="365">১ বছর</button></div>'
         +'<label>শুরু</label><input type="date" class="pp-input" id="khStart" value="'+todayStr2()+'">'
@@ -8135,7 +8410,7 @@ setInterval(checkPrayerAlerts, 5000);
     }
     var st=planStats(p);
     var dots=''; for (let i=1;i<=p.days;i++){ var d=new Date(p.start+'T00:00:00'); d.setDate(d.getDate()+i-1); var ds=d.toISOString().slice(0,10); dots+='<span class="khatam-dot'+(p.doneDays&&p.doneDays[ds]?' done':'')+(i===st.dayNo?' today':'')+'" title="'+ds+'">'+(window.toBn?toBn(i):i)+'</span>'; }
-    box.innerHTML='<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>{{calendar_month}} খতম প্ল্যান</h3>'
+    box.innerHTML='<div class="pp-header"><h3>{{calendar_month}} খতম প্ল্যান</h3><button type="button" class="pp-close" aria-label="বন্ধ করুন" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button></div>'
       +'<div class="khatam-row"><b>দিন '+ (window.toBn?toBn(st.dayNo):st.dayNo) +' / '+ (window.toBn?toBn(p.days):p.days) +'</b><span>'+(st.onTrack?'{{check_circle:f}} ট্র্যাকে':'{{warning}} পিছিয়ে')+'</span></div>'
       +'<div class="khatam-row"><span>আজকের পড়া</span><b>'+refStr(st.todayStart)+' → '+refStr(Math.max(st.todayStart, st.todayEnd-1))+'</b></div>'
       +'<div class="khatam-row"><span>আজ পড়তে হবে</span><b>'+ (window.toBn?toBn(st.perDay):st.perDay) +' আয়াত</b></div>'
@@ -8679,12 +8954,12 @@ setInterval(checkPrayerAlerts, 5000);
       if(packages[k].status==='downloading' && (!packageJob || packageJob.finished)) packages[k].status='incomplete';
     });
     savePackageMeta(packages);
-    var html='<button class="pp-close" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button><h3>{{download}} ডাউনলোড</h3>'+ 
+    var html='<div class="pp-header"><h3>{{download}} ডাউনলোড</h3><button type="button" class="pp-close" aria-label="বন্ধ করুন" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button></div>'+ 
       '<span id="qxDlMarker" hidden></span>'
-      +'<div style="margin:8px 0 6px"><input id="qxDlSearch" class="pp-input" placeholder="🔍 অনুবাদ, তাফসির, কারি, হাদিস বা সূরা খুঁজুন..." autocomplete="off" style="margin-bottom:0"></div>'
+      +'<div style="margin:8px 0 6px"><input id="qxDlSearch" class="pp-input" placeholder="অনুবাদ, তাফসির, কারি, হাদিস বা সূরা খুঁজুন..." autocomplete="off" style="margin-bottom:0"></div>'
       +'<div id="qxDlSearchInfo" class="pp-mini" style="display:none;margin-bottom:8px"></div>';
     var isDone=function(k){return packages[k]&&packages[k].status==='complete';};
-    var card=function(btnId,title,note,btnText){return '<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{package_2}}</span><b>'+title+'</b></div><small style="display:block;margin:4px 0 8px">'+note+'</small><button class="pp-btn" id="'+btnId+'">{{download}} '+btnText+'</button></div>';};
+    var card=function(btnId,title,note,btnText){return '<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{folder_open}}</span><b>'+title+'</b></div><small style="display:block;margin:4px 0 8px">'+note+'</small><button class="pp-btn" id="'+btnId+'">{{download}} '+btnText+'</button></div>';};
     if(!isDone(packageKey('translation','bn.zakaria'))) html+=card('qxDownloadTranslation','অনুবাদ · ড. আবু বকর মুহাম্মাদ যাকারিয়া','সম্পূর্ণ ১১৪ সূরার বাংলা অনুবাদ','সম্পূর্ণ অনুবাদ ডাউনলোড');
     var pendingTafsir=TAFSIRS.filter(function(t){return !isDone(packageKey('tafsir',t[0]));});
     if(pendingTafsir.length){
@@ -8704,10 +8979,10 @@ setInterval(checkPrayerAlerts, 5000);
       pendingHadith.forEach(function(c){html+='<button class="pp-btn" data-hadith-dl="'+c.id+'"><span class="ms" style="font-size:var(--qx-fs-xl);margin-right:4px">{{download}}</span>'+c.name+'</button>';});
       html+='</div></div>';
     }
-    html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{queue_music}}</span> সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
     var m=meta(), ks=Object.keys(m);
     var hasSurahAudio = ks.length>0;
     if(ks.length){
+      html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{headphones}}</span> সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
       ks.forEach(function(k){var info=m[k],parts=k.split('|'),sn=parseInt(parts[0],10); html+='<div class="dl-item"><div><b>'+(info.name||('সূরা '+sn))+'</b><br><small>'+getReciterName(info.reciter)+' · '+info.count+' আয়াত</small></div><button class="dl-btn ghost" data-del="'+k+'">{{delete}}</button></div>';});
     }
     if(packageJob && !packageJob.finished){
@@ -8720,7 +8995,7 @@ setInterval(checkPrayerAlerts, 5000);
       var free=hasQuota?(quota-usage):0;
       var barColor = pct>85 ? '#dc2626' : pct>65 ? '#d97706' : 'var(--qx-main-color)';
       html+='<div class="dl-item" style="display:block;margin-top:12px">'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><b>📦 স্টোরেজ স্ট্যাটাস</b><small>'+ (hasQuota?pct+'% ব্যবহৃত':'তথ্য নেই') +'</small></div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><b>{{folder_open}} স্টোরেজ স্ট্যাটাস</b><small>'+ (hasQuota?pct+'% ব্যবহৃত':'তথ্য নেই') +'</small></div>'
         + (hasQuota ? '<div style="width:100%;height:10px;background:var(--qx-border);border-radius:var(--qx-radius-pill);overflow:hidden;margin-bottom:6px"><div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:var(--qx-radius-pill);transition:width .3s"></div></div>' : '')
         +'<div class="pp-mini" style="line-height:1.5">'
         +(hasQuota? 'ব্যবহৃত: <b>'+formatBytes(usage)+'</b> / মোট: <b>'+formatBytes(quota)+'</b> · খালি: <b>'+formatBytes(free)+'</b><br>':'ব্রাউজার স্টোরেজ তথ্য দেয়নি।<br>')
@@ -8729,7 +9004,7 @@ setInterval(checkPrayerAlerts, 5000);
     })();
     var entries=Object.keys(packages).filter(function(k){return ['complete','incomplete','paused'].includes(packages[k].status);});
     var hasPackages = entries.length>0;
-    if(entries.length){ html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{package_2}}</span> ডাউনলোড করা প্যাকেজ</h4>';
+    if(entries.length){ html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{folder_open}}</span> ডাউনলোড করা প্যাকেজ</h4>';
     if(entries.length){
       entries.forEach(function(k){
         var item=packages[k];
@@ -8952,10 +9227,21 @@ window.openAyahCard = function(label, ar, bn){
   box.querySelector('#acShare').onclick=async function(){
     var blob=await toBlob(); var file=new File([blob], 'quranix-ayah.png', {type:'image/png'});
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      try{ await navigator.share({title:label, text:'['+label+']\n'+bn+'\n— Quranix', files:[file]}); return; }catch(e){}
+      try{
+        await navigator.share({title:label, text:'['+label+']\n'+bn+'\n— Quranix', files:[file]});
+        return;
+      }catch(e){
+        // Do not download a duplicate file when the user explicitly cancels sharing.
+        if(e && e.name==='AbortError') return;
+      }
     }
-    // fallback: download
-    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quranix-ayah.png'; a.click();
+    // Fallback: download the image when file sharing is unavailable or fails.
+    var a=document.createElement('a');
+    var imageUrl=URL.createObjectURL(blob);
+    a.href=imageUrl;
+    a.download='quranix-ayah.png';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(imageUrl); }, 1000);
     if(typeof showToast==='function') showToast('শেয়ার সমর্থিত নয়, ছবি ডাউনলোড করে দিলাম');
   };
   renderChips();
@@ -9097,7 +9383,7 @@ var ASMA_DATA=[["الله", "আল্লাহ", "একমাত্র উপ�
 function asmaToday(){var d=new Date();return ASMA_DATA[(d.getDate()-1)%99];}
 function buildAsmaCard(){var t=asmaToday();var idx=ASMA_DATA.indexOf(t);var box=document.createElement('div');box.className='khatam-card';box.innerHTML='<div class="khatam-row"><b>{{auto_awesome}} আজকের নাম</b><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯</span></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:30px;color:var(--qx-main-color)">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div class="trk-mini">'+t[4]+'</div></div><div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">৯৯ নাম দেখো →</span><span>সূরা '+t[3]+'</span></div>';box.onclick=function(){if(typeof setMode==='function')setMode('asma');};return box;}
 function renderAsma(){if(typeof showOther==='function')showOther('{{auto_awesome}} আসমাউল হুসনা');const appEl = document.getElementById('app');var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var t=asmaToday();var top=document.createElement('div');top.className='asma-top';top.innerHTML='<small>{{auto_awesome}} আজকের নাম · '+(ASMA_DATA.indexOf(t)+1)+' / ৯৯</small><div class="ar">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div><small>রেফারেন্স: সূরা '+t[3]+' · '+t[4]+'</small></div>';top.onclick=function(){openAsmaDetail(ASMA_DATA.indexOf(t));};appEl.appendChild(top);var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='৯৯টি নাম মুখস্থ করো, প্রতিটা নামে ট্যাপ করে অর্থ + কুরআনের রেফারেন্স দেখো। {{star:f}} প্রিয় করো, {{bubble_chart}} জিকির করো।';appEl.appendChild(info);var search=document.createElement('input');search.className='asma-search';search.placeholder='নাম খুঁজুন... যেমন: রহমান, গাফুর, রজ্জাক';appEl.appendChild(search);var grid=document.createElement('div');grid.className='asma-grid';appEl.appendChild(grid);function draw(filter){grid.innerHTML='';ASMA_DATA.forEach(function(item,i){var txt=(item[1]+' '+item[2]+' '+item[0]).toLowerCase();if(filter&&txt.indexOf(filter.toLowerCase())<0)return;var c=document.createElement('div');c.className='asma-card'+(favs[i]?' fav':'');c.innerHTML='<div class="ar">'+item[0]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+item[1]+'</b><small>'+item[2]+'</small><div class="trk-mini">সূরা '+item[3]+(counts[i]?' · {{bubble_chart}} '+counts[i]+' বার':'')+'</div>';c.onclick=function(){openAsmaDetail(i);};grid.appendChild(c);});}search.oninput=function(){draw(search.value);};draw('');}
-function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:48px;color:var(--qx-main-color);direction:rtl;line-height:1.6">'+item[0]+'</div><b style="font-size:var(--qx-fs-xl)">'+item[1]+'</b><div style="color:var(--qx-meta-color)">'+item[2]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{bubble_chart}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">← আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম →</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';if(navigator.share){try{await navigator.share({title:item[1],text:text});}catch(e){}}else if(typeof copyText==='function')copyText(text,'কপি হয়েছে!');};}
+function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:48px;color:var(--qx-main-color);direction:rtl;line-height:1.6">'+item[0]+'</div><b style="font-size:var(--qx-fs-xl)">'+item[1]+'</b><div style="color:var(--qx-meta-color)">'+item[2]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{bubble_chart}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">← আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম →</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';await shareTextOrCopy(text,item[1],'শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!');};}
 window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaDetail=openAsmaDetail;
 </script>
 
@@ -9553,49 +9839,131 @@ window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaD
 <script>
 /* ===== PWA: install + service worker ===== */
 (function(){
-  var deferred=null;
-  window.quranixInstallAvailable=false;
-  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred=e; window.quranixInstallAvailable=true; showBanner(); });
-  window.addEventListener('appinstalled', function(){ hideBanner(); if(typeof showToast==='function') showToast('Quranix ইনস্টল হয়েছে'); });
-  function showBanner(){ const b = document.getElementById('pwaBanner'); if(b) b.classList.add('show'); }
-  function hideBanner(){ const b = document.getElementById('pwaBanner'); if(b) b.classList.remove('show'); }
-  function isInstalled(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true; }
-  if(isInstalled()){ /* already installed - no banner */ }
-  else { setTimeout(function(){ if(deferred) showBanner(); }, 2500); }
-  const ib = document.getElementById('pwaInstallBtn');
-  if(ib) ib.onclick=function(){ doInstall(); };
-  const bc =document.getElementById('pwaBannerClose');
-  if(bc) bc.onclick=function(){ hideBanner(); localStorage.setItem('quranix_pwa_dismiss','1'); };
+  var deferred = null;
+  var installButton = document.getElementById('pwaInstallBtn');
+  var bannerClose = document.getElementById('pwaBannerClose');
+  var mini = document.getElementById('gPwaMini');
+  var updateNoticeShown = false;
+
+  window.quranixInstallAvailable = false;
+
+  function isInstalled(){
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  }
+
+  function isBannerDismissed(){
+    try { return localStorage.getItem('quranix_pwa_dismiss') === '1'; }
+    catch(e) { return false; }
+  }
+
+  function showBanner(){
+    var banner = document.getElementById('pwaBanner');
+    if (banner && !isInstalled() && !isBannerDismissed()) {
+      banner.style.display = '';
+      banner.classList.add('show');
+    }
+  }
+
+  function hideBanner(){
+    var banner = document.getElementById('pwaBanner');
+    if (banner) banner.classList.remove('show');
+  }
+
+  function setInstallAvailability(value){
+    window.quranixInstallAvailable = !!value;
+  }
+
+  window.addEventListener('beforeinstallprompt', function(event){
+    event.preventDefault();
+    deferred = event;
+    setInstallAvailability(true);
+    showBanner();
+  });
+
+  window.addEventListener('appinstalled', function(){
+    deferred = null;
+    setInstallAvailability(false);
+    hideBanner();
+    if (typeof showToast === 'function') showToast('Quranix ইনস্টল হয়েছে');
+  });
+
+  if (installButton) installButton.onclick = function(){ doInstall(); };
+  if (bannerClose) bannerClose.onclick = function(){
+    hideBanner();
+    try { localStorage.setItem('quranix_pwa_dismiss', '1'); } catch(e) {}
+  };
+
   async function doInstall(){
-    if(isInstalled()){ if(typeof showToast==='function') showToast('Quranix ইতিমধ্যে ইনস্টল করা আছে'); return; }
-    if(deferred){
-      var promptEvent=deferred;
-      deferred=null;
-      try{
+    if (isInstalled()) {
+      if (typeof showToast === 'function') showToast('Quranix ইতিমধ্যে ইনস্টল করা আছে');
+      return;
+    }
+
+    if (deferred) {
+      var promptEvent = deferred;
+      deferred = null;
+      setInstallAvailability(false);
+      try {
         await promptEvent.prompt();
-        var choice=await promptEvent.userChoice;
-        if(choice && choice.outcome==='accepted') hideBanner();
-        else if(typeof showToast==='function') showToast('ইনস্টল বাতিল করা হয়েছে');
-      }catch(err){
-        if(typeof showToast==='function') showToast('ইনস্টল প্রম্পট খোলা যায়নি; ব্রাউজার মেনু ব্যবহার করুন');
+        var choice = await promptEvent.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          hideBanner();
+        } else if (typeof showToast === 'function') {
+          showToast('ইনস্টল বাতিল করা হয়েছে');
+        }
+      } catch(error) {
+        if (typeof showToast === 'function') showToast('ইনস্টল প্রম্পট খোলা যায়নি; ব্রাউজার মেনু ব্যবহার করুন');
       }
       return;
     }
-    var isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
-    var isAndroid=/Android/i.test(navigator.userAgent);
-    if(isIOS){ alert('iPhone-এ Safari খুলে Share → Add to Home Screen → Add চাপুন।'); }
-    else if(isAndroid){ alert('Chrome-এর ⋮ মেনু → Install app / Add to Home screen নির্বাচন করুন।'); }
-    else { alert('PC-তে Chrome বা Edge-এর address bar-এর Install আইকন, অথবা মেনু → Install Quranix নির্বাচন করুন।'); }
+
+    var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var isAndroid = /Android/i.test(navigator.userAgent);
+    if (isIOS) {
+      alert('iPhone বা iPad-এ Safari খুলে Share → Add to Home Screen → Add নির্বাচন করুন।');
+    } else if (isAndroid) {
+      alert('Chrome-এর ⋮ মেনু → Install app / Add to Home screen নির্বাচন করুন।');
+    } else {
+      alert('PC-তে Chrome বা Edge-এর address bar-এর Install আইকন, অথবা মেনু → Install Quranix নির্বাচন করুন।');
+    }
   }
-  window.quranixInstall=doInstall;
-  // Service worker - only on http/https, not file://
-  if('serviceWorker' in navigator && location.protocol!=='file:'){
+
+  window.quranixInstall = doInstall;
+
+  // Service workers require an eligible secure origin; file:// preview is intentionally skipped.
+  if ('serviceWorker' in navigator && window.isSecureContext && location.protocol !== 'file:') {
     window.addEventListener('load', function(){
-      navigator.serviceWorker.register('./sw.js').then(function(){ console.log('Quranix SW ok'); }).catch(function(e){ console.log('SW fail', e); });
+      navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(function(registration){
+        console.log('Quranix service worker registered');
+
+        if (registration && typeof registration.update === 'function') {
+          registration.update().catch(function(error){
+            console.warn('Quranix service worker update check failed', error);
+          });
+        }
+
+        if (registration && registration.waiting && !updateNoticeShown) {
+          updateNoticeShown = true;
+          if (typeof showToast === 'function') showToast('Quranix-এর নতুন আপডেট প্রস্তুত। রিফ্রেশ করলে চালু হবে।');
+        }
+
+        registration.addEventListener('updatefound', function(){
+          var installing = registration.installing;
+          if (!installing) return;
+          installing.addEventListener('statechange', function(){
+            if (installing.state === 'installed' && navigator.serviceWorker.controller && !updateNoticeShown) {
+              updateNoticeShown = true;
+              if (typeof showToast === 'function') showToast('Quranix-এর নতুন আপডেট প্রস্তুত। রিফ্রেশ করলে চালু হবে।');
+            }
+          });
+        });
+      }).catch(function(error){
+        console.warn('Quranix service worker registration failed', error);
+      });
     });
   }
-  // Update mini label
-  const mini = document.getElementById('gPwaMini'); if(mini) mini.textContent=isInstalled()?'ইনস্টল করা ›':'›';
+
+  if (mini) mini.textContent = isInstalled() ? 'ইনস্টল করা ›' : '›';
 })();
 </script>
 <script>
@@ -9626,7 +9994,7 @@ async function openOfflineHadithCollection(collection){
 function renderHadith(){if(typeof showOther==='function')showOther('{{history_edu}} হাদিস প্যাকেজ');const appEl = document.getElementById('app');var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='একে একে পড়ো, মুখস্থ হলে {{check_circle:f}} মার্ক করো।';appEl.appendChild(info);var pkgs=[{k:'nawawi',icon:'{{menu_book}}',name:'৪০ হাদিস (ইমাম নববী)',desc:'ইমাম নববীর সংকলন থেকে সোর্স-যাচাইকৃত নির্বাচিত হাদিস',count:HADITH_DATA.nawawi.length},{k:'qudsi',icon:'{{auto_awesome}}',name:'হাদিসে কুদসি',desc:'আল্লাহর কথা, রাসূল ﷺ-এর ভাষায় — হাদিস কুদসি থেকে সোর্স-যাচাইকৃত',count:HADITH_DATA.qudsi.length},{k:'short',icon:'{{lightbulb}}',name:'ছোট হাদিস — দৈনন্দিন জীবন',desc:'ছোট ছোট হাদিস, মুখস্থ করা সহজ — প্রতিদিন ১টা',count:HADITH_DATA.short.length}];pkgs.forEach(function(pk){var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var done=0;for (let i=0;i<pk.count;i++){if(mem[pk.k+':'+i])done++;}var card=document.createElement('div');card.className='hadith-pkg';card.innerHTML='<h3>'+pk.icon+' '+pk.name+'</h3><div class="sub">'+pk.desc+'</div><div class="khatam-row" style="margin-top:8px"><span>'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'টি হাদিস</span><span>মুখস্থ: '+(typeof toBn==='function'?toBn(done):done)+'/'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'</span><span style="color:var(--qx-main-color);font-weight:700">খোলো →</span></div><div class="goal-track"><div class="goal-fill" style="width:'+Math.round(done/pk.count*100)+'%" ></div></div>';card.onclick=function(){renderHadithList(pk.k,pk.name);};appEl.appendChild(card);});var today=hadithToday();var tc=document.createElement('div');tc.className='hadith-pkg';tc.innerHTML='<h3>{{history_edu}} আজকের হাদিস</h3><div class="ar" style="font-family:var(--qx-font-arabic);font-size:22px;direction:rtl;text-align:right;color:var(--qx-main-color)">'+today.ar+'</div><b>'+today.title+'</b><div class="trk-mini">'+today.bn+'</div><div class="ref" style="font-size:var(--qx-fs-xs);color:var(--qx-meta-color)">{{auto_stories}} '+today.ref+'</div>';tc.onclick=function(){openHadithDetail(today.pkg,today.idx);};appEl.appendChild(tc);renderOfflineHadithCollections(appEl);}
 function renderHadithList(pkgKey,pkgName){if(typeof showOther==='function')showOther('{{history_edu}} '+pkgName);const appEl = document.getElementById('app');var back=document.createElement('button');back.className='dl-btn ghost';back.textContent='← সব প্যাকেজ';back.onclick=function(){renderHadith();};appEl.appendChild(back);var search=document.createElement('input');search.className='asma-search';search.placeholder='হাদিস খুঁজুন... যেমন: নিয়ত, রাগ, ধৈর্য';appEl.appendChild(search);var list=document.createElement('div');appEl.appendChild(list);function draw(f){list.innerHTML='';var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}HADITH_DATA[pkgKey].forEach(function(h,i){if(f&&(h[0]+h[2]+h[3]).toLowerCase().indexOf(f.toLowerCase())<0)return;var item=document.createElement('div');item.className='hadith-item'+(mem[pkgKey+':'+i]?' done':'');item.innerHTML='<div class="ar">'+h[1]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+h[0]+'</b><div style="font-size:var(--qx-fs-md);margin:4px 0">'+h[2]+'</div><div class="ref">{{auto_stories}} '+h[3]+(mem[pkgKey+':'+i]?' · {{check_circle:f}} মুখস্থ':'')+'</div>';var hkey=pkgKey+':'+i;var sv=document.createElement('button');sv.type='button';sv.className='star qx-star';sv.setAttribute('aria-label','সংরক্ষণ করুন');sv.textContent=savedHas('hadith',hkey)?'{{star:f}}':'{{star}}';sv.onclick=function(e){e.stopPropagation();var on=savedToggle('hadith',hkey,{title:h[0],ar:h[1],bn:h[2],ref:h[3]});sv.textContent=on?'{{star:f}}':'{{star}}';showToast(on?'সংরক্ষিত হয়েছে':'সংরক্ষণ সরানো হয়েছে');};item.appendChild(sv);item.onclick=function(){openHadithDetail(pkgKey,i);};list.appendChild(item);});}search.oninput=function(){draw(search.value);};draw('');}
 function openHadithDetail(pkgKey,idx){var h=HADITH_DATA[pkgKey][idx];var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var key=pkgKey+':'+idx;var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>{{history_edu}} '+(pkgKey==='nawawi'?'৪০ হাদিস':pkgKey==='qudsi'?'হাদিসে কুদসি':'ছোট হাদিস')+' · '+(typeof toBn==='function'?toBn(idx+1):idx+1)+'</span><button id="hX">{{close}}</button></div><div class="ar" style="font-family:var(--qx-font-arabic);font-size:26px;direction:rtl;text-align:center;color:var(--qx-main-color);line-height:1.8">'+h[1]+'</div><b style="font-size:var(--qx-fs-xl)">'+h[0]+'</b><div style="line-height:1.7;margin:10px 0">'+h[2]+'</div><div class="trk-mini">{{auto_stories}} রেফারেন্স: '+h[3]+'</div><div class="trk-mini" style="margin-top:6px">{{lightbulb}} এই হাদিসটা আজকের দিনে কীভাবে আমল করবা, একটু ভেবে নাও। মুখস্থ হলে {{check_circle:f}} চাপ দাও।</div><div class="ac-row"><button class="ac-btn ghost" id="hSave">'+(savedHas('hadith',key)?'{{star:f}} সংরক্ষিত':'{{star}} সংরক্ষণ')+'</button><button class="ac-btn ghost" id="hMem">'+(mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো')+'</button><button class="ac-btn" id="hShare">{{share}} শেয়ার করো</button></div><div class="ac-row"><button class="ac-btn ghost" id="hPrev">← আগের হাদিস</button><button class="ac-btn ghost" id="hNext">পরের হাদিস →</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='hadith'){};};box.querySelector('#hX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#hSave').onclick=function(){var on=savedToggle('hadith',key,{title:h[0],ar:h[1],bn:h[2],ref:h[3]});this.textContent=on?'{{star:f}} সংরক্ষিত':'{{star}} সংরক্ষণ';if(typeof showToast==='function')showToast(on?'সংরক্ষিত হয়েছে':'সংরক্ষণ সরানো হয়েছে');};
-box.querySelector('#hMem').onclick=function(){if(mem[key])delete mem[key];else mem[key]=1;localStorage.setItem('quranix_hadith_mem',JSON.stringify(mem));this.textContent=mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো';if(typeof showToast==='function')showToast(mem[key]?'মুখস্থ মার্ক হয়েছে':'মার্ক সরানো হয়েছে');};box.querySelector('#hShare').onclick=async function(){var text=''+h[0]+'\n'+h[1]+'\n'+h[2]+'\n'+h[3]+'\n— Quranix · হাদিস প্যাকেজ';if(navigator.share){try{await navigator.share({title:h[0],text:text});}catch(e){}}else if(typeof copyText==='function')copyText(text,'কপি হয়েছে!');};box.querySelector('#hPrev').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+HADITH_DATA[pkgKey].length-1)%HADITH_DATA[pkgKey].length);};box.querySelector('#hNext').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+1)%HADITH_DATA[pkgKey].length);};}
+box.querySelector('#hMem').onclick=function(){if(mem[key])delete mem[key];else mem[key]=1;localStorage.setItem('quranix_hadith_mem',JSON.stringify(mem));this.textContent=mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো';if(typeof showToast==='function')showToast(mem[key]?'মুখস্থ মার্ক হয়েছে':'মার্ক সরানো হয়েছে');};box.querySelector('#hShare').onclick=async function(){var text=''+h[0]+'\n'+h[1]+'\n'+h[2]+'\n'+h[3]+'\n— Quranix · হাদিস প্যাকেজ';await shareTextOrCopy(text,h[0],'শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!');};box.querySelector('#hPrev').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+HADITH_DATA[pkgKey].length-1)%HADITH_DATA[pkgKey].length);};box.querySelector('#hNext').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+1)%HADITH_DATA[pkgKey].length);};}
 window.renderHadith=renderHadith;window.openOfflineHadithCollection=openOfflineHadithCollection;window.buildHadithCard=buildHadithCard;window.openHadithDetail=openHadithDetail;window.renderHadithList=renderHadithList;
 </script>
 
@@ -9731,14 +10099,10 @@ window.renderHadith=renderHadith;window.openOfflineHadithCollection=openOfflineH
   // 1.6 Asset fallback: use the browser font-loading API instead of measuring text width.
   try{
     if(document.fonts && typeof document.fonts.load === 'function'){
-      Promise.all([
-        document.fonts.load('20px "MSLocal"', 'search').catch(function(){ return []; }),
-        document.fonts.load('20px "Material Symbols Rounded"', 'search').catch(function(){ return []; })
-      ]).then(function(fontLists){
-        const localAvailable = fontLists[0].length > 0 && document.fonts.check('20px "MSLocal"', 'search');
-        const webAvailable = fontLists[1].length > 0 && document.fonts.check('20px "Material Symbols Rounded"', 'search');
-        if(!localAvailable && !webAvailable) document.body.classList.add('no-icon-font');
-      });
+      document.fonts.load('20px "MSLocal"', 'search').then(function(fontList){
+        const localAvailable = fontList.length > 0 && document.fonts.check('20px "MSLocal"', 'search');
+        if(!localAvailable) document.body.classList.add('no-icon-font');
+      }).catch(function(){ document.body.classList.add('no-icon-font'); });
     }
   }catch(e){}
 
@@ -9781,34 +10145,10 @@ window.renderHadith=renderHadith;window.openOfflineHadithCollection=openOfflineH
 (function(){
   var rp = document.getElementById("readerProgress");
   if(rp && rp.parentNode !== document.body) document.body.appendChild(rp);
-  var moreBtn = document.querySelector('#nav button[data-m="more"]');
-  if(!moreBtn) return;
-  var bEl = moreBtn.querySelector("b"), sEl = moreBtn.querySelector("span");
-  if(!bEl || !sEl) return;
-  var origB = bEl.innerHTML, origS = sEl.textContent;
-  var homePhase = false, notHome = false;
-  function goHomeNow(){
-    notHome = false; homePhase = false;
-    bEl.innerHTML = origB; sEl.textContent = origS;
+  var homeBtn = document.getElementById("navHome");
+  if(homeBtn) homeBtn.addEventListener("click", function(){
     if(typeof window.goHome === "function") window.goHome();
-  }
-  moreBtn.addEventListener("click", function(e){
-    if(homePhase){ e.preventDefault(); e.stopPropagation(); goHomeNow(); return; }
-    notHome = true;
-  }, true);
-  new MutationObserver(function(){
-    if(document.body.classList.contains("inside-page")) notHome = true;
-  }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
-  setInterval(function(){
-    if(!notHome || homePhase) return;
-    homePhase = true;
-    bEl.textContent = "{{home}}";
-    sEl.textContent = "হোম";
-    setTimeout(function(){
-      homePhase = false;
-      bEl.innerHTML = origB; sEl.textContent = origS;
-    }, 5000);
-  }, 10000);
+  });
 })();
 </script>
 <script>
