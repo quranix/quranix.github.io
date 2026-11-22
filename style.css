@@ -41,7 +41,7 @@
 }
 
 @font-face {
-  font-family:'MSLocal';font-style:normal;font-weight:200;font-display:swap;src:url(fonts/material-symbols-rounded.woff2) format('woff2')
+  font-family:'MSLocal';font-style:normal;font-weight:200;font-display:block;src:url(fonts/material-symbols-rounded.woff2) format('woff2')
 }
 
 :root {
@@ -3348,6 +3348,8 @@ body.inside-page .ayah .icon-btn:focus-visible, body.inside-page .ayah .star:foc
   letter-spacing: normal;
   text-transform: none;
   display: inline-block;
+  width: 1em;
+  overflow: hidden;
   white-space: nowrap;
   direction: ltr;
   vertical-align: -.22em;
@@ -4376,3 +4378,11 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
 .qx-nm .qx-nm-src-no { padding-left: 8px; margin-left: 2px; border-left: 1px solid var(--qx-border); color: var(--qx-meta-color); font-weight: 600; }
 .qx-nm .qx-nm-grade { display: inline-flex; align-items: center; gap: 4px; min-height: 30px; padding: 0 12px 0 8px; border-radius: var(--qx-radius-pill); background: color-mix(in srgb, var(--qx-success) 14%, transparent); color: var(--qx-success); font-size: var(--qx-fs-md); font-weight: 700; }
 .qx-nm .qx-nm-grade svg { width: 15px; height: 15px; }
+
+/* খতম প্ল্যান: কাস্টম দিনের বাটন লাইন ভেঙে নামবে, আংশিক পড়া দিনের রং */
+.pp-tabs.wrap { flex-wrap: wrap; }
+.pp-tabs.wrap button { flex: 1 1 28%; }
+.khatam-dot.part {
+  background: color-mix(in srgb, var(--qx-main-color) 30%, var(--qx-card-bg));
+  border-color: var(--qx-main-color);
+}

@@ -1,4 +1,4 @@
-const CACHE = 'quranix-v13';
+const CACHE = 'quranix-v14';
 const ASSETS = [
   './',
   './index.html',
@@ -17,8 +17,22 @@ const ASSETS = [
   './icons/apple-touch-icon.png'
 ];
 
+// fonts আলাদা করে রাখা: কোনো ফন্ট ফাইল না থাকলেও install ভাঙবে না
+const FONTS = [
+  './fonts/material-symbols-rounded.woff2',
+  './fonts/hind-siliguri-300.woff2', './fonts/hind-siliguri-400.woff2', './fonts/hind-siliguri-500.woff2',
+  './fonts/hind-siliguri-600.woff2', './fonts/hind-siliguri-700.woff2',
+  './fonts/noto-naskh-arabic.woff2', './fonts/amiri-quran.woff2',
+  './fonts/noto-serif-bengali-400.woff2', './fonts/noto-serif-bengali-700.woff2',
+  './fonts/kalpurush.woff2'
+];
+
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(ASSETS).then(() => Promise.all(FONTS.map(u => c.add(u).catch(() => {})))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {
