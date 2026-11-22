@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quranix | বাংলা কুরআন</title>
 <meta name="theme-color" content="#0f6b4f">
-<script>document.documentElement.classList.add('icons-pending');setTimeout(function(){document.documentElement.classList.remove('icons-pending');},3000);</script>
+<script>document.documentElement.classList.add('icons-pending');setTimeout(function(){document.documentElement.classList.remove('icons-pending');},6000);</script>
 <link rel="preload" href="fonts/material-symbols-rounded.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/hind-siliguri-400.woff" as="font" type="font/woff" crossorigin>
 <link rel="manifest" href="manifest.json">
@@ -15,43 +15,43 @@
 
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:300;font-display:swap;src:url(fonts/hind-siliguri-300.woff2) format("woff2"), url(fonts/hind-siliguri-300.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:300;font-display:swap;src:url(fonts/hind-siliguri-300.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/hind-siliguri-400.woff2) format("woff2"), url(fonts/hind-siliguri-400.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/hind-siliguri-400.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/hind-siliguri-500.woff2) format("woff2"), url(fonts/hind-siliguri-500.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/hind-siliguri-500.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/hind-siliguri-600.woff2) format("woff2"), url(fonts/hind-siliguri-600.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/hind-siliguri-600.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/hind-siliguri-700.woff2) format("woff2"), url(fonts/hind-siliguri-700.woff) format("woff")
+  font-family:"Hind Siliguri";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/hind-siliguri-700.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Noto Naskh Arabic";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/noto-naskh-arabic.woff2) format("woff2"), url(fonts/noto-naskh-arabic.woff) format("woff")
+  font-family:"Noto Naskh Arabic";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/noto-naskh-arabic.woff) format("woff")
 }
 
 @font-face {
-  font-family:"Amiri Quran";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/amiri-quran.woff2) format("woff2"), url(fonts/amiri-quran.woff) format("woff")
+  font-family:"Amiri Quran";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/amiri-quran.woff2) format("woff2")
 }
 
 @font-face {
-  font-family:"Noto Serif Bengali";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/noto-serif-bengali-400.woff2) format("woff2"), url(fonts/noto-serif-bengali-400.woff) format("woff")
+  font-family:"Noto Serif Bengali";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/noto-serif-bengali-400.woff2) format("woff2")
 }
 
 @font-face {
-  font-family:"Noto Serif Bengali";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/noto-serif-bengali-700.woff2) format("woff2"), url(fonts/noto-serif-bengali-700.woff) format("woff")
+  font-family:"Noto Serif Bengali";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/noto-serif-bengali-700.woff2) format("woff2")
 }
 
 @font-face {
-  font-family:"Kalpurush";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/kalpurush.woff2) format("woff2"), url(fonts/kalpurush.woff) format("woff")
+  font-family:"Kalpurush";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/kalpurush.woff2) format("woff2")
 }
 
 @font-face {
@@ -4474,23 +4474,23 @@ body.no-icon-font .ms::before {
 <body>
 <header>
   <div class="bar">
-    <button id="back" class="back-btn-hidden">{{arrow_back}}</button>
+    <button id="back" class="back-btn-hidden"><span class="ms" aria-hidden="true">arrow_back</span></button>
     <img class="app-logo" src="icons/icon-192x192.png" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:var(--qx-radius)" role="button" tabindex="0" title="Home">
     <h1 id="title">Quranix</h1>
     <div class="header-tools">
-      <button id="headerSearchBtn" class="header-btn" title="সার্চ">{{search}}</button>
+      <button id="headerSearchBtn" class="header-btn" title="সার্চ"><span class="ms" aria-hidden="true">search</span></button>
       <button id="widthToggle" class="header-btn" title="পড়ার প্রস্থ"></button>
-      <button id="themeToggle" class="header-btn" title="ডার্ক/লাইট">{{dark_mode}}</button>
+      <button id="themeToggle" class="header-btn" title="ডার্ক/লাইট"><span class="ms" aria-hidden="true">dark_mode</span></button>
       <button id="gridMenu" class="header-btn" title="মেনু">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
       </button>
       <div id="gridDropdown">
         <div class="g-quick" id="gQuick"></div>
-        <button class="g-menu-item" data-popup="hijri"><span>{{nights_stay}} &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
-        <button class="g-menu-item" data-popup="downloads"><span>{{download}} &nbsp; ডাউনলোড</span><small id="gDlMini">›</small></button>
-        <button class="g-menu-item" data-popup="source"><span>{{info}} &nbsp; উৎস ও তথ্যসূত্র</span><small>›</small></button>
-        <button class="g-menu-item" data-popup="backup"><span>{{save}} &nbsp; ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
-        <button class="g-menu-item install-menu-item" data-popup="pwa"><span>{{smartphone}} &nbsp; Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন ›</small></button>
+        <button class="g-menu-item" data-popup="hijri"><span><span class="ms" aria-hidden="true">nights_stay</span> &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
+        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span> &nbsp; ডাউনলোড</span><small id="gDlMini">›</small></button>
+        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span> &nbsp; উৎস ও তথ্যসূত্র</span><small>›</small></button>
+        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span> &nbsp; ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
+        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span> &nbsp; Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন ›</small></button>
         <button class="g-menu-item" data-popup="settings"><span>কাস্টমাইজেশন</span><small>›</small></button>
       </div>
     </div>
@@ -4516,25 +4516,25 @@ body.no-icon-font .ms::before {
 
 <main id="app"></main>
 
-<div id="hifzBar"><b>{{psychology}} হিফজ মোড</b>
+<div id="hifzBar"><b><span class="ms" aria-hidden="true">psychology</span> হিফজ মোড</b>
 <button class="hifz-chip" data-hifz="bn">বাংলা লুকাও</button>
 <button class="hifz-chip" data-hifz="ar">আরবি লুকাও</button>
 <button class="hifz-chip" data-hifz="both">দুটোই লুকাও</button>
 <button class="hifz-chip" data-hifz="off">বন্ধ</button>
 <span id="hifzProgress" class="hifz-progress"></span></div>
 
-<div id="wwBar" class="ww-bar">{{abc}} <b>শব্দে শব্দে মোড</b><span>যেকোনো আরবি শব্দে ট্যাপ করো</span><span id="wwBarClose" style="margin-left:auto;cursor:pointer">{{close}}</span></div>
-<div id="tajweedLegend"><b>{{palette}} তাজভিদ:</b><span><i class="tj-dot" style="background:var(--qx-tj-ghunnah)"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-qalqalah)"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-ikhfa)"></i>ইখফা</span><span><i class="tj-dot" style="background:var(--qx-tj-idgham)"></i>ইদগাম</span><span><i class="tj-dot" style="background:var(--qx-tj-iqlab)"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:var(--qx-tj-madd)"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto">{{close}}</span></div>
-<div id="dlBar"><div class="dl-txt"><b id="dlTitle">{{download}} এই সূরার তেলাওয়াত</b><small id="dlSub">অফলাইনে শোনার জন্য</small></div><button class="dl-btn" id="dlBtn">{{download}} ডাউনলোড</button><button class="dl-btn ghost" id="dlManageBtn">{{folder_open}} ম্যানেজ</button></div>
-<div id="audioBar" class="audio-bar" role="region" aria-label="অডিও প্লেয়ার"><div class="audio-inner"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-ctrls"><button id="audioPrev" type="button" aria-label="আগের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button><button id="audioPlayPause" type="button" class="primary" aria-label="অডিও চালাও">{{play_arrow}}</button><button id="audioNext" type="button" aria-label="পরের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button><button id="audioAuto" type="button" aria-label="অটো-প্লে"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg></button><button id="audioSpeed" type="button" aria-label="তেলাওয়াতের গতি">1x</button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো">{{close}}</button></div><div class="audio-progress"><span id="audioCurrentTime">০:০০</span><input id="audioSeek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="অডিও অগ্রগতি"><span id="audioDuration">০:০০</span></div><div class="audio-status" id="audioStatus" aria-live="polite"></div></div></div>
+<div id="wwBar" class="ww-bar"><span class="ms" aria-hidden="true">abc</span> <b>শব্দে শব্দে মোড</b><span>যেকোনো আরবি শব্দে ট্যাপ করো</span><span id="wwBarClose" style="margin-left:auto;cursor:pointer"><span class="ms" aria-hidden="true">close</span></span></div>
+<div id="tajweedLegend"><b><span class="ms" aria-hidden="true">palette</span> তাজভিদ:</b><span><i class="tj-dot" style="background:var(--qx-tj-ghunnah)"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-qalqalah)"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-ikhfa)"></i>ইখফা</span><span><i class="tj-dot" style="background:var(--qx-tj-idgham)"></i>ইদগাম</span><span><i class="tj-dot" style="background:var(--qx-tj-iqlab)"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:var(--qx-tj-madd)"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto"><span class="ms" aria-hidden="true">close</span></span></div>
+<div id="dlBar"><div class="dl-txt"><b id="dlTitle"><span class="ms" aria-hidden="true">download</span> এই সূরার তেলাওয়াত</b><small id="dlSub">অফলাইনে শোনার জন্য</small></div><button class="dl-btn" id="dlBtn"><span class="ms" aria-hidden="true">download</span> ডাউনলোড</button><button class="dl-btn ghost" id="dlManageBtn"><span class="ms" aria-hidden="true">folder_open</span> ম্যানেজ</button></div>
+<div id="audioBar" class="audio-bar" role="region" aria-label="অডিও প্লেয়ার"><div class="audio-inner"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-ctrls"><button id="audioPrev" type="button" aria-label="আগের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button><button id="audioPlayPause" type="button" class="primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true">play_arrow</span></button><button id="audioNext" type="button" aria-label="পরের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button><button id="audioAuto" type="button" aria-label="অটো-প্লে"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg></button><button id="audioSpeed" type="button" aria-label="তেলাওয়াতের গতি">1x</button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো"><span class="ms" aria-hidden="true">close</span></button></div><div class="audio-progress"><span id="audioCurrentTime">০:০০</span><input id="audioSeek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="অডিও অগ্রগতি"><span id="audioDuration">০:০০</span></div><div class="audio-status" id="audioStatus" aria-live="polite"></div></div></div>
 
 <nav id="nav">
-  <button id="navHome" type="button"><b>{{home}}</b><span>হোম</span></button>
-  <button data-m="prayer"><b>{{mosque}}</b><span>নামাজ</span></button>
-  <button data-m="quran" class="on"><b>{{menu_book}}</b><span>কুরআন</span></button>
-  <button data-m="hadith"><b>{{history_edu}}</b><span>হাদিস</span></button>
+  <button id="navHome" type="button"><b><span class="ms" aria-hidden="true">home</span></b><span>হোম</span></button>
+  <button data-m="prayer"><b><span class="ms" aria-hidden="true">mosque</span></b><span>নামাজ</span></button>
+  <button data-m="quran" class="on"><b><span class="ms" aria-hidden="true">menu_book</span></b><span>কুরআন</span></button>
+  <button data-m="hadith"><b><span class="ms" aria-hidden="true">history_edu</span></b><span>হাদিস</span></button>
   <button data-m="dua"><b><svg class="dua-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12c0 4 3.2 7 9 7s9-3 9-7"/><path d="M3 12c1.5 1 3.5 1.5 5 1M21 12c-1.5 1-3.5 1.5-5 1"/><path d="M12 3v5M9.5 5.5L12 8l2.5-2.5"/></svg></b><span>দোয়া ও তাসবিহ</span></button>
-  <button data-m="more"><b>{{more_horiz}}</b><span>আরও</span></button>
+  <button data-m="more"><b><span class="ms" aria-hidden="true">more_horiz</span></b><span>আরও</span></button>
 </nav>
 
 <div id="gridPopupOverlay"><div id="gridPopupBox"></div></div>
