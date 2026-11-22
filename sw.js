@@ -1,4 +1,10 @@
-const CACHE = 'quranix-v17';
+/* Quranix service worker — NETWORK-FIRST
+   অনলাইনে থাকলে সবসময় সার্ভার থেকে নতুন ফাইল আনে (এবং ক্যাশ আপডেট করে)।
+   নেট না থাকলে বা সার্ভার ৪ সেকেন্ডে সাড়া না দিলে ক্যাশ থেকে চালায়, তাই অফলাইনেও চলে।
+   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v18 → v19), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
+   কিন্তু পুরোনো ক্যাশ পরিষ্কার হবে ভার্সন বদলালেই। */
+const CACHE = 'quranix-v18';
+const NETWORK_TIMEOUT_MS = 4000;
 const ASSETS = [
   './',
   './index.html',
@@ -23,6 +29,48 @@ const ASSETS = [
   './fonts/noto-serif-bengali-700.woff2',
   './fonts/material-symbols-rounded.woff2'
 ];
-self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); });
-self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))); });
-self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
+
+/* একটা ফাইল না পেলেও বাকিগুলো ক্যাশ হবে (আগে একটা ফেল করলে সব ক্যাশ ফেল করত) */
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => Promise.all(ASSETS.map(a => c.add(a).catch(() => {}))))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+function fetchWithTimeout(request){
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), NETWORK_TIMEOUT_MS);
+    fetch(request, { cache: 'no-cache' }).then(
+      r => { clearTimeout(timer); resolve(r); },
+      err => { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;   /* API/অডিও ইত্যাদি বাইরের রিকোয়েস্ট যেমন আছে তেমনই যাবে */
+  e.respondWith(
+    fetchWithTimeout(req).then(res => {
+      if (res && res.ok) {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+      }
+      return res;
+    }).catch(() =>
+      caches.match(req).then(hit => hit || (req.mode === 'navigate' ? caches.match('./index.html') : undefined))
+        .then(hit => hit || new Response('Offline', { status: 503, statusText: 'Offline' }))
+    )
+  );
+});
