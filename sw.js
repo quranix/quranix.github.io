@@ -1,8 +1,9 @@
-const CACHE = 'quranix-v15';
+const CACHE = 'quranix-v16';
 const ASSETS = [
   './',
   './index.html',
   './bundle.js',
+  './dictionary.js',
   './quran-data.js',
   './manifest.json',
   './icons/favicon.ico',
