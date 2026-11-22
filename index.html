@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quranix | বাংলা কুরআন</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+<header>
+  <div class="bar">
+    <button id="back" class="back-btn-hidden">{{arrow_back}}</button>
+    <img class="app-logo" src="icon-192x192.png?v=8" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:var(--qx-radius)" role="button" tabindex="0" title="Home">
+    <h1 id="title">Quranix</h1>
+    <div class="header-tools">
+      
+      <button id="headerSearchBtn" class="header-btn" title="সার্চ" aria-label="সূরা খুঁজুন">{{search}}</button>
+      <button id="widthToggle" class="header-btn" title="পড়ার প্রস্থ: সংকীর্ণ/প্রশস্ত" aria-label="পড়ার প্রস্থ বদলান" aria-pressed="false">
+        <svg class="wt-wide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>
+        <svg class="wt-narrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h6M15 12h6M6 9l3 3-3 3M18 9l-3 3 3 3"/></svg>
+      </button>
+      <button id="themeToggle" class="header-btn" title="ডার্ক/লাইট মোড" aria-label="ডার্ক লাইট মোড বদলান">{{dark_mode}}</button>
+      <button id="gridMenu" class="header-btn" title="মেনু" aria-label="মেনু খুলুন">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
+      </button>
+
+      <div id="gridDropdown">
+        <div class="g-quick" id="gQuick"></div>
+        <button class="g-menu-item" data-popup="hijri"><span>{{nights_stay}} &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
+        <button class="g-menu-item" data-popup="downloads"><span>{{download}} &nbsp; ডাউনলোড</span><small id="gDlMini">›</small></button>
+        <button class="g-menu-item" data-popup="source"><span>{{info}} &nbsp; উৎস ও তথ্যসূত্র</span><small>›</small></button>
+        <button class="g-menu-item" data-popup="backup"><span>{{save}} &nbsp; ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
+        <button class="g-menu-item install-menu-item" data-popup="pwa"><span>{{smartphone}} &nbsp; Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন ›</small></button>
+        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.18 10.21 L21.51 10.66 L21.51 13.34 L19.18 13.79 L18.34 15.81 L19.67 17.78 L17.78 19.67 L15.81 18.34 L13.79 19.18 L13.34 21.51 L10.66 21.51 L10.21 19.18 L8.19 18.34 L6.22 19.67 L4.33 17.78 L5.66 15.81 L4.82 13.79 L2.49 13.34 L2.49 10.66 L4.82 10.21 L5.66 8.19 L4.33 6.22 L6.22 4.33 L8.19 5.66 L10.21 4.82 L10.66 2.49 L13.34 2.49 L13.79 4.82 L15.81 5.66 L17.78 4.33 L19.67 6.22 L18.34 8.19Z"/><circle cx="12" cy="12" r="3"/></svg> &nbsp; কাস্টমাইজেশন</span><small>›</small></button>
+      </div>
+    </div>
+  </div>
+  <div class="reader-progress" id="readerProgress" role="progressbar" aria-label="পাঠের অগ্রগতি" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reader-progress-fill" id="readerProgressFill"></div></div>
+  
+</header>
+<div id="controls">
+    <input id="q" placeholder="সূরা খুঁজুন...">
+    <div class="controls-trans-wrap">
+      <select id="transSel">
+        <option value="bn.bengali">অনুবাদ: মাওলানা মুহিউদ্দীন খান</option>
+        <option value="bn.zakaria">অনুবাদ: ড. আবু বকর মুহাম্মাদ যাকারিয়া</option>
+      </select>
+    </div>
+    <div class="quick-jump" id="quickJumpBox">
+      <select id="jumpSurah" style="flex:2" title="সূরা নির্বাচন করুন"></select>
+      <input id="jumpAyah" type="number" min="1" placeholder="আয়াত নং" style="flex:1">
+      <button id="jumpGo">যান</button>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+<main id="app"></main><div id="hifzBar"><b>{{psychology}} হিফজ মোড</b>
+<button class="hifz-chip" data-hifz="bn">বাংলা লুকাও</button>
+<button class="hifz-chip" data-hifz="ar">আরবি লুকাও</button>
+<button class="hifz-chip" data-hifz="both">দুটোই লুকাও</button>
+<button class="hifz-chip" data-hifz="off">বন্ধ</button>
+<span id="hifzProgress" class="hifz-progress"></span></div>
+
+<div id="wwBar" class="ww-bar">{{abc}} <b>শব্দে শব্দে মোড</b><span>যেকোনো আরবি শব্দে ট্যাপ করো — অর্থ দেখাবে</span><span id="wwBarClose" style="margin-left:auto;cursor:pointer">{{close}}</span></div>
+<div id="tajweedLegend"><b>{{palette}} তাজভিদ:</b><span><i class="tj-dot" style="background:var(--qx-tj-ghunnah)"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-qalqalah)"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-ikhfa)"></i>ইখফা</span><span><i class="tj-dot" style="background:var(--qx-tj-idgham)"></i>ইদগাম</span><span><i class="tj-dot" style="background:var(--qx-tj-iqlab)"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:var(--qx-tj-madd)"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto">{{close}}</span></div>
+<div id="dlBar"><div class="dl-txt"><b id="dlTitle">{{download}} এই সূরার তেলাওয়াত</b><small id="dlSub">অফলাইনে শোনার জন্য ডাউনলোড করে রাখো</small></div><button class="dl-btn" id="dlBtn">{{download}} ডাউনলোড</button><button class="dl-btn ghost" id="dlManageBtn">{{folder_open}} ম্যানেজ</button></div>
+<div id="audioBar" class="audio-bar">
+  <div class="audio-inner">
+    <div class="audio-info">
+      <b id="audioTitle">সূরা · আয়াত</b>
+      <small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small>
+    </div>
+    <div class="audio-ctrls">
+      <button id="audioPrev" title="পূর্ববর্তী আয়াত">{{skip_previous}}</button>
+      <button id="audioPlayPause" class="primary" title="প্লে/পজ">{{pause}}</button>
+      <button id="audioNext" title="পরবর্তী আয়াত">{{skip_next}}</button>
+      <button id="audioSpeed" class="speed-btn" title="গতি পরিবর্তন">1x</button>
+      <button id="audioAuto" class="on" title="স্বয়ংক্রিয় পরবর্তী আয়াত">{{repeat}}</button>
+      <button id="audioClose" title="বন্ধ করুন">{{close}}</button>
+    </div>
+    <div class="audio-progress" aria-label="অডিওর অগ্রগতি">
+      <span id="audioCurrentTime">০:০০</span>
+      <input id="audioSeek" type="range" min="0" max="1000" value="0" step="1" aria-label="অডিওর অবস্থান" disabled>
+      <span id="audioDuration">০:০০</span>
+    </div>
+    <div id="audioStatus" class="audio-status" role="status" aria-live="polite">প্রস্তুত</div>
+  </div>
+</div>
+
+<nav id="nav">
+  <button id="navHome" type="button" aria-label="হোম"><b>{{home}}</b><span>হোম</span></button>
+  <button data-m="prayer"><b>{{mosque}}</b><span>নামাজ</span></button>
+  <button data-m="quran" class="on"><b>{{menu_book}}</b><span>কুরআন</span></button>
+  <button data-m="hadith"><b>{{history_edu}}</b><span>হাদিস</span></button>
+  <button data-m="dua"><b><svg class="dua-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.2c-4.6 0-7.7-2.6-8.9-7.2-.2-.8.9-1.2 1.4-.5l1.5 2.2"/><path d="M12 20.2c4.6 0 7.7-2.6 8.9-7.2.2-.8-.9-1.2-1.4-.5l-1.5 2.2"/><path d="M6 14.7 4.6 9.4c-.2-.8 1-1.1 1.3-.4l1.6 4.2"/><path d="M7.5 13.2 6.6 7.2c-.1-.8 1.1-1 1.3-.2l1.2 5.6"/><path d="M9.2 12.6 8.9 6.6c0-.8 1.2-.9 1.3-.1l.6 5.4"/><path d="M18 14.7l1.4-5.3c.2-.8-1-1.1-1.3-.4l-1.6 4.2"/><path d="M16.5 13.2l.9-6c.1-.8-1.1-1-1.3-.2l-1.2 5.6"/><path d="M14.8 12.6l.3-6c0-.8-1.2-.9-1.3-.1l-.6 5.4"/></svg></b><span>দোয়া ও তাসবিহ</span></button>
+  <button data-m="more"><b>{{more_horiz}}</b><span>আরও</span></button>
+</nav>
+<div id="gridPopupOverlay"><div id="gridPopupBox"></div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="js/quran/surah.js"></script>
+<script src="js/quran/subjective.js"></script>
+<script src="js/quran/dictionary.js"></script>
+<script src="js/quran/tafseer.js"></script>
+<script src="js/quran/audio.js"></script>
+<script src="js/99names.js"></script>
+<script src="js/hadith.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
