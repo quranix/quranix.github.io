@@ -1,11 +1,15 @@
-const CACHE = 'quranix-v14';
+const CACHE = 'quranix-v17';
+
+// index.html-এ CSS আর JS সবই inline, তাই আলাদা style.css / js/*.js নেই।
+// শুধু যে ফাইলগুলো সত্যিই আছে সেগুলোই এখানে রাখা হয়েছে।
 const ASSETS = [
   './',
   './index.html',
-  './style.css',
-  './js/quran.js',
-  './js/main.js',
-  './manifest.json',
+  './manifest.json'
+];
+
+// icons ও fonts আলাদা করে রাখা: কোনো ফাইল না থাকলেও install ভাঙবে না
+const OPTIONAL = [
   './icons/favicon.ico',
   './icons/icon-32x32.png',
   './icons/icon-48x48.png',
@@ -14,11 +18,7 @@ const ASSETS = [
   './icons/icon-512x512.png',
   './icons/icon-maskable-192x192.png',
   './icons/icon-maskable-512x512.png',
-  './icons/apple-touch-icon.png'
-];
-
-// fonts আলাদা করে রাখা: কোনো ফন্ট ফাইল না থাকলেও install ভাঙবে না
-const FONTS = [
+  './icons/apple-touch-icon.png',
   './fonts/material-symbols-rounded.woff2',
   './fonts/hind-siliguri-300.woff2', './fonts/hind-siliguri-400.woff2', './fonts/hind-siliguri-500.woff2',
   './fonts/hind-siliguri-600.woff2', './fonts/hind-siliguri-700.woff2',
@@ -30,7 +30,7 @@ const FONTS = [
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
-      .then(c => c.addAll(ASSETS).then(() => Promise.all(FONTS.map(u => c.add(u).catch(() => {})))))
+      .then(c => c.addAll(ASSETS).then(() => Promise.all(OPTIONAL.map(u => c.add(u).catch(() => {})))))
       .then(() => self.skipWaiting())
   );
 });
@@ -43,14 +43,14 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Cache-first; same-origin files (fonts সহ) প্রথমবার লোড হলেই cache-এ জমা হয়, তাই fonts-এর নাম এখানে লিখতে হয় না
+// Cache-first; same-origin ফাইল প্রথমবার লোড হলেই cache-এ জমা হয়
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
   e.respondWith(
-    caches.match(req).then(hit => hit || fetch(req).then(res => {
+    caches.match(req, { ignoreSearch: req.mode === 'navigate' }).then(hit => hit || fetch(req).then(res => {
       if (res && res.ok) {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy));
