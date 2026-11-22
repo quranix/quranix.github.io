@@ -2377,97 +2377,279 @@ function renderTopics(){
 }
 
 let qxDictQ = "", qxDictFilter = "all";
+/* ===== ১৫০ শব্দের অভিধান (পুরোনো ধাতু-ভিত্তিক renderDict/renderDictList/renderDictDetail বদলে; QX_DICT ডেটা উপরে যেমন ছিল তেমনই) ===== */
+/* ===== js/quran/dictionary.js — ১৫০ শব্দের অভিধান (standalone) =====
+   লোড করার নিয়ম: index.html-এ bundle.js-এর ঠিক পরে —
+     <script src="bundle.js"></script>
+     <script src="dictionary.js"></script>
+   এই ফাইল bundle.js-এর পুরোনো renderDict() (ধাতু-ভিত্তিক অভিধান) বদলে দেয়। bundle.js-এ হাত দিতে হয় না।
+   পুরোনো QX_DICT ডেটা bundle.js-এ যেমন ছিল তেমনই আছে, শুধু আর ব্যবহার হয় না।
+   উৎস: শব্দের সংখ্যা ও ধাতু — Quranic Arabic Corpus Morphology v0.4 (mustafa0x/quran-morphology ফোর্ক)।
+   বাছাই: ৭টা ক্যাটাগরি, কুরআনে কতবার এসেছে তার ভিত্তিতে। বিষয়ভিত্তিক ট্যাবের কোনো ধাতুর সাথে মিল নেই (যাচাই করা)।
+   গণনা: উপসর্গ (و ال ل ب ف ক) আলাদা অংশ হিসেবে গোনা। সর্বনাম/ইশারার সংখ্যা ≈ আনুমানিক (approx = 1)।
+   ঘর: [ক্যাটাগরি নম্বর, আরবি শব্দ, বাংলা অর্থ, ধাতু (নেই হলে ""), count, approx]
+   সিরিয়াল = অ্যারেতে অবস্থান (১ থেকে)। নতুন শব্দ সবসময় শেষে যোগ করো। কাজের জন্য কালার: শুধু --qx-* ভেরিয়েবল। */
+const QX_DICT150_SOURCE = "Quranic Arabic Corpus v0.4 — mustafa0x ফোর্ক (শব্দের সংখ্যা ও ধাতু)";
+/* বাংলা অর্থের উৎস এখানে লিখলে ফুটারে দেখাবে। ফাঁকা থাকলে কিছু দেখায় না। */
+const QX_DICT150_MEANING_SRC = "";
+const QX_DICT150_CATS = [
+  "", "হরফ ও অব্যয়", "সর্বনাম ও ইশারা", "সম্বন্ধ ও প্রশ্ন", "না-বাচক ও শর্ত",
+  "আল্লাহ ও মূল পরিভাষা", "বহুব্যবহৃত ক্রিয়া", "বহুব্যবহৃত বিশেষ্য"
+];
+const QX_DICT150 = [
+  [1, "و", "এবং, আর", "", 9594, 0],
+  [1, "ال", "নির্দিষ্টতা বোঝায় (এই/সেই)", "", 8377, 0],
+  [1, "ل", "জন্য, -এর", "", 4380, 0],
+  [1, "مِن", "থেকে, হতে, কতক", "", 3226, 0],
+  [1, "ف", "অতঃপর, তাই", "", 3001, 0],
+  [1, "ب", "দ্বারা, সাথে, -এ", "", 2544, 0],
+  [1, "فِي", "মধ্যে, -এ", "", 1701, 0],
+  [1, "إِنّ", "নিশ্চয়ই", "", 1682, 0],
+  [1, "عَلَى", "উপরে, বিপক্ষে", "", 1445, 0],
+  [1, "إِلَى", "দিকে, পর্যন্ত", "", 742, 0],
+  [1, "إِلّا", "ছাড়া, ব্যতীত", "", 659, 0],
+  [1, "أَن", "যে, যেন", "", 616, 0],
+  [1, "عَن", "থেকে, সম্পর্কে", "", 465, 0],
+  [1, "قَد", "অবশ্যই, ইতিমধ্যে", "", 406, 0],
+  [1, "أَنّ", "নিশ্চয়ই (যে)", "", 362, 0],
+  [1, "ثُمّ", "তারপর", "", 338, 0],
+  [1, "ك", "মতো, ন্যায়", "", 287, 0],
+  [1, "أَو", "অথবা", "", 280, 0],
+  [1, "بَيْن", "মাঝে, মধ্যে", "بين", 266, 0],
+  [1, "قَبْل", "আগে, পূর্বে", "قبل", 242, 0],
+  [1, "عِند", "কাছে, নিকট", "عند", 197, 0],
+  [1, "مَع", "সাথে", "", 164, 0],
+  [1, "دُون", "ছাড়া, নিচে", "دون", 144, 0],
+  [1, "حَتَّى", "যতক্ষণ না, পর্যন্ত", "", 142, 0],
+  [1, "أَم", "নাকি", "", 137, 0],
+  [1, "بَل", "বরং", "", 127, 0],
+  [1, "س", "অচিরেই (ভবিষ্যৎ)", "", 119, 0],
+  [1, "لٰكِن", "কিন্তু", "", 65, 0],
+  [2, "هُم / ـهُم", "তারা, তাদের", "", 3897, 1],
+  [2, "ـه", "তার, তাকে", "", 3364, 1],
+  [2, "ـكُم", "তোমাদের, তোমাদেরকে", "", 2262, 1],
+  [2, "ـنا", "আমাদের, আমাদেরকে", "", 1755, 1],
+  [2, "ـها", "তার, তাকে (স্ত্রীলিঙ্গ)", "", 1187, 1],
+  [2, "ـك", "তোমার, তোমাকে", "", 1165, 1],
+  [2, "هُوَ", "সে (পুরুষ)", "", 481, 1],
+  [2, "ذٰلِكَ", "ওটা, সেটি", "", 479, 1],
+  [2, "هٰذا", "এটি", "", 231, 1],
+  [2, "أُولٰئِكَ", "ওরা", "", 206, 1],
+  [2, "أَنتُم", "তোমরা", "", 135, 1],
+  [2, "نَحنُ", "আমরা", "", 86, 1],
+  [2, "أَنتَ", "তুমি", "", 81, 1],
+  [2, "أَنا", "আমি", "", 68, 1],
+  [2, "هِيَ", "সে (নারী)", "", 63, 1],
+  [2, "هٰؤُلاءِ", "এরা", "", 46, 1],
+  [3, "ما", "যা, কী, না", "", 2565, 0],
+  [3, "الَّذِي", "যে, যিনি", "", 1468, 0],
+  [3, "مَن", "যে কেউ, কে", "", 871, 0],
+  [3, "أ", "কি? (প্রশ্নসূচক)", "", 513, 0],
+  [3, "ي", "হে (সম্বোধন)", "", 361, 0],
+  [3, "أَيّ", "কোন, যেকোনো", "أيي", 215, 0],
+  [3, "ذُو", "অধিকারী, ওয়ালা", "", 156, 0],
+  [3, "هَل", "কি? (প্রশ্নসূচক)", "", 93, 0],
+  [3, "كَيْف", "কীভাবে", "كيف", 83, 0],
+  [3, "حَيْث", "যেখানে", "حيث", 31, 0],
+  [4, "لا", "না, নয়", "", 1742, 0],
+  [4, "إِن", "যদি", "", 703, 0],
+  [4, "إِذا", "যখন, যদি", "", 423, 0],
+  [4, "لَم", "না (অতীতের না-বাচক)", "", 348, 0],
+  [4, "إِذ", "যখন (অতীতে)", "", 309, 0],
+  [4, "لَو", "যদি (যা হয়নি)", "", 201, 0],
+  [4, "لَمّا", "যখন, যখনই", "", 165, 0],
+  [4, "لَن", "কখনোই না", "", 106, 0],
+  [4, "لَيْسَ", "নয়", "ليس", 89, 0],
+  [4, "لَوْلا", "যদি না, কেন নয়", "", 75, 0],
+  [4, "أَمّا", "আর যারা, আর যে", "", 55, 0],
+  [5, "اللَّه", "আল্লাহ", "أله", 2699, 0],
+  [5, "رَبّ", "প্রতিপালক", "ربب", 975, 0],
+  [5, "آيَة", "নিদর্শন, আয়াত", "أيي", 382, 0],
+  [5, "رَسُول", "রাসূল, বার্তাবাহক", "رسل", 332, 0],
+  [5, "كِتاب", "কিতাব, গ্রন্থ", "كتب", 260, 0],
+  [5, "سَبِيل", "পথ", "سبل", 176, 0],
+  [5, "إِلٰه", "ইলাহ, উপাস্য", "أله", 147, 0],
+  [5, "جَنَّة", "জান্নাত, বাগান", "جنن", 147, 0],
+  [5, "عَبْد", "বান্দা, দাস", "عبد", 131, 0],
+  [5, "دِين", "দ্বীন, প্রতিদান", "دين", 92, 0],
+  [5, "مَلَك", "ফেরেশতা", "ملك", 88, 0],
+  [5, "شَيْطان", "শয়তান", "شطن", 88, 0],
+  [5, "فَضْل", "অনুগ্রহ", "فضل", 84, 0],
+  [5, "جَهَنَّم", "জাহান্নাম", "", 77, 0],
+  [5, "نَبِيّ", "নবী", "نبأ", 75, 0],
+  [5, "قُرْءان", "কুরআন", "قرأ", 70, 0],
+  [5, "قِيامَة", "কিয়ামত", "قوم", 70, 0],
+  [5, "أُمَّة", "জাতি, সম্প্রদায়", "أمم", 64, 0],
+  [5, "نِعْمَة", "নিয়ামত", "نعم", 50, 0],
+  [5, "صِراط", "সরল পথ", "صرط", 45, 0],
+  [6, "قالَ", "বলল", "قول", 1618, 0],
+  [6, "كانَ", "ছিল, হলো", "كون", 1358, 0],
+  [6, "جَعَلَ", "বানাল, স্থির করল", "جعل", 340, 0],
+  [6, "جاءَ", "এলো", "جيأ", 278, 0],
+  [6, "عَمِلَ", "কাজ করল", "عمل", 276, 0],
+  [6, "آتَى", "দিল", "أتي", 271, 0],
+  [6, "رَأَى", "দেখল", "رأي", 271, 0],
+  [6, "أَتَى", "এলো", "أتي", 264, 0],
+  [6, "شاءَ", "চাইল, ইচ্ছা করল", "شيأ", 236, 0],
+  [6, "خَلَقَ", "সৃষ্টি করল", "خلق", 184, 0],
+  [6, "أَنزَلَ", "নাযিল করল", "نزل", 183, 0],
+  [6, "أَرادَ", "ইচ্ছা করল", "رود", 139, 0],
+  [6, "أَرْسَلَ", "পাঠাল", "رسل", 130, 0],
+  [6, "أَخَذَ", "নিল, ধরল", "أخذ", 127, 0],
+  [6, "اتَّخَذَ", "গ্রহণ করল, বানিয়ে নিল", "أخذ", 124, 0],
+  [6, "عَبَدَ", "ইবাদত করল", "عبد", 122, 0],
+  [6, "سَأَلَ", "জিজ্ঞেস করল", "سأل", 106, 0],
+  [6, "وَجَدَ", "পেল", "وجد", 106, 0],
+  [6, "أَخْرَجَ", "বের করল", "خرج", 99, 0],
+  [6, "أَكَلَ", "খেল", "أكل", 93, 0],
+  [6, "فَعَلَ", "করল", "فعل", 88, 0],
+  [6, "نَظَرَ", "তাকাল", "نظر", 87, 0],
+  [6, "قَتَلَ", "হত্যা করল", "قتل", 83, 0],
+  [6, "رَجَعَ", "ফিরল", "رجع", 79, 0],
+  [6, "سَمِعَ", "শুনল", "سمع", 78, 0],
+  [6, "تَوَلَّى", "মুখ ফেরাল, অভিভাবকত্ব নিল", "ولي", 78, 0],
+  [6, "أَمَرَ", "আদেশ করল", "أمر", 77, 0],
+  [6, "دَخَلَ", "প্রবেশ করল", "دخل", 76, 0],
+  [6, "جَزَى", "প্রতিদান দিল", "جزي", 73, 0],
+  [6, "أَطاعَ", "আনুগত্য করল", "طوع", 72, 0],
+  [6, "أَوْحَى", "ওহি পাঠাল", "وحي", 72, 0],
+  [6, "أَشْرَكَ", "শরিক করল", "شرك", 71, 0],
+  [6, "وَعَدَ", "প্রতিশ্রুতি দিল", "وعد", 70, 0],
+  [7, "يَوْم", "দিন", "يوم", 475, 0],
+  [7, "أَرْض", "জমিন, পৃথিবী", "أرض", 461, 0],
+  [7, "قَوْم", "জাতি, সম্প্রদায়", "قوم", 383, 0],
+  [7, "كُلّ", "প্রতিটি, সব", "كلل", 359, 0],
+  [7, "سَماء", "আসমান, আকাশ", "سمو", 310, 0],
+  [7, "نَفْس", "প্রাণ, সত্তা, নিজ", "نفس", 295, 0],
+  [7, "شَىْء", "কিছু, বস্তু", "شيأ", 283, 0],
+  [7, "ناس", "মানুষ", "أنس", 241, 0],
+  [7, "خَيْر", "কল্যাণ, ভালো", "خير", 178, 0],
+  [7, "أَمْر", "বিষয়, আদেশ", "أمر", 166, 0],
+  [7, "بَعْض", "কতক", "بعض", 157, 0],
+  [7, "غَيْر", "অন্য, ছাড়া", "غير", 147, 0],
+  [7, "قَلْب", "অন্তর, হৃদয়", "قلب", 132, 0],
+  [7, "أَهْل", "অধিবাসী, পরিবার", "أهل", 127, 0],
+  [7, "يَد", "হাত", "يدي", 120, 0],
+  [7, "دُنْيا", "দুনিয়া", "دنو", 115, 0],
+  [7, "عَظِيم", "মহান, বিরাট", "عظم", 107, 0],
+  [7, "قَوْل", "কথা", "قول", 92, 0],
+  [7, "مَثَل", "উপমা", "مثل", 88, 0],
+  [7, "وَلِيّ", "অভিভাবক, বন্ধু", "ولي", 86, 0],
+  [7, "مال", "সম্পদ", "مول", 86, 0],
+  [7, "لَيْل", "রাত", "ليل", 84, 0],
+  [7, "أَصْحاب", "সঙ্গী, অধিকারীগণ", "صحب", 78, 0],
+  [7, "زَوْج", "জোড়া, স্বামী/স্ত্রী", "زوج", 76, 0],
+  [7, "وَجْه", "চেহারা, মুখ", "وجه", 72, 0],
+  [7, "عَمَل", "কাজ", "عمل", 71, 0],
+  [7, "إِنسان", "মানুষ", "أنس", 71, 0],
+  [7, "بَيْت", "ঘর", "بيت", 65, 0],
+  [7, "ماء", "পানি", "موه", 63, 0],
+  [7, "كَثِير", "অনেক", "كثر", 63, 0],
+  [7, "نَهار", "দিন, দিনের আলো", "نهر", 57, 0],
+  [7, "رِزْق", "রিজিক, জীবিকা", "رزق", 55, 0]
+];
+
+let qxDict150Q = "", qxDict150Cat = 0;
+
+function qxDict150Norm(s){
+  return String(s || "").replace(/[\u064B-\u065F\u0670\u0640]/g, "").replace(/[آأإٱ]/g, "ا").toLowerCase();
+}
+function qxDict150CountText(d){
+  return (d[5] ? "≈" : "") + toBn(d[4]) + " বার";
+}
+
 function renderDict(){
   app.innerHTML = "";
   const head = document.createElement("div");
   head.className = "bn";
   head.style.cssText = "opacity:.7;font-size:11px;font-style:italic;margin:2px 0 8px;text-align:center;";
-  head.textContent = "আরবি টাইপ করতে হবে না — বাংলা অর্থ লেখো, বা ধাতুর নম্বর লেখো। ১টা ধাতু জানলে ওই ধাতুর সব শব্দ চেনা যায়।";
+  head.textContent = "*প্রতিটা শব্দের সংখ্যা চূড়ান্ত হিসাব নয়।";
   app.appendChild(head);
-  app.appendChild(qxListHeading(toBn(QX_DICT.length) + "টি ধাতু"));
+  app.appendChild(qxListHeading(toBn(QX_DICT150.length) + "টি শব্দ"));
   const search = document.createElement("input");
-  search.type = "search"; search.value = qxDictQ; search.placeholder = "বাংলা অর্থ লেখো, বা ধাতুর নম্বর লেখো (১–১৬৫১)…";
+  search.type = "search"; search.value = qxDict150Q;
+  search.placeholder = "বাংলা অর্থ, আরবি শব্দ বা নম্বর (১–" + toBn(QX_DICT150.length) + ") লেখো…";
+  search.setAttribute("aria-label", "অভিধানে খোঁজো");
   search.style.cssText = "width:100%;padding:10px;border:1px solid var(--qx-border);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);font:inherit;margin-bottom:8px;";
-  search.oninput = () => { qxDictQ = search.value; renderDictList(); };
+  search.oninput = () => { qxDict150Q = search.value; renderDict150List(); };
   app.appendChild(search);
   const filters = document.createElement("div");
   filters.style.cssText = "display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;";
-  [["all","সব"],["bn","অর্থ আছে"],["nobn","অর্থ বাকি"]].forEach(([v,label]) => {
+  const chips = [];
+  const paintChips = () => chips.forEach(([v, b]) => {
+    const on = qxDict150Cat === v;
+    b.style.background = on ? "var(--qx-main-color)" : "var(--qx-card-bg)";
+    b.style.color = on ? "var(--qx-on-main)" : "var(--qx-text-color)";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  [[0, "সব"]].concat(QX_DICT150_CATS.slice(1).map((n, i) => [i + 1, n])).forEach(([v, label]) => {
     const b = document.createElement("button"); b.type = "button";
     b.textContent = label;
-    b.style.cssText = "padding:6px 12px;border:1px solid var(--qx-border);border-radius:999px;background:" + (qxDictFilter===v?"var(--qx-main-color)":"var(--qx-card-bg)") + ";color:" + (qxDictFilter===v?"var(--qx-on-main)":"var(--qx-text-color)") + ";cursor:pointer;font:inherit;";
-    b.onclick = () => { qxDictFilter = v; renderDict(); };
-    filters.appendChild(b);
+    b.style.cssText = "padding:6px 12px;border:1px solid var(--qx-border);border-radius:999px;cursor:pointer;font:inherit;";
+    b.onclick = () => { qxDict150Cat = v; paintChips(); renderDict150List(); };
+    chips.push([v, b]); filters.appendChild(b);
   });
+  paintChips();
   app.appendChild(filters);
-  const wrap = document.createElement("div"); wrap.id = "qx-dict-list"; app.appendChild(wrap);
-  renderDictList();
+  const wrap = document.createElement("div"); wrap.id = "qx-dict150-list"; app.appendChild(wrap);
+  renderDict150List();
   const foot = document.createElement("div");
   foot.className = "bn";
   foot.style.cssText = "opacity:.7;font-size:11px;font-style:italic;margin:12px 0 0;text-align:center;";
-  foot.textContent = "উৎস: Quranic Arabic Corpus v0.4 — mustafa0x ফোর্ক | বাংলা অর্থ ধাপে ধাপে পূরণ হচ্ছে";
+  foot.textContent = "উৎস: " + QX_DICT150_SOURCE + (QX_DICT150_MEANING_SRC ? " | বাংলা অর্থ: " + QX_DICT150_MEANING_SRC : "");
   app.appendChild(foot);
 }
-function renderDictList(){
-  const wrap = document.getElementById("qx-dict-list"); if (!wrap) return;
-  const qRaw = qxDictQ.trim().toLowerCase();
-  const q = qRaw.replace(/[০-৯]/g, ch => "০১২৩৪৫৬৭৮৯".indexOf(ch));
-  let list = QX_DICT.map((d, i) => ({ d, rank: i + 1 }));
-  if (qxDictFilter === "bn") list = list.filter(x => x.d[1]);
-  if (qxDictFilter === "nobn") list = list.filter(x => !x.d[1]);
-  if (q) {
-    if (/^\d+$/.test(q)) {
-      const n = +q;
+
+function renderDict150List(){
+  const wrap = document.getElementById("qx-dict150-list"); if (!wrap) return;
+  const qRaw = qxDict150Q.trim();
+  const qBn = qRaw.replace(/[০-৯]/g, ch => "০১২৩৪৫৬৭৮৯".indexOf(ch));
+  const qAr = qxDict150Norm(qRaw);
+  let list = QX_DICT150.map((d, i) => ({ d, rank: i + 1 }));
+  if (qxDict150Cat) list = list.filter(x => x.d[0] === qxDict150Cat);
+  if (qRaw) {
+    if (/^\d+$/.test(qBn)) {
+      const n = +qBn;
       list = list.filter(x => x.rank === n);
     } else {
-      list = list.filter(x => x.d[0].includes(qRaw) || x.d[1].toLowerCase().includes(qRaw) || x.d[4].toLowerCase().includes(qRaw));
+      const ql = qRaw.toLowerCase();
+      list = list.filter(x => x.d[2].toLowerCase().includes(ql) || qxDict150Norm(x.d[1]).includes(qAr) || (x.d[3] && qxDict150Norm(x.d[3]).includes(qAr)));
     }
   }
   wrap.innerHTML = "";
-  const shown = list.slice(0, 300);
-  const note = document.createElement("div"); note.className = "bn";
-  note.style.cssText = "opacity:.7;font-size:12px;margin-bottom:8px;";
-  note.textContent = "দেখাইতেছি: " + toBn(shown.length) + "টা ধাতু" + (list.length > 300 ? " (প্রথম ৩০০টা — বাংলা অর্থ বা নম্বর লিখলে বাকিগুলা আসবে)" : "") + (/^\\d+$/.test(q) ? " · নম্বর " + toBn(q) + "-এর ধাতু" : "");
-  wrap.appendChild(note);
   const grid = qxListGrid();
-  shown.forEach(({ d, rank }) => {
-    const title = d[1] || "—";
-    const it = item(toBn(rank), title, toBn(d[2]) + " বার · " + toBn(d[3]) + "টি আয়াত", d[0], () => renderDictDetail(d, rank));
+  list.forEach(({ d, rank }) => {
+    const it = item(toBn(rank), d[2], QX_DICT150_CATS[d[0]] + " · " + qxDict150CountText(d), d[1], () => renderDict150Detail(d, rank));
     it.classList.add("surah-item");
     const arabic = it.querySelector(".ar-name");
     if (arabic) { arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); }
     grid.appendChild(it);
   });
   wrap.appendChild(grid);
-  if (!shown.length) wrap.appendChild(msg("কিছু পাওয়া যায়নি"));
+  if (!list.length) wrap.appendChild(msg("কিছু পাওয়া যায়নি"));
 }
-function renderDictDetail(d, rank){
-  qxNav.pushMode(); showOther(d[1] || "ধাতু " + d[0]);
+
+function renderDict150Detail(d, rank){
+  qxNav.pushMode(); showOther(d[2]);
   const back = document.createElement("button");
-  back.type = "button"; back.className = "qx-back-link"; back.textContent = "‹ সব ধাতু";
+  back.type = "button"; back.className = "qx-back-link"; back.textContent = "‹ সব শব্দ";
   back.onclick = () => { if (qxNav.modePushed) history.back(); else renderHome(); };
   app.appendChild(back);
   const card = document.createElement("div"); card.className = "ayah qx-sec-card";
   const arabic = document.createElement("div"); arabic.className = "ar";
-  arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); arabic.textContent = d[0];
+  arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); arabic.textContent = d[1];
   const info = document.createElement("div"); info.className = "bn";
-  info.innerHTML = "<b>" + (d[1] || "— বাংলা অর্থ এখনো দেওয়া হয় নাই") + "</b><br>ধাতু #" + toBn(rank) + " · " + toBn(d[2]) + " বার · " + toBn(d[3]) + "টি আয়াতে · প্রথম আয়াত: " + d[5];
-  const lems = document.createElement("div"); lems.className = "bn";
-  lems.style.cssText = "opacity:.85;margin-top:8px;";
-  lems.textContent = "একই ধাতুর শব্দ (LEM): " + (d[4] ? d[4].split("¦").join(" • ") : "—");
-  card.append(arabic, info, lems); app.appendChild(card);
-  const topic = QX_TOPICS.find(t => t.ar === d[0]);
-  if (topic) {
-    const tb = document.createElement("button"); tb.type = "button"; tb.className = "qx-back-link";
-    tb.textContent = "এই ধাতুর বিষয় দেখো: " + topic.bn + " ›";
-    tb.onclick = () => renderTopicDetail(topic);
-    app.appendChild(tb);
-  }
-  const ob = document.createElement("button"); ob.type = "button"; ob.className = "qx-back-link";
-  const parts = d[5].split(":"); ob.textContent = "প্রথম আয়াত খুলো: সূরা " + toBn(parts[0]) + ":" + toBn(parts[1]) + " ›";
-  ob.onclick = () => openSurah(+parts[0], 0, +parts[1]);
-  app.appendChild(ob);
+  const b = document.createElement("b"); b.textContent = d[2];
+  info.appendChild(b);
+  info.appendChild(document.createElement("br"));
+  info.appendChild(document.createTextNode("শব্দ #" + toBn(rank) + " · " + QX_DICT150_CATS[d[0]] + " · কুরআনে " + qxDict150CountText(d) + " এসেছে"));
+  const root = document.createElement("div"); root.className = "bn";
+  root.style.cssText = "opacity:.85;margin-top:8px;";
+  root.textContent = d[3] ? "ধাতু: " + d[3].split("").join(" ") : "ধাতু: নেই (মূল শব্দ)";
+  card.append(arabic, info, root); app.appendChild(card);
 }
+
+
 function renderTopicDetail(t){
   window.qxTopicOpen = t;
   qxNav.pushMode();
