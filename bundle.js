@@ -1,3 +1,14 @@
+/* Quranix Bundle - Auto merged from quran.txt + main.txt */
+/* Generated: no totka, single file */
+
+// quran.js - Merged from 7 files: surah, subjective, dictionary, tafseer, audio, 99names, hadith
+// Generated: merged to reduce files from 9 to 3
+
+
+
+/* ===== js/quran/surah.js ===== */
+// js/quran/surah.js - Sob surah + Bangla onubad
+// quran-data.js er bodole ei file - surah meta + API loader
 // API: https://api.alquran.cloud/v1 - LOCAL = window.QURAN thakle offline use kore
 
 const SURAH_META = [
@@ -129,7 +140,8 @@ async function loadSurah(n){
 }
 window.loadSurah = loadSurah;
 
-/* ===== subjective ===== */
+
+/* ===== js/quran/subjective.js ===== */
 const QX_TOPICS = [
   // S01 — Root ر ح م — Source: mustafa0x/quran-morphology (Corpus v0.4 fork)
   { ar: "رحم", bn: "রহমত", count: 339, ayahs: [[1,1],[1,3],[2,37],[2,54],[2,64],[2,105],[2,128],[2,143],[2,157],[2,160],[2,163],[2,173],[2,178],[2,182],[2,192],[2,199],[2,218],[2,226],[2,228],[2,286],[3,6],[3,8],[3,31],[3,74],[3,89],[3,107],[3,129],[3,132],[3,157],[3,159],[4,1],[4,16],[4,23],[4,25],[4,29],[4,64],[4,83],[4,96],[4,100],[4,106],[4,110],[4,113],[4,129],[4,152],[4,175],[5,3],[5,34],[5,39],[5,74],[5,98],[6,12],[6,16],[6,54],[6,133],[6,143],[6,144],[6,145],[6,147],[6,154],[6,155],[6,157],[6,165],[7,23],[7,49],[7,52],[7,56],[7,57],[7,63],[7,72],[7,149],[7,151],[7,153],[7,154],[7,155],[7,156],[7,167],[7,203],[7,204],[8,69],[8,70],[8,75],[9,5],[9,21],[9,27],[9,61],[9,71],[9,91],[9,99],[9,102],[9,104],[9,117],[9,118],[9,128],[10,21],[10,57],[10,58],[10,86],[10,107],[11,9],[11,17],[11,28],[11,41],[11,43],[11,47],[11,58],[11,63],[11,66],[11,73],[11,90],[11,94],[11,119],[12,53],[12,56],[12,64],[12,92],[12,98],[12,111],[13,8],[13,30],[14,36],[15,49],[15,56],[16,7],[16,18],[16,47],[16,64],[16,89],[16,110],[16,115],[16,119],[17,8],[17,24],[17,28],[17,54],[17,57],[17,66],[17,82],[17,87],[17,100],[17,110],[18,10],[18,16],[18,58],[18,65],[18,81],[18,82],[18,98],[19,2],[19,18],[19,21],[19,26],[19,44],[19,45],[19,50],[19,53],[19,58],[19,61],[19,69],[19,75],[19,78],[19,85],[19,87],[19,88],[19,91],[19,92],[19,93],[19,96],[20,5],[20,90],[20,108],[20,109],[21,26],[21,36],[21,42],[21,75],[21,83],[21,84],[21,86],[21,107],[21,112],[22,5],[22,65],[23,75],[23,109],[23,118],[24,5],[24,10],[24,14],[24,20],[24,21],[24,22],[24,33],[24,56],[24,62],[25,6],[25,26],[25,48],[25,59],[25,60],[25,63],[25,70],[26,5],[26,9],[26,68],[26,104],[26,122],[26,140],[26,159],[26,175],[26,191],[26,217],[27,11],[27,19],[27,30],[27,46],[27,63],[27,77],[28,16],[28,43],[28,46],[28,73],[28,86],[29,21],[29,23],[29,51],[30,5],[30,21],[30,33],[30,36],[30,46],[30,50],[31,3],[31,34],[32,6],[33,5],[33,6],[33,17],[33,24],[33,43],[33,50],[33,59],[33,73],[34,2],[35,2],[36,5],[36,11],[36,15],[36,23],[36,44],[36,45],[36,52],[36,58],[38,9],[38,43],[39,9],[39,38],[39,53],[40,7],[40,9],[41,2],[41,32],[41,50],[42,5],[42,8],[42,28],[42,48],[43,17],[43,19],[43,20],[43,32],[43,33],[43,36],[43,45],[43,81],[44,6],[44,42],[45,20],[45,30],[46,8],[46,12],[47,22],[48,14],[48,25],[48,29],[49,5],[49,10],[49,12],[49,14],[50,33],[52,28],[55,1],[57,9],[57,13],[57,27],[57,28],[58,12],[59,10],[59,22],[60,3],[60,7],[60,12],[64,14],[66,1],[67,3],[67,19],[67,20],[67,28],[67,29],[73,20],[76,31],[78,37],[78,38],[90,17]] },
@@ -330,7 +342,10 @@ const QX_TOPICS = [
   // S99 — Root خ ت م — শেষ বিষয় (একক) — Source: mustafa0x/quran-morphology (Corpus v0.4 fork)
   { ar: "ختم", bn: "মোহর / সমাপ্তি", count: 8, ayahs: [[2,7],[6,46],[33,40],[36,65],[42,24],[45,23],[83,25],[83,26]] },
 ];
-// S01-S99 subjective - Root based topics, source mustafa0x/quran-morphology
+// S01-S99 subjective.js - Root based topics, source mustafa0x/quran-morphology
+
+
+/* ===== js/quran/audio.js ===== */
 
 /* ===== STEP 3: OFFLINE AUDIO (IndexedDB) ===== */
 (function(){
@@ -440,7 +455,7 @@ const QX_TOPICS = [
     var rec=reciterNow(); var m=meta(); var k=cur.n+'|'+rec;
     const btn = document.getElementById('dlBtn');
     if(m[k]){ // delete
-      if(!confirm('এই সূরার ডাউনলোড মুছে ফেলতে চান?')) return;
+      if(!confirm('এই সূরার ডাউনলোড মুছে ফেলবা?')) return;
       var count=Number(cur.count||0);
       // Reader list may be unavailable after navigation; use canonical surah metadata as fallback.
       if(!count && window.surahs){var sm=window.surahs.find(function(x){return Number(x.number)===Number(cur.n);});count=sm?Number(sm.numberOfAyahs||0):0;}
@@ -2211,6 +2226,7 @@ function renderHome(){
   if (mode === "hadith") return renderHadith();
   if (mode === "more") return renderMore();
   if (mode === "saved") return renderSaved();
+  if (mode === "dict") return renderDictPage();
   if (QX_SECTIONS[mode]) return renderSection(mode);
   renderQuranHome();
 }
@@ -2543,6 +2559,12 @@ function qxDict150CountText(d){
   return (d[5] ? "≈" : "") + toBn(d[4]) + " বার";
 }
 
+/* "আরও" পেজ থেকে খোলা অভিধান পেজ (mode = "dict") */
+function renderDictPage(){
+  showOther("{{abc}} অভিধান");
+  renderDict();
+}
+
 function renderDict(){
   app.innerHTML = "";
   const head = document.createElement("div");
@@ -2620,7 +2642,7 @@ function renderDict150Detail(d, rank){
   back.type = "button"; back.className = "qx-back-link"; back.textContent = "‹ সব শব্দ";
   back.onclick = () => { if (qxNav.modePushed) history.back(); else renderHome(); };
   app.appendChild(back);
-  const card = document.createElement("div"); card.className = "ayah qx-sec-card";
+  const card = document.createElement("div"); card.className = "ayah qx-sec-card qx-dict-detail";
   const arabic = document.createElement("div"); arabic.className = "ar";
   arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); arabic.textContent = d[1];
   const info = document.createElement("div"); info.className = "bn";
@@ -3012,7 +3034,7 @@ async function openJuz(n, y){
 /* ===== নামাজের সময়, তাসবিহ, দোয়া ===== */
 function setMode(m){
   mode = m; qEl.value = "";
-  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.m === m || (m === "tasbih" && b.dataset.m === "dua") || ((m === "tracker" || m === "saved") && b.dataset.m === "more")));
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.m === m || (m === "tasbih" && b.dataset.m === "dua") || ((m === "tracker" || m === "saved" || m === "dict") && b.dataset.m === "more")));
   renderHome();
 }
 document.querySelectorAll("#nav button[data-m]").forEach(b => b.onclick = () => {
@@ -3073,6 +3095,7 @@ function renderMore(){
   const box = mk("div", "qx-list");
   box.appendChild(qxRow("star", "সংরক্ষিত", "বুকমার্ক ও ফেভারিট", function(){ setMode("saved"); }));
   box.appendChild(qxRow("bar_chart", "ট্র্যাকার", "প্রতিদিনের হিসাব", function(){ setMode("tracker"); }));
+  box.appendChild(qxRow("abc", "অভিধান", "কুরআনের ১৫০টি জরুরি শব্দ", function(){ setMode("dict"); }));
   app.appendChild(box);
 }
 function qxSecSource(card, ref){
@@ -4363,6 +4386,11 @@ window.addEventListener("online", () => showToast("ইন্টারনেট �
 // Android WebView / Browser Back Button Navigation Handling
 function handleBackNavigation(){
   if (qxNav.closeTopOverlay()) return true;
+  if (document.querySelector(".qx-dict-detail")) {
+    renderHome();
+    if (mode !== "quran") qxNav.pushMode();
+    return true;
+  }
   if (reading) {
     saveScroll();
     reading = null;
