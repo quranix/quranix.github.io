@@ -3887,13 +3887,18 @@ function qxNmSource(ref){
   if(grade){ const g = mk('span', 'qx-nm-grade'); g.appendChild(qxNmIcon('check')); g.appendChild(mk('span', '', grade)); row.appendChild(g); }
   return row;
 }
+function qxPrayerShowOther(title){
+  const keep = app.querySelector(".p3-tabs");
+  showOther(title);
+  if (keep) app.insertBefore(keep, app.firstChild);
+}
 function renderPrayerLearnView(){
   const currentChapterId = window.qxNamazChapter || null;
 
   if(currentChapterId){
     const ch = NAMAZ_NABVI_DATA.find(c=>c.id===currentChapterId);
     if(ch){
-      showOther('{{menu_book}} ' + ch.title);
+      qxPrayerShowOther('{{menu_book}} ' + ch.title);
       const wrap = mk('div','qx-nm qx-sec-page');
 
       const back = qxNmBtn('qx-nm-back', 'সব অধ্যায়', 'left', ()=>{ window.qxNamazChapter=null; renderPrayerLearnView(); });
@@ -3960,7 +3965,7 @@ function renderPrayerLearnView(){
   }
 
   // List view
-  showOther('{{menu_book}} নামাজ শিক্ষা - নববী পদ্ধতি');
+  qxPrayerShowOther('{{menu_book}} নামাজ শিক্ষা - নববী পদ্ধতি');
   const container = mk('div','qx-nm qx-sec-page');
 
   const introCard = mk('div','ayah qx-sec-card');
@@ -5215,9 +5220,9 @@ setInterval(checkPrayerAlerts, 5000);
   }
   // ---- FILTER ----
   function renderFilterPopup(){
-    var labels={all:'সব সূরা',Meccan:'মাক্কী',Medinan:'মাদানী',juz:'পারা',topic:'বিষয়ভিত্তিক আয়াত',bm:'সংরক্ষিত'};
+    var labels={all:'সব সূরা',Meccan:'মাক্কী',Medinan:'মাদানী',juz:'পারা',topic:'বিষয়ভিত্তিক আয়াত',dict:'অভিধান',bm:'সংরক্ষিত'};
     var html=head('{{filter_list}} সূরা ফিল্টার');
-    ['all','Meccan','Medinan','juz','topic','bm'].forEach(function(k){
+    ['all','Meccan','Medinan','juz','topic','dict','bm'].forEach(function(k){
       html+='<button type="button" class="pp-opt'+(tab===k?' on':'')+'" data-tab="'+k+'" aria-pressed="'+(tab===k?'true':'false')+'">'+labels[k]+'<span aria-hidden="true">'+(tab===k?'{{check}}':'')+'</span></button>';
     });
     box.innerHTML=html;
@@ -5226,7 +5231,7 @@ setInterval(checkPrayerAlerts, 5000);
     if(selectedOption) selectedOption.focus();
   }
   function refreshMinis(){
-    var labels={all:'সব সূরা',Meccan:'মাক্কী',Medinan:'মাদানী',juz:'পারা',topic:'বিষয়ভিত্তিক আয়াত',bm:'সংরক্ষিত'};
+    var labels={all:'সব সূরা',Meccan:'মাক্কী',Medinan:'মাদানী',juz:'পারা',topic:'বিষয়ভিত্তিক আয়াত',dict:'অভিধান',bm:'সংরক্ষিত'};
     const activeTab=(typeof mode!=='undefined'&&mode==='saved')?'bm':tab;
     const f = document.getElementById('gFilterMini'); if(f) f.textContent=(labels[activeTab]||'সব সূরা')+' ›';
     var v=transOrig?transOrig.value:'bn.bengali'; const t = document.getElementById('gTransMini'); if(t) t.textContent=(v==='bn.zakaria'?'ড. আবু বকর যাকারিয়া':'মুহিউদ্দীন খান')+' ›';
@@ -5299,7 +5304,7 @@ setInterval(checkPrayerAlerts, 5000);
     const appEl = document.getElementById('app'); if(!appEl) return;
     appEl.querySelectorAll('.home-tiles,.home-browse-nav,.home-browse-heading').forEach(function(el){el.remove();});
     var browse=document.createElement('section'); browse.className='home-browse-nav'+(tab==='home'?'':' is-sticky'); browse.setAttribute('role','group'); browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
-    var browseItems=[['all','সব সূরা'],['Meccan','মাক্কী'],['Medinan','মাদানী'],['juz','পারা'],['topic','বিষয়ভিত্তিক আয়াত']];
+    var browseItems=[['all','সব সূরা'],['Meccan','মাক্কী'],['Medinan','মাদানী'],['juz','পারা'],['topic','বিষয়ভিত্তিক আয়াত'],['dict','অভিধান']];
     browseItems.forEach(function(pair){
       var b=document.createElement('button'); b.type='button'; b.textContent=pair[1]; b.setAttribute('aria-pressed',tab===pair[0]?'true':'false');
       if(tab===pair[0]){b.className='on';b.setAttribute('aria-current','page');}
