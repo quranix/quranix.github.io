@@ -41,7 +41,7 @@
 }
 
 @font-face {
-  font-family:'MSLocal';font-style:normal;font-weight:200;font-display:swap;src:url(material-symbols-rounded.woff2) format('woff2')
+  font-family:'MSLocal';font-style:normal;font-weight:200;font-display:swap;src:url(fonts/material-symbols-rounded.woff2) format('woff2')
 }
 
 :root {
