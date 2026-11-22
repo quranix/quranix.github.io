@@ -4170,9 +4170,18 @@ let appPrefs = lsGet("appPrefs", {
   reducedMotion: false
 });
 
+/* নির্বাচিত বাংলা ফন্টের পরে বাকি বাংলা ফন্ট ফলব্যাক হিসেবে জুড়ে দেয় (ফাইল না এলেও বাংলা ঠিক দেখাবে) */
+function qxFontStack(v){
+  v=String(v||'');
+  var m=v.match(/,\s*(sans-serif|serif)\s*$/), g=m?m[1]:'sans-serif';
+  v=v.replace(/,\s*(sans-serif|serif)\s*$/,'');
+  ['"Hind Siliguri"','"Noto Serif Bengali"','"Kalpurush"','"Noto Sans Bengali"'].forEach(function(f){ if(v.indexOf(f)<0) v+=','+f; });
+  return v+','+g;
+}
+
 function applyAppPrefs(){
   document.documentElement.style.setProperty("--qx-font-arabic", AR_FONTS.some(function(f){ return f[0] === appPrefs.arFont; }) ? appPrefs.arFont : AR_FONTS[0][0]);
-  document.documentElement.style.setProperty("--qx-font", appPrefs.bnFont || BN_FONTS[0][0]);
+  document.documentElement.style.setProperty("--qx-font", qxFontStack(appPrefs.bnFont || BN_FONTS[0][0]));
   document.documentElement.style.setProperty("--qx-fs-bn", (appPrefs.bnFs || 16) + "px");
   document.documentElement.toggleAttribute("data-hc", !!appPrefs.highContrast);
   const systemReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -5306,6 +5315,7 @@ setInterval(checkPrayerAlerts, 5000);
       p.bits=new Array(c+1).join('1')+new Array(TOTAL-c+1).join('0');
     }
     if(!p.log) p.log={};
+    if(!p.ticks || typeof p.ticks!=='object') p.ticks={};   // দিন নম্বর -> {n: যোগ হওয়া আয়াত, runs: [[from,to)...]}
     return p;
   }
   function countOnes(bits,a,b){ var n=0; for(var i=a;i<b;i++) if(bits.charCodeAt(i)===49) n++; return n; }
@@ -5313,25 +5323,100 @@ setInterval(checkPrayerAlerts, 5000);
   function getPlan(){ var p=load(); return p?ensure(p):null; }
   function addLog(p,delta){ var t=todayStr2(); p.log[t]=Math.max(0,(p.log[t]||0)+delta); }
 
+  /* n আয়াত k দিনে সমান ভাগ (বাড়তি আয়াত প্রথম দিনগুলোতে ১টা করে) */
+  function split(n,k){
+    var o=[]; if(k<=0) return o;
+    var b=Math.floor(n/k), x=n%k;
+    for(var i=0;i<k;i++) o.push(b+(i<x?1:0));
+    return o;
+  }
+  /* মূল পরিকল্পনা: ৬২৩৬ আয়াত p.days দিনে সমান ভাগ — i = ১-ভিত্তিক দিন নম্বর */
+  function origSize(p,i){ var d=p.days||30, b=Math.floor(TOTAL/d), x=TOTAL%d; return b+((i-1)<x?1:0); }
+  function origCum(p,n){ var d=p.days||30, b=Math.floor(TOTAL/d), x=TOTAL%d; n=Math.max(0,Math.min(d,n)); return b*n+Math.min(n,x); }
+  /* গত দিন পূর্ণ কি না: টিক দেওয়া, অথবা ওই দিন মূল লক্ষ্যের সমান/বেশি পড়া */
+  function dayDone(p,i){
+    if(p.ticks[i]) return true;
+    return (p.log[addDays(p.start,i-1)]||0) >= origSize(p,i);
+  }
+
   function planStats(p){
     ensure(p);
     var today=todayStr2(), days=p.days||30;
-    var perDay=Math.ceil(TOTAL/days);
     var elapsed=daysBetween(p.start,today);
     var notStarted=elapsed<0, over=elapsed>=days;
     var dayNo=Math.max(1,Math.min(days,elapsed+1));
-    var todayStart=Math.min(TOTAL,(dayNo-1)*perDay), todayEnd=Math.min(TOTAL,dayNo*perDay);
     var done=countOnes(p.bits,0,TOTAL), next=firstZero(p.bits);
     var endDate=addDays(p.start,days-1);
     var remain=Math.max(0,daysBetween(today,endDate)+1);
-    var needToday=notStarted?0:todayEnd-countOnes(p.bits,0,todayEnd);      // আজ রাতের মধ্যে ট্র্যাকে থাকতে যত আয়াত বাকি
-    var behind=notStarted?0:Math.max(0,todayStart-countOnes(p.bits,0,todayStart)); // আগের দিনগুলোর জমা
-    var readToday=p.log[today]||0;
-    var state = notStarted?'future' : (done>=TOTAL?'finished' : (over?'over' : (needToday===0?'ok' : (behind>0?'behind' : (readToday>0?'part':'todo')))));
-    var catchUp = Math.ceil((TOTAL-done)/Math.max(1,remain));
-    return {total:TOTAL,done:done,next:next,perDay:perDay,dayNo:dayNo,todayStart:todayStart,todayEnd:todayEnd,
-            endDate:endDate,remain:remain,pct:Math.round(done/TOTAL*100),needToday:needToday,behind:behind,
-            readToday:readToday,state:state,notStarted:notStarted,over:over,catchUp:catchUp,days:days};
+    var readToday=notStarted?0:(p.log[today]||0);
+    var remainNow=TOTAL-done;
+    /* আজ সকালে যত আয়াত বাকি ছিল (আজকের পড়া যোগ করে) — এতে দিনের মধ্যে আজকের লক্ষ্য স্থির থাকে */
+    var remainBase=Math.min(TOTAL,remainNow+readToday);
+    var remDays=notStarted?days:(over?0:days-dayNo+1);          // আজসহ বাকি দিন
+    var ticked=!notStarted && !!p.ticks[dayNo];
+    var target, needToday, todayDone, perDay;
+    if(notStarted){
+      target=split(TOTAL,days)[0]; needToday=0; todayDone=false; perDay=target;
+    } else if(over){
+      target=remainNow; needToday=remainNow; todayDone=(remainNow===0); perDay=0;
+    } else {
+      target=split(remainBase,remDays)[0]||0;
+      needToday=Math.max(0,target-readToday);
+      todayDone=(ticked || needToday===0);
+      if(todayDone) needToday=0;
+      perDay = todayDone ? (remDays>1 ? (split(remainNow,remDays-1)[0]||0) : 0) : target;
+    }
+    var behind=(notStarted||over)?0:Math.max(0,origCum(p,dayNo-1)-(done-readToday));
+    var missed=0;
+    if(!notStarted){ var lim=over?days:dayNo-1; for(var i=1;i<=lim;i++){ if(!dayDone(p,i)) missed++; } }
+    var state = notStarted?'future' : (done>=TOTAL?'finished' : (over?'over' : (todayDone?'ok' : (behind>0?'behind' : (readToday>0?'part':'todo')))));
+    return {total:TOTAL,done:done,next:next,perDay:perDay,target:target,dayNo:dayNo,
+            endDate:endDate,remain:remain,remDays:remDays,remainNow:remainNow,pct:Math.round(done/TOTAL*100),
+            needToday:needToday,todayDone:todayDone,behind:behind,missed:missed,
+            readToday:readToday,state:state,notStarted:notStarted,over:over,days:days};
+  }
+
+  /* বাম থেকে ডানে প্রথম না-পড়া আয়াতগুলো n টি পড়া ধরে; কোন কোন রেঞ্জ বদলাল তা ফেরত দেয় */
+  function fillForward(p,n){
+    var arr=p.bits.split(''), runs=[], moved=0, i=firstZero(p.bits), run=null;
+    while(moved<n && i<TOTAL){
+      if(arr[i]!=='1'){
+        arr[i]='1'; moved++;
+        if(run && run[1]===i) run[1]=i+1; else { run=[i,i+1]; runs.push(run); }
+      }
+      i++;
+    }
+    p.bits=arr.join('');
+    return {moved:moved,runs:runs};
+  }
+
+  /* দিনের ঘরে টিক: ওই দিনের লক্ষ্য পূর্ণ করে; আবার চাপলে শুধু টিকের যোগ-করা আয়াত বাদ যায় */
+  function tickDay(p,i){
+    ensure(p);
+    var ds=addDays(p.start,i-1), st=planStats(p), r;
+    if(p.ticks[i]){
+      var t=p.ticks[i], moved=0, arr=p.bits.split('');
+      (t.runs||[]).forEach(function(rg){ for(var j=rg[0];j<rg[1];j++){ if(arr[j]==='1'){ arr[j]='0'; moved++; } } });
+      p.bits=arr.join('');
+      p.log[ds]=Math.max(0,(p.log[ds]||0)-moved);
+      delete p.ticks[i];
+      return {ticked:false,moved:moved};
+    }
+    var need;
+    if(!st.notStarted && !st.over && i===st.dayNo) need=st.needToday;               // আজ: আজকের বাকিটুকু
+    else need=Math.max(0,origSize(p,i)-(p.log[ds]||0));                              // গত দিন: ওই দিনের মূল ভাগ
+    need=Math.min(need,st.remainNow);
+    r=fillForward(p,need);
+    p.log[ds]=(p.log[ds]||0)+r.moved;
+    p.ticks[i]={n:r.moved,runs:r.runs};
+    return {ticked:true,moved:r.moved};
+  }
+
+  function targetRow(st){
+    var s='<div class="khatam-row"><span>আজকের লক্ষ্য</span><b>'+(st.over?'বাকি সব ':'')+bn(st.target)+' আয়াত'
+         +(st.needToday>0?' · বাকি '+bn(st.needToday):' · পূর্ণ')+'</b></div>';
+    if(st.missed>0 && !st.over) s+='<div class="khatam-row"><span>মিস হওয়া দিন</span><b>'+bn(st.missed)+'টি · বাকি দিনে ভাগ হয়েছে</b></div>';
+    return s;
   }
   function statusHtml(st){
     switch(st.state){
@@ -5345,8 +5430,9 @@ setInterval(checkPrayerAlerts, 5000);
     }
   }
   function resumeSegs(st){
-    var to = st.state==='over' ? TOTAL : st.todayEnd;
-    return st.next<to ? segments(st.next,to) : [];
+    if(st.notStarted || st.state==='finished') return [];
+    var to = st.over ? TOTAL : Math.min(TOTAL, st.next+st.needToday);
+    return (st.needToday>0 && st.next<to) ? segments(st.next,to) : [];
   }
   function openAtNext(st){
     var r=fromGlobal(Math.min(st.next,TOTAL-1));
@@ -5367,8 +5453,9 @@ setInterval(checkPrayerAlerts, 5000);
       h+='<div class="khatam-row"><span>মাশাআল্লাহ! পুরো কুরআন শেষ হয়েছে</span></div>';
     } else if(st.state==='future'){
       h+='<div class="khatam-row"><span>শুরু</span><b>'+fmtDate(p.start)+'</b></div>';
-    } else if(segs.length){
-      h+='<div class="khatam-row"><span>আজকের পড়া</span><b style="text-align:right">'+segLines(segs).join('<br>')+'</b></div>';
+    } else {
+      h+=targetRow(st);
+      if(segs.length) h+='<div class="khatam-row"><span>আজকের পড়া</span><b style="text-align:right">'+segLines(segs).join('<br>')+'</b></div>';
     }
     h+='<div class="khatam-row"><span>শেষ হবে</span><b>'+fmtDate(st.endDate)+' · আর '+bn(st.remain)+' দিন</b></div>'
      + '<div class="goal-track" style="margin:8px 0"><div class="goal-fill" style="width:'+st.pct+'%"></div></div>'
@@ -5413,12 +5500,19 @@ setInterval(checkPrayerAlerts, 5000);
       var d=getDays();
       if(!d){ prevEl.textContent='দিনের সংখ্যা লিখুন (১ থেকে ৭৩০)'; return; }
       var start=startEl.value||todayStr2(), per=Math.ceil(TOTAL/d), end=addDays(start,d-1), diff=daysBetween(todayStr2(),start);
-      var h='প্রতিদিন প্রায় <b>'+bn(per)+' আয়াত</b> · শেষ হবে <b>'+fmtDate(end)+'</b>';
-      if(diff>0){ h+='<br>শুরু হবে '+bn(diff)+' দিন পরে'; }
-      else if(diff<0){
+      var h;
+      if(diff<0){
         var gone=-diff, rem=d-gone;
-        if(rem>0) h+='<br>শুরুর তারিখ '+bn(gone)+' দিন আগের, আজ প্ল্যানের '+bn(gone+1)+' নম্বর দিন। এখনো কিছু না পড়া হলে বাকি '+bn(rem)+' দিনে প্রতিদিন প্রায় <b>'+bn(Math.ceil(TOTAL/rem))+' আয়াত</b> পড়তে হবে';
-        else h+='<br>এই তারিখ থেকে শুরু করলে প্ল্যানের মেয়াদ আগেই শেষ হয়ে যায়';
+        if(rem>0){
+          h='আজ প্ল্যানের <b>'+bn(gone+1)+' নম্বর দিন</b> (শুরুর তারিখ '+bn(gone)+' দিন আগের)<br>'
+           +'আজ থেকে প্রতিদিন প্রায় <b>'+bn(Math.ceil(TOTAL/rem))+' আয়াত</b> · শেষ হবে <b>'+fmtDate(end)+'</b>'
+           +'<br><span style="opacity:.85">মূল ভাগ ছিল প্রতিদিন '+bn(per)+' আয়াত। আগের দিনগুলোতে পড়া থাকলে প্ল্যান বানিয়ে সেই দিনের ঘরে টিক দিন, বাকি দিনের সংখ্যা কমে যাবে।</span>';
+        } else {
+          h='এই তারিখ থেকে শুরু করলে প্ল্যানের মেয়াদ ('+bn(d)+' দিন) আগেই শেষ হয়ে যায়';
+        }
+      } else {
+        h='প্রতিদিন প্রায় <b>'+bn(per)+' আয়াত</b> · শেষ হবে <b>'+fmtDate(end)+'</b>';
+        if(diff>0) h+='<br>শুরু হবে '+bn(diff)+' দিন পরে';
       }
       prevEl.innerHTML=h;
     }
@@ -5437,7 +5531,8 @@ setInterval(checkPrayerAlerts, 5000);
       var d=getDays(); if(!d){ toast('দিনের সংখ্যা ঠিক করুন (১ থেকে ৭৩০)'); return; }
       var np={days:d, start:startEl.value||todayStr2(), created:todayStr2(), log:{}, bits:new Array(TOTAL+1).join('0')};
       save(np); overlay.classList.remove('open');
-      toast('খতম প্ল্যান শুরু! প্রতিদিন প্রায় '+bn(Math.ceil(TOTAL/d))+' আয়াত');
+      var gd=daysBetween(startEl.value||todayStr2(),todayStr2()), rd=(gd>0)?Math.max(1,d-gd):d;
+      toast('খতম প্ল্যান শুরু! প্রতিদিন প্রায় '+bn(Math.ceil(TOTAL/rd))+' আয়াত');
       refreshHome();
     };
   }
@@ -5445,31 +5540,67 @@ setInterval(checkPrayerAlerts, 5000);
   function renderPlan(box,overlay,p){
     var st=planStats(p), segs=resumeSegs(st);
     var dots='';
-    var perDay=st.perDay;
     for(var i=1;i<=p.days;i++){
-      var ds=addDays(p.start,i-1), a=(i-1)*perDay, b=Math.min(TOTAL,i*perDay);
-      var got=countOnes(p.bits,a,b), full=(b>a&&got>=b-a);
-      dots+='<span class="khatam-dot'+(full?' done':(got>0?' part':''))+(i===st.dayNo&&!st.notStarted?' today':'')+'" title="'+ds+'">'+bn(i)+'</span>';
+      var ds=addDays(p.start,i-1), cls='khatam-dot', tit='';
+      var tk=!!p.ticks[i], lg=p.log[ds]||0, sz=origSize(p,i);
+      var isToday=(!st.notStarted && !st.over && i===st.dayNo);
+      var isFuture=(st.notStarted || (!st.over && i>st.dayNo));
+      if(tk){ cls+=' done ticked'; tit='টিক দেওয়া'; }
+      else if(isFuture){ tit='আসছে'; }
+      else if(isToday){
+        if(st.todayDone){ cls+=' done'; tit='আজকের লক্ষ্য পূর্ণ'; }
+        else if(st.readToday>0){ cls+=' part'; tit='আংশিক'; }
+        else tit='আজ বাকি';
+      } else {
+        if(lg>=sz){ cls+=' done'; tit='পূর্ণ'; }
+        else if(lg>0){ cls+=' part miss'; tit='আংশিক পড়া'; }
+        else { cls+=' miss'; tit='মিস'; }
+      }
+      if(isToday) cls+=' today';
+      dots+='<span class="'+cls+'" role="button" tabindex="0" data-i="'+i+'" title="'+fmtDate(ds)+' · '+tit+'">'+bn(i)+'</span>';
     }
     var h='<div class="pp-header"><h3>{{calendar_month}} খতম প্ল্যান</h3>'+closeBtn()+'</div>'
       +'<div class="khatam-row"><b>দিন '+bn(st.dayNo)+' / '+bn(st.days)+'</b><span>'+statusHtml(st)+'</span></div>';
     if(st.state==='future') h+='<div class="khatam-row"><span>শুরু হবে</span><b>'+fmtDate(p.start)+'</b></div>';
+    else if(st.state!=='finished') h+=targetRow(st);
     if(segs.length) h+='<div class="khatam-row"><span>আজকের পড়া</span><b style="text-align:right">'+segLines(segs).join('<br>')+'</b></div>';
-    h+='<div class="khatam-row"><span>দৈনিক লক্ষ্য</span><b>প্রায় '+bn(st.perDay)+' আয়াত</b></div>';
-    if(st.state!=='future') h+='<div class="khatam-row"><span>আজ পড়া হয়েছে</span><b>'+bn(st.readToday)+' আয়াত'+(st.needToday>0?' · বাকি '+bn(st.needToday):'')+'</b></div>';
-    if(st.behind>0 && st.state!=='over') h+='<div class="pp-mini">আগের দিনগুলোর '+bn(st.behind)+' আয়াত জমে আছে। বাকি '+bn(st.remain)+' দিনে শেষ করতে প্রতিদিন প্রায় '+bn(st.catchUp)+' আয়াত লাগবে।</div>';
+    if(st.perDay>0 && st.state!=='finished' && !st.over) h+='<div class="khatam-row"><span>'+(st.todayDone?'কাল থেকে প্রতিদিন':'দৈনিক লক্ষ্য')+'</span><b>প্রায় '+bn(st.perDay)+' আয়াত</b></div>';
+    if(st.state!=='future') h+='<div class="khatam-row"><span>আজ পড়া হয়েছে</span><b>'+bn(st.readToday)+' আয়াত</b></div>';
+    if(st.behind>0 && st.state!=='over') h+='<div class="pp-mini">মূল পরিকল্পনার চেয়ে '+bn(st.behind)+' আয়াত পিছিয়ে। না-পড়া আয়াত বাকি '+bn(st.remDays)+' দিনে সমানভাবে ভাগ হয়েছে।</div>';
+    if(st.over && st.state!=='finished') h+='<div class="pp-mini">মেয়াদ শেষ, তবে '+bn(st.remainNow)+' আয়াত বাকি আছে।</div>';
     h+='<div class="goal-track" style="margin:8px 0"><div class="goal-fill" style="width:'+st.pct+'%"></div></div>'
       +'<div class="khatam-row"><span>মোট</span><b>'+bn(st.done)+' / ৬,২৩৬ ('+bn(st.pct)+'%)</b></div>'
       +'<div class="khatam-row"><span>শেষ হবে</span><b>'+fmtDate(st.endDate)+'</b></div>'
-      +'<div class="pp-mini">দিনগুলো — সবুজ = পূর্ণ, আধা রং = আংশিক, বর্ডার = আজ</div><div class="khatam-dots">'+dots+'</div>'
+      +'<div class="pp-mini">দিনের ঘরে ট্যাপ করলে ওই দিনের লক্ষ্য পূর্ণ ধরে টিক পড়বে (আয়াত নিজে থেকে যোগ হবে), আবার ট্যাপ করলে টিক উঠে যাবে। লাল = মিস, আধা রং = আংশিক, বর্ডার = আজ</div><div class="khatam-dots" id="khDots">'+dots+'</div>'
       +'<div class="pp-mini" style="margin-top:6px">আজ কত আয়াত পড়লেন? সংখ্যা লিখে যোগ করুন (ভুল হলে মাইনাস লিখে কমান, যেমন −৫)</div>'
       +'<div style="display:flex;gap:8px;margin:6px 0 10px"><input type="number" inputmode="numeric" class="pp-input" id="khAddN" style="margin:0;flex:1" placeholder="যেমন: ৫">'
       +'<button class="pp-btn" id="khAdd" style="width:auto;flex:0 0 38%">যোগ করুন</button></div>'
       +(st.state==='finished'?'':'<button class="pp-btn" id="khGo">{{play_arrow}} আজকের পড়া শুরু করুন</button><div style="height:8px"></div>')
-      +(st.needToday>0?'<button class="pp-btn" id="khDone" style="background:var(--qx-card-bg);color:var(--qx-text-color);border:1px solid var(--qx-border)">{{check_circle:f}} আজকের বাকি পড়া শেষ করেছি</button><div style="height:8px"></div>':'')
+      +(st.needToday>0 && !st.over?'<button class="pp-btn" id="khDone" style="background:var(--qx-card-bg);color:var(--qx-text-color);border:1px solid var(--qx-border)">{{check_circle:f}} আজকের বাকি পড়া শেষ করেছি</button><div style="height:8px"></div>':'')
       +'<button class="pp-btn" id="khReset" style="background:none;color:var(--qx-danger);border:1px solid var(--qx-danger)">{{delete}} প্ল্যান মুছে ফেলুন</button>';
     box.innerHTML=h;
     var mini=document.getElementById('gKhatamMini'); if(mini) mini.textContent=bn(st.pct)+'% ›';
+
+    function rerender(){
+      var sb=box.scrollTop, so=overlay.scrollTop;
+      save(p); renderPlan(box,overlay,p); refreshHome();
+      box.scrollTop=sb; overlay.scrollTop=so;
+    }
+    function onDot(i){
+      var s2=planStats(p);
+      if(s2.notStarted || (!s2.over && i>s2.dayNo)){ toast('আগামী দিনে টিক দেওয়া যায় না'); return; }
+      var r=tickDay(p,i);
+      if(r.ticked) toast(r.moved>0 ? 'দিন '+bn(i)+' টিক · '+bn(r.moved)+' আয়াত যোগ হয়েছে' : 'দিন '+bn(i)+' টিক দেওয়া হলো');
+      else toast('দিন '+bn(i)+'-এর টিক তুলে নেওয়া হলো'+(r.moved>0?' · '+bn(r.moved)+' আয়াত কমেছে':''));
+      rerender();
+    }
+    var dotsEl=document.getElementById('khDots');
+    if(dotsEl){
+      dotsEl.onclick=function(e){ var t=e.target.closest ? e.target.closest('.khatam-dot') : null; if(t) onDot(parseInt(t.dataset.i,10)); };
+      dotsEl.onkeydown=function(e){
+        if(e.key==='Enter' || e.key===' '){ var t=e.target.closest ? e.target.closest('.khatam-dot') : null; if(t){ e.preventDefault(); onDot(parseInt(t.dataset.i,10)); } }
+      };
+    }
 
     var go=document.getElementById('khGo');
     if(go) go.onclick=function(){ overlay.classList.remove('open'); openAtNext(st); };
@@ -5489,14 +5620,13 @@ setInterval(checkPrayerAlerts, 5000);
         p.bits=arr.join(''); addLog(p,-moved);
         toast(bn(moved)+' আয়াত কমানো হয়েছে');
       }
-      save(p); renderPlan(box,overlay,p); refreshHome();
+      rerender();
     };
     var done=document.getElementById('khDone');
     if(done) done.onclick=function(){
-      var arr=p.bits.split(''), moved=0;
-      for(var i=0;i<st.todayEnd;i++){ if(arr[i]!=='1'){ arr[i]='1'; moved++; } }
-      p.bits=arr.join(''); addLog(p,moved); save(p);
-      toast('আজকের পড়া সম্পন্ন'); renderPlan(box,overlay,p); refreshHome();
+      var r=tickDay(p,st.dayNo);
+      toast(r.moved>0 ? 'আজকের পড়া সম্পন্ন · '+bn(r.moved)+' আয়াত যোগ হয়েছে' : 'আজকের পড়া সম্পন্ন');
+      rerender();
     };
     document.getElementById('khReset').onclick=function(){
       if(confirm('খতম প্ল্যান মুছে ফেলবেন?')){ try{ localStorage.removeItem(KEY); }catch(e){} overlay.classList.remove('open'); refreshHome(); }
@@ -6436,15 +6566,54 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
     if(controls) controls.style.display = 'none';
   }catch(e){}
 
-  // 1.6 Asset fallback: use the browser font-loading API instead of measuring text width.
+  // 1.6 আইকন ফন্ট: লোড হলে আইকন দেখাও; না হলে .ms লেখার বদলে ইউনিকোড চিহ্ন দেখাও (কাঁচা শব্দ নয়)
   try{
-    if(document.fonts && typeof document.fonts.load === 'function'){
-      document.fonts.load('20px "MSLocal"', 'search').then(function(fontList){
-        const localAvailable = fontList.length > 0 && document.fonts.check('20px "MSLocal"', 'search');
-        if(!localAvailable) document.body.classList.add('no-icon-font');
-      }).catch(function(){ document.body.classList.add('no-icon-font'); });
+    var QX_IC_FB={abc:'Ab',arrow_back:'\u2190',arrow_forward:'\u2192',auto_awesome:'\u2728',auto_stories:'\uD83D\uDCD6',bar_chart:'\uD83D\uDCCA',bedtime:'\uD83C\uDF19',
+      bubble_chart:'\u25CC',calendar_month:'\uD83D\uDCC5',calendar_today:'\uD83D\uDCC5',event:'\uD83D\uDCC5',check:'\u2713',done:'\u2713',done_all:'\u2713',check_circle:'\u2714',
+      close:'\u2715',cancel:'\u2715',content_copy:'\u29C9',crop_portrait:'\u25AF',crop_square:'\u25A2',dark_mode:'\uD83C\uDF19',nightlight:'\uD83C\uDF19',nights_stay:'\uD83C\uDF19',
+      delete:'\uD83D\uDDD1',download:'\u2B07',edit:'\u270E',edit_note:'\uD83D\uDCDD',explore:'\uD83E\uDDED',filter_list:'\u2261',folder_open:'\uD83D\uDCC2',
+      front_hand:'\uD83E\uDD32',grid_view:'\u25A6',headphones:'\uD83C\uDFA7',history:'\u27F2',history_edu:'\uD83D\uDCDC',home:'\uD83C\uDFE0',hourglass_top:'\u23F3',
+      image:'\uD83D\uDDBC',info:'\u2139',light_mode:'\u2600',wb_sunny:'\u2600',lightbulb:'\uD83D\uDCA1',location_on:'\uD83D\uDCCD',menu_book:'\uD83D\uDCD6',
+      more_horiz:'\u22EF',mosque:'\uD83D\uDD4C',no_meals:'\u26D4',notifications:'\uD83D\uDD14',palette:'\uD83C\uDFA8',pause:'\u23F8',play_arrow:'\u25B6',
+      psychology:'\uD83E\uDDE0',push_pin:'\uD83D\uDCCC',radio_button_unchecked:'\u25CB',refresh:'\u27F3',sync:'\u27F3',save:'\uD83D\uDCBE',search:'\uD83D\uDD0D',
+      share:'\u21EA',smartphone:'\uD83D\uDCF1',star:'\u2605',stars:'\u2605',target:'\u25CE',text_fields:'T',toll:'\u25C9',topic:'\uD83D\uDCD1',translate:'\u6587',
+      view_in_ar:'\u25C8',view_list:'\u2630',menu:'\u2630',visibility:'\uD83D\uDC41',volume_up:'\uD83D\uDD0A',warning:'\u26A0',wb_twilight:'\uD83C\uDF06',
+      add:'+',remove:'\u2212',chevron_right:'\u203A',chevron_left:'\u2039',expand_more:'\u25BE',expand_less:'\u25B4',favorite:'\u2665',bookmark:'\uD83D\uDD16',
+      bookmarks:'\uD83D\uDD16',settings:'\u2699',tune:'\u2699',schedule:'\uD83D\uDD52',help:'?',lock:'\uD83D\uDD12',skip_next:'\u23ED',skip_previous:'\u23EE',
+      repeat:'\u27F3',format_size:'Aa',vibration:'\uD83D\uDCF3'};
+    function qxFbFix(el){
+      var n=(el.textContent||'').trim();
+      if(el.getAttribute('data-n')===n) return;
+      el.setAttribute('data-n',n);
+      el.setAttribute('data-g',QX_IC_FB[n]||'\u2022');
     }
-  }catch(e){}
+    function qxFbScan(r){
+      if(r.nodeType===3){ var p=r.parentNode; if(p && p.classList && p.classList.contains('ms')) qxFbFix(p); return; }
+      if(r.nodeType!==1) return;
+      if(r.classList.contains('ms')) qxFbFix(r);
+      if(r.querySelectorAll) r.querySelectorAll('.ms').forEach(qxFbFix);
+    }
+    var qxFbOn=false;
+    window.qxIconFallbackOn=function(){
+      if(qxFbOn) return; qxFbOn=true;
+      document.body.classList.add('no-icon-font');
+      qxFbScan(document.body);
+      new MutationObserver(function(ms){
+        ms.forEach(function(m){
+          if(m.type==='characterData'){ qxFbScan(m.target); return; }
+          m.addedNodes.forEach(qxFbScan);
+          if(m.target && m.target.classList && m.target.classList.contains('ms')) qxFbFix(m.target);
+        });
+      }).observe(document.body,{childList:true,subtree:true,characterData:true});
+    };
+    var qxIconsReady=function(){ document.documentElement.classList.remove('icons-pending'); };
+    var qxIconsFail=function(){ window.qxIconFallbackOn(); qxIconsReady(); };
+    if(document.fonts && typeof document.fonts.load === 'function'){
+      document.fonts.load('200 20px "MSLocal"', 'search').then(function(fontList){
+        if(fontList.length>0 && document.fonts.check('200 20px "MSLocal"', 'search')) qxIconsReady(); else qxIconsFail();
+      }).catch(qxIconsFail);
+    } else { qxIconsReady(); }
+  }catch(e){ document.documentElement.classList.remove('icons-pending'); }
 
 })();
 
@@ -6506,4 +6675,3 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   apply(w);
   btn.onclick=function(){ w=!w; apply(w); try{ localStorage.setItem(K, w?'1':'0'); }catch(e){} };
 })();
-
