@@ -1667,6 +1667,24 @@ audioObj.onended = () => {
   }
 };
 
+/* Keep every ayah card's play/pause quick button in step with the audio element */
+function qxSyncPlayButtons(){
+  const cur = currentPlayIdx >= 0 ? currentPlaylist[currentPlayIdx] : null;
+  const playing = !!cur && !audioObj.paused && !audioObj.ended;
+  document.querySelectorAll(".ayah-play-btn").forEach(b => {
+    const mine = !!cur && Number(b.dataset.s) === cur.s.number && Number(b.dataset.a) === cur.no;
+    const want = mine && playing ? "pause" : "play_arrow";
+    if (b.dataset.state !== want) {
+      b.dataset.state = want;
+      b.textContent = "{{" + want + "}}";
+      b.title = want === "pause" ? "বিরতি দিন" : "তেলাওয়াত শুনুন";
+      b.setAttribute("aria-label", b.title);
+    }
+    b.classList.toggle("on", mine);
+  });
+}
+["play", "playing", "pause", "ended", "emptied", "error"].forEach(ev => audioObj.addEventListener(ev, qxSyncPlayButtons));
+
 /* Phase 4: accessible playback progress, network feedback and lock-screen controls */
 (function(){
   const seek=document.getElementById('audioSeek');
@@ -2830,7 +2848,6 @@ function renderQuranHome(){
     surahGrid.appendChild(surahItem);
   });
   app.appendChild(surahGrid);
-  if (LOCAL && LOCAL.info) { const f = document.createElement("div"); f.className = "msg"; f.style.fontSize = "12px"; f.textContent = LOCAL.info; app.appendChild(f); }
 }
 
 function item(n, name, sub, arName, onClick){
@@ -2878,6 +2895,8 @@ function ayahCard(label, ar, bn, a, removable){
   const actions = document.createElement("div");
   actions.className = "ayah-actions";
   const menuItems = [];
+  // Dropdown order = how often people need it (lower rank first). Items added elsewhere (hifz) default to rank 50.
+  const addMenu = (rank, lbl, fn, cond) => { const it = [lbl, fn, cond]; it.rank = rank; menuItems.push(it); };
 
   const copyBtn = document.createElement("button");
   copyBtn.className = "icon-btn";
@@ -2887,7 +2906,7 @@ function ayahCard(label, ar, bn, a, removable){
     const text = `[${label}]\n${ar}\n\n${bn}\n— Quranix`;
     copyText(text, "আয়াত ক্লিপবোর্ডে কপি হয়েছে!");
   };
-  if (a) actions.appendChild(copyBtn); else menuItems.push([() => "{{content_copy}} কপি করুন", () => copyBtn.onclick()]);
+  if (!a) addMenu(5, () => "{{content_copy}} কপি করুন", () => copyBtn.onclick());
 
   const shareBtn = document.createElement("button");
   shareBtn.type = "button";
@@ -2899,21 +2918,33 @@ function ayahCard(label, ar, bn, a, removable){
     const text = `[${label}]\n${ar}\n\n${bn}\n— Quranix`;
     await shareTextOrCopy(text, label, "শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!");
   };
-  menuItems.push([() => "{{share}} শেয়ার করুন", () => shareBtn.onclick()]);
-  menuItems.push([() => "{{image}} ছবি বানাও", () => { if(window.openAyahCard) window.openAyahCard(label, ar, bn); }]);
+  addMenu(10, () => "{{share}} শেয়ার করুন", () => shareBtn.onclick());
+  addMenu(20, () => "{{image}} ছবি বানাও", () => { if(window.openAyahCard) window.openAyahCard(label, ar, bn); });
 
   if (a) {
     const playBtn = document.createElement("button");
     playBtn.type = "button";
     playBtn.setAttribute("aria-label", "এই আয়াতের তেলাওয়াত শুনুন");
-    playBtn.className = "icon-btn";
-    playBtn.title = "তেলাওয়াত শুনুন";
-    playBtn.textContent = "{{volume_up}}";
+    playBtn.className = "icon-btn ayah-play-btn";
+    playBtn.dataset.s = a.s.number; playBtn.dataset.a = a.no;
+    const cur0 = currentPlayIdx >= 0 ? currentPlaylist[currentPlayIdx] : null;
+    const mine0 = !!cur0 && cur0.s.number === a.s.number && cur0.no === a.no;
+    const playing0 = mine0 && !audioObj.paused;
+    playBtn.dataset.state = playing0 ? "pause" : "play_arrow";
+    playBtn.title = playing0 ? "বিরতি দিন" : "তেলাওয়াত শুনুন";
+    playBtn.setAttribute("aria-label", playBtn.title);
+    playBtn.classList.toggle("on", mine0);
+    playBtn.textContent = playing0 ? "{{pause}}" : "{{play_arrow}}";
     playBtn.onclick = () => {
+      const cur = currentPlayIdx >= 0 ? currentPlaylist[currentPlayIdx] : null;
+      if (cur && cur.s.number === a.s.number && cur.no === a.no && audioObj.src) {
+        // Same ayah: toggle pause / resume instead of restarting
+        if (audioObj.paused) audioObj.play().catch(() => {}); else audioObj.pause();
+        return;
+      }
       const list = window._activeAyahList && window._activeAyahList.length ? window._activeAyahList : [a];
       playAyahFromList(list, a.s.number, a.no);
     };
-    menuItems.push([() => "{{volume_up}} তেলাওয়াত শুনুন", () => playBtn.onclick()]);
 
     const tafseerBtn = document.createElement("button");
     tafseerBtn.type = "button";
@@ -2924,7 +2955,6 @@ function ayahCard(label, ar, bn, a, removable){
     tafseerBtn.onclick = () => {
       openTafseer(a.s.number, a.no, label);
     };
-    actions.appendChild(tafseerBtn);
 
     const k = bmKey(a);
     const isRead = goalData.readKeys.includes(k);
@@ -2942,22 +2972,21 @@ function ayahCard(label, ar, bn, a, removable){
       d.classList.toggle("read-done", nowRead);
       showToast(nowRead ? `পঠিত চিহ্নিত (${toBn(goalData.readKeys.length)}/${toBn(goalData.target)})` : "পঠিত চিহ্ন সরানো হয়েছে");
     };
-    menuItems.push([() => goalData.readKeys.includes(k) ? "{{check_circle:f}} পঠিত চিহ্ন সরান" : "{{radio_button_unchecked}} পঠিত চিহ্নিত করুন", () => readBtn.onclick()]);
+    addMenu(40, () => goalData.readKeys.includes(k) ? "{{check_circle:f}} পঠিত চিহ্ন সরান" : "{{radio_button_unchecked}} পঠিত চিহ্নিত করুন", () => readBtn.onclick());
 
     const noteBtn = document.createElement("button");
     noteBtn.className = "icon-btn";
     noteBtn.title = "ব্যক্তিগত নোট লিখুন";
     noteBtn.textContent = ayahNotes[k] ? "{{edit_note}}" : "{{edit}}";
-    menuItems.push([() => ayahNotes[k] ? "{{edit_note}} নোট দেখুন/এডিট" : "{{edit}} ব্যক্তিগত নোট", () => noteBtn.onclick()]);
-    menuItems.push([() => "{{translate}} অনুবাদ পরিবর্তন", () => { if (window.openGridPopup) window.openGridPopup("trans"); }]);
+    addMenu(30, () => ayahNotes[k] ? "{{edit_note}} নোট দেখুন/এডিট" : "{{edit}} ব্যক্তিগত নোট", () => noteBtn.onclick());
+    addMenu(60, () => "{{translate}} অনুবাদ পরিবর্তন", () => { if (window.openGridPopup) window.openGridPopup("trans"); });
 
     const st = document.createElement("button"); st.type = "button"; st.setAttribute("aria-label", "সংরক্ষিত আয়াত"); st.className = "star";
     st.textContent = savedHas("quran", k) ? "{{star:f}}" : "{{star}}";
     st.onclick = () => { const on = savedToggle("quran", k); st.textContent = on ? "{{star:f}}" : "{{star}}"; showToast(on ? "সংরক্ষিত হয়েছে" : "সংরক্ষণ সরানো হয়েছে"); if (removable && !on) d.remove(); };
-    menuItems.push([() => savedHas("quran", k) ? "{{star:f}} সংরক্ষণ সরান" : "{{star}} সংরক্ষণ করুন", () => st.onclick()]);
   const hifzOn = () => document.body.classList.contains("hifz-on") && !!d._hifz;
-  menuItems.push([() => d._hifz && d._hifz.isMem() ? "{{check_circle:f}} মুখস্থ চিহ্ন সরান" : "{{psychology}} মুখস্থ হিসেবে চিহ্নিত করুন", () => d._hifz && d._hifz.toggleMem(), hifzOn]);
-  menuItems.push([() => d._hifz && d._hifz.isHidden() ? "{{visibility}} অনুবাদ দেখাও" : "{{visibility}} অনুবাদ লুকাও", () => d._hifz && d._hifz.toggleHide(), hifzOn]);
+  addMenu(55, () => d._hifz && d._hifz.isMem() ? "{{check_circle:f}} মুখস্থ চিহ্ন সরান" : "{{psychology}} মুখস্থ হিসেবে চিহ্নিত করুন", () => d._hifz && d._hifz.toggleMem(), hifzOn);
+  addMenu(55, () => d._hifz && d._hifz.isHidden() ? "{{visibility}} অনুবাদ দেখাও" : "{{visibility}} অনুবাদ লুকাও", () => d._hifz && d._hifz.toggleHide(), hifzOn);
 
     const renderNoteEl = (txt) => {
       const oldBox = d.querySelector(".note-box");
@@ -2979,8 +3008,11 @@ function ayahCard(label, ar, bn, a, removable){
     };
     noteBtn.onclick = () => openNoteEditor(a.s.number, a.no, label, renderNoteEl);
     if (ayahNotes[k]) setTimeout(() => renderNoteEl(ayahNotes[k]), 0);
+    // Quick row order: audio, saved, copy, tafsir, then the ⋯ menu
+    actions.appendChild(playBtn); actions.appendChild(st); actions.appendChild(copyBtn); actions.appendChild(tafseerBtn);
   }
   if (a && window.qxHifzMenuItems) window.qxHifzMenuItems(d, menuItems);
+  menuItems.sort((x, y) => (x.rank == null ? 50 : x.rank) - (y.rank == null ? 50 : y.rank));
   if (menuItems.length) {
     const more = document.createElement("button"); more.type = "button"; more.setAttribute("aria-label", "আয়াতের আরও বিকল্প"); more.setAttribute("aria-haspopup", "menu"); more.setAttribute("aria-expanded", "false"); more.className = "more-btn"; more.title = "আরও"; more.textContent = "{{more_horiz}}";
     const menu = document.createElement("div"); menu.className = "ayah-menu"; menu.setAttribute("role", "menu");
@@ -4449,15 +4481,27 @@ function renderTasbih(){
   arc.style.strokeDasharray = C.toFixed(2);
   const inner = mk("span", "qx-tsb-in"), cnt = mk("span", "qx-tsb-count"), sub = mk("small");
   inner.appendChild(cnt); inner.appendChild(sub); btn.appendChild(inner);
+  let prevFrac = null;
   const upd = () => {
     const c = ts.c[ts.k] || 0, t = ts.t;
     cnt.textContent = toBn(c);
     const frac = t ? (c === 0 ? 0 : ((c - 1) % t + 1) / t) : (c ? 1 : 0);
-    arc.style.strokeDashoffset = (C * (1 - frac)).toFixed(2);
+    // When a cycle restarts the ring would sweep backwards; jump it instead so it stays smooth.
+    if (prevFrac !== null && frac < prevFrac) {
+      arc.style.transition = "none";
+      arc.style.strokeDashoffset = (C * (1 - frac)).toFixed(2);
+      void arc.getBoundingClientRect();
+      arc.style.transition = "";
+    } else {
+      arc.style.strokeDashoffset = (C * (1 - frac)).toFixed(2);
+    }
+    prevFrac = frac;
     sub.textContent = t ? "চক্র " + toBn(Math.floor(c / t)) + " · লক্ষ্য " + toBn(t) : "অসীম গণনা";
   };
   btn.onclick = () => {
     const c = (ts.c[ts.k] || 0) + 1; ts.c[ts.k] = c; lsSet("tasbih", ts); upd();
+    cnt.classList.remove("tap"); void cnt.offsetWidth; cnt.classList.add("tap");
+    if (ts.t && c % ts.t === 0) { btn.classList.remove("cycle-done"); void btn.offsetWidth; btn.classList.add("cycle-done"); }
     try { if (navigator.vibrate) navigator.vibrate(ts.t && c % ts.t === 0 ? [120, 60, 120] : 12); } catch(e){}
   };
   upd();
@@ -4546,7 +4590,6 @@ function qxDuaCard(d, n, opts){
   if (window.renderAyahArabic) ar.innerHTML = window.renderAyahArabic(d[1], 0, 0); else ar.textContent = d[1];
   body.appendChild(ar);
   body.appendChild(mk("div", "bn", d[2]));
-  if (d[3]) body.appendChild(qxNmSource(d[3]));
 
   const act = mk("div", "qx-dua-act");
   const text = "[" + d[0] + "]\n" + d[1] + "\n\n" + d[2] + (d[3] ? "\nসূত্র: " + d[3] : "") + "\n— Quranix";
@@ -4562,7 +4605,11 @@ function qxDuaCard(d, n, opts){
     showToast(on ? "সংরক্ষিত হয়েছে" : "সংরক্ষণ সরানো হয়েছে");
   };
   act.appendChild(copy); act.appendChild(share); act.appendChild(star);
-  body.appendChild(act);
+  // Source (left) and quick buttons (right) share one row; source wraps above on very narrow screens.
+  const foot = mk("div", "qx-dua-foot");
+  if (d[3]) foot.appendChild(qxNmSource(d[3]));
+  foot.appendChild(act);
+  body.appendChild(foot);
   card.appendChild(body);
   return card;
 }
@@ -5063,8 +5110,6 @@ function openSettingsModal() {
   const content = document.createElement("div"); content.className = "g-settings-panel"; content.setAttribute("role", "group"); content.setAttribute("aria-label", "কাস্টমাইজেশন");
 
   const header = document.createElement("div"); header.className = "settings-modal-header";
-  const backBtn = document.createElement("button"); backBtn.type = "button"; backBtn.className = "close-btn"; backBtn.textContent = "{{arrow_back}}"; backBtn.setAttribute("aria-label", "পেছনে যান");
-  header.appendChild(backBtn);
   const sTitle = mk("h3", "settings-modal-title", " কাস্টমাইজেশন");
   const gearSrc = dd.querySelector('[data-popup="settings"] svg');
   if (gearSrc) sTitle.insertBefore(gearSrc.cloneNode(true), sTitle.firstChild);
@@ -5080,7 +5125,6 @@ function openSettingsModal() {
     if (e.key === "Escape") { e.preventDefault(); dismissSettings(); }
   };
   close.setAttribute("aria-label", "বন্ধ করুন"); close.onclick = dismissSettings;
-  backBtn.onclick = backToMenu;
   header.appendChild(close);
   content.appendChild(header);
 
