@@ -4702,6 +4702,7 @@ let appPrefs = lsGet("appPrefs", {
   arFont: AR_FONTS[0][0],
   bnFont: '"Hind Siliguri",sans-serif',
   bnFs: 16,
+  uiSize: "small",
   onboarded: false,
   highContrast: false,
   reducedMotion: false
@@ -4721,6 +4722,11 @@ function applyAppPrefs(){
   document.documentElement.style.setProperty("--qx-font", qxFontStack(appPrefs.bnFont || BN_FONTS[0][0]));
   document.documentElement.style.setProperty("--qx-fs-bn", (appPrefs.bnFs || 16) + "px");
   document.documentElement.toggleAttribute("data-hc", !!appPrefs.highContrast);
+  var uiSizeNow = (appPrefs.uiSize === "medium" || appPrefs.uiSize === "lite") ? appPrefs.uiSize : "small";
+  if (document.documentElement.getAttribute("data-size") !== uiSizeNow) {
+    document.documentElement.setAttribute("data-size", uiSizeNow);
+    try { window.dispatchEvent(new Event("resize")); } catch(e) {}
+  }
   const systemReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.documentElement.toggleAttribute("data-reduced-motion", !!appPrefs.reducedMotion || !!systemReducedMotion);
 }
@@ -5183,6 +5189,14 @@ function openSettingsModal() {
   // 1. Font & accessibility
   const accSec = mk("div", "set-sec");
   accSec.appendChild(mk("div", "set-title", "{{text_fields}} ফন্ট কাস্টমাইজেশন"));
+
+  accSec.appendChild(fontField("অ্যাপের সাইজ", [
+    ["lite", "Lite (সবচেয়ে বড়)"],
+    ["medium", "Medium"],
+    ["small", "Small (এখনকার সাইজ)"]
+  ], (val) => (appPrefs.uiSize || "small") === val, (val) => {
+    appPrefs.uiSize = val; lsSet("appPrefs", appPrefs); applyAppPrefs();
+  }));
 
   accSec.appendChild(sizeRow(
     "আরবি আকার",
