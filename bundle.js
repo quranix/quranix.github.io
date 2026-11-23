@@ -5383,7 +5383,8 @@ setInterval(checkPrayerAlerts, 5000);
   window.openGridPopup=openPopup;
   function head(title){ return '<div class="pp-header"><h3>'+title+'</h3><button type="button" class="pp-close" aria-label="বন্ধ করুন" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button></div>'; }
   function renderPwaPopup(){
-    var installed=window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+    if(window.isInApp && window.isInApp()){ overlay.classList.remove('open'); return; }
+    var installed=!!(window.quranixIsInstalled && window.quranixIsInstalled());
     var ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
     var android=/Android/i.test(navigator.userAgent);
     var mobile=ios||android;
@@ -5393,12 +5394,14 @@ setInterval(checkPrayerAlerts, 5000);
       : '<div class="pp-mini">Install বাটনে চাপুন। প্রম্পট না এলে Chrome-এর ⋮ মেনু → Add to Home screen নির্বাচন করুন।</div>';
     var pcSteps='<div class="pp-mini">Install বাটনে চাপুন অথবা Chrome, Firefox বা Edge-এ URL bar → Install app বাটনে চাপুন।</div>';
     var content=installed
-      ? '<div class="pp-mini" style="text-align:center;padding:12px 4px">Quranix ইতিমধ্যে এই ডিভাইসে ইনস্টল করা আছে। হোম স্ক্রিন বা অ্যাপ তালিকা দেখুন।</div>'
+      ? '<div class="pp-mini" style="text-align:center;padding:12px 4px">Quranix ইতিমধ্যে এই ডিভাইসে ইনস্টল করা আছে। নিচের বাটনে চাপ দিয়ে অ্যাপ খুলুন।</div>'
       : '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 12px">'
         +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px">{{smartphone}}</div><b style="display:block;text-align:center;font-size:var(--qx-fs-md);margin-bottom:6px">মোবাইল</b>'+mobileSteps+'</div>'
         +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px"><svg class="ms-svg" viewBox="0 0 24 24" style="font-size:1em" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><b style="display:block;text-align:center;font-size:var(--qx-fs-md);margin-bottom:6px">ল্যাপটপ</b>'+pcSteps+'</div>'
         +'</div><p class="pp-mini" style="margin:0 0 10px">*ইনস্টল বাটন কাজ করতে ব্রাউজারে PWA install সমর্থিত হতে হবে।</p>';
-    box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:var(--qx-radius-lg);background:var(--qx-main-color);color:var(--qx-on-main);display:grid;place-items:center;font-size:26px">{{download}}</div><b>অফলাইনে পড়ুন</b><p class="pp-mini">মোবাইল বা ডেস্কটপে Quranix ইনস্টল করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} এখনই ইনস্টল করুন</button>':'');
+    box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:var(--qx-radius-lg);background:var(--qx-main-color);color:var(--qx-on-main);display:grid;place-items:center;font-size:26px">{{download}}</div><b>অফলাইনে পড়ুন</b><p class="pp-mini">মোবাইল বা ডেস্কটপে Quranix ইনস্টল করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} ইনস্টল করুন</button>':'<button class="pp-btn" id="quranixPopupOpen">{{smartphone}} অ্যাপ খুলুন</button>');
+    var openButton=box.querySelector('#quranixPopupOpen');
+    if(openButton) openButton.onclick=function(){ if(window.quranixOpenApp) window.quranixOpenApp(); };
     var installButton=box.querySelector('#quranixPopupInstall');
     if(installButton){
       installButton.onclick=function(){ if(window.quranixInstall) window.quranixInstall(); };
@@ -6921,8 +6924,44 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
 
   window.quranixInstallAvailable = false;
 
+  var INSTALLED_KEY = 'quranix_installed';
+
+  function inApp(){
+    return typeof window.isInApp === 'function'
+      ? window.isInApp()
+      : ((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true);
+  }
+
+  function getInstalledFlag(){
+    try { return localStorage.getItem(INSTALLED_KEY) === '1'; }
+    catch(e) { return false; }
+  }
+
+  function setInstalledFlag(value){
+    try {
+      if (value) localStorage.setItem(INSTALLED_KEY, '1');
+      else localStorage.removeItem(INSTALLED_KEY);
+    } catch(e) {}
+  }
+
+  // অ্যাপের ভিতরে বা (ব্রাউজারে থাকলেও) ডিভাইসে ইনস্টল করা থাকলে true
   function isInstalled(){
-    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    return inApp() || getInstalledFlag();
+  }
+
+  function updateMini(){
+    if (mini) mini.textContent = inApp() ? '{{chevron_right}}' : (isInstalled() ? 'অ্যাপ খুলুন {{chevron_right}}' : 'ইনস্টল করুন {{chevron_right}}');
+  }
+
+  // ব্রাউজার ট্যাব থেকে ইনস্টল করা অ্যাপ খোলার চেষ্টা (লিংক ক্যাপচার কাজ করলে অ্যাপে খুলবে)
+  function openInstalledApp(){
+    if (inApp()) return;
+    try { window.open(new URL('./', location.href).href, '_blank'); } catch(e) {}
+    setTimeout(function(){
+      if (document.visibilityState === 'visible' && typeof showToast === 'function') {
+        showToast('অ্যাপ না খুললে হোম স্ক্রিন বা অ্যাপ তালিকা থেকে Quranix খুলুন');
+      }
+    }, 1500);
   }
 
   function isBannerDismissed(){
@@ -6950,14 +6989,19 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   window.addEventListener('beforeinstallprompt', function(event){
     event.preventDefault();
     deferred = event;
+    // প্রম্পট আসা মানে অ্যাপ এখন ইনস্টল করা নেই (আনইনস্টল হলে পুরনো ফ্ল্যাগ মুছে যাবে)
+    setInstalledFlag(false);
     setInstallAvailability(true);
+    updateMini();
     showBanner();
   });
 
   window.addEventListener('appinstalled', function(){
     deferred = null;
+    setInstalledFlag(true);
     setInstallAvailability(false);
     hideBanner();
+    updateMini();
     if (typeof showToast === 'function') showToast('Quranix ইনস্টল হয়েছে');
   });
 
@@ -6968,10 +7012,8 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   };
 
   async function doInstall(){
-    if (isInstalled()) {
-      if (typeof showToast === 'function') showToast('Quranix ইতিমধ্যে ইনস্টল করা আছে');
-      return;
-    }
+    if (inApp()) return; // অ্যাপের ভিতরে কিছুই দেখানো/করা হবে না
+    if (isInstalled()) { openInstalledApp(); return; }
 
     if (deferred) {
       var promptEvent = deferred;
@@ -7003,6 +7045,15 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   }
 
   window.quranixInstall = doInstall;
+  window.quranixIsInstalled = isInstalled;
+  window.quranixOpenApp = openInstalledApp;
+
+  // ব্রাউজারে থাকলেও ইনস্টল আছে কি না যাচাই (Chrome Android; manifest-এ related_applications লাগে)
+  if (!inApp() && navigator.getInstalledRelatedApps) {
+    navigator.getInstalledRelatedApps().then(function(apps){
+      if (apps && apps.length) { setInstalledFlag(true); hideBanner(); updateMini(); }
+    }).catch(function(){});
+  }
 
   // Service workers require an eligible secure origin; file:// preview is intentionally skipped.
   if ('serviceWorker' in navigator && window.isSecureContext && location.protocol !== 'file:') {
@@ -7036,7 +7087,7 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
     });
   }
 
-  if (mini) mini.textContent = isInstalled() ? 'ইনস্টল করা {{chevron_right}}' : '{{chevron_right}}';
+  updateMini();
 })();
 
 

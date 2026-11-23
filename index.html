@@ -13,6 +13,25 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Quranix">
 <script>document.documentElement.classList.add('icons-pending');setTimeout(function(){document.documentElement.classList.remove('icons-pending');},6000);</script>
+<script>
+/* isInApp(): অ্যাপের ভিতরে (ইনস্টল করা PWA / Capacitor / TWA) চললে true; সাধারণ ব্রাউজার ট্যাবে false */
+(function(){
+  function mm(q){ try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch(e){ return false; } }
+  window.isInApp = function(){
+    try {
+      if (mm('(display-mode: standalone)') || mm('(display-mode: fullscreen)') || mm('(display-mode: minimal-ui)') || mm('(display-mode: window-controls-overlay)')) return true;
+      if (window.navigator.standalone === true) return true;
+      if (window.Capacitor && (typeof window.Capacitor.isNativePlatform !== 'function' || window.Capacitor.isNativePlatform())) return true;
+      if (typeof document.referrer === 'string' && document.referrer.indexOf('android-app://') === 0) return true;
+    } catch(e){}
+    return false;
+  };
+  if (window.isInApp()) {
+    document.documentElement.classList.add('in-app');
+    try { localStorage.setItem('quranix_installed', '1'); } catch(e){}
+  }
+})();
+</script>
 <link rel="preload" href="fonts/material-symbols-rounded.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/hind-siliguri-400.woff" as="font" type="font/woff" crossorigin>
 <link rel="manifest" href="manifest.json">
@@ -5212,6 +5231,9 @@ nav button[data-m="quran"] b::before { inset: -11px; }
 /* ===== অ্যাপের সাইজ: Small (এখনকার) / Medium / Lite (সবচেয়ে বড়) ===== */
 html[data-size="medium"] { --qx-scale: 1.1; }
 html[data-size="lite"] { --qx-scale: 1.2; }
+/* অ্যাপের ভিতরে ইনস্টল প্রম্পট/ব্যানার/মেনু আইটেম দেখাবে না */
+html.in-app #pwaBanner,
+html.in-app .install-menu-item { display: none !important; }
 </style>
 </head>
 <body>
