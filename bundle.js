@@ -122,9 +122,16 @@ window.SURAH_META = SURAH_META;
 // Bangla onubad API theke ase - AlQuran Cloud bn.bengali edition
 async function loadSurah(n){
   const API = "https://api.alquran.cloud/v1";
+  const getOk = async (url) => {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error("API HTTP " + r.status);
+    const j = await r.json();
+    if (!j || !j.data) throw new Error("API ডেটা পাওয়া যায়নি");
+    return j;
+  };
   const [ar, bn] = await Promise.all([
-    fetch(`${API}/surah/${n}`).then(r=>r.json()),
-    fetch(`${API}/surah/${n}/bn.bengali`).then(r=>r.json())
+    getOk(`${API}/surah/${n}`),
+    getOk(`${API}/surah/${n}/bn.bengali`)
   ]);
   return { ar: ar.data, bn: bn.data };
 }
@@ -593,7 +600,9 @@ const QX_TOPICS = [
     {id:'Al-Nasai',name:'সুনান আন-নাসাঈ',chapters:50,meta:"nasa'i.json",folder:'Al-Nasai'},
     {id:'Ibne-Mazah',name:'সুনান ইবনে মাজাহ',chapters:37,meta:'ibnemajah.json',folder:'Ibne-Mazah'}
   ];
-  var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@main/';
+  /* TODO: 'main' বদলে GitHub রিপোর সর্বশেষ কমিট হ্যাশ বা ট্যাগ বসাও (পিন করলে রিপো বদলালেও অ্যাপ ভাঙবে না) */
+var HADITH_CDN_REF='main';
+var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CDN_REF+'/';
   function normalizeHadithRows(payload){
     var rows=Array.isArray(payload)?payload:(payload&&Array.isArray(payload.hadiths)?payload.hadiths:(payload&&Array.isArray(payload.data)?payload.data:(payload&&Array.isArray(payload.items)?payload.items:(payload&&Array.isArray(payload.hadith)?payload.hadith:null))));
     if(!rows && payload && payload.hadith) rows=[payload];
@@ -1817,7 +1826,9 @@ window.qxSourcesHtml = function(){
 const TAFSIRS = [[381,"তাফসির ফাতহুল মাজীদ","bn-tafisr-fathul-majid"],[164,"তাফসির ইবনে কাসীর","bn-tafseer-ibn-e-kaseer"]];
 const TAFSIR_CDN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@v1.2.3/tafsir/";
 // Fallback when the pinned release does not contain an edition.
-const TAFSIR_CDN_MAIN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/";
+/* TODO: ফলব্যাক ref 'main'-ও পিন করো (কমিট হ্যাশ) */
+const TAFSIR_CDN_FALLBACK_REF = "main";
+const TAFSIR_CDN_MAIN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@" + TAFSIR_CDN_FALLBACK_REF + "/tafsir/";
 function getTafsirSlug(id){ const item=TAFSIRS.find(t=>Number(t[0])===Number(id)); return item?item[2]:""; }
 let tafsirId = lsGet("tafsirId", 381);
 async function shareTextOrCopy(text, title, copyMessage){
@@ -3764,7 +3775,7 @@ function renderQiblaView(){
 function renderAlertsView(){
   // বোতাম নতুন করে আঁকলে স্ক্রল ওপরে লাফায়; তাই শুধু টিক বোতাম বদলানো হয়
   function azTick(on, label){
-    const b = mk("button", "trk-tick" + (on ? " on" : ""), on ? "{{check}}" : "");
+    const b = mk("button", "trk-tick az-tick" + (on ? " on" : ""), on ? "{{check_circle:f}}" : "{{radio_button_unchecked}}");
     b.type = "button";
     b.setAttribute("aria-pressed", String(!!on));
     b.setAttribute("aria-label", label);
@@ -3791,7 +3802,7 @@ function renderAlertsView(){
 
   // ২. প্রধান কার্ড
   const card = mk("div", "trk-cat");
-  card.appendChild(mk("h3", null, "{{notifications}} আজান ও নামাজের অ্যালার্ট"));
+  card.appendChild(mk("h3", null, "{{alarm}} আজান ও নামাজের অ্যালার্ট"));
   card.appendChild(mk("div", "sub", "ওয়াক্ত হলে শব্দ ও নোটিফিকেশন পাবেন"));
 
   card.appendChild(azRow("অ্যালার্ট চালু রাখুন", "", () => !!alertCfg.enabled, async () => {
@@ -4216,7 +4227,7 @@ function renderPrayer(){
 
   // Sub-navigation tabs for Prayer Times, Qibla Compass, and Adhan Alerts
   const subTabs = mk("div", "p3-tabs");
-  [["learn","{{i_learn}} নামাজ শিক্ষা"],["times","{{i_mosque}} নামাজের সময়"],["qibla","{{i_qibla}} কিবলা কম্পাস"],["alerts","{{notifications}} আজান অ্যালার্ট"]].forEach(([k, label]) => {
+  [["learn","{{i_learn}} নামাজ শিক্ষা"],["times","{{i_mosque}} নামাজের সময়"],["qibla","{{i_qibla}} কিবলা কম্পাস"],["alerts","{{alarm}} আজান অ্যালার্ট"]].forEach(([k, label]) => {
     const b = mk("button", prayerSubTab === k ? "on" : "", label);
     b.onclick = () => { prayerSubTab = k; renderPrayer(); };
     subTabs.appendChild(b);
@@ -4495,12 +4506,14 @@ function renderTasbih(){
     } else {
       arc.style.strokeDashoffset = (C * (1 - frac)).toFixed(2);
     }
+    arc.classList.toggle("empty", frac === 0);
     prevFrac = frac;
     sub.textContent = t ? "চক্র " + toBn(Math.floor(c / t)) + " · লক্ষ্য " + toBn(t) : "অসীম গণনা";
   };
   btn.onclick = () => {
     const c = (ts.c[ts.k] || 0) + 1; ts.c[ts.k] = c; lsSet("tasbih", ts); upd();
     cnt.classList.remove("tap"); void cnt.offsetWidth; cnt.classList.add("tap");
+    btn.classList.remove("ripple"); void btn.offsetWidth; btn.classList.add("ripple");
     if (ts.t && c % ts.t === 0) { btn.classList.remove("cycle-done"); void btn.offsetWidth; btn.classList.add("cycle-done"); }
     try { if (navigator.vibrate) navigator.vibrate(ts.t && c % ts.t === 0 ? [120, 60, 120] : 12); } catch(e){}
   };
@@ -6981,7 +6994,6 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   if ('serviceWorker' in navigator && window.isSecureContext && location.protocol !== 'file:') {
     window.addEventListener('load', function(){
       navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(function(registration){
-        console.log('Quranix service worker registered');
 
         if (registration && typeof registration.update === 'function') {
           registration.update().catch(function(error){

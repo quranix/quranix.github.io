@@ -136,7 +136,7 @@
   --qx-z-search-panel: 40;
   --qx-z-nav: 30;
   --qx-z-modal: 100;
-  --qx-z-toast: 120;
+  --qx-z-toast: 10100;
   --qx-z-dropdown: 90;
 }
 
@@ -485,7 +485,7 @@ main {
   padding: 6px 14px;
   border-radius: var(--qx-radius-lg);
   font-size: var(--qx-fs-md);
-  z-index: 99;
+  z-index: var(--qx-z-toast);
   animation: fadeInOut 2s ease;
   max-width: 90vw;
   text-align: center;
@@ -2604,8 +2604,13 @@ body.bars-hidden .audio-bar.with-nav {
   border-bottom: 1px solid var(--qx-border);
   padding: 8px 10px;
   position: sticky;
-  top: 0;
+  top: var(--qx-hdr-h,62px);
   z-index: 4;
+  transition: top .25s ease;
+}
+
+body.bars-hidden #hifzBar {
+  top: 0;
 }
 
 body.hifz-on #hifzBar {
@@ -4087,7 +4092,7 @@ body:not(.inside-page) #title {
     align-items: flex-start;
     row-gap: 8px;
   }
-  body.inside-page .ayah .no>span: first-child {
+  body.inside-page .ayah .no>span:first-child {
     flex: 1 1 100%;
   }
 }
@@ -5154,13 +5159,52 @@ nav button[data-m="quran"] b::before { inset: -11px; }
 .qx-tsb-opt .ms { font-size: 20px; width: 20px; }
 .qx-tsb-opt:active { transform: scale(.96); }
 .qx-tsb-opt:focus-visible { outline: 2px solid var(--qx-main-color); outline-offset: 2px; }
+
+/* আজান অ্যালার্টের টিক: বৃত্তের ভেতরে বৃত্ত না করে সরাসরি check_circle আইকন */
+.trk-tick.az-tick {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--qx-meta-color);
+}
+.trk-tick.az-tick .ms { font-size: 30px; }
+.trk-tick.az-tick.on { background: none; border: 0; color: var(--qx-main-color); }
+
+/* fit_page_width: ফন্টে নেই, তাই ইনলাইন SVG (fill ধরনের আইকন) */
+.ms-svg-fill { width: 1em; height: 1em; fill: currentColor; stroke: none; display: inline-block; vertical-align: -.2em; }
+
+/* ===== তাসবিহ ফাইন টিউনিং (ফেজ ৪) ===== */
+.qx-tsb-btn { overflow: hidden; will-change: transform; -webkit-touch-callout: none; }
+.qx-tsb-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--qx-main-color) 30%, transparent) 0, transparent 70%);
+  opacity: 0;
+  transform: scale(.6);
+  pointer-events: none;
+}
+.qx-tsb-btn.ripple::after { animation: qxTsbRipple .38s ease-out; }
+@keyframes qxTsbRipple { 0% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.05); } }
+.qx-tsb-in { z-index: 1; max-width: 74%; text-align: center; }
+.qx-tsb-in small { text-wrap: balance; }
+.qx-tsb-count { min-width: 2ch; }
+/* অগ্রগতির রিং: শূন্যে গোল ক্যাপের ফোঁটা লুকানো, মসৃণ ইজ */
+.qx-tsb-arc { transition: stroke-dashoffset .3s cubic-bezier(.22,.8,.3,1), opacity .15s ease; }
+.qx-tsb-arc.empty { opacity: 0; }
+.qx-tsb-opt.danger .ms { font-size: 20px; }
 </style>
 </head>
 <body>
 <a class="qx-skip-link" href="#app">মূল কনটেন্টে যান</a>
 <header>
   <div class="bar">
-    <button id="widthToggle" class="header-btn" aria-label="পড়ার প্রস্থ পরিবর্তন করুন" title="পড়ার প্রস্থ: সংকীর্ণ / পূর্ণ" aria-pressed="false"><span class="ms wt-wide" aria-hidden="true">fullscreen</span><span class="ms wt-narrow" aria-hidden="true">fullscreen_exit</span></button>
+    <button id="widthToggle" class="header-btn" aria-label="পড়ার প্রস্থ পরিবর্তন করুন" title="পড়ার প্রস্থ: সংকীর্ণ / পূর্ণ" aria-pressed="false"><svg class="ms-svg-fill wt-wide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4,20q-0.82,0-1.41-0.59T2,18V6Q2,5.18 2.59,4.59T4,4H20q0.83,0 1.41,0.59Q22,5.18 22,6V18q0,0.82-0.59,1.41T20,20H4ZM20,6H4V18H20V6ZM4,6V18V6Zm5,9V9L6,12l3,3Zm9-3L15,9v6l3-3Z"/></svg><span class="ms wt-narrow" aria-hidden="true">fullscreen_exit</span></button>
     <button id="back" class="back-btn-hidden" type="button" aria-label="পেছনে যান"><span class="ms" aria-hidden="true">arrow_back</span></button>
     <img class="app-logo" src="icons/icon-192x192.png" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:var(--qx-radius)" role="button" tabindex="0" title="Home">
     <h1 id="title">Quranix</h1>
