@@ -1,9 +1,9 @@
 /* Quranix service worker — NETWORK-FIRST
    অনলাইনে থাকলে সবসময় সার্ভার থেকে নতুন ফাইল আনে (এবং ক্যাশ আপডেট করে)।
    নেট না থাকলে বা সার্ভার ৪ সেকেন্ডে সাড়া না দিলে ক্যাশ থেকে চালায়, তাই অফলাইনেও চলে।
-   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v18 → v19), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
+   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v20 → v21), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
    কিন্তু পুরোনো ক্যাশ পরিষ্কার হবে ভার্সন বদলালেই। */
-const CACHE = 'quranix-v18';
+const CACHE = 'quranix-v20';
 const NETWORK_TIMEOUT_MS = 4000;
 const ASSETS = [
   './',
@@ -56,6 +56,21 @@ function fetchWithTimeout(request){
   });
 }
 
+/* redirect-করা রেসপন্স দিয়ে পেজ খোলা ব্রাউজার আটকায় (অফলাইনে "You are offline"/এরর পেজ আসে), তাই কপি করে সাধারণ রেসপন্স বানাই */
+function clean(res){
+  if (!res || !res.redirected) return Promise.resolve(res);
+  return res.blob().then(b => new Response(b, { headers: res.headers, status: res.status, statusText: res.statusText }));
+}
+
+function offlineFallback(req){
+  return caches.match(req, { ignoreSearch: true })
+    .then(hit => hit || (req.mode === 'navigate'
+      ? caches.match('./index.html', { ignoreSearch: true }).then(h => h || caches.match('./', { ignoreSearch: true }))
+      : undefined))
+    .then(hit => clean(hit))
+    .then(hit => hit || new Response('Offline', { status: 503, statusText: 'Offline' }));
+}
+
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
@@ -63,14 +78,11 @@ self.addEventListener('fetch', e => {
   if (url.origin !== self.location.origin) return;   /* API/অডিও ইত্যাদি বাইরের রিকোয়েস্ট যেমন আছে তেমনই যাবে */
   e.respondWith(
     fetchWithTimeout(req).then(res => {
-      if (res && res.ok) {
+      if (res && res.ok && !res.redirected) {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
       }
       return res;
-    }).catch(() =>
-      caches.match(req).then(hit => hit || (req.mode === 'navigate' ? caches.match('./index.html') : undefined))
-        .then(hit => hit || new Response('Offline', { status: 503, statusText: 'Offline' }))
-    )
+    }).catch(() => offlineFallback(req))
   );
 });
