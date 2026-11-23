@@ -58,6 +58,10 @@
   font-family:'MSLocal';font-style:normal;font-weight:200;font-display:block;src:url(fonts/material-symbols-rounded.woff2) format('woff2')
 }
 
+@font-face {
+  font-family:'QXIslamic';font-style:normal;font-weight:400;font-display:block;src:url(fonts/islamic-icons.ttf) format('truetype')
+}
+
 :root {
   /* palette (raw colours) */
   --qx-c-white: #ffffff;
@@ -4842,13 +4846,65 @@ body.no-icon-font .ms::before {
 /* ফেজ C: কিবলা কম্পাসে বৃত্তের ভেতরে শুধু আইকন-ব্যাজ */
 .kaaba-badge { top: 14px; width: 28px; height: 28px; padding: 0; border-radius: 50%; display: grid; place-items: center; font-size: var(--qx-fs-lg); }
 .kaaba-needle { top: 46px; }
+
+/* ইসলামিক আইকন: fonts/islamic-icons.ttf (IslamicIcons, fontello)। data-i নাম → --qi-o আউটলাইন, --qi-s সলিড (সক্রিয়/.f অবস্থায়) */
+.ms.qi[data-i="asma"] { --qi-o: "\e800"; --qi-s: "\e825"; }
+.ms.qi[data-i="quran"] { --qi-o: "\e81e"; --qi-s: "\e83a"; }
+.ms.qi[data-i="hadith"] { --qi-o: "\e815"; --qi-s: "\e82f"; }
+.ms.qi[data-i="mosque"] { --qi-o: "\e839"; --qi-s: "\e830"; }
+.ms.qi[data-i="learn"] { --qi-o: "\e818"; --qi-s: "\e836"; }
+.ms.qi[data-i="dua"] { --qi-o: "\e817"; --qi-s: "\e835"; }
+.ms.qi[data-i="tasbih"] { --qi-o: "\e84a"; --qi-s: "\e83f"; }
+.ms.qi[data-i="ramadan"] { --qi-o: "\e81c"; --qi-s: "\e82a"; }
+.ms.qi[data-i="kalima"] { --qi-o: "\e847"; --qi-s: "\e843"; }
+.ms.qi[data-i="hajj"] { --qi-o: "\e810"; --qi-s: "\e829"; }
+.ms.qi[data-i="zakat"] { --qi-o: "\e848"; --qi-s: "\e845"; }
+.ms.qi[data-i="qibla"] { --qi-o: "\e81a"; --qi-s: "\e838"; }
+.ms.qi[data-i="hijri"] { --qi-o: "\e806"; --qi-s: "\e806"; }
+.ms.qi[data-i="qurbani"] { --qi-o: "\e804"; --qi-s: "\e826"; }
+html body .ms.qi::before {
+  content: var(--qi-o);
+  font-family: 'QXIslamic';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1em;
+  line-height: 1;
+  display: block;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: normal;
+  font-variation-settings: normal;
+}
+
+html body .ms.qi.f::before,
+html body nav button.on .ms.qi::before,
+html body button:active .ms.qi::before,
+html body .g-menu-item:active .ms.qi::before {
+  content: var(--qi-s);
+}
+
+body.no-icon-font .ms.qi {
+  font-size: 1.25em;
+  width: 1em;
+  height: auto;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: -.22em;
+}
+
+/* ডিফল্ট চেভরন/এক্সপ্যান্ড আইকন (chevron_right/left, expand_more/less) — মেনুর ডান পাশের তীর */
+.g-menu-item small .ms {
+  font-size: 20px;
+  color: var(--qx-meta-color);
+  vertical-align: middle;
+}
 </style>
 </head>
 <body>
 <a class="qx-skip-link" href="#app">মূল কনটেন্টে যান</a>
 <header>
   <div class="bar">
-    <button id="widthToggle" class="header-btn" aria-label="পড়ার প্রস্থ পরিবর্তন করুন" title="পড়ার প্রস্থ: সংকীর্ণ / পূর্ণ" aria-pressed="false"><span class="ms wt-wide" aria-hidden="true">width_wide</span><span class="ms wt-narrow" aria-hidden="true">width_normal</span></button>
+    <button id="widthToggle" class="header-btn" aria-label="পড়ার প্রস্থ পরিবর্তন করুন" title="পড়ার প্রস্থ: সংকীর্ণ / পূর্ণ" aria-pressed="false"><span class="ms wt-wide" aria-hidden="true">fullscreen</span><span class="ms wt-narrow" aria-hidden="true">fullscreen_exit</span></button>
     <button id="back" class="back-btn-hidden" type="button" aria-label="পেছনে যান"><span class="ms" aria-hidden="true">arrow_back</span></button>
     <img class="app-logo" src="icons/icon-192x192.png" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:var(--qx-radius)" role="button" tabindex="0" title="Home">
     <h1 id="title">Quranix</h1>
@@ -4860,12 +4916,12 @@ body.no-icon-font .ms::before {
       </button>
       <div id="gridDropdown">
         <div class="g-quick" id="gQuick"></div>
-        <button class="g-menu-item" data-popup="hijri"><span><span class="ms" aria-hidden="true">nights_stay</span> &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini">›</small></button>
-        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span> &nbsp; ডাউনলোড</span><small id="gDlMini">›</small></button>
-        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span> &nbsp; উৎস ও তথ্যসূত্র</span><small>›</small></button>
-        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span> &nbsp; ব্যাকআপ ও রিস্টোর</span><small>›</small></button>
-        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span> &nbsp; Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন ›</small></button>
-        <button class="g-menu-item" data-popup="settings"><span>কাস্টমাইজেশন</span><small>›</small></button>
+        <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span> &nbsp; হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span> &nbsp; ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span> &nbsp; উৎস ও তথ্যসূত্র</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span> &nbsp; ব্যাকআপ ও রিস্টোর</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span> &nbsp; Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন <span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="settings"><span>কাস্টমাইজেশন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
       </div>
     </div>
   </div>
@@ -4904,9 +4960,9 @@ body.no-icon-font .ms::before {
 
 <nav id="nav" aria-label="প্রধান নেভিগেশন">
   <button id="navHome" type="button"><b><span class="ms" aria-hidden="true">home</span></b><span>হোম</span></button>
-  <button data-m="prayer"><b><span class="ms" aria-hidden="true">mosque</span></b><span>নামাজ</span></button>
-  <button data-m="quran" class="on"><b><span class="ms" aria-hidden="true">menu_book</span></b><span>কুরআন</span></button>
-  <button data-m="dua"><b><svg class="dua-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12c0 4 3.2 7 9 7s9-3 9-7"/><path d="M3 12c1.5 1 3.5 1.5 5 1M21 12c-1.5 1-3.5 1.5-5 1"/><path d="M12 3v5M9.5 5.5L12 8l2.5-2.5"/></svg></b><span>দোয়া ও তাসবিহ</span></button>
+  <button data-m="prayer"><b><span class="ms qi" data-i="mosque" aria-hidden="true"></span></b><span>নামাজ</span></button>
+  <button data-m="quran" class="on"><b><span class="ms qi" data-i="quran" aria-hidden="true"></span></b><span>কুরআন</span></button>
+  <button data-m="dua"><b><span class="ms qi" data-i="dua" aria-hidden="true"></span></b><span>দোয়া ও তাসবিহ</span></button>
   <button data-m="more"><b><span class="ms" aria-hidden="true">more_horiz</span></b><span>আরও</span></button>
 </nav>
 

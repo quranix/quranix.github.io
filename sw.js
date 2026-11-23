@@ -3,7 +3,7 @@
    নেট না থাকলে বা সার্ভার ৪ সেকেন্ডে সাড়া না দিলে ক্যাশ থেকে চালায়, তাই অফলাইনেও চলে।
    ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v20 → v21), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
    কিন্তু পুরোনো ক্যাশ পরিষ্কার হবে ভার্সন বদলালেই। */
-const CACHE = 'quranix-v20';
+const CACHE = 'quranix-v21';
 const NETWORK_TIMEOUT_MS = 4000;
 const ASSETS = [
   './',
@@ -27,7 +27,8 @@ const ASSETS = [
   './fonts/kalpurush.woff2',
   './fonts/noto-serif-bengali-400.woff2',
   './fonts/noto-serif-bengali-700.woff2',
-  './fonts/material-symbols-rounded.woff2'
+  './fonts/material-symbols-rounded.woff2',
+  './fonts/islamic-icons.ttf'
 ];
 
 /* একটা ফাইল না পেলেও বাকিগুলো ক্যাশ হবে (আগে একটা ফেল করলে সব ক্যাশ ফেল করত) */
