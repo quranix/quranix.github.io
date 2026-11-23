@@ -4729,6 +4729,104 @@ body.no-icon-font .ms::before {
   font-weight: 400;
   text-align: center;
 }
+
+
+/* ===== Quranix V5: compact Home + balanced prayer/tracker page polish ===== */
+.home-section-title {
+  margin: 14px 2px 8px;
+  color: var(--qx-text-color);
+  font-size: var(--qx-fs-lg);
+  font-weight: 700;
+}
+.home-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 7px;
+  margin: 0 auto 14px;
+  width: 100%;
+}
+.home-quick-btn {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--qx-border);
+  border-radius: var(--qx-radius);
+  background: var(--qx-card-bg);
+  color: var(--qx-text-color);
+  text-align: left;
+  cursor: pointer;
+}
+.home-quick-btn>.ms:first-child {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--qx-radius);
+  color: var(--qx-main-color);
+  background: var(--qx-main-soft);
+  font-size: 20px;
+}
+.home-quick-copy { display:flex; flex-direction:column; min-width:0; gap:2px; }
+.home-quick-copy b { font-size:var(--qx-fs-sm); font-weight:700; }
+.home-quick-copy small { color:var(--qx-meta-color); font-size:var(--qx-fs-xs); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.home-quick-go { margin-left:auto; color:var(--qx-meta-color); font-size:18px; }
+.home-category-grid { margin-top:0; }
+.home-category-grid .home-tile { min-height:68px; }
+.home-category-grid .t-ic { width:36px; height:36px; border-radius:var(--qx-radius); }
+.home-category-grid .t-ic .ms { font-size:22px; }
+
+/* Prayer sub-navigation and panels */
+.p3-tabs { padding:3px; gap:5px; border:1px solid var(--qx-border); border-radius:var(--qx-radius-lg); background:var(--qx-tile-bg); }
+.p3-tabs button { padding:9px 12px; border:1px solid transparent; border-radius:var(--qx-radius); }
+.p3-card { padding:14px; box-shadow:var(--qx-shadow); }
+.hero { border-radius:var(--qx-radius-lg); box-shadow:var(--qx-shadow); }
+.qibla-box { gap:8px; }
+.compass-dial { width:min(68vw,250px); height:min(68vw,250px); max-width:250px; max-height:250px; border-width:3px; box-shadow:var(--qx-shadow); }
+.compass-mark.n { color:var(--qx-danger); }
+.kaaba-badge { box-shadow:var(--qx-shadow); }
+.alert-row { gap:12px; flex-wrap:wrap; padding:11px 0; }
+.alert-row>span:first-child { font-weight:600; }
+.alert-row select { max-width:58%; min-width:145px; }
+.switch-btn { min-width:88px; padding:8px 13px; border:1px solid var(--qx-border); background:var(--qx-tile-bg); color:var(--qx-text-color); }
+
+/* Tracker hierarchy: same palette and token registry, clearer grouping */
+.trk-head { box-shadow:var(--qx-shadow); padding:18px 14px; }
+.trk-head .big { font-size:var(--qx-fs-xl); margin:3px 0 5px; }
+.trk-cat { box-shadow:var(--qx-shadow); padding:14px; }
+.trk-cat h3 { display:flex; align-items:center; gap:6px; }
+.trk-row { gap:10px; min-height:42px; }
+.trk-row:focus-within { background:var(--qx-main-soft); }
+@media (min-width:700px) {
+  .home-quick-actions { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .home-category-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .p3-card { padding:18px; }
+}
+@media (max-width:380px) {
+  .home-quick-actions { gap:6px; }
+  .home-quick-btn { padding:8px 7px; gap:6px; }
+  .home-quick-btn>.ms:first-child { flex-basis:28px; width:28px; height:28px; }
+  .home-category-grid .home-tile { padding:9px; gap:8px; }
+  .alert-row select { max-width:100%; }
+}
+
+
+/* V6B: accessible focus and compact control feedback for the four scoped pages */
+.trk-tick:focus-visible,.switch-btn:focus-visible,.p3-tabs button:focus-visible,.qibla-box button:focus-visible,.alert-row button:focus-visible,.alert-row select:focus-visible {
+  outline:2px solid var(--qx-main-color);
+  outline-offset:2px;
+}
+.trk-dot.done { background:var(--qx-main-soft); border-color:var(--qx-main-color); color:var(--qx-main-color); }
+.trk-row>div { min-width:0; overflow-wrap:anywhere; }
+.qibla-box .note { max-width:42rem; line-height:1.55; }
+.alert-row>div:first-child { min-width:0; flex:1 1 190px; }
+@media (max-width:380px) {
+  .compass-dial { width:min(76vw,230px); height:min(76vw,230px); }
+  .switch-btn { min-width:80px; }
+}
+
 </style>
 </head>
 <body>
@@ -4791,7 +4889,7 @@ body.no-icon-font .ms::before {
 <nav id="nav">
   <button id="navHome" type="button"><b><span class="ms" aria-hidden="true">home</span></b><span>হোম</span></button>
   <button data-m="prayer"><b><span class="ms" aria-hidden="true">mosque</span></b><span>নামাজ</span></button>
-  <button data-m="quran" class="on"><b><span class="ms" aria-hidden="true">menu_book</span></b><span>কুরআন</span></button>
+  <button data-m="quran" class="on"><b><span class="ms" aria-hidden="true">auto_stories</span></b><span>কুরআন</span></button>
   <button data-m="dua"><b><svg class="dua-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12c0 4 3.2 7 9 7s9-3 9-7"/><path d="M3 12c1.5 1 3.5 1.5 5 1M21 12c-1.5 1-3.5 1.5-5 1"/><path d="M12 3v5M9.5 5.5L12 8l2.5-2.5"/></svg></b><span>দোয়া ও তাসবিহ</span></button>
   <button data-m="more"><b><span class="ms" aria-hidden="true">more_horiz</span></b><span>আরও</span></button>
 </nav>
