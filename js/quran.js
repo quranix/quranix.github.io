@@ -1,5 +1,18 @@
-/* js/quran.js — মূল কাঠামো + কুরআন অংশ (সূরা, অডিও, অফলাইন অডিও, ৯৯ নাম, হাদিস, নোট, বুকমার্ক, গ্রিড/লিস্ট, বিষয়ভিত্তিক ও শব্দার্থ UI, হোম, আয়াত কার্ড)
-   আগে লোড হবে: quran-data.js, data/topics.js, data/dictionary.js, data/district.js। এরপর লোড হবে js/apps.js। */
+/* js/quran.js
+   WHAT IT IS: the main part of the app. Home screen, surah list, reader, audio, offline audio,
+   99 names, hadith, notes, bookmarks, and the screens for the topics tab and the word-meaning tab.
+   LOADS AFTER:  quran-data.js, data/topics.js, data/dictionary.js, data/district.js
+   LOADS BEFORE: js/apps.js (apps.js uses many names from this file)
+
+   EDIT RULES
+   1. Keep the code formatted and readable. Do not minify.
+   2. Change a function where it is. Do not keep the old one and add a new one with the same name.
+   3. Before you rename a function or a window.* name, search js/apps.js too. It may use it.
+   4. Put big new data lists in the data/ folder, not here.
+   5. After any change, raise the CACHE number in sw.js (example: quranix-v23 to quranix-v24).
+
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+*/
 
 /* ===== সূরা ===== */
 // সব সূরা + বাংলা অনুবাদ

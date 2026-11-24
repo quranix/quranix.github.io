@@ -1,6 +1,18 @@
-/* data/district.js — বিভাগ → জেলা → থানা/উপজেলা (BD_DISTRICTS, BD_THANAS)
-   নামাজের সময়ের লোকেশন বাছাইয়ে ব্যবহার হয় (renderPrayer, js/apps.js)। সাধারণত এই ফাইলে হাত দিতে হয় না।
-   লোড অর্ডার: quran-data.js → data/*.js → js/quran.js → js/apps.js */
+/* data/district.js
+   WHAT IT IS: places in Bangladesh, used by the prayer page (renderPrayer in js/apps.js).
+   BD_DISTRICTS: division name -> list of [district name, latitude, longitude]
+   BD_THANAS:    district name -> list of [thana or upazila name, latitude, longitude]
+
+   EDIT RULES
+   1. Usually you do not need to touch this file.
+   2. A district name must be spelled exactly the same in BD_DISTRICTS and as a key in BD_THANAS.
+      A small spelling difference breaks the match.
+   3. Do not rename BD_DISTRICTS or BD_THANAS.
+   4. Keep the file formatted and readable. Do not minify.
+   5. After any change, raise the CACHE number in sw.js.
+
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+*/
 
 /* বিভাগ → জেলা (জেলা সদরের আনুমানিক স্থানাঙ্ক) */
 const BD_DISTRICTS = {

@@ -1,6 +1,17 @@
-/* data/topics.js — বিষয়ভিত্তিক আয়াত (QX_TOPICS)
-   সাধারণত এই ফাইলে হাত দিতে হয় না। বিষয়ভিত্তিক ট্যাবের UI কোড js/quran.js-এ (renderTopics)।
-   লোড অর্ডার: quran-data.js → data/*.js → js/quran.js → js/apps.js */
+/* data/topics.js
+   WHAT IT IS: the topic list for the "বিষয়ভিত্তিক আয়াত" tab (QX_TOPICS).
+   EACH ITEM:  { ar: Arabic word, bn: Bangla name, count: number shown in the app, ayahs: [[surah, ayah], ...] }
+   SCREEN CODE: js/quran.js (renderTopics). This file is data only, no code.
+
+   EDIT RULES
+   1. Usually you do not need to touch this file.
+   2. Do not rename QX_TOPICS. The screen code finds the list by this name.
+   3. Keep every item in the same shape, and every ayah as [surah, ayah].
+   4. Keep the file formatted and readable. Do not minify.
+   5. After any change, raise the CACHE number in sw.js.
+
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+*/
 
 /* ===== বিষয়ভিত্তিক আয়াত =====
    উৎস: Quranic Arabic Corpus (corpus.quran.com) Morphology v0.4।

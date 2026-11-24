@@ -1,6 +1,23 @@
-/* data/dictionary.js — ১৫০ শব্দের অভিধান (শব্দার্থ ট্যাব)
-   নতুন শব্দ যোগ করলে এই ফাইলে করো। UI কোড (renderDict, renderDict150List, renderDict150Detail) js/quran.js-এ।
-   লোড অর্ডার: quran-data.js → data/*.js → js/quran.js → js/apps.js */
+/* data/dictionary.js
+   WHAT IT IS: the 150-word dictionary for the "শব্দার্থ" tab.
+   NAMES INSIDE: QX_DICT150, QX_DICT150_CATS, QX_DICT150_SOURCE, QX_DICT150_MEANING_SRC
+   EACH ROW: [category number, Arabic word, Bangla meaning, Arabic root, times in Quran, approx flag]
+     - category number = position in QX_DICT150_CATS (the first one is 0)
+     - Arabic root is shown on the detail page and used in search. Do not put anything else there.
+     - approx flag: 1 = the count is about right (shown with ≈), 0 = exact
+   SCREEN CODE: js/quran.js (renderDict150List, renderDict150Detail)
+
+   EDIT RULES
+   1. Add new words at the END of QX_DICT150. A word number is its position in the list,
+      so adding in the middle changes the number of every word after it.
+   2. Need a new category? Add it at the END of QX_DICT150_CATS.
+   3. Do not rename the four names above.
+   4. Keep every row the same length (6 items).
+   5. Keep the file formatted and readable. Do not minify.
+   6. After any change, raise the CACHE number in sw.js.
+
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+*/
 
 /* ===== ১৫০ শব্দের অভিধান (শব্দার্থ ট্যাব ও "আরও" পেজ) =====
    এটাই শব্দার্থ পেজের ডেটা (পুরোনো ধাতু-ভিত্তিক QX_DICT ডেটা মুছে ফেলা হয়েছে)।

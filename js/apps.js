@@ -1,5 +1,17 @@
-/* js/apps.js — নামাজ, কিবলা, তাসবিহ, দোয়া, সেটিংস, হিফজ, খতম, ইমেজ কার্ড, ট্র্যাকার, তাজউইদ, শব্দে শব্দে, হিজরি, PWA
-   সবার শেষে লোড হবে (ভেতরে অ্যাপ চালু করার কোড আছে)। লোড অর্ডার ঠিক রাখতে হবে। */
+/* js/apps.js
+   WHAT IT IS: tools and settings. Prayer times, qibla, tasbih, dua, settings, hifz, khatam,
+   image card, tracker, tajweed, word by word, hijri calendar, and install (PWA).
+   LOADS LAST: it runs after js/quran.js and uses names from that file.
+
+   EDIT RULES
+   1. Keep the code formatted and readable. Do not minify.
+   2. Change a function where it is. Do not keep the old one and add a new one with the same name.
+   3. Some blocks run as soon as the file loads. Keep their order. Do not move blocks up or down.
+   4. Do not change the script order in index.html. This file must stay last.
+   5. After any change, raise the CACHE number in sw.js (example: quranix-v23 to quranix-v24).
+
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+*/
 
 /* ===== নামাজের সময়, তাসবিহ, দোয়া ===== */
 function qxNavHighlight(m){

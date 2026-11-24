@@ -1,9 +1,20 @@
+/* sw.js
+   WHAT IT IS: the service worker. It saves the app files on the phone so the app works offline.
+
+   EDIT RULES
+   1. Add every new file to the ASSETS list. A wrong path does not show an error,
+      the file is just missing when the phone is offline. Check the spelling.
+   2. After you change any file in the app, raise the CACHE number (example: quranix-v23 to quranix-v24).
+      This clears the old files from users' phones.
+   3. Keep sw.js and manifest.json in the root folder, next to index.html.
+*/
+
 /* Quranix service worker — NETWORK-FIRST
    অনলাইনে থাকলে সবসময় সার্ভার থেকে নতুন ফাইল আনে (এবং ক্যাশ আপডেট করে)।
    নেট না থাকলে বা সার্ভার ৪ সেকেন্ডে সাড়া না দিলে ক্যাশ থেকে চালায়, তাই অফলাইনেও চলে।
-   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v21 → v22), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
+   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v22 → v23), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
    কিন্তু পুরোনো ক্যাশ পরিষ্কার হবে ভার্সন বদলালেই। */
-const CACHE = 'quranix-v22';
+const CACHE = 'quranix-v23';
 const NETWORK_TIMEOUT_MS = 4000;
 const ASSETS = [
   './',
