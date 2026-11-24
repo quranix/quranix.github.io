@@ -1,14 +1,18 @@
 /* Quranix service worker — NETWORK-FIRST
    অনলাইনে থাকলে সবসময় সার্ভার থেকে নতুন ফাইল আনে (এবং ক্যাশ আপডেট করে)।
    নেট না থাকলে বা সার্ভার ৪ সেকেন্ডে সাড়া না দিলে ক্যাশ থেকে চালায়, তাই অফলাইনেও চলে।
-   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v20 → v21), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
+   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v21 → v22), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
    কিন্তু পুরোনো ক্যাশ পরিষ্কার হবে ভার্সন বদলালেই। */
-const CACHE = 'quranix-v21';
+const CACHE = 'quranix-v22';
 const NETWORK_TIMEOUT_MS = 4000;
 const ASSETS = [
   './',
   './index.html',
-  './bundle.js',
+  './data/topics.js',
+  './data/dictionary.js',
+  './data/district.js',
+  './js/quran.js',
+  './js/apps.js',
   './quran-data.js',
   './manifest.json',
   './icons/favicon.ico',
