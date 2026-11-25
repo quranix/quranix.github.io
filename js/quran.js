@@ -1057,7 +1057,7 @@ function renderOfflineHadithCollections(appEl){
   keys.forEach(function(k){var item=m[k],id=k.split('|').slice(1).join('|'),c=(window.quranixHadithCollections||[]).find(function(x){return x.id===id;});if(!c)return;var b=document.createElement('button');b.className='dl-btn';b.style.margin='6px 6px 0 0';b.textContent=c.name+' · '+(item.status==='complete'?'সম্পূর্ণ':item.status==='paused'?'থামানো':'অসম্পূর্ণ');b.onclick=function(){openOfflineHadithCollection(c);};wrap.appendChild(b);});
   appEl.appendChild(wrap);
 }
-async async function openOfflineHadithCollection(collection){
+async function openOfflineHadithCollection(collection){
   if(typeof showOther==='function') showOther(collection.name);
   var appEl=document.getElementById('app'); appEl.innerHTML='';
   var back=document.createElement('button'); back.className='dl-btn ghost'; back.textContent='← হাদিস প্যাকেজ'; back.onclick=function(){ renderHadith(); }; appEl.appendChild(back);
@@ -3115,8 +3115,6 @@ function ayahCard(label, ar, bn, a, removable){
     const text = `[${label}]\n${ar}\n\n${bn}\n— Quranix`;
     copyText(text, "আয়াত ক্লিপবোর্ডে কপি হয়েছে!");
   };
-  if (!a) addMenu(5, () => "{{content_copy}} কপি করুন", () => copyBtn.onclick());
-
   const shareBtn = document.createElement("button");
   shareBtn.type = "button";
   shareBtn.setAttribute("aria-label", "আয়াত শেয়ার করুন");
@@ -3129,6 +3127,8 @@ function ayahCard(label, ar, bn, a, removable){
   };
   addMenu(10, () => "{{share}} শেয়ার করুন", () => shareBtn.onclick());
   addMenu(20, () => "{{image}} ছবি বানাও", () => { if(window.openAyahCard) window.openAyahCard(label, ar, bn); });
+  addMenu(30, () => "{{bookmark}} বুকমার্ক করুন", () => st.onclick());
+  addMenu(40, () => "{{content_copy}} কপি করুন", () => copyBtn.onclick());
 
   if (a) {
     const playBtn = document.createElement("button");
@@ -3181,23 +3181,15 @@ function ayahCard(label, ar, bn, a, removable){
       d.classList.toggle("read-done", nowRead);
       showToast(nowRead ? `পঠিত চিহ্নিত (${toBn(goalData.readKeys.length)}/${toBn(goalData.target)})` : "পঠিত চিহ্ন সরানো হয়েছে");
     };
-    addMenu(40, () => goalData.readKeys.includes(k) ? "{{check_circle:f}} পঠিত চিহ্ন সরান" : "{{radio_button_unchecked}} পঠিত চিহ্নিত করুন", () => readBtn.onclick());
-
-    const noteBtn = document.createElement("button");
+        const noteBtn = document.createElement("button");
     noteBtn.className = "icon-btn";
     noteBtn.title = "ব্যক্তিগত নোট লিখুন";
     noteBtn.textContent = ayahNotes[k] ? "{{edit_note}}" : "{{edit}}";
-    addMenu(30, () => ayahNotes[k] ? "{{edit_note}} নোট দেখুন/এডিট" : "{{edit}} ব্যক্তিগত নোট", () => noteBtn.onclick());
-    addMenu(60, () => "{{translate}} অনুবাদ পরিবর্তন", () => { if (window.openGridPopup) window.openGridPopup("trans"); });
-
-    const st = document.createElement("button"); st.type = "button"; st.setAttribute("aria-label", "সংরক্ষিত আয়াত"); st.className = "star";
+            const st = document.createElement("button"); st.type = "button"; st.setAttribute("aria-label", "সংরক্ষিত আয়াত"); st.className = "star";
     st.textContent = savedHas("quran", k) ? "{{star:f}}" : "{{star}}";
     st.onclick = () => { const on = savedToggle("quran", k); st.textContent = on ? "{{star:f}}" : "{{star}}"; showToast(on ? "সংরক্ষিত হয়েছে" : "সংরক্ষণ সরানো হয়েছে"); if (removable && !on) d.remove(); };
   const hifzOn = () => document.body.classList.contains("hifz-on") && !!d._hifz;
-  addMenu(55, () => d._hifz && d._hifz.isMem() ? "{{check_circle:f}} মুখস্থ চিহ্ন সরান" : "{{psychology}} মুখস্থ হিসেবে চিহ্নিত করুন", () => d._hifz && d._hifz.toggleMem(), hifzOn);
-  addMenu(55, () => d._hifz && d._hifz.isHidden() ? "{{visibility}} অনুবাদ দেখাও" : "{{visibility}} অনুবাদ লুকাও", () => d._hifz && d._hifz.toggleHide(), hifzOn);
-
-    const renderNoteEl = (txt) => {
+        const renderNoteEl = (txt) => {
       const oldBox = d.querySelector(".note-box");
       if (oldBox) oldBox.remove();
       noteBtn.textContent = txt ? "{{edit_note}}" : "{{edit}}";
