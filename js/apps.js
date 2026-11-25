@@ -1931,12 +1931,27 @@ openJuz = async function(n, y){ pushReaderState(); return _origOpenJuz(n, y); };
 /* ===== জেসচার সিস্টেম =====
    নতুন জেসচার যোগ করতে: ১) QX_GESTURES তালিকায় একটা এন্ট্রি দিন, ২) নিচে তার হ্যান্ডলার লিখুন, শুরুতে qxGestureOn("id") দিয়ে চেক করুন।
    কাস্টমাইজেশন মেনুর "জেসচার" অংশে অন/অফ সুইচ নিজে থেকেই চলে আসবে। */
+/* জেসচার অংশের আইকন: Material Symbols (Rounded, FILL0) SVG পাথ; animation = তিনটা overlapping বৃত্ত (থিমের রঙে)।
+   এখানে নেই এমন নাম হলে আইকন ফন্ট (material-symbols-rounded.woff2) থেকে আসে। */
+const QX_ICON_PATHS = {
+  swipe_right: '<path d="M11.83,22q-0.6,0-1.15-0.23T9.7,21.13L4.6,16l0.75-0.78q0.4-0.4 0.94-0.54T7.35,14.7L9,15.18V7Q9,6.57 9.29,6.29Q9.58,6 10,6t0.71,0.29T11,7V17.83L8.58,17.15l2.55,2.55q0.13,0.13 0.31,0.21T11.83,20H16q0.82,0 1.41-0.59T18,18V14q0-0.43 0.29-0.71T19,13t0.71,0.29T20,14v4q0,1.65-1.18,2.82T16,22H11.83ZM12,15V11q0-0.43 0.29-0.71T13,10t0.71,0.29T14,11v4H12Zm3,0V12q0-0.43 0.29-0.71T16,11q0.43,0 0.71,0.29T17,12v3H15ZM2,7Q2.75,4.35 5.55,2.67T12,1q2.35,0 4.53,0.77T20.5,4.02V2H22V7H17V5.5h2.9q-1.65-1.45-3.68-2.23T12,2.5q-2.95,0-5.21,1.2T3.58,7H2ZM14.5,17Z"/>',
+  swap_horiz: '<path d="M7,20L2,15l5-5l1.4,1.42L5.83,14H13v2H5.83L8.4,18.58L7,20Zm10-6l-1.4-1.43L18.18,10H11V8h7.18L15.6,5.43L17,4l5,5l-5,5Z"/>',
+  ads_click: '<path d="M11.7,18q-2.4-0.13-4.05-1.85Q6,14.43 6,12Q6,9.5 7.75,7.75T12,6q2.43,0 4.15,1.65T18,11.7l-2.1-0.63q-0.32-1.35-1.4-2.21T12,8Q10.35,8 9.18,9.17T8,12q0,1.42 0.86,2.5t2.21,1.4L11.7,18Zm1.2,3.95Q12.68,22 12.45,22T12,22q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12q0,0.22 0,0.45T21.95,12.9L20,12.3V12q0-3.35-2.32-5.68T12,4T6.33,6.32T4,12t2.33,5.68T12,20q0.08,0 0.15,0t0.15,0l0.6,1.95Zm7.63,0.55l-4.28-4.27L15,22L12,12l10,3l-3.77,1.25l4.27,4.27L20.53,22.5Z"/>',
+  touch_long: '<path d="M10.48,22q-0.7,0-1.31-0.3T8.13,20.85L2.68,13.93l0.48-0.5q0.5-0.53 1.2-0.63t1.3,0.28L7.5,14.2V6q0-0.43 0.29-0.71T8.5,5Q8.93,5 9.23,5.29Q9.53,5.57 9.53,6V17.8L7.1,16.3l2.6,3.32q0.15,0.18 0.35,0.27T10.48,20H16q0.82,0 1.41-0.59T18,18V14q0-0.43-0.29-0.71T17,13H11.53V11H17q1.25,0 2.13,0.88T20,14v4q0,1.65-1.18,2.82T16,22H10.48Zm2.07-6.5ZM8.48,0q2.5,0 4.25,1.75T14.48,6q0,0.82-0.21,1.59T13.65,9.02l-1.3-0.75q0.3-0.5 0.46-1.07T12.98,6q0-1.88-1.31-3.19T8.48,1.5T5.29,2.81T3.98,6q0,0.63 0.15,1.2T4.58,8.27L3.28,9q-0.4-0.65-0.6-1.41T2.48,6q0-2.5 1.75-4.25T8.48,0Zm0,2.5q1.45,0 2.48,1.02T11.98,6q0,0.5-0.13,0.94T11.48,7.77l-1.3-0.75q0.13-0.22 0.2-0.49T10.45,6q0-0.82-0.59-1.41T8.45,4Q7.6,4 7.03,4.59Q6.45,5.18 6.45,6q0,0.27 0.08,0.54t0.2,0.49L5.43,7.77Q5.2,7.38 5.09,6.94T4.98,6q0-1.45 1.01-2.48T8.48,2.5Z"/>',
+  animation: '<circle cx="6" cy="12" r="6" fill-opacity=".3"/><circle cx="12" cy="12" r="6" fill-opacity=".6"/><circle cx="18" cy="12" r="6"/>'
+};
+function qxSetIco(name){
+  const el = mk("span", "set-ico"); el.setAttribute("aria-hidden", "true");
+  if (QX_ICON_PATHS[name]) el.innerHTML = '<svg class="ms-svg-fill" viewBox="0 0 24 24" aria-hidden="true">' + QX_ICON_PATHS[name] + '</svg>';
+  else el.textContent = "{{" + name + "}}";
+  return el;
+}
 const QX_GESTURES = [
-  { id: "swipe",    label: "সোয়াইপ বাঁ/ডান",   hint: "কুরআন পড়ার সময় পরের বা আগের সূরা (পারা হলে পারা), অন্য পেজে নিচের ট্যাব বদল" },
-  { id: "dbl",      label: "ডাবল ট্যাপ",        hint: "আয়াতে দুবার ট্যাপ করলে সংরক্ষণ (বুকমার্ক) হবে" },
-  { id: "long",     label: "লং প্রেস",           hint: "আয়াত চেপে ধরলে ⋯ মেনু খুলবে" },
-  { id: "ptr",      label: "টেনে রিফ্রেশ",       hint: "পেজের উপরে গিয়ে নিচে টেনে ছাড়লে নামাজের সময় বা বর্তমান পেজ রিফ্রেশ হবে" },
-  { id: "homeEdit", label: "হোমে লং প্রেস",      hint: "হোম ও আরও পেজে চেপে ধরলে ড্যাশবোর্ড সাজান খুলবে" }
+  { id: "swipe",    icon: "swap_horiz", label: "সোয়াইপ বাঁ/ডান",   hint: "কুরআন পড়ার সময় পরের বা আগের সূরা (পারা হলে পারা), অন্য পেজে নিচের ট্যাব বদল" },
+  { id: "dbl",      icon: "ads_click",  label: "ডাবল ট্যাপ",        hint: "আয়াতে দুবার ট্যাপ করলে সংরক্ষণ (বুকমার্ক) হবে" },
+  { id: "long",     icon: "touch_long", label: "লং প্রেস",           hint: "আয়াত চেপে ধরলে ⋯ মেনু খুলবে" },
+  { id: "ptr",      icon: "refresh",    label: "টেনে রিফ্রেশ",       hint: "পেজের উপরে গিয়ে নিচে টেনে ছাড়লে নামাজের সময় বা বর্তমান পেজ রিফ্রেশ হবে" },
+  { id: "homeEdit", icon: "home",       label: "হোমে লং প্রেস",      hint: "হোম ও আরও পেজে চেপে ধরলে ড্যাশবোর্ড সাজান খুলবে" }
 ];
 function qxGestureCfg(){
   try{ return JSON.parse(localStorage.getItem("qxGestures") || "{}") || {}; }catch(e){ return {}; }
@@ -2549,9 +2564,12 @@ function openSettingsModal() {
   }
 
   // Collapsible section: <details> + <summary>, three parts (font, translation/tafsir/audio, gesture/animation)
-  function accSection(title) {
+  function accSection(title, ico) {
     const sec = document.createElement("details"); sec.className = "set-sec";
-    sec.appendChild(mk("summary", "set-title", title));
+    const sum = mk("summary", "set-title");
+    if (ico) { sum.appendChild(qxSetIco(ico)); sum.appendChild(document.createTextNode(title)); }
+    else sum.textContent = title;
+    sec.appendChild(sum);
     return sec;
   }
 
@@ -2629,7 +2647,7 @@ function openSettingsModal() {
   body.appendChild(transSec);
 
   // 3. Gesture and animation (small switches at the right; gesture rows come from the QX_GESTURES list)
-  const gesSec = accSection("{{front_hand}} জেসচার ও অ্যানিমেশন");
+  const gesSec = accSection("জেসচার ও অ্যানিমেশন", "swipe_right");
   QX_GESTURES.forEach(g => {
     const row = mk("label", "set-row");
     const lab = mk("span", "set-label", g.label);
@@ -2638,12 +2656,13 @@ function openSettingsModal() {
     sw.type = "checkbox"; sw.className = "set-switch"; sw.checked = qxGestureOn(g.id);
     sw.setAttribute("aria-label", g.label);
     sw.onchange = () => qxGestureSet(g.id, sw.checked);
-    row.appendChild(lab); row.appendChild(sw);
+    row.appendChild(qxSetIco(g.icon)); row.appendChild(lab); row.appendChild(sw);
     gesSec.appendChild(row);
   });
   const motionRow = mk("label", "set-row");
   const motionLab = mk("span", "set-label", "অ্যানিমেশন কম");
   motionLab.appendChild(mk("small", "qx-g-hint", "পেজ ও কার্ডের নড়াচড়া কমিয়ে দেবে"));
+  motionRow.appendChild(qxSetIco("animation"));
   motionRow.appendChild(motionLab);
   const motionToggle = document.createElement("input");
   motionToggle.type = "checkbox"; motionToggle.className = "set-switch"; motionToggle.checked = !!appPrefs.reducedMotion;
@@ -3067,7 +3086,7 @@ setInterval(checkPrayerAlerts, 5000);
     }catch(e){}
     var cnt=0, tgt=10; try{ if(typeof goalData!=='undefined'){ if(goalData.date===todayStr()) cnt=goalData.readKeys?goalData.readKeys.length:0; tgt=goalData.target||10; } }catch(e){}
 
-    var qTitle=document.createElement('div'); qTitle.className='home-section-title'; qTitle.textContent='Quick Actions';
+    var qTitle=document.createElement('div'); qTitle.className='home-section-title'; qTitle.textContent='শর্টকাট';
     var quick=document.createElement('div'); quick.className='home-quick-actions';
     var defs=[
       ['history','শেষ পড়া',lastNm,lastAction],
@@ -3105,7 +3124,7 @@ setInterval(checkPrayerAlerts, 5000);
       t.onclick=d[3]; row.appendChild(t);
     });
     var tools=qxPageTools('home',[
-      {title:'Quick Actions',items:defs.map(function(d){return {id:d[0],title:d[1],icon:icons[d[0]]};})},
+      {title:'শর্টকাট',items:defs.map(function(d){return {id:d[0],title:d[1],icon:icons[d[0]]};})},
       {title:'বিষয়ভিত্তিক বিভাগ',items:cats.map(function(d){return {id:d[0],title:d[1],icon:d[0]};})}
     ],function(){ buildHero(); });
     var nodes=[tools];
@@ -3747,6 +3766,7 @@ function buildTrackerCard(){
   return box;
 }
 function renderTracker(){
+  var _prevScroll = window.scrollY;
   if(typeof showOther==='function') showOther('{{bar_chart}} ট্র্যাকার');
   var d=trkLoad(); var td=trkToday();
   const appEl = document.getElementById('app');
@@ -3838,9 +3858,10 @@ function renderTracker(){
   };
   c6.appendChild(add); appEl.appendChild(c6);
 
-  var note=document.createElement('div'); note.className='trk-mini'; note.style.textAlign='center'; note.style.margin='12px 0 30px';
+  var note=document.createElement('div'); note.className='note'; note.style.textAlign='center';
   note.textContent='ট্র্যাকার ডিভাইসে স্বয়ংক্রিয়ভাবে সেভ হয় এবং Quranix JSON ব্যাকআপের সাথেও সংরক্ষিত থাকে।';
   appEl.appendChild(note);
+  if(_prevScroll>0){ setTimeout(function(){ window.scrollTo(0,_prevScroll); }, 0); }
 }
 window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
 
@@ -4272,7 +4293,7 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
       cur.setDate(cur.getDate()+1);
     }
     appEl.appendChild(cal);
-    var note=document.createElement('div'); note.className='trk-mini'; note.style.textAlign='center'; note.textContent='আরবি মাসের তারিখ চাঁদ দেখার উপর নির্ভরশীল — রমজান / ঈদের চূড়ান্ত তারিখের জন্য স্থানীয় ঘোষণা দেখো।';
+    var note=document.createElement('div'); note.className='note'; note.style.textAlign='center'; note.textContent='আরবি মাসের তারিখ চাঁদ দেখার উপর নির্ভরশীল — রমজান / ঈদের চূড়ান্ত তারিখের জন্য স্থানীয় ঘোষণা দেখো।';
     appEl.appendChild(note);
     // All events sorted
     var evHead=document.createElement('h3'); evHead.style.cssText='margin:14px 0 4px;color:var(--qx-main-color)'; evHead.textContent='{{event}} গুরুত্বপূর্ণ আগামী দিনগুলো';
@@ -4682,7 +4703,7 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   btn.onclick=function(){ w=!w; apply(w); try{ localStorage.setItem(K, w?'1':'0'); }catch(e){} };
 })();
 
-// Phase 5 v2.0.31 — Quick Actions বাংলা নাম + grid/list + Home customize + Dashboard Edit
+// Quick Actions বাংলা নাম (গ্রিড/লিস্ট, হোম কাস্টমাইজ ও ড্যাশবোর্ড এডিট এখন হোম ও "আরও" পেজের টুলবারে: qxPageTools)
 window.QX_QUICK_ACTIONS_BN = {
   "hijri": "হিজরি ক্যালেন্ডার",
   "downloads": "ডাউনলোড",
@@ -4715,49 +4736,8 @@ function qxApplyQuickActionsBN(){
     });
   }catch(e){}
 }
-function qxInitHomeCustomize(){
-  const gridListBtn = document.getElementById('gQuickGridList');
-  const homeBtn = document.getElementById('gHomeCustomize');
-  const dashBtn = document.getElementById('gDashboardEdit');
-  if(gridListBtn && !gridListBtn.dataset.qxInit){
-    gridListBtn.dataset.qxInit = '1';
-    // P9: সেভ করা grid/list পছন্দ লোডে ফিরিয়ে আনা
-    try{
-      const sv = localStorage.getItem('quranix_home_view');
-      if(sv === 'grid' || sv === 'list'){
-        const g = sv === 'grid';
-        document.body.classList.toggle('qx-view-grid', g);
-        document.body.classList.toggle('qx-view-list', !g);
-        gridListBtn.classList.toggle('on', g);
-        const ic = gridListBtn.querySelector('.ms');
-        if(ic) ic.textContent = g ? 'view_list' : 'grid_view';
-      }
-    }catch(e){}
-    gridListBtn.onclick = () => {
-      const isGrid = document.body.classList.toggle('qx-view-grid');
-      document.body.classList.toggle('qx-view-list', !isGrid);
-      gridListBtn.classList.toggle('on', isGrid);
-      gridListBtn.querySelector('.ms').textContent = isGrid ? 'view_list' : 'grid_view';
-      try{ localStorage.setItem('quranix_home_view', isGrid ? 'grid' : 'list'); }catch(e){}
-    };
-  }
-  if(homeBtn && !homeBtn.dataset.qxInit){
-    homeBtn.dataset.qxInit = '1';
-    homeBtn.onclick = () => {
-      if(typeof openSettingsModal === 'function') openSettingsModal();
-      else if(window.openGridPopup) window.openGridPopup('settings');
-    };
-  }
-  if(dashBtn && !dashBtn.dataset.qxInit){
-    dashBtn.dataset.qxInit = '1';
-    dashBtn.onclick = () => {
-      if(typeof openSettingsModal === 'function') openSettingsModal();
-      else if(window.openGridPopup) window.openGridPopup('settings');
-    };
-  }
-}
 document.addEventListener('DOMContentLoaded', () => {
-  try{ qxApplyQuickActionsBN(); qxInitHomeCustomize(); }catch(e){}
+  try{ qxApplyQuickActionsBN(); }catch(e){}
 });
-setTimeout(() => { try{ qxApplyQuickActionsBN(); qxInitHomeCustomize(); }catch(e){} }, 800);
+setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
 

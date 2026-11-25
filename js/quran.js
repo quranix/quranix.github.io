@@ -420,7 +420,7 @@ window.loadSurah = loadSurah;
     {id:'Ibne-Mazah',name:'সুনান ইবনে মাজাহ',chapters:37,meta:'ibnemajah.json',folder:'Ibne-Mazah'}
   ];
   /* TODO: 'main' বদলে GitHub রিপোর সর্বশেষ কমিট হ্যাশ বা ট্যাগ বসাও (পিন করলে রিপো বদলালেও অ্যাপ ভাঙবে না) */
-var HADITH_CDN_REF='main';
+var HADITH_CDN_REF='e7bdd85';
 var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CDN_REF+'/';
   function normalizeHadithRows(payload){
     var rows=Array.isArray(payload)?payload:(payload&&Array.isArray(payload.hadiths)?payload.hadiths:(payload&&Array.isArray(payload.data)?payload.data:(payload&&Array.isArray(payload.items)?payload.items:(payload&&Array.isArray(payload.hadith)?payload.hadith:null))));
@@ -1990,7 +1990,7 @@ const TAFSIRS = [[381,"তাফসির ফাতহুল মাজীদ","b
 const TAFSIR_CDN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@v1.2.3/tafsir/";
 // Fallback when the pinned release does not contain an edition.
 /* TODO: ফলব্যাক ref 'main'-ও পিন করো (কমিট হ্যাশ) */
-const TAFSIR_CDN_FALLBACK_REF = "main";
+const TAFSIR_CDN_FALLBACK_REF = "311a038";
 const TAFSIR_CDN_MAIN = "https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@" + TAFSIR_CDN_FALLBACK_REF + "/tafsir/";
 function getTafsirSlug(id){ const item=TAFSIRS.find(t=>Number(t[0])===Number(id)); return item?item[2]:""; }
 let tafsirId = lsGet("tafsirId", 381);
@@ -2586,7 +2586,7 @@ function renderTopics(){
   app.appendChild(topicHead);
   // Sort — Grid/List-এর একই লাইনে, কাস্টম ড্রপডাউন (বাটন + মেনু)। নেটিভ <select> মোবাইলে ক্লিক না খাওয়ার কারণে বাদ দেওয়া।
   const topicHeading = qxListHeading(toBn(QX_TOPICS.length) + "টি বিষয়");
-  const sortOpts = [["count","শব্দের সংখ্যা"],["pair","জোড়া"],["bn","বাংলা অভিধান ক্রম"],["imp","কুরআনে গুরুত্ব"]];
+  const sortOpts = [["count","সংখ্যা অনুযায়ী"],["pair","জোড়া অনুযায়ী"],["bn","বাংলা বর্ণক্রম"],["imp","গুরুত্ব অনুযায়ী"]];
   const sortWrap = qxSortDropdown(sortOpts, qxTopicSort, v => { qxTopicSort = v; renderTopics(); }, "বিষয় সাজানো");
   // heading: [count] [sort] [single view toggle] — sort মাঝখানে, toggle ডানে
   const toggleEl = topicHeading.querySelector(".qx-view-toggle");
