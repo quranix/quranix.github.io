@@ -4202,18 +4202,10 @@ window.QX_QUICK_ACTIONS_BN = {
   "pwa": "Quranix অ্যাপ",
   "settings": "কাস্টমাইজেশন",
   "prayer": "নামাজের সময়",
-  "qibla": "কিবলা কম্পাস",
+  "qibla": "কিবলা",
   "tasbih": "তাসবিহ",
-  "tracker": "আমল ট্র্যাকার",
-  "khatm": "খতম",
-  "hadith": "হাদিস",
-  "dua": "দোয়া ও তাসবিহ",
-  "asma": "আসমাউল হুসনা",
-  "ramadan": "রমজান",
-  "kalima": "কালিমা",
-  "quran": "কুরআন",
-  "more": "আরও",
-  "home": "হোম"
+  "tracker": "ট্র্যাকার",
+  "khatm": "খতম"
 };
 function qxApplyQuickActionsBN(){
   try{
@@ -4240,6 +4232,7 @@ function qxInitHomeCustomize(){
   const dashBtn = document.getElementById('gDashboardEdit');
   if(gridListBtn && !gridListBtn.dataset.qxInit){
     gridListBtn.dataset.qxInit = '1';
+    // P9: সেভ করা grid/list পছন্দ লোডে ফিরিয়ে আনা
     try{
       const sv = localStorage.getItem('quranix_home_view');
       if(sv === 'grid' || sv === 'list'){
@@ -4255,100 +4248,23 @@ function qxInitHomeCustomize(){
       const isGrid = document.body.classList.toggle('qx-view-grid');
       document.body.classList.toggle('qx-view-list', !isGrid);
       gridListBtn.classList.toggle('on', isGrid);
-      const ms = gridListBtn.querySelector('.ms');
-      if(ms) ms.textContent = isGrid ? 'view_list' : 'grid_view';
+      gridListBtn.querySelector('.ms').textContent = isGrid ? 'view_list' : 'grid_view';
       try{ localStorage.setItem('quranix_home_view', isGrid ? 'grid' : 'list'); }catch(e){}
     };
   }
-  // P13 J-7: More menu customize + separate roles
   if(homeBtn && !homeBtn.dataset.qxInit){
     homeBtn.dataset.qxInit = '1';
     homeBtn.onclick = () => {
-      const dd = document.getElementById('gridDropdown');
-      if(dd) dd.classList.remove('open');
-      // Toggle home edit mode - separate from dashboard
-      const isEdit = document.body.classList.toggle('qx-home-edit-mode');
-      homeBtn.classList.toggle('active-home', isEdit);
-      homeBtn.classList.toggle('on', isEdit);
-      try{
-        localStorage.setItem('quranix_home_edit', isEdit ? '1' : '0');
-        if(isEdit){
-          if(typeof showToast === 'function') showToast('হোম এডিট মোড চালু — কার্ডে ট্যাপ করে লুকান');
-        } else {
-          if(typeof showToast === 'function') showToast('হোম এডিট শেষ');
-        }
-      }catch(e){}
-      // Add done button in home section titles if entering edit
-      if(isEdit){
-        document.querySelectorAll('.home-section-title').forEach(t=>{
-          if(t.querySelector('.home-edit-done')) return;
-          const done = document.createElement('button');
-          done.className='home-edit-done';
-          done.textContent='শেষ';
-          done.onclick=()=>{ homeBtn.click(); };
-          t.appendChild(done);
-        });
-      } else {
-        document.querySelectorAll('.home-edit-done').forEach(el=>el.remove());
-      }
+      if(typeof openSettingsModal === 'function') openSettingsModal();
+      else if(window.openGridPopup) window.openGridPopup('settings');
     };
-    // Restore edit state
-    try{
-      if(localStorage.getItem('quranix_home_edit')==='1'){
-        setTimeout(()=>{ if(!document.body.classList.contains('qx-home-edit-mode')) homeBtn.click(); }, 300);
-      }
-    }catch(e){}
   }
   if(dashBtn && !dashBtn.dataset.qxInit){
     dashBtn.dataset.qxInit = '1';
     dashBtn.onclick = () => {
-      const dd = document.getElementById('gridDropdown');
-      if(dd) dd.classList.remove('open');
-      // Dashboard edit = separate role - opens tracker/dashboard
-      dashBtn.classList.add('active-dash');
-      setTimeout(()=>dashBtn.classList.remove('active-dash'), 800);
-      try{
-        if(typeof setMode === 'function'){
-          setMode('tracker');
-          if(typeof showToast === 'function') showToast('ড্যাশবোর্ড এডিট — ট্র্যাকারে কাস্টমাইজ করুন');
-        } else if(window.openGridPopup){
-          window.openGridPopup('settings');
-        }
-      }catch(e){
-        if(window.openGridPopup) window.openGridPopup('settings');
-      }
+      if(typeof openSettingsModal === 'function') openSettingsModal();
+      else if(window.openGridPopup) window.openGridPopup('settings');
     };
-  }
-  // P13 J-5: Quick Actions Bangla + hide logic
-  try{
-    const hidden = JSON.parse(localStorage.getItem('quranix_home_hidden')||'[]');
-    if(Array.isArray(hidden) && hidden.length){
-      document.querySelectorAll('.home-quick-btn').forEach(btn=>{
-        const key = btn.textContent.trim().slice(0,20);
-        // Use data key if available
-        if(hidden.includes(key) || hidden.includes(btn.getAttribute('aria-label'))){
-          btn.style.display='none';
-        }
-      });
-    }
-  }catch(e){}
-  // Delegate hide on edit mode
-  if(!window._qxHomeEditDelegated){
-    window._qxHomeEditDelegated = true;
-    document.addEventListener('click', function(e){
-      if(!document.body.classList.contains('qx-home-edit-mode')) return;
-      const btn = e.target.closest('.home-quick-btn');
-      if(!btn) return;
-      e.preventDefault(); e.stopPropagation();
-      const label = btn.getAttribute('aria-label') || btn.textContent.trim().slice(0,30);
-      try{
-        const cur = JSON.parse(localStorage.getItem('quranix_home_hidden')||'[]');
-        cur.push(label);
-        localStorage.setItem('quranix_home_hidden', JSON.stringify(cur));
-      }catch(e){}
-      btn.style.display='none';
-      if(typeof showToast === 'function') showToast('লুকানো হলো — রিসেট করতে হোম কাস্টমাইজ থেকে রিসেট করুন');
-    });
   }
 }
 document.addEventListener('DOMContentLoaded', () => {

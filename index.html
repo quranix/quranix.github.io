@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-QURANIX VERSION: v2.0.36 - P10 CSS cleaned
+QURANIX VERSION: v2.0.39 - P10 CSS cleaned
 QX FILE EDIT RULES
 1. NO OVERRIDE RULE - Do not add duplicate rules that override previous ones. Edit existing rule directly.
 2. NO !important - Never use !important in any CSS.
@@ -691,6 +691,7 @@ nav button.on {
   opacity: .7;
   }
   50% { transform: scale(1.2);
+  }
 }
 
 nav button[data-m="quran"] b {
@@ -2809,31 +2810,6 @@ body.hifz-on #hifzBar {
   display: none;
 }
 
-.ayah .ar.hifz-hide {
-  position: relative;
-  filter: blur(9px);
-  user-select: none;
-  -webkit-user-select: none;
-  cursor: pointer;
-}
-
-.ayah .ar.hifz-hide::after {
-  content: "ট্যাপ করে দেখুন";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%,-50%);
-  filter: none;
-  background: var(--qx-card-bg);
-  border: 1px solid var(--qx-border);
-  color: var(--qx-meta-color);
-  font-size: var(--qx-fs-sm);
-  font-family: var(--qx-font);
-  padding: calc(4px * var(--qx-scale)) calc(10px * var(--qx-scale));
-  border-radius: var(--qx-radius-pill);
-  white-space: nowrap;
-}
-
 .ayah .ar.hifz-hide.revealed {
   filter: none;
 }
@@ -3115,46 +3091,6 @@ body.hifz-on #hifzBar {
   accent-color: var(--qx-main-color);
 }
 
-.trk-head {
-  background: var(--qx-main-color);
-  color: var(--qx-on-main);
-  border-radius: var(--qx-radius-lg);
-  padding: calc(18px * var(--qx-scale)) calc(14px * var(--qx-scale));
-  text-align: center;
-  margin: 8px 0;
-  box-shadow: var(--qx-shadow);
-}
-
-.trk-head .big {
-  font-size: var(--qx-fs-xl);
-  font-weight: 700;
-  margin: 3px 0 5px;
-}
-
-.trk-cat {
-  background: var(--qx-card-bg);
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius-lg);
-  padding: calc(14px * var(--qx-scale));
-  margin: 10px 0;
-  box-shadow: var(--qx-shadow);
-}
-
-.trk-cat h3 {
-  margin: 0 0 4px;
-  font-size: var(--qx-fs-lg);
-  color: var(--qx-main-color);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.trk-cat .sub {
-  font-size: var(--qx-fs-sm);
-  color: var(--qx-meta-color);
-  margin-bottom: 8px;
-}
-
 .trk-row {
   display: flex;
   justify-content: space-between;
@@ -3216,11 +3152,6 @@ body.hifz-on #hifzBar {
 
 .trk-dot.today {
   box-shadow: 0 0 0 2px var(--qx-main-color);
-}
-
-.trk-mini {
-  font-size: var(--qx-fs-xs);
-  color: var(--qx-meta-color);
 }
 
 .asma-grid {
@@ -4217,6 +4148,7 @@ body:not(.inside-page) #title {
   }
   .ww-sheet {
     max-height: 60dvh;
+  }
 }
 
 @keyframes fadeInOut {
@@ -4229,6 +4161,7 @@ body:not(.inside-page) #title {
   }
   100% {
     opacity: 0;
+  }
 }
 
 .controls-trans-wrap {
@@ -4282,18 +4215,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 #app:focus {
   outline: none;
-}
-
-.hijri-info-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10050;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: calc(16px * var(--qx-scale));
-  background: rgba(0,0,0,.62);
-  backdrop-filter: blur(3px);
 }
 
 .hijri-info-overlay.open {
@@ -5466,6 +5387,7 @@ nav::after {
   0% { transform: scale(1);
   } 40% { transform: scale(1.12);
   } 100% { transform: scale(1);
+  }
 }
 
 .qx-tsb-btn.cycle-done {
@@ -5475,6 +5397,7 @@ nav::after {
 @keyframes qxTsbDone {
   0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--qx-main-color) 55%, transparent);
   } 100% { box-shadow: 0 0 0 22px transparent;
+  }
 }
 
 .qx-tsb-opt .ms {
@@ -5540,6 +5463,7 @@ nav::after {
   0% { opacity: 1;
   transform: scale(1.05);
   } 100% { opacity: 0;
+  }
 }
 
 .qx-tsb-arc.empty {
@@ -5548,14 +5472,6 @@ nav::after {
 
 .qx-tsb-opt.danger .ms {
   font-size: calc(20px * var(--qx-scale));
-}
-
-html[data-size="medium"] {
-  --qx-scale: 1.1;
-}
-
-html[data-size="lite"] {
-  --qx-scale: 1.2;
 }
 
 html.in-app #pwaBanner,
@@ -5883,6 +5799,7 @@ nav button b .ms {
   0% { transform: rotateX(0);
   } 50% { transform: rotateX(90deg);
   } 100% { transform: rotateX(0);
+  }
 }
 
 .prayer-next-card .countdown .flip-box b {
@@ -5980,7 +5897,7 @@ nav button, .bottom-nav button {
   cursor: pointer;
 }
 
-.g-quick-toggle .ms {
+.g-quick-toggle .ms, .g-quick-toggle .ms-svg-fill {
   font-size: 20px;
   color: var(--qx-main-color);
 }
@@ -5996,7 +5913,7 @@ nav button, .bottom-nav button {
   border-color: var(--qx-main-color);
 }
 
-.g-quick-toggle.on .ms {
+.g-quick-toggle.on .ms, .g-quick-toggle.on .ms-svg-fill {
   color: #fff;
 }
 
@@ -6020,7 +5937,7 @@ nav button, .bottom-nav button {
   min-height: 52px;
 }
 
-.g-menu-item .ms, .g-quick-btn .ms, .g-quick-toggle .ms {
+.g-menu-item .ms, .g-quick-btn .ms, .g-quick-toggle .ms, .g-quick-toggle .ms-svg-fill {
   color: var(--qx-main-color);
 }
 
@@ -6714,12 +6631,13 @@ html.qx-final-test .qx-debug {
   }
 }
 
-
 /* P13 Home / More menu - separate roles */
+
 body.qx-home-edit-mode .home-quick-btn {
   position: relative;
   outline: 1px dashed var(--qx-main-color);
 }
+
 body.qx-home-edit-mode .home-quick-btn::after {
   content: "×";
   position: absolute;
@@ -6735,6 +6653,7 @@ body.qx-home-edit-mode .home-quick-btn::after {
   place-items: center;
   z-index: 2;
 }
+
 .home-section-title .home-edit-done {
   margin-left: auto;
   padding: 4px 10px;
@@ -6745,54 +6664,88 @@ body.qx-home-edit-mode .home-quick-btn::after {
   font-size: 12px;
   font-weight: 600;
 }
+
 .g-quick-toggle.active-home {
   background: var(--qx-main-color);
   color: #fff;
   border-color: var(--qx-main-color);
 }
+
 .g-quick-toggle.active-dash {
   background: var(--qx-main-soft);
   color: var(--qx-main-color);
   border-color: var(--qx-main-color);
 }
 
-
 /* P14 A - Light mode blur color fix */
+
 .hijri-info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: calc(16px * var(--qx-scale));
   background: rgba(0,0,0,.32);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
+
 html[data-theme="dark"] .hijri-info-overlay {
   background: rgba(0,0,0,.62);
 }
+
 .ayah .ar.hifz-hide {
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
   filter: blur(9px);
   background: var(--qx-card-bg);
 }
+
 .ayah .ar.hifz-hide::after {
+  content: "ট্যাপ করে দেখুন";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  filter: none;
+  color: var(--qx-meta-color);
+  font-size: var(--qx-fs-sm);
+  font-family: var(--qx-font);
+  padding: calc(4px * var(--qx-scale)) calc(10px * var(--qx-scale));
+  border-radius: var(--qx-radius-pill);
+  white-space: nowrap;
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   box-shadow: 0 4px 12px rgba(0,0,0,.12);
   backdrop-filter: blur(2px);
 }
+
 html[data-theme="dark"] .ayah .ar.hifz-hide::after {
   box-shadow: 0 4px 12px rgba(0,0,0,.32);
 }
 
 /* P14 B - LITE size fix */
+
 html[data-size="small"] {
   --qx-scale: 1;
 }
+
 html[data-size="medium"] {
   --qx-scale: 1.12;
 }
+
 html[data-size="lite"] {
   --qx-scale: 1.25;
 }
+
 html[data-size="lite"] .ayah .ar {
   line-height: 2.4;
 }
+
 html[data-size="lite"] .g-menu-item,
 html[data-size="lite"] .g-quick-btn,
 html[data-size="lite"] .home-quick-btn,
@@ -6801,7 +6754,10 @@ html[data-size="lite"] .home-tile {
 }
 
 /* P14 J-11 - Tracker design */
+
 .trk-head {
+  text-align: center;
+  box-shadow: var(--qx-shadow);
   padding: 16px 14px;
   margin: 0 0 12px;
   border-radius: 16px;
@@ -6809,15 +6765,18 @@ html[data-size="lite"] .home-tile {
   color: var(--qx-on-main);
   border: 1px solid var(--qx-border);
 }
+
 .trk-head small {
   opacity: .85;
   font-size: var(--qx-fs-xs);
 }
+
 .trk-head .big {
   font-size: var(--qx-fs-xl);
   font-weight: 800;
   margin: 4px 0;
 }
+
 .trk-cat {
   margin: 0 0 14px;
   padding: 14px;
@@ -6826,20 +6785,28 @@ html[data-size="lite"] .home-tile {
   background: var(--qx-card-bg);
   box-shadow: 0 1px 6px rgba(0,0,0,.04);
 }
+
 .trk-cat h3 {
+  color: var(--qx-main-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0 0 4px;
   font-size: var(--qx-fs-md);
   font-weight: 700;
 }
+
 .trk-cat .sub {
   color: var(--qx-meta-color);
   font-size: var(--qx-fs-xs);
   margin-bottom: 8px;
 }
+
 .trk-mini {
   color: var(--qx-meta-color);
   font-size: var(--qx-fs-xs);
 }
+
 html[data-theme="dark"] .trk-cat {
   box-shadow: 0 1px 8px rgba(0,0,0,.2);
 }
@@ -6851,8 +6818,8 @@ html[data-theme="dark"] .trk-cat {
 <header>
   <div class="bar">
     <button id="widthToggle" class="header-btn" aria-label="পড়ার প্রস্থ পরিবর্তন করুন" title="পড়ার প্রস্থ: সংকীর্ণ / পূর্ণ" aria-pressed="false"><svg class="ms-svg-fill wt-wide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4,20q-0.82,0-1.41-0.59T2,18V6Q2,5.18 2.59,4.59T4,4H20q0.83,0 1.41,0.59Q22,5.18 22,6V18q0,0.82-0.59,1.41T20,20H4ZM20,6H4V18H20V6ZM4,6V18V6Zm5,9V9L6,12l3,3Zm9-3L15,9v6l3-3Z"/></svg><span class="ms wt-narrow" aria-hidden="true">fullscreen_exit</span></button>
-    <button id="back" class="back-btn-hidden" type="button" aria-label="পেছনে যান"><span class="ms" aria-hidden="true">arrow_back</span></button>
-    <img class="app-logo" src="icons/icon-192x192.png" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:var(--qx-radius)" role="button" tabindex="0" title="Home">
+    <button id="back" class="back-btn-hidden" type="button" aria-label="পেছনে যান"><span class="ms" aria-hidden="true">chevron_left</span></button>
+    <img class="app-logo" src="icons/icon-192.png" onerror="this.onerror=null;this.src='icons/icon-192x192.png'" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:var(--qx-radius)" role="button" tabindex="0" title="Home">
     <h1 id="title">Quranix</h1>
     <div class="header-tools">
       <button id="headerSearchBtn" class="header-btn" type="button" aria-label="সার্চ খুলুন" title="সার্চ"><span class="ms" aria-hidden="true">search</span></button>
@@ -6865,14 +6832,14 @@ html[data-theme="dark"] .trk-cat {
         <div class="g-quick-bar">
           <button class="g-quick-toggle" id="gQuickGridList" type="button" aria-label="গ্রিড / লিস্ট দেখুন"><span class="ms">grid_view</span><span>গ্রিড / লিস্ট</span></button>
           <button class="g-quick-toggle" id="gHomeCustomize" type="button" aria-label="হোম কাস্টমাইজ"><span class="ms">edit</span><span>হোম কাস্টমাইজ</span></button>
-          <button class="g-quick-toggle" id="gDashboardEdit" type="button" aria-label="ড্যাশবোর্ড এডিট"><span class="ms">dashboard_customize</span><span>ড্যাশবোর্ড এডিট</span></button>
+          <button class="g-quick-toggle" id="gDashboardEdit" type="button" aria-label="ড্যাশবোর্ড এডিট"><svg class="ms-svg-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M11,11V4H22v7H11ZM2,20V13H12v7H2Zm0-9V4H9v7H2ZM13,9h7V6H13V9ZM4,18h6V15H4v3ZM4,9H7V6H4V9Zm9,0Zm-3,6ZM7,9Zm7,13V18.93l5.53-5.5q0.22-0.22 0.5-0.32T20.58,13q0.3,0 0.57,0.11q0.27,0.11 0.5,0.34l0.93,0.93q0.22,0.22 0.32,0.5T23,15.43t-0.1,0.56T22.58,16.5L17.08,22H14Zm7.5-6.58L20.58,14.5l0.92,0.92Zm-6,5.08h0.95l3.03-3.05l-0.45-0.47l-0.48-0.45L15.5,19.55V20.5Zm3.53-3.52l-0.48-0.45l0.93,0.93l-0.45-0.47Z"/></svg><span>ড্যাশবোর্ড এডিট</span></button>
         </div>
-        <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
-        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
-        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span>উৎস ও তথ্যসূত্র</span><small><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
-        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span>ব্যাকআপ ও রিস্টোর</span><small><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
-        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span>Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন <span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
-        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>কাস্টমাইজেশন</span><small><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
+        <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span>উৎস ও তথ্যসূত্র</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span>ব্যাকআপ ও রিস্টোর</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span>Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন <span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>কাস্টমাইজেশন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
       </div>
     </div>
   </div>
