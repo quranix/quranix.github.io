@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-QURANIX VERSION: v2.0.42 - grid customization collapsible
+QURANIX VERSION: v2.0.43 - gesture rows with icons
 QX FILE EDIT RULES
 1. NO OVERRIDE RULE - Do not add duplicate rules that override previous ones. Edit existing rule directly.
 2. NO !important - Never use !important in any CSS.
@@ -625,8 +625,8 @@ nav {
   justify-content: center;
   padding-left: 0;
   padding-right: 0;
-  --qx-notch-r: 29px;
-  --qx-notch-cy: 4px;
+  --qx-notch-r: calc(12px * var(--qx-scale) + 12px);
+  --qx-notch-cy: calc(12px * var(--qx-scale) - 6px);
   border: 0;
   box-shadow: none;
 }
@@ -703,7 +703,7 @@ nav button[data-m="quran"] b {
 nav button[data-m="quran"] b::before {
   content: "";
   position: absolute;
-  inset: -9px;
+  inset: -7px;
   border-radius: 50%;
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
@@ -725,7 +725,7 @@ nav button[data-m="quran"] span {
 }
 
 body .audio-bar.with-nav {
-  bottom: calc(66px + env(safe-area-inset-bottom));
+  bottom: calc(66px * var(--qx-scale) + env(safe-area-inset-bottom));
 }
 
 .qx-search {
@@ -1285,7 +1285,6 @@ body.qx-modal-open {
 }
 
 .audio-bar.with-nav {
-  bottom: calc(58px + env(safe-area-inset-bottom));
   padding-bottom: 10px;
 }
 
@@ -1383,6 +1382,10 @@ body.qx-modal-open {
   font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   min-height: 12px;
+}
+
+.audio-status:empty {
+  display: none;
 }
 
 .audio-ctrls button:focus-visible,.audio-progress input:focus-visible {
@@ -1812,7 +1815,8 @@ summary.set-title:focus-visible {
   border-radius: var(--qx-radius);
 }
 
-.set-title .ms {
+.set-title .ms,
+.set-ico {
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -1823,6 +1827,10 @@ summary.set-title:focus-visible {
   color: var(--qx-main-color);
   font-size: calc(22px * var(--qx-scale));
   vertical-align: baseline;
+}
+
+.set-ico .ms {
+  font-size: 1em;
 }
 
 .set-sec > :not(.set-title) ~ * {
@@ -3135,6 +3143,10 @@ body.hifz-on #hifzBar {
 
 .trk-row:last-child {
   border-bottom: 0;
+}
+
+.trk-row b .ms {
+  margin-inline-end: calc(6px * var(--qx-scale));
 }
 
 .trk-tick {
@@ -5602,9 +5614,13 @@ html.in-app .install-menu-item.show {
 
 .audio-float {
   position: fixed;
-  bottom: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
   right: 16px;
   z-index: 998;
+}
+
+.audio-float.with-nav {
+  bottom: calc(66px * var(--qx-scale) + 12px + env(safe-area-inset-bottom));
 }
 
 .audio-float button {
@@ -7421,7 +7437,7 @@ html[data-size="lite"] .home-tile {
   padding: 16px 14px;
   margin: 0 0 12px;
   border-radius: 16px;
-  background: linear-gradient(135deg, var(--qx-main-color), var(--qx-main-soft));
+  background: var(--qx-main-color);
   color: var(--qx-on-main);
   border: 1px solid var(--qx-border);
 }
