@@ -1854,14 +1854,14 @@ summary.set-title:focus-visible {
   display: flex;
   align-items: center;
   gap: 14px;
-  min-height: 68px;
-  padding: 12px 16px;
-  margin: 0 16px 10px;
+  min-height: 52px;
+  padding: 10px 16px;
+  margin: 0 16px 8px;
   border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  font-size: 16px;
-  color: #000;
+  background: var(--qx-card-bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  font-size: 15px;
+  color: var(--qx-text-color);
   cursor: pointer;
   border: 0;
   transition: transform .12s, box-shadow .15s;
@@ -1971,8 +1971,8 @@ label.set-row {
   appearance: none;
   position: relative;
   flex-shrink: 0;
-  width: 50px;
-  height: 31px;
+  width: 42px;
+  height: 26px;
   margin: 0 0 0 auto;
   border: 0;
   border-radius: 999px;
@@ -1986,8 +1986,8 @@ label.set-row {
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 27px;
-  height: 27px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,.25);
@@ -2000,7 +2000,7 @@ label.set-row {
 }
 
 .set-switch:checked::after {
-  transform: translateX(19px);
+  transform: translateX(16px);
 }
 
 .set-switch:focus-visible {
@@ -7036,7 +7036,7 @@ html[data-reduced-motion] .qx-fd.flip b {
   max-width:520px;
   max-height:85vh;
   overflow:auto;
-  background:#f2f2f7;
+  background:var(--qx-tile-bg);
   border-radius:16px 16px 0 0;
   padding:12px 0 calc(20px + env(safe-area-inset-bottom));
   box-shadow:0 -4px 24px rgba(0,0,0,.15);
@@ -7094,7 +7094,7 @@ html[data-reduced-motion] .qx-fd.flip b {
   margin:0 16px;
   padding:0;
   border-radius:12px;
-  background:#fff;
+  background:var(--qx-card-bg);
   box-shadow:0 1px 3px rgba(0,0,0,.08);
   overflow:hidden;
 }
@@ -7160,7 +7160,7 @@ html[data-reduced-motion] .qx-fd.flip b {
   width:32px;
   height:32px;
   border-radius:8px;
-  background:#f2f2f7;
+  background:var(--qx-tile-bg);
   color:#0F766E;
   font-size:20px;
 }
@@ -7169,7 +7169,7 @@ html[data-reduced-motion] .qx-fd.flip b {
   min-width:0;
   font-size:16px;
   font-weight:400;
-  color:#000;
+  color:var(--qx-text-color);
   line-height:1.3;
 }
 .qx-de-rm{
@@ -7216,7 +7216,7 @@ html[data-reduced-motion] .qx-fd.flip b {
 .qx-de-addcard .qx-de-ic{
   width:32px;
   height:32px;
-  background:#f2f2f7;
+  background:var(--qx-tile-bg);
 }
 .qx-de-addcard .qx-de-name{
   font-size:15px;
@@ -7237,8 +7237,8 @@ html[data-reduced-motion] .qx-fd.flip b {
   padding:20px 16px;
   text-align:center;
   font-size:14px;
-  color:#8e8e93;
-  background:#fff;
+  color:var(--qx-meta-color);
+  background:var(--qx-card-bg);
 }
 .qx-de-box .ac-row{
   margin:20px 16px 0;
@@ -7265,8 +7265,8 @@ html[data-reduced-motion] .qx-fd.flip b {
 }
 .qx-ios-card{
   margin:0 16px;
-  border-radius:12px;
-  background:#fff;
+  border-radius:14px;
+  background:var(--qx-card-bg);
   box-shadow:0 1px 3px rgba(0,0,0,.08);
   overflow:hidden;
 }
@@ -7276,8 +7276,8 @@ html[data-reduced-motion] .qx-fd.flip b {
   justify-content:space-between;
   min-height:52px;
   padding:0 16px;
-  border-bottom:1px solid rgba(0,0,0,.06);
-  background:#fff;
+  border-bottom:1px solid var(--qx-border);
+  background:transparent;
 }
 .qx-ios-row:last-child{
   border-bottom:none;
@@ -7285,7 +7285,7 @@ html[data-reduced-motion] .qx-fd.flip b {
 .qx-ios-row b{
   font-size:16px;
   font-weight:400;
-  color:#000;
+  color:var(--qx-text-color);
 }
 .qx-ios-ctrl{
   display:flex;
@@ -7324,10 +7324,10 @@ html[data-reduced-motion] .qx-fd.flip b {
   align-items:center;
   gap:6px;
   font-size:16px;
-  color:#000;
+  color:var(--qx-text-color);
 }
 .qx-ios-link small{
-  color:#000;
+  color:var(--qx-text-color);
 }
 .qx-ios-chev{
   color:#0F766E;
@@ -7712,13 +7712,13 @@ html[data-theme="dark"] .trk-cat {
 }
 
 /* P final fixes: divider very light, gesture icon 28px fixed, small iOS toggle 50x31 teal */
-.g-menu-item + .g-menu-item{border-top:1px solid rgba(0,0,0,0.06);}
+.g-menu-item + .g-menu-item{border-top:1px solid var(--qx-border);}
 .qx-gesture-icon, .g-quick-btn .ms{width:28px !important;height:28px !important;flex:0 0 28px !important;font-size:28px !important;line-height:28px !important;}
-.qx-ios-card{background:#fff;border-radius:14px;border:1px solid var(--qx-border);padding:12px;}
-.qx-ios-toggle{width:50px;height:31px;background:#CCFBF1;border-radius:999px;position:relative;transition:.2s;}
+.qx-ios-card{background:var(--qx-card-bg);border-radius:14px;border:1px solid var(--qx-border);padding:12px;}
+.qx-ios-toggle{width:42px;height:26px;background:#CCFBF1;border-radius:999px;position:relative;transition:.2s;}
 .qx-ios-toggle.on{background:#0F766E;}
-.qx-ios-toggle i{width:27px;height:27px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-.qx-ios-toggle.on i{transform:translateX(19px);}
+.qx-ios-toggle i{width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.qx-ios-toggle.on i{transform:translateX(16px);}
 .qx-g-card{padding-left:16px;padding-right:16px;}
 
 </style>
