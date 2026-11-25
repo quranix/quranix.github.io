@@ -1298,8 +1298,9 @@ function renderPrayer(){
   const cd = qxFlipBuild();
   if (nx.at) qxFlipSet(cd, (Math.floor(nx.at.getTime() / 1000) - Math.floor(now.getTime() / 1000)) * 1000, true); else cd.style.display = "none";
   hero.appendChild(cd);
-  const chip = mk("div", "hero-date hero-date-ic"); chip.title = ds; chip.setAttribute("aria-label", ds);
-  chip.innerHTML = '<span class="ms" aria-hidden="true">calendar_month</span>';
+  const chip = mk("div", "hero-date hero-date-ic qx-cal-transparent"); chip.title = ds; chip.setAttribute("aria-label", ds);
+  const _todayNum = (function(){ try{ return new Date().getDate(); }catch(e){ return ""; } })();
+  chip.innerHTML = '<span class="qx-cal-wrap"><span class="ms" aria-hidden="true">calendar_month</span><small class="qx-cal-date">' + _todayNum + '</small></span>';
   hero.appendChild(chip);
   const snd = mk("button", "hero-snd" + (qxTickOn ? "" : " off")); snd.type = "button";
   snd.innerHTML = '<span class="ms" aria-hidden="true">volume_up</span>';
@@ -1947,11 +1948,11 @@ function qxSetIco(name){
   return el;
 }
 const QX_GESTURES = [
-  { id: "swipe",    icon: "swap_horiz", label: "সোয়াইপ বাঁ/ডান",   hint: "কুরআন পড়ার সময় পরের বা আগের সূরা (পারা হলে পারা), অন্য পেজে নিচের ট্যাব বদল" },
-  { id: "dbl",      icon: "ads_click",  label: "ডাবল ট্যাপ",        hint: "আয়াতে দুবার ট্যাপ করলে সংরক্ষণ (বুকমার্ক) হবে" },
-  { id: "long",     icon: "touch_long", label: "লং প্রেস",           hint: "আয়াত চেপে ধরলে ⋯ মেনু খুলবে" },
-  { id: "ptr",      icon: "refresh",    label: "টেনে রিফ্রেশ",       hint: "পেজের উপরে গিয়ে নিচে টেনে ছাড়লে নামাজের সময় বা বর্তমান পেজ রিফ্রেশ হবে" },
-  { id: "homeEdit", icon: "home",       label: "হোমে লং প্রেস",      hint: "হোম ও আরও পেজে চেপে ধরলে ড্যাশবোর্ড সাজান খুলবে" }
+  { id: "swipe",    icon: "swap_horiz", label: "সোয়াইপ বাঁ/ডান",   hint: "পৃষ্ঠা বা স্ক্রিন বাঁ-ডানে সোয়াইপ করে নেভিগেট করুন" },
+  { id: "dbl",      icon: "ads_click",  label: "ডাবল ট্যাপ",        hint: "ডাবল ট্যাপ করে দ্রুত কাজ সম্পন্ন করুন" },
+  { id: "long",     icon: "touch_long", label: "লং প্রেস",           hint: "দীর্ঘক্ষণ চেপে ধরে অতিরিক্ত অপশন দেখুন" },
+  { id: "ptr",      icon: "refresh",    label: "টেনে রিফ্রেশ",       hint: "স্ক্রিন নিচে টেনে রিফ্রেশ করুন" },
+  { id: "homeEdit", icon: "home",       label: "হোমে লং প্রেস",      hint: "হোম বাটন লং প্রেস করে দ্রুত অ্যাকশন চালু করুন" }
 ];
 function qxGestureCfg(){
   try{ return JSON.parse(localStorage.getItem("qxGestures") || "{}") || {}; }catch(e){ return {}; }
@@ -2661,7 +2662,7 @@ function openSettingsModal() {
   });
   const motionRow = mk("label", "set-row");
   const motionLab = mk("span", "set-label", "অ্যানিমেশন কম");
-  motionLab.appendChild(mk("small", "qx-g-hint", "পেজ ও কার্ডের নড়াচড়া কমিয়ে দেবে"));
+  motionLab.appendChild(mk("small", "qx-g-hint", "অ্যানিমেশন কমিয়ে কর্মক্ষমতা ও ব্যাটারি সাশ্রয় করুন"));
   motionRow.appendChild(qxSetIco("animation"));
   motionRow.appendChild(motionLab);
   const motionToggle = document.createElement("input");
@@ -3026,25 +3027,58 @@ setInterval(checkPrayerAlerts, 5000);
   }
   // ---- FONT ----
   function getFs(){ try{ return parseInt(localStorage.getItem('fs'))||30; }catch(e){ return 30; } }
+    function getFs(){ try{ return parseInt(localStorage.getItem('fs'))||30; }catch(e){ return 30; } }
   function renderFontPopup(){
     var arFs=getFs(); var bnFs=(typeof appPrefs!=='undefined'&&appPrefs.bnFs)?appPrefs.bnFs:16;
-    var arOpts='', bnOpts='';
-    if(typeof AR_FONTS!=='undefined') AR_FONTS.forEach(function(f){ arOpts+='<option value="'+f[0].replace(/"/g,'&quot;')+'" '+(typeof appPrefs!=='undefined'&&appPrefs.arFont===f[0]?'selected':'')+'>'+f[1]+'</option>'; });
-    if(typeof BN_FONTS!=='undefined') BN_FONTS.forEach(function(f){ bnOpts+='<option value="'+f[0].replace(/"/g,'&quot;')+'" '+(typeof appPrefs!=='undefined'&&appPrefs.bnFont===f[0]?'selected':'')+'>'+f[1]+'</option>'; });
-    box.innerHTML=head('{{text_fields}} ফন্ট কাস্টমাইজ') +
-      '<div class="pp-mini">বাংলা ফন্ট পরিবর্তন</div><select class="pp-input" id="ppBnFont">'+bnOpts+'</select>' +
-      '<div class="frow"><span>বাংলা ফন্টের সাইজ (<b>'+bnFs+'px</b>)</span><span class="fsz"><button id="ppBnMinus" title="ছোট"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><button id="ppBnReset" title="রিসেট"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg></button><button id="ppBnPlus" title="বড়"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button></span></div>' +
-      '<div class="pp-mini">আরবি ফন্ট পরিবর্তন</div><select class="pp-input" id="ppArFont">'+arOpts+'</select>' +
-      '<div class="frow"><span>আরবি ফন্টের সাইজ (<b>'+arFs+'px</b>)</span><span class="fsz"><button id="ppArMinus" title="ছোট"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><button id="ppArReset" title="রিসেট"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg></button><button id="ppArPlus" title="বড়"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button></span></div>';
-    document.getElementById('ppArReset').onclick=function(){ localStorage.setItem('fs','30'); document.documentElement.style.setProperty('--qx-fs-ar','30px'); renderFontPopup(); };
-    document.getElementById('ppBnReset').onclick=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFs=16; if(typeof lsSet==='function') lsSet('appPrefs',appPrefs); if(typeof applyAppPrefs==='function') applyAppPrefs(); renderFontPopup(); };
+    var uiPct=(appPrefs.uiSize==='lite'?125:(appPrefs.uiSize==='medium'?112:100));
+    var curArName=(function(){ try{ var f=AR_FONTS.find(function(x){return x[0]===appPrefs.arFont;}); return f?f[1]:'Amiri Quran'; }catch(e){ return 'Amiri Quran'; } })();
+    var curBnName=(function(){ try{ var f=BN_FONTS.find(function(x){return x[0]===appPrefs.bnFont;}); return f?f[1]:'Hind Siliguri'; }catch(e){ return 'Hind Siliguri'; } })();
+    box.innerHTML=head('{{text_fields}} ফন্ট সেটিংস') +
+      '<div class="qx-ios-sec">SIZE</div>' +
+      '<div class="qx-ios-card">' +
+        '<div class="qx-ios-row"><b>App Size</b><div class="qx-ios-ctrl"><button class="qx-ios-btn" id="ppAppMinus">−</button><span>'+uiPct+'%</span><button class="qx-ios-btn" id="ppAppPlus">+</button></div></div>' +
+        '<div class="qx-ios-row"><b>Arabic Size</b><div class="qx-ios-ctrl"><span>'+arFs+'px</span><button class="qx-ios-btn" id="ppArMinus">A-</button><button class="qx-ios-btn" id="ppArPlus">A+</button></div></div>' +
+        '<div class="qx-ios-row"><b>Bengali Size</b><div class="qx-ios-ctrl"><span>'+bnFs+'px</span><button class="qx-ios-btn" id="ppBnMinus">অ-</button><button class="qx-ios-btn" id="ppBnPlus">অ+</button></div></div>' +
+      '</div>' +
+      '<div class="qx-ios-sec">FONT</div>' +
+      '<div class="qx-ios-card">' +
+        '<button class="qx-ios-row" id="ppArFontRow" style="width:100%;border:0;text-align:left;cursor:pointer"><b>Arabic Font</b><span class="qx-ios-link"><small>'+curArName+'</small><span class="ms qx-ios-chev">chevron_right</span></span></button>' +
+        '<button class="qx-ios-row" id="ppBnFontRow" style="width:100%;border:0;text-align:left;cursor:pointer"><b>Bengali Font</b><span class="qx-ios-link"><small>'+curBnName+'</small><span class="ms qx-ios-chev">chevron_right</span></span></button>' +
+      '</div>';
+    document.getElementById('ppAppMinus').onclick=function(){
+      var order=['small','medium','lite']; var idx=order.indexOf(appPrefs.uiSize||'small'); if(idx>0){ appPrefs.uiSize=order[idx-1]; lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); }
+    };
+    document.getElementById('ppAppPlus').onclick=function(){
+      var order=['small','medium','lite']; var idx=order.indexOf(appPrefs.uiSize||'small'); if(idx<order.length-1){ appPrefs.uiSize=order[idx+1]; lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); }
+    };
     document.getElementById('ppArMinus').onclick=function(){ var v=Math.max(20,getFs()-2); localStorage.setItem('fs', String(v)); document.documentElement.style.setProperty('--qx-fs-ar', v+'px'); renderFontPopup(); };
     document.getElementById('ppArPlus').onclick=function(){ var v=Math.min(48,getFs()+2); localStorage.setItem('fs', String(v)); document.documentElement.style.setProperty('--qx-fs-ar', v+'px'); renderFontPopup(); };
-    document.getElementById('ppBnMinus').onclick=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFs=Math.max(13,(appPrefs.bnFs||16)-1); if(typeof lsSet==='function') lsSet('appPrefs',appPrefs); if(typeof applyAppPrefs==='function') applyAppPrefs(); renderFontPopup(); };
-    document.getElementById('ppBnPlus').onclick=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFs=Math.min(24,(appPrefs.bnFs||16)+1); if(typeof lsSet==='function') lsSet('appPrefs',appPrefs); if(typeof applyAppPrefs==='function') applyAppPrefs(); renderFontPopup(); };
-    document.getElementById('ppArFont').onchange=function(){ if(typeof appPrefs==='undefined') return; appPrefs.arFont=this.value; if(typeof lsSet==='function') lsSet('appPrefs',appPrefs); if(typeof applyAppPrefs==='function') applyAppPrefs(); };
-    document.getElementById('ppBnFont').onchange=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFont=this.value; if(typeof lsSet==='function') lsSet('appPrefs',appPrefs); if(typeof applyAppPrefs==='function') applyAppPrefs(); };
+    document.getElementById('ppBnMinus').onclick=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFs=Math.max(13,(appPrefs.bnFs||16)-1); lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); };
+    document.getElementById('ppBnPlus').onclick=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFs=Math.min(24,(appPrefs.bnFs||16)+1); lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); };
+    document.getElementById('ppArFontRow').onclick=function(){ renderFontListPopup('ar'); };
+    document.getElementById('ppBnFontRow').onclick=function(){ renderFontListPopup('bn'); };
   }
+  function renderFontListPopup(kind){
+    var list=(kind==='ar'?AR_FONTS:BN_FONTS); var cur=(kind==='ar'?appPrefs.arFont:appPrefs.bnFont);
+    var title=(kind==='ar'?'Arabic Font':'Bengali Font');
+    var html=head('{{font_download}} '+title) + '<div class="qx-ios-card">';
+    list.forEach(function(f){
+      var on=(f[0]===cur);
+      html+='<button class="qx-ios-row" data-v="'+f[0].replace(/"/g,'&quot;')+'" style="width:100%;border:0;text-align:left;cursor:pointer;'+(on?'background:#f0fdfa':'')+'"><b>'+f[1]+'</b><span class="qx-ios-link">'+(on?'<span class="ms" style="color:#0F766E">check</span>':'')+'<span class="ms qx-ios-chev">chevron_right</span></span></button>';
+    });
+    html+='</div><div style="height:12px"></div><button class="pp-btn" id="ppFontBack" style="background:#fff;color:#000;border:1px solid var(--qx-border)">পেছনে</button>';
+    box.innerHTML=html;
+    box.querySelectorAll('.qx-ios-row[data-v]').forEach(function(btn){
+      btn.onclick=function(){
+        var v=this.getAttribute('data-v');
+        if(kind==='ar') appPrefs.arFont=v; else appPrefs.bnFont=v;
+        lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup();
+      };
+    });
+    document.getElementById('ppFontBack').onclick=function(){ renderFontPopup(); };
+  }
+
+  // ---- BACKUP / SOURCE ----
   // ---- BACKUP / SOURCE ----
   function renderBackupPopup(){
     box.innerHTML=head('{{save}} ব্যাকআপ ও রিস্টোর') + '<button class="pp-btn" id="ppExport">{{share}} ব্যাকআপ ডাউনলোড</button><div style="height:8px"></div><button class="pp-btn" id="ppImport" style="background:var(--qx-card-bg);color:var(--qx-text-color);border:1px solid var(--qx-border)">{{download}} ব্যাকআপ রিস্টোর</button><input type="file" id="ppFile" accept=".json,application/json" style="display:none">';
