@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-QURANIX VERSION: v46
+QURANIX VERSION: v2.0.36 - P10 CSS cleaned
 QX FILE EDIT RULES
 1. NO OVERRIDE RULE - Do not add duplicate rules that override previous ones. Edit existing rule directly.
 2. NO !important - Never use !important in any CSS.
@@ -52,58 +52,103 @@ ABOUT THIS FILE
 <link rel="icon" href="icons/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
-
-
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:300;font-display:swap;src:url(fonts/hind-siliguri-300.woff) format("woff")
+  font-family: "Hind Siliguri";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(fonts/hind-siliguri-300.woff) format("woff");
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/hind-siliguri-400.woff) format("woff")
+  font-family: "Hind Siliguri";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/hind-siliguri-400.woff) format("woff");
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/hind-siliguri-500.woff) format("woff")
+  font-family: "Hind Siliguri";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/hind-siliguri-500.woff) format("woff");
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/hind-siliguri-600.woff) format("woff")
+  font-family: "Hind Siliguri";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/hind-siliguri-600.woff) format("woff");
 }
 
 @font-face {
-  font-family:"Hind Siliguri";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/hind-siliguri-700.woff) format("woff")
+  font-family: "Hind Siliguri";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/hind-siliguri-700.woff) format("woff");
 }
 
 @font-face {
-  font-family:"Noto Naskh Arabic";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/noto-naskh-arabic.woff) format("woff")
+  font-family: "Noto Naskh Arabic";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(fonts/noto-naskh-arabic.woff) format("woff");
 }
 
 @font-face {
-  font-family:"Amiri Quran";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/amiri-quran.woff2) format("woff2")
+  font-family: "Amiri Quran";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/amiri-quran.woff2) format("woff2");
 }
 
 @font-face {
-  font-family:"Noto Serif Bengali";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/noto-serif-bengali-400.woff2) format("woff2")
+  font-family: "Noto Serif Bengali";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/noto-serif-bengali-400.woff2) format("woff2");
 }
 
 @font-face {
-  font-family:"Noto Serif Bengali";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/noto-serif-bengali-700.woff2) format("woff2")
+  font-family: "Noto Serif Bengali";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/noto-serif-bengali-700.woff2) format("woff2");
 }
 
 @font-face {
-  font-family:"Kalpurush";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/kalpurush.woff2) format("woff2")
+  font-family: "Kalpurush";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/kalpurush.woff2) format("woff2");
 }
 
 @font-face {
-  font-family:'MSLocal';font-style:normal;font-weight:200;font-display:block;src:url(fonts/material-symbols-rounded.woff2) format('woff2')
+  font-family: 'MSLocal';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url(fonts/material-symbols-rounded.woff2) format('woff2');
 }
 
 @font-face {
-  font-family:'QXIslamic';font-style:normal;font-weight:400;font-display:block;src:url(fonts/islamic-icons.ttf) format('truetype')
+  font-family: 'QXIslamic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url(fonts/islamic-icons.ttf) format('truetype');
 }
 
 :root {
-  /* palette (raw colours) */
   --qx-c-white: #ffffff;
   --qx-c-offwhite: #f5f5f5;
   --qx-c-ink: #2b2b2b;
@@ -122,22 +167,20 @@ ABOUT THIS FILE
   --qx-c-night-raise: #273449;
   --qx-c-night-border: #4a5a6a;
   --qx-c-night-muted: #a7b0be;
-
-  /* roles (light) */
   --qx-bg: var(--qx-c-white);
   --qx-outer-bg: var(--qx-c-offwhite);
   --qx-card-bg: var(--qx-c-offwhite);
   --qx-text-color: var(--qx-c-ink);
   --qx-meta-color: var(--qx-c-meta);
   --qx-main-color: var(--qx-c-teal);
-  --qx-main-soft: rgba(15,118,110,.06);
+  --qx-main-soft: color-mix(in srgb, var(--qx-main-color) 12%, transparent);
   --qx-on-main: var(--qx-c-white);
   --qx-on-teal: #fff;
   --qx-knob: #fff;
   --qx-badge-bg: #e6e8ea;
   --qx-border: var(--qx-c-gray);
   --qx-tile-bg: var(--qx-c-offwhite);
-  --qx-hover: var(--qx-c-mist);
+  --qx-hover: color-mix(in srgb, var(--qx-main-color) 8%, transparent);
   --qx-shadow: 0 2px 10px rgba(0,0,0,0.05);
   --qx-highlight: #dfe3e8;
   --qx-danger: #d32f2f;
@@ -150,8 +193,6 @@ ABOUT THIS FILE
   --qx-tj-iqlab: #db2777;
   --qx-tj-madd: var(--qx-danger);
   --qx-tj-lam: #0891b2;
-
-  /* size, font, layout */
   --qx-scale: 1;
   --qx-tag-bg: #eceeef;
   --qx-tag-text: #4b5563;
@@ -181,6 +222,9 @@ ABOUT THIS FILE
   --qx-z-modal: 100;
   --qx-z-toast: 10100;
   --qx-z-dropdown: 90;
+  --qx-btn-h: 44px;
+  --qx-btn-h-sm: 36px;
+  --qx-icon-size: 22px;
 }
 
 [data-theme="dark"] {
@@ -449,7 +493,6 @@ main {
   padding-bottom: 7px;
 }
 
-/* আয়াত নম্বরকে নরম অ্যাকসেন্ট ব্যাকগ্রাউন্ডের গোল ব্যাজ */
 .ayah .no > .ayah-number {
   display: inline-flex;
   align-items: center;
@@ -463,7 +506,6 @@ main {
   white-space: nowrap;
 }
 
-/* অ্যাকশন আইকনগুলোতে আলাদা টাইল ব্যাকগ্রাউন্ড থাকবে না */
 .ayah-actions > .icon-btn,
 .ayah-actions > .star {
   background: transparent;
@@ -573,7 +615,9 @@ nav {
   right: 0;
   bottom: 0;
   display: flex;
-  background: var(--qx-card-bg);
+  gap: 0;
+  justify-content: space-around;
+  background: none;
   border-top: 1px solid var(--qx-border);
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 6;
@@ -581,6 +625,10 @@ nav {
   justify-content: center;
   padding-left: 0;
   padding-right: 0;
+  --qx-notch-r: 29px;
+  --qx-notch-cy: 4px;
+  border: 0;
+  box-shadow: none;
 }
 
 nav button {
@@ -594,8 +642,8 @@ nav button {
   align-items: center;
   justify-content: flex-start;
   gap: 4px;
-  padding: calc(8px * var(--qx-scale)) 2px calc(8px * var(--qx-scale));
-  min-height: calc(52px * var(--qx-scale));
+  padding: 6px 2px;
+  min-height: 52px;
   font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
   text-align: center;
@@ -639,14 +687,16 @@ nav button.on {
 }
 
 @keyframes qxMorePulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: .7; }
+  0%, 100% { transform: scale(1);
+  opacity: .7;
+  }
+  50% { transform: scale(1.2);
 }
 
-/* কুরআন বাটন: ফুটারের মাঝখানে, সামান্য উপরে ওঠা গোল বাটন */
 nav button[data-m="quran"] b {
   position: relative;
   transform: translateY(-12px);
+  margin-bottom: -8px;
 }
 
 nav button[data-m="quran"] b::before {
@@ -669,18 +719,14 @@ nav button[data-m="quran"].on b::before {
   border-color: var(--qx-main-color);
 }
 
+nav button[data-m="quran"] span {
+  margin-top: -4px;
+}
+
 body .audio-bar.with-nav {
   bottom: calc(66px + env(safe-area-inset-bottom));
 }
 
-@media (max-height:480px) and (orientation:landscape) {
-  nav button[data-m="quran"] b { transform: none; }
-  nav button[data-m="quran"] b::before { display: none; }
-  nav button[data-m="quran"].on b { color: var(--qx-main-color); }
-  body .audio-bar.with-nav { bottom: calc(36px + env(safe-area-inset-bottom)); }
-}
-
-/* সার্চ বার (বিষয়ভিত্তিক ট্যাব) */
 .qx-search {
   position: relative;
   display: flex;
@@ -720,7 +766,6 @@ body .audio-bar.with-nav {
   box-shadow: 0 0 0 3px var(--qx-main-soft);
 }
 
-/* দোয়া ও তাসবিহ — নতুন ডিজাইন */
 .qx-dua-act {
   display: flex;
   justify-content: flex-end;
@@ -796,10 +841,14 @@ body .audio-bar.with-nav {
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
+  transition: transform .12s ease, box-shadow .2s ease;
+  overflow: hidden;
+  will-change: transform;
+  -webkit-touch-callout: none;
 }
 
 .qx-tsb-btn:active {
-  transform: scale(.97);
+  transform: scale(.96);
 }
 
 .qx-tsb-btn svg {
@@ -822,7 +871,7 @@ body .audio-bar.with-nav {
 .qx-tsb-arc {
   stroke: var(--qx-main-color);
   stroke-linecap: round;
-  transition: stroke-dashoffset .25s ease;
+  transition: stroke-dashoffset .3s cubic-bezier(.22,.8,.3,1), opacity .15s ease;
 }
 
 .qx-tsb-in {
@@ -830,7 +879,10 @@ body .audio-bar.with-nav {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  z-index: 1;
+  max-width: 74%;
+  text-align: center;
 }
 
 .qx-tsb-count {
@@ -838,18 +890,25 @@ body .audio-bar.with-nav {
   font-weight: 700;
   line-height: 1;
   color: var(--qx-main-color);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  min-width: 2ch;
 }
 
 .qx-tsb-in small {
   color: var(--qx-meta-color);
+  font-size: var(--qx-fs-md);
+  line-height: 1.3;
+  text-wrap: balance;
 }
 
 .qx-tsb-ctl {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   justify-content: center;
+  margin-top: 6px;
 }
 
 .qx-tsb-opt {
@@ -860,6 +919,14 @@ body .audio-bar.with-nav {
   color: var(--qx-text-color);
   font: inherit;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: calc(44px * var(--qx-scale));
+  min-width: calc(44px * var(--qx-scale));
+  line-height: 1;
+  transition: background-color .15s ease, border-color .15s ease, transform .1s ease;
 }
 
 .qx-tsb-opt.on {
@@ -871,13 +938,6 @@ body .audio-bar.with-nav {
 .qx-tsb-opt.danger {
   color: var(--qx-danger);
   border-color: var(--qx-danger);
-}
-
-/* More button pulse: mobile only (not on tablet/PC), off when reduced motion is on */
-@media (max-width: 599px) {
-  html:not([data-reduced-motion]) nav button[data-m="more"]:not(.on) b {
-    animation: qxMorePulse 2.4s ease-in-out infinite;
-  }
 }
 
 select {
@@ -905,6 +965,7 @@ select {
   padding: calc(18px * var(--qx-scale)) calc(12px * var(--qx-scale));
   text-align: center;
   margin: 8px 0;
+  box-shadow: var(--qx-shadow);
 }
 
 .hero small {
@@ -971,6 +1032,14 @@ select {
   color: var(--qx-meta-color);
   line-height: 1.6;
   margin-top: 14px;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.note::before {
+  content: "* ";
+  font-weight: 700;
+  color: var(--qx-main-color);
 }
 
 .tw {
@@ -982,8 +1051,8 @@ select {
 }
 
 .tbtn {
-  width: 180px;
-  height: 210px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   border: 0;
   background: var(--qx-main-color);
@@ -995,10 +1064,14 @@ select {
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12), inset 0 -6px 12px rgba(0,0,0,.08);
+  transition: transform .08s ease, box-shadow .08s ease;
+  aspect-ratio: 1 / 1;
 }
 
 .tbtn:active {
   transform: scale(.97);
+  box-shadow: 0 3px 10px rgba(0,0,0,.12), inset 0 -3px 8px rgba(0,0,0,.08);
 }
 
 .tcount {
@@ -1008,8 +1081,9 @@ select {
 }
 
 .tbtn small {
-  margin-top: 8px;
-  opacity: .9;
+  margin-top: 2px;
+  opacity: .85;
+  font-size: 12px;
 }
 
 .src {
@@ -1074,30 +1148,33 @@ body.qx-modal-open {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: calc(4px * var(--qx-scale)) 2px calc(8px * var(--qx-scale));
+  padding: calc(6px * var(--qx-scale)) calc(4px * var(--qx-scale)) calc(12px * var(--qx-scale));
   background: var(--qx-tile-bg);
 }
 
 .settings-modal-title {
   flex: 1;
   margin: 0;
-  font-size: var(--qx-fs-lg);
+  font-size: var(--qx-fs-xl);
   font-weight: 600;
   color: var(--qx-text-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .settings-modal-header .close-btn {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: calc(34px * var(--qx-scale));
-  height: calc(34px * var(--qx-scale));
+  width: calc(40px * var(--qx-scale));
+  height: calc(40px * var(--qx-scale));
   padding: 0;
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
   background: var(--qx-card-bg);
   color: var(--qx-meta-color);
-  font-size: calc(20px * var(--qx-scale));
+  font-size: calc(22px * var(--qx-scale));
   transition: background-color .18s ease, color .18s ease, border-color .18s ease;
 }
 
@@ -1114,9 +1191,9 @@ body.qx-modal-open {
 .settings-body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   padding: calc(4px * var(--qx-scale)) 2px calc(6px * var(--qx-scale));
-  font-size: var(--qx-fs);
+  font-size: var(--qx-fs-lg);
   line-height: 1.4;
 }
 
@@ -1151,7 +1228,7 @@ body.qx-modal-open {
 .header-tools {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   height: 100%;
   position: relative;
   flex-shrink: 0;
@@ -1197,12 +1274,13 @@ body.qx-modal-open {
   background: var(--qx-card-bg);
   border-top: 1px solid var(--qx-border);
   padding: calc(10px * var(--qx-scale)) calc(14px * var(--qx-scale)) calc(10px + env(safe-area-inset-bottom));
-  z-index: 20;
+  z-index: 999;
   display: none;
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.08);
   transition: bottom .25s ease;
   padding-left: var(--qx-gutter);
   padding-right: var(--qx-gutter);
+  padding-top: 6px;
 }
 
 .audio-bar.with-nav {
@@ -1246,26 +1324,34 @@ body.qx-modal-open {
 .audio-ctrls {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   width: 100%;
-  justify-content: space-between;
+  justify-content: center;
+  padding: 8px 12px;
 }
 
 .audio-ctrls button {
   padding: calc(6px * var(--qx-scale)) calc(8px * var(--qx-scale));
-  border-radius: var(--qx-radius);
+  border-radius: 50%;
   cursor: pointer;
   font-size: var(--qx-fs);
-  display: flex;
+  display: grid;
   align-items: center;
   justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  place-items: center;
 }
 
 .audio-ctrls button.primary {
   background: var(--qx-main-color);
-  color: var(--qx-on-main);
+  color: #fff;
   border-color: var(--qx-main-color);
   font-weight: 600;
+  width: 52px;
+  height: 52px;
 }
 
 .audio-ctrls button.on {
@@ -1436,6 +1522,8 @@ body.qx-modal-open {
   font-size: var(--qx-fs-md);
   line-height: 1.6;
   color: var(--qx-text-color);
+  font-style: italic;
+  font-weight: 500;
 }
 
 .note-box-head {
@@ -1460,19 +1548,24 @@ body.qx-modal-open {
 
 .p3-tabs {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   margin-bottom: 12px;
   overflow-x: auto;
   scrollbar-width: none;
+  padding: 3px;
+  border: 1px solid var(--qx-border);
+  border-radius: var(--qx-radius-lg);
+  background: var(--qx-tile-bg);
 }
 
 .p3-tabs button {
   flex: 1 0 auto;
   white-space: nowrap;
-  padding: calc(8px * var(--qx-scale)) calc(12px * var(--qx-scale));
-  border-radius: var(--qx-radius-lg);
+  padding: calc(9px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  border-radius: var(--qx-radius);
   font-weight: 600;
   cursor: pointer;
+  border: 1px solid transparent;
 }
 
 .p3-tabs button.on {
@@ -1485,8 +1578,9 @@ body.qx-modal-open {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
-  padding: calc(12px * var(--qx-scale)) calc(14px * var(--qx-scale));
+  padding: calc(14px * var(--qx-scale));
   margin: 8px 0;
+  box-shadow: var(--qx-shadow);
 }
 
 .p3-grid {
@@ -1520,20 +1614,24 @@ body.qx-modal-open {
   align-items: center;
   padding: calc(16px * var(--qx-scale)) calc(10px * var(--qx-scale));
   text-align: center;
+  gap: 8px;
 }
 
 .compass-dial {
   position: relative;
-  width: 200px;
-  height: 230px;
+  width: min(68vw,250px);
+  height: min(68vw,250px);
   border-radius: 50%;
   border: 4px solid var(--qx-main-color);
   background: var(--qx-card-bg);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  box-shadow: var(--qx-shadow);
   margin: 14px auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  max-width: 250px;
+  max-height: 250px;
+  border-width: 3px;
 }
 
 .compass-ring {
@@ -1553,7 +1651,7 @@ body.qx-modal-open {
   top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  color: #d9534f;
+  color: var(--qx-danger);
 }
 
 .compass-mark.s {
@@ -1582,21 +1680,25 @@ body.qx-modal-open {
 
 .kaaba-badge {
   position: absolute;
-  top: -6px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--qx-main-color);
   color: var(--qx-on-main);
-  padding: 3px calc(8px * var(--qx-scale));
-  border-radius: var(--qx-radius-lg);
-  font-size: var(--qx-fs-md);
+  padding: 0;
+  border-radius: 50%;
+  font-size: var(--qx-fs-lg);
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: var(--qx-shadow);
+  width: calc(28px * var(--qx-scale));
+  height: calc(28px * var(--qx-scale));
+  display: grid;
+  place-items: center;
 }
 
 .kaaba-needle {
   position: absolute;
-  top: 24px;
+  top: 46px;
   bottom: 50%;
   left: 50%;
   width: 4px;
@@ -1623,8 +1725,10 @@ body.qx-modal-open {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(8px * var(--qx-scale)) 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--qx-border);
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .alert-row:last-child {
@@ -1632,11 +1736,15 @@ body.qx-modal-open {
 }
 
 .switch-btn {
-  padding: calc(5px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  padding: calc(8px * var(--qx-scale)) calc(13px * var(--qx-scale));
   border-radius: var(--qx-radius-lg);
   font-size: var(--qx-fs-sm);
   font-weight: 600;
   cursor: pointer;
+  min-width: 88px;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-tile-bg);
+  color: var(--qx-text-color);
 }
 
 .switch-btn.on {
@@ -1658,29 +1766,30 @@ html,body,button,input,select,textarea {
 }
 
 .set-sec {
-  padding: calc(8px * var(--qx-scale)) calc(4px * var(--qx-scale));
+  padding: calc(10px * var(--qx-scale)) calc(4px * var(--qx-scale));
 }
 
 .set-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin: 0 0 8px;
-  font-size: var(--qx-fs);
+  font-size: var(--qx-fs-lg);
   font-weight: 600;
   color: var(--qx-text-color);
+  margin-bottom: 10px;
 }
 
 .set-title .ms {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: calc(30px * var(--qx-scale));
-  height: calc(30px * var(--qx-scale));
+  width: calc(34px * var(--qx-scale));
+  height: calc(34px * var(--qx-scale));
   border-radius: var(--qx-radius);
   background: var(--qx-main-soft);
   color: var(--qx-main-color);
-  font-size: var(--qx-fs-xl);
+  font-size: calc(22px * var(--qx-scale));
   vertical-align: baseline;
 }
 
@@ -1693,9 +1802,9 @@ html,body,button,input,select,textarea {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: calc(48px * var(--qx-scale));
+  min-height: calc(54px * var(--qx-scale));
   padding: calc(6px * var(--qx-scale)) 0;
-  font-size: var(--qx-fs);
+  font-size: var(--qx-fs-lg);
   color: var(--qx-text-color);
 }
 
@@ -1712,7 +1821,7 @@ label.set-row {
 
 .set-label small {
   color: var(--qx-meta-color);
-  font-size: var(--qx-fs-sm);
+  font-size: var(--qx-fs-md);
 }
 
 .set-field {
@@ -1731,14 +1840,14 @@ label.set-row {
 .set-select {
   display: block;
   width: 100%;
-  min-height: calc(42px * var(--qx-scale));
+  min-height: calc(48px * var(--qx-scale));
   padding: calc(9px * var(--qx-scale)) calc(12px * var(--qx-scale));
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
   background: var(--qx-tile-bg);
   color: var(--qx-text-color);
   font: inherit;
-  font-size: var(--qx-fs);
+  font-size: var(--qx-fs-lg);
   cursor: pointer;
   transition: border-color .18s ease, box-shadow .18s ease;
 }
@@ -1764,14 +1873,14 @@ label.set-row {
 }
 
 .set-stepper button {
-  min-width: calc(42px * var(--qx-scale));
-  min-height: calc(36px * var(--qx-scale));
+  min-width: calc(48px * var(--qx-scale));
+  min-height: calc(42px * var(--qx-scale));
   padding: 0 calc(10px * var(--qx-scale));
   border: 0;
   border-radius: 0;
   background: transparent;
   color: var(--qx-text-color);
-  font-size: var(--qx-fs);
+  font-size: var(--qx-fs-lg);
   font-weight: 600;
   cursor: pointer;
   transition: background-color .18s ease, color .18s ease;
@@ -1796,8 +1905,8 @@ label.set-row {
   appearance: none;
   position: relative;
   flex-shrink: 0;
-  width: calc(34px * var(--qx-scale));
-  height: calc(20px * var(--qx-scale));
+  width: calc(42px * var(--qx-scale));
+  height: calc(24px * var(--qx-scale));
   margin: 0;
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-pill);
@@ -1811,8 +1920,8 @@ label.set-row {
   position: absolute;
   top: 2px;
   left: 2px;
-  width: calc(14px * var(--qx-scale));
-  height: calc(14px * var(--qx-scale));
+  width: calc(18px * var(--qx-scale));
+  height: calc(18px * var(--qx-scale));
   border-radius: 50%;
   background: var(--qx-knob);
   box-shadow: 0 1px 3px rgba(0,0,0,.3);
@@ -1825,7 +1934,7 @@ label.set-row {
 }
 
 .set-switch:checked::after {
-  transform: translateX(14px);
+  transform: translateX(18px);
 }
 
 .set-switch:focus-visible {
@@ -1848,12 +1957,12 @@ label.set-row {
 .offline-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: var(--qx-fs-xs);
-  padding: 3px calc(8px * var(--qx-scale));
-  border-radius: var(--qx-radius-lg);
-  background: color-mix(in srgb, var(--qx-main-color) 12%, var(--qx-card-bg));
-  color: var(--qx-main-color);
+  gap: 4px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  color: #2e7d32;
   font-weight: 600;
 }
 
@@ -1876,7 +1985,6 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   display: none;
 }
 
-/* Header search opens the home search controls as a centered modal. */
 #controls {
   display: none;
   position: fixed;
@@ -1915,15 +2023,6 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 #controls .quick-jump button,
 #controls .tabs button {
   border-radius: var(--qx-radius-lg);
-}
-
-@media (max-width: 480px) {
-  #controls {
-    width: calc(100vw - 24px);
-    max-height: 84vh;
-    padding: calc(16px * var(--qx-scale));
-    border-radius: var(--qx-radius-lg);
-  }
 }
 
 .aotd-card, .goal-bar, .resume {
@@ -2006,7 +2105,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   top: calc(62px + env(safe-area-inset-top) + 8px);
   right: 12px;
   left: auto;
-  width: min(300px,calc(100vw - 2*var(--qx-gutter)));
+  width: min(360px, calc(100vw - 2 * var(--qx-gutter)));
   height: auto;
   max-height: calc(100vh - 80px);
   overflow-y: auto;
@@ -2017,7 +2116,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
   box-shadow: 0 6px 20px rgba(0,0,0,.22);
-  padding: calc(6px * var(--qx-scale));
+  padding: calc(8px * var(--qx-scale));
   text-align: left;
   box-sizing: border-box;
 }
@@ -2050,28 +2149,40 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .g-menu-item {
-  margin: 4px 0;
+  margin: 2px 0;
   border: 0;
   background: transparent;
+  min-height: calc(54px * var(--qx-scale));
+  padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  font-size: var(--qx-fs-lg);
+  border-radius: var(--qx-radius-lg);
 }
+
 .g-menu-item .ms {
   font-size: calc(22px * var(--qx-scale));
   color: var(--qx-main-color);
 }
+
 .g-menu-item .ms-svg {
   width: calc(22px * var(--qx-scale));
   height: calc(22px * var(--qx-scale));
   color: var(--qx-main-color);
+  font-size: 1em;
 }
+
 .g-menu-item[data-popup="settings"] {
   border: 0;
   background: transparent;
+  border-top: 1px solid var(--qx-border);
+  margin-top: 8px;
+  padding-top: 12px;
 }
 
 .g-menu-item small {
   color: var(--qx-meta-color);
   flex-shrink: 0;
   text-align: right;
+  font-size: var(--qx-fs-md);
 }
 
 .g-menu-item:hover,
@@ -2090,18 +2201,23 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .g-quick-btn {
-  flex: 1;
+  flex: 1 1 30%;
   min-width: 0;
   flex-direction: column;
   justify-content: center;
   gap: 4px;
-  padding: calc(8px * var(--qx-scale)) calc(4px * var(--qx-scale));
-  font-size: var(--qx-fs-sm);
+  padding: 12px 6px;
+  font-size: 12px;
   text-align: center;
+  min-height: calc(66px * var(--qx-scale));
+  border-radius: var(--qx-radius-lg);
+  align-items: center;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 .g-quick-btn .ms {
-  font-size: calc(22px * var(--qx-scale));
+  font-size: 22px;
   color: var(--qx-main-color);
 }
 
@@ -2155,8 +2271,8 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 #gridPopupBox {
   position: relative;
   box-sizing: border-box;
-  width: min(440px,calc(100vw - 24px));
-  max-width: 440px;
+  width: min(540px, calc(100vw - 24px));
+  max-width: 540px;
   max-height: min(88vh, 760px);
   overflow-x: hidden;
   overflow-y: auto;
@@ -2165,7 +2281,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   background: var(--qx-tile-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
-  padding: calc(12px * var(--qx-scale));
+  padding: calc(18px * var(--qx-scale));
   box-shadow: 0 20px 40px rgba(0,0,0,.3);
 }
 
@@ -2183,7 +2299,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   min-width: 0;
   margin: 0;
   padding: 0;
-  font-size: var(--qx-fs-lg);
+  font-size: var(--qx-fs-xl);
   line-height: 1.35;
 }
 
@@ -2192,15 +2308,15 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   top: 10px;
   right: 10px;
   z-index: 2;
-  width: calc(36px * var(--qx-scale));
-  height: calc(36px * var(--qx-scale));
+  width: calc(40px * var(--qx-scale));
+  height: calc(40px * var(--qx-scale));
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
   background: var(--qx-card-bg);
-  font-size: calc(20px * var(--qx-scale));
+  font-size: calc(22px * var(--qx-scale));
   line-height: 1;
   cursor: pointer;
   color: var(--qx-text-color);
@@ -2209,7 +2325,7 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 
 .pp-header .pp-close {
   position: static;
-  flex: 0 0 36px;
+  flex: 0 0 40px;
 }
 
 .pp-tabs {
@@ -2220,13 +2336,13 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 
 .pp-tabs button {
   flex: 1;
-  padding: calc(9px * var(--qx-scale));
+  padding: calc(12px * var(--qx-scale)) calc(10px * var(--qx-scale));
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
   background: var(--qx-card-bg);
   color: var(--qx-text-color);
   font: inherit;
-  font-size: var(--qx-fs-md);
+  font-size: var(--qx-fs-lg);
   cursor: pointer;
 }
 
@@ -2284,21 +2400,20 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   word-break: break-word;
   box-sizing: border-box;
 }
+
 .dl-grid {
   display: grid;
   gap: 8px;
 }
+
 .dl-grid.cols-1 {
   grid-template-columns: 1fr;
 }
+
 .dl-grid.cols-2 {
   grid-template-columns: repeat(2, minmax(0,1fr));
 }
-@media (max-width: 520px) {
-  .dl-grid.cols-2 {
-    grid-template-columns: 1fr;
-  }
-}
+
 .dl-grid .pp-btn,
 .dl-grid .dl-btn {
   width: 100%;
@@ -2356,12 +2471,12 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .pp-result b {
-  font-size: var(--qx-fs);
+  font-size: var(--qx-fs-lg);
 }
 
 .pp-result small {
   color: var(--qx-meta-color);
-  font-size: var(--qx-fs-sm);
+  font-size: var(--qx-fs-md);
   line-height: 1.5;
   display: block;
 }
@@ -2377,12 +2492,12 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(8px * var(--qx-scale)) 0;
-  font-size: var(--qx-fs-md);
+  padding: calc(10px * var(--qx-scale)) 0;
+  font-size: var(--qx-fs-lg);
 }
 
 .pp-font-row button {
-  padding: calc(6px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  padding: calc(8px * var(--qx-scale)) calc(16px * var(--qx-scale));
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius);
   background: var(--qx-card-bg);
@@ -2392,9 +2507,9 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .pp-mini {
-  font-size: var(--qx-fs-sm);
+  font-size: var(--qx-fs-md);
   color: var(--qx-meta-color);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .src-sec {
@@ -2425,6 +2540,8 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   margin-top: 4px;
   padding-top: 8px;
   border-top: 1px solid var(--qx-border);
+  font-style: italic;
+  font-weight: 500;
 }
 
 #transSel {
@@ -2554,15 +2671,15 @@ body.bars-hidden .audio-bar.with-nav {
 }
 
 #gridPopupBox.wide {
-  width: min(480px, calc(100vw - 24px));
-  max-width: 480px;
-  padding: calc(16px * var(--qx-scale));
+  width: min(600px, calc(100vw - 24px));
+  max-width: 600px;
+  padding: calc(20px * var(--qx-scale));
 }
 
 #gridPopupBox.wide-fixed {
   display: flex;
   flex-direction: column;
-  height: min(520px, 78vh);
+  height: min(600px, 80vh);
   overflow: hidden;
 }
 
@@ -2786,8 +2903,8 @@ body.hifz-on #hifzBar {
 }
 
 .khatam-dot {
-  width: calc(20px * var(--qx-scale));
-  height: calc(22px * var(--qx-scale));
+  width: calc(28px * var(--qx-scale));
+  height: calc(30px * var(--qx-scale));
   border-radius: 50%;
   border: 1px solid var(--qx-border);
   display: flex;
@@ -2795,6 +2912,10 @@ body.hifz-on #hifzBar {
   justify-content: center;
   font-size: var(--qx-fs-xs);
   background: var(--qx-card-bg);
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .khatam-dot.done {
@@ -2998,28 +3119,34 @@ body.hifz-on #hifzBar {
   background: var(--qx-main-color);
   color: var(--qx-on-main);
   border-radius: var(--qx-radius-lg);
-  padding: calc(16px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  padding: calc(18px * var(--qx-scale)) calc(14px * var(--qx-scale));
   text-align: center;
   margin: 8px 0;
+  box-shadow: var(--qx-shadow);
 }
 
 .trk-head .big {
-  font-size: calc(26px * var(--qx-scale));
+  font-size: var(--qx-fs-xl);
   font-weight: 700;
+  margin: 3px 0 5px;
 }
 
 .trk-cat {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
-  padding: calc(12px * var(--qx-scale));
+  padding: calc(14px * var(--qx-scale));
   margin: 10px 0;
+  box-shadow: var(--qx-shadow);
 }
 
 .trk-cat h3 {
   margin: 0 0 4px;
   font-size: var(--qx-fs-lg);
   color: var(--qx-main-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .trk-cat .sub {
@@ -3035,6 +3162,8 @@ body.hifz-on #hifzBar {
   padding: calc(9px * var(--qx-scale)) calc(6px * var(--qx-scale));
   border-bottom: 1px solid var(--qx-border);
   font-size: var(--qx-fs);
+  gap: 10px;
+  min-height: calc(42px * var(--qx-scale));
 }
 
 .trk-row:last-child {
@@ -3060,23 +3189,30 @@ body.hifz-on #hifzBar {
 
 .trk-dots {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   margin: 6px 0 2px;
+  width: 100%;
 }
 
 .trk-dot {
-  width: calc(26px * var(--qx-scale));
-  height: calc(26px * var(--qx-scale));
-  border-radius: 50%;
+  width: auto;
+  height: calc(30px * var(--qx-scale));
+  border-radius: var(--qx-radius-pill);
   border: 1px solid var(--qx-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--qx-fs-xs);
   background: var(--qx-card-bg);
+  flex: 1 1 0;
+  min-width: 0;
 }
 
-.trk-dot.done { background: var(--qx-card-bg); border-color: var(--qx-border); color: inherit; }
+.trk-dot.done {
+  background: var(--qx-main-soft);
+  border-color: var(--qx-main-color);
+  color: var(--qx-main-color);
+}
 
 .trk-dot.today {
   box-shadow: 0 0 0 2px var(--qx-main-color);
@@ -3098,16 +3234,22 @@ body.hifz-on #hifzBar {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
-  padding: calc(14px * var(--qx-scale)) calc(10px * var(--qx-scale));
+  padding: 12px;
   text-align: center;
   cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  line-height: 1.6;
+  border-bottom: 1px solid color-mix(in srgb, var(--qx-border) 70%, transparent);
 }
 
 .asma-card .ar {
-  font-size: calc(30px * var(--qx-scale));
+  font-size: 22px;
   line-height: 1.6;
   color: var(--qx-main-color);
   direction: rtl;
+  text-align: right;
 }
 
 .asma-card b {
@@ -3122,7 +3264,7 @@ body.hifz-on #hifzBar {
   display: block;
   color: var(--qx-meta-color);
   font-size: var(--qx-fs-sm);
-  line-height: 1.55;
+  line-height: 1.5;
   margin-top: 2px;
   overflow-wrap: anywhere;
 }
@@ -3147,10 +3289,14 @@ body.hifz-on #hifzBar {
   background: var(--qx-main-color);
   color: var(--qx-on-main);
   border-radius: var(--qx-radius-lg);
-  padding: calc(16px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  padding: 14px;
   text-align: center;
   margin: 8px 0;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  line-height: 1.6;
 }
 
 .asma-top .ar {
@@ -3323,6 +3469,7 @@ body.ww-on .ayah .ar .ww-word {
   text-align: center;
   font-size: var(--qx-fs-xs);
   min-height: calc(40px * var(--qx-scale));
+  transition: background .18s ease,border-color .18s ease,transform .15s ease;
 }
 
 .hijri-day.today {
@@ -3334,16 +3481,19 @@ body.ww-on .ayah .ar .ww-word {
 .hijri-day.event {
   border-color: var(--qx-event);
   box-shadow: inset 0 0 0 1px var(--qx-event);
+  background: color-mix(in srgb,var(--qx-event) 16%,var(--qx-card-bg));
+  cursor: pointer;
 }
 
-.hijri-day.event { background: color-mix(in srgb,var(--qx-event) 16%,var(--qx-card-bg)); }
+.hijri-day:hover {
+  background: var(--qx-hover);
+  border-color: var(--qx-main-color);
+  transform: translateY(-2px);
+}
 
-.hijri-day { transition: background .18s ease,border-color .18s ease,transform .15s ease; }
-
-.hijri-day:hover { background: var(--qx-hover); border-color: var(--qx-main-color); transform: translateY(-2px); }
-
-.hijri-day.today:hover { background: var(--qx-main-color); }
-
+.hijri-day.today:hover {
+  background: var(--qx-main-color);
+}
 
 .hijri-day .hnum {
   font-weight: 700;
@@ -3367,13 +3517,30 @@ body.ww-on .ayah .ar .ww-word {
   box-shadow: 0 0 0 1px var(--qx-main-color);
 }
 
-.hijri-upcoming { gap: 14px; padding: calc(16px * var(--qx-scale)) calc(16px * var(--qx-scale)); }
+.hijri-upcoming {
+  gap: 14px;
+  padding: calc(16px * var(--qx-scale)) calc(16px * var(--qx-scale));
+  cursor: pointer;
+}
 
-.hijri-upcoming .he-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.hijri-upcoming .he-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-.hijri-upcoming .he-name { font-size: var(--qx-fs-xl); line-height: 1.3; font-weight: 700; }
+.hijri-upcoming .he-name {
+  font-size: var(--qx-fs-xl);
+  line-height: 1.3;
+  font-weight: 700;
+}
 
-.hijri-upcoming .trk-mini { font-size: var(--qx-fs-sm); line-height: 1.4; }
+.hijri-upcoming .trk-mini {
+  font-size: var(--qx-fs-sm);
+  line-height: 1.4;
+}
 
 .he-date-en {
   display: inline-block;
@@ -3387,30 +3554,81 @@ body.ww-on .ayah .ar .ww-word {
   line-height: 1.35;
   align-self: flex-start;
 }
-.hijri-event.next .he-date-en { color: var(--qx-meta-color); }
 
-.hijri-upcoming .he-side { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.hijri-event.next .he-date-en {
+  color: var(--qx-meta-color);
+}
 
-.he-ring { position: relative; width: calc(62px * var(--qx-scale)); height: calc(62px * var(--qx-scale)); }
+.hijri-upcoming .he-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
-.he-ring svg { display: block; width: 100%; height: 100%; }
+.he-ring {
+  position: relative;
+  width: calc(62px * var(--qx-scale));
+  height: calc(62px * var(--qx-scale));
+}
 
-.he-ring circle { fill: none; stroke-width: 4; }
+.he-ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
-.he-ring .he-track { stroke: var(--qx-border); }
+.he-ring circle {
+  fill: none;
+  stroke-width: 4;
+}
 
-.he-ring .he-arc { stroke: var(--qx-main-color); stroke-linecap: round; }
+.he-ring .he-track {
+  stroke: var(--qx-border);
+}
 
-.he-ring .he-days { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; font-size: var(--qx-fs-xs); font-weight: 700; color: var(--qx-main-color); }
+.he-ring .he-arc {
+  stroke: var(--qx-main-color);
+  stroke-linecap: round;
+}
 
-.he-ring .he-days b { font-size: var(--qx-fs-lg); }
+.he-ring .he-days {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+  font-size: var(--qx-fs-xs);
+  font-weight: 700;
+  color: var(--qx-main-color);
+}
 
-.he-ring .he-days small { font-size: calc(8px * var(--qx-scale)); font-weight: 400; color: var(--qx-meta-color); }
+.he-ring .he-days b {
+  font-size: var(--qx-fs-lg);
+}
 
-.he-ic { display: flex; align-items: center; justify-content: center; width: calc(38px * var(--qx-scale)); height: calc(38px * var(--qx-scale)); border-radius: var(--qx-radius-lg); background: color-mix(in srgb,var(--qx-main-color) 12%,transparent); }
+.he-ring .he-days small {
+  font-size: calc(8px * var(--qx-scale));
+  font-weight: 400;
+  color: var(--qx-meta-color);
+}
 
-.he-ic .ms { font-size: calc(22px * var(--qx-scale)); color: var(--qx-main-color); }
+.he-ic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(38px * var(--qx-scale));
+  height: calc(38px * var(--qx-scale));
+  border-radius: var(--qx-radius-lg);
+  background: color-mix(in srgb,var(--qx-main-color) 12%,transparent);
+}
 
+.he-ic .ms {
+  font-size: calc(22px * var(--qx-scale));
+  color: var(--qx-main-color);
+}
 
 #pwaBanner {
   display: none;
@@ -3472,6 +3690,7 @@ body.ww-on .ayah .ar .ww-word {
   padding: calc(12px * var(--qx-scale));
   margin: 8px 0;
   cursor: pointer;
+  position: relative;
 }
 
 .hadith-item .ar {
@@ -3489,6 +3708,7 @@ body.ww-on .ayah .ar .ww-word {
 .hadith-item .ref {
   font-size: var(--qx-fs-xs);
   color: var(--qx-meta-color);
+  padding-right: 48px;
 }
 
 .hadith-item.done {
@@ -3501,15 +3721,16 @@ body.ww-on .ayah .ar .ww-word {
 
 #gridPopupBox .pp-opt {
   width: 100%;
-  min-height: calc(44px * var(--qx-scale));
-  padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  min-height: calc(54px * var(--qx-scale));
+  padding: calc(12px * var(--qx-scale)) calc(14px * var(--qx-scale));
   gap: 12px;
   line-height: 1.4;
+  font-size: var(--qx-fs-lg);
 }
 
 #gridPopupBox .pp-result {
   width: 100%;
-  padding: calc(12px * var(--qx-scale));
+  padding: calc(14px * var(--qx-scale));
   margin-bottom: 8px;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -3563,10 +3784,26 @@ body.ww-on .ayah .ar .ww-word {
   color: var(--qx-on-main);
 }
 
-.qx-topic-sort { flex: 1 1 auto; }
-.surah-list-heading:has(.qx-topic-sort) { flex-wrap: nowrap; gap: 8px; justify-content: flex-start; }
-.surah-list-heading:has(.qx-topic-sort) span { flex: 0 0 auto; }
-.surah-list-heading:has(.qx-topic-sort) .qx-view-toggle { flex: 0 0 auto; }
+.qx-topic-sort {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.surah-list-heading:has(.qx-topic-sort) {
+  flex-wrap: nowrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.surah-list-heading:has(.qx-topic-sort) span {
+  flex: 0 0 auto;
+}
+
+.surah-list-heading:has(.qx-topic-sort) .qx-view-toggle {
+  flex: 0 0 auto;
+}
 
 .qx-back-link {
   display: inline-block;
@@ -3729,20 +3966,20 @@ body.inside-page h1 {
 .g-quick {
   display: flex;
   gap: 8px;
-  padding: 2px 0 calc(10px * var(--qx-scale));
-  margin-bottom: 4px;
+  padding: 4px 0 8px;
+  margin-bottom: 6px;
   border-bottom: 1px solid var(--qx-border);
+  flex-wrap: wrap;
 }
 
 .g-quick:empty {
   display: none;
 }
 
-
 #gridPopupBox .pp-input {
   width: 100%;
   margin: 0 0 10px;
-  padding: calc(11px * var(--qx-scale));
+  padding: calc(13px * var(--qx-scale)) calc(14px * var(--qx-scale));
   font-size: var(--qx-fs-lg);
   border-radius: var(--qx-radius-lg);
 }
@@ -3755,13 +3992,6 @@ nav button.on .dua-ic {
   stroke-width: 1.7;
 }
 
-nav button span {
-  line-height: 1.15;
-  text-align: center;
-  font-size: var(--qx-fs-xs);
-}
-
-/* theme flip: no colour fades, so every element changes together (no blink) */
 html.theme-switching *,html.theme-switching *::before,html.theme-switching *::after {
   transition: none;
 }
@@ -3969,202 +4199,6 @@ body:not(.inside-page) #title {
   cursor: pointer;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .01ms;
-    animation-iteration-count: 1;
-    transition-duration: .01ms;
-  }
-  .reader-progress,.reader-progress-fill {
-    transition: none;
-  }
-  .p3-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-height:480px) and (orientation:landscape) {
-  header {
-    padding-top: calc(6px + env(safe-area-inset-top));
-  padding-bottom: 6px;
-  }
-  .tbtn {
-    width: 150px;
-  height: 170px;
-  }
-  .tcount {
-    font-size: calc(44px * var(--qx-scale));
-  }
-  .compass-dial {
-    width: 170px;
-  }
-  nav button {
-    padding: calc(4px * var(--qx-scale)) 0;
-  flex-direction: row;
-  justify-content: center;
-  gap: 6px;
-  }
-  .audio-bar.with-nav {
-    bottom: calc(36px + env(safe-area-inset-bottom));
-  }
-  .hero {
-    padding: calc(10px * var(--qx-scale));
-  }
-  .ww-sheet .ww-ar {
-    font-size: calc(32px * var(--qx-scale));
-  }
-}
-
-@media (min-width:900px) {
-  nav {
-    left: 50%;
-    right: auto;
-    bottom: 0;
-    transform: translateX(-50%);
-    width: min(560px,100%);
-    border: 1px solid var(--qx-border);
-    border-bottom: 0;
-    border-radius: var(--qx-radius-lg);
-    padding: calc(4px * var(--qx-scale)) calc(8px * var(--qx-scale)) calc(4px + env(safe-area-inset-bottom));
-    box-shadow: 0 -4px 20px rgba(0,0,0,.08);
-  }
-  nav button {
-    min-height: calc(48px * var(--qx-scale));
-  }
-  main {
-    padding: clamp(16px,2.5vw,calc(32px * var(--qx-scale))) clamp(16px,3vw,calc(48px * var(--qx-scale))) calc(120px * var(--qx-scale));
-    max-width: 100%;
-  }
-  #app {
-    max-width: 100%;
-  }
-  #app>.item {
-    max-width: 100%;
-  }
-  #app>.ayah {
-    max-width: 100%;
-  }
-  .home-tiles {
-    gap: 14px;
-  }
-  .item {
-    padding: calc(16px * var(--qx-scale));
-  }
-  :root {
-    --qx-content-max: 100%;
-    --qx-gutter: 16px;
-  }
-  .asma-grid {
-    grid-template-columns: repeat(4,1fr);
-  }
-  .ac-box,.sheet-box {
-    border-radius: var(--qx-radius-lg);
-    margin-bottom: 5vh;
-  }
-  .ac-ov,.sheet-ov {
-    align-items: center;
-  }
-  .ww-sheet {
-    left: 50%;
-  }
-  .hijri-cal {
-    gap: 6px;
-  }
-
-  body.inside-page #app {
-    max-width: 940px;
-    margin: 14px auto;
-  }
-  body.inside-page .ayah {
-    padding: calc(22px * var(--qx-scale)) calc(26px * var(--qx-scale));
-  }
-  body.inside-page .ayah .ar {
-    line-height: 2.25;
-  }
-}
-
-@media(max-width:520px) {
-  .audio-progress {
-    order: 3;
-  }
-  .audio-status {
-    order: 4;
-  }
-  .audio-inner {
-    row-gap: 5px;
-  }
-  body.inside-page main {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  body.inside-page .ayah {
-    border-radius: var(--qx-radius-lg);
-    padding: 2px calc(6px * var(--qx-scale));
-    margin: 10px auto;
-  }
-  body.inside-page .ayah .ar {
-    line-height: 2.25;
-  }
-  body.inside-page .ayah .bn {
-    line-height: 1.85;
-    text-align: start;
-  }
-  body.inside-page .ayah-actions {
-    gap: 5px;
-    width: 100%;
-    justify-content: flex-end;
-  }
-  body.inside-page .icon-btn,body.inside-page .star {
-    min-width: calc(40px * var(--qx-scale));
-    min-height: calc(40px * var(--qx-scale));
-  }
-  .surah-meta {
-    gap: 5px;
-  }
-  .surah-meta .surah-meaning {
-    flex-basis: 100%;
-    font-size: var(--qx-fs-xs);
-  }
-  .surah-meta .surah-revelation,.surah-meta .surah-ayah-count {
-    font-size: var(--qx-fs-xs);
-  }
-  .surah-item .ar-name {
-    font-size: var(--qx-fs-xl);
-  }
-  body.inside-page .ayah .no {
-    align-items: flex-start;
-    row-gap: 8px;
-  }
-  body.inside-page .ayah .no>span:first-child {
-    flex: 1 1 100%;
-  }
-}
-
-@media(max-width:480px) {
-  #gridPopupOverlay {
-    padding: calc(10px * var(--qx-scale));
-  }
-  #gridPopupBox {
-    padding: calc(12px * var(--qx-scale));
-  }
-  .pp-row {
-    gap: 6px;
-  }
-  .pp-row select {
-    min-width: 0;
-    font-size: var(--qx-fs-md);
-  }
-  .pp-result {
-    overflow-wrap: anywhere;
-  }
-}
-
-@media(min-width:481px) and (max-height:560px) {
-  #gridPopupBox {
-    max-height: 90vh;
-  }
-}
-
 @supports (height:100dvh) {
   #gridPopupBox {
     max-height: min(88dvh, 760px);
@@ -4183,247 +4217,167 @@ body:not(.inside-page) #title {
   }
   .ww-sheet {
     max-height: 60dvh;
-  }
 }
 
-@media(max-width:380px) {
-  .quick-jump {
-    gap: 5px;
-  }
-  .quick-jump select,.quick-jump input {
-    font-size: var(--qx-fs-sm);
-    padding-left: 7px;
-    padding-right: 9px;
-  }
-  .quick-jump button {
-    padding-left: 9px;
-  }
-
-  #gridPopupBox {
-    width: calc(100vw - 20px);
-    padding: calc(12px * var(--qx-scale));
-  }
-  #gridDropdown {
-    width: min(300px,calc(100vw - 20px));
-  }
-}
-
-@media(max-width:420px) {
-  .surah-item {
-    gap: 9px;
-    padding: calc(10px * var(--qx-scale));
-  }
-  .surah-item .num {
-    flex-basis: 32px;
-    min-width: calc(32px * var(--qx-scale));
-    height: calc(32px * var(--qx-scale));
-    font-size: var(--qx-fs-sm);
-  }
-  .surah-item .mid b {
-    font-size: var(--qx-fs);
-  }
-  .surah-item .mid small {
-    font-size: var(--qx-fs-xs);
-  }
-  .surah-item .ar-name {
-    font-size: var(--qx-fs-xl);
-    max-width: 31%;
-  }
-
-  header {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  .bar {
-    gap: 7px;
-  }
-  .app-logo {
-    width: calc(28px * var(--qx-scale));
-    height: calc(28px * var(--qx-scale));
-  }
-  .header-btn {
-    min-width: calc(36px * var(--qx-scale));
-    padding: calc(5px * var(--qx-scale)) calc(8px * var(--qx-scale));
-  }
-
-  header .bar {
-    padding-left: 10px;
-    padding-right: 10px;
-    gap: 8px;
-  }
-  header h1#title {
-    font-size: var(--qx-fs-xl);
-  }
-  .home-tiles {
-    gap: 10px;
-  }
-}
-
-@media(max-width:340px) {
-  .surah-item .ar-name {
-    display: none;
-  }
-}
-
-@media (min-width:600px) {
-  .asma-grid {
-    grid-template-columns: repeat(3,1fr);
-  }
-  .hijri-day {
-    min-height: calc(56px * var(--qx-scale));
-    font-size: var(--qx-fs-sm);
-  }
-  .ac-box {
-    max-width: 600px;
-  }
-  nav button {
-    font-size: var(--qx-fs-sm);
-    flex: 0 1 150px;
-  }
-  .tbtn {
-    width: 240px;
-    height: 240px;
-  }
-}
-
-@media (min-width:700px) {
-  #app {
-    display: block;
-  }
-  .hadith-pkg,.trk-cat {
-    margin-left: 0;
-    margin-right: 0;
-  }
-  .ayah .ar {
-    line-height: 2.2;
-  }
-  .modal-content {
-    padding: calc(24px * var(--qx-scale));
-  }
-}
-
-@media (hover:hover) {
-  .item:hover,.hadith-pkg:hover,.asma-card:hover,.khatam-card:hover {
-    border-color: var(--qx-main-color);
-  }
-}
-
-@media (min-width:520px) {
-  .home-tiles {
-    gap: 12px;
-  }
-  .home-tile {
-    min-height: 88px;
-    padding: calc(14px * var(--qx-scale));
-  }
-}
-
-@media (hover:none) {
-  .home-tile:hover {
-    transform: none;
-    box-shadow: var(--qx-shadow);
-  }
-}
-
-@media(max-width:360px) {
-  .home-browse-nav {
-    gap: 6px;
-  }
-  .home-browse-nav button {
-    padding: calc(7px * var(--qx-scale)) calc(12px * var(--qx-scale));
-    font-size: var(--qx-fs-sm);
-    min-height: calc(36px * var(--qx-scale));
-  }
-  body.inside-page .ayah {
-    padding: calc(11px * var(--qx-scale));
-  }
-  body.inside-page .ayah-actions {
-    justify-content: flex-start;
-  }
-  body.inside-page .ayah .ar {
-    overflow-wrap: anywhere;
-  }
-
-  .header-btn {
-    min-width: calc(40px * var(--qx-scale));
-    min-height: calc(40px * var(--qx-scale));
-    width: calc(40px * var(--qx-scale));
-    height: calc(40px * var(--qx-scale));
-  }
-}
-
-/* The app sets an explicit data-theme during startup; OS preference must not override it. */
 @keyframes fadeInOut {
   0% {
     opacity: 0;
-    transform: translate(-50%, -10px);
+  transform: translate(-50%, -10px);
   }
   10%, 85% {
     opacity: 1;
-    transform: translate(-50%, 0);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -10px);
-  }
 }
 
+.controls-trans-wrap {
+  margin-top: 8px;
+}
 
-.controls-trans-wrap { margin-top: 8px; }
+.back-btn-hidden {
+  display: none;
+}
 
-
-
-.back-btn-hidden { display: none; }
-
-
-
-/* ===== PHASE 3: Accessibility + Responsive + Dark/Light ===== */
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   outline: 3px solid var(--qx-main-color);
   outline-offset: 2px;
   border-radius: var(--qx-radius);
 }
+
 [dir="rtl"] {
   text-align: right;
 }
+
 .ayah .ar, .ar-name {
   direction: rtl;
   unicode-bidi: isolate;
   line-height: 2.1;
 }
+
 .bn-text {
   line-height: 1.8;
   font-family: var(--qx-font), "Hind Siliguri", sans-serif;
 }
 
+.qx-skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 20000;
+  padding: calc(10px * var(--qx-scale)) calc(14px * var(--qx-scale));
+  border-radius: var(--qx-radius);
+  background: var(--qx-main-color);
+  color: var(--qx-on-main);
+  font-weight: 700;
+  transform: translateY(-160%);
+  transition: transform .15s ease;
+}
 
+.qx-skip-link:focus {
+  transform: translateY(0);
+  outline: 3px solid var(--qx-text-color);
+  outline-offset: 3px;
+}
 
+#app:focus {
+  outline: none;
+}
 
-/* Keyboard access: visible skip link and a predictable focus target */
-.qx-skip-link{position:fixed;top:8px;left:8px;z-index:20000;padding:calc(10px * var(--qx-scale)) calc(14px * var(--qx-scale));border-radius:var(--qx-radius);background:var(--qx-main-color);color:var(--qx-on-main);font-weight:700;transform:translateY(-160%);transition:transform .15s ease}
-.qx-skip-link:focus{transform:translateY(0);outline:3px solid var(--qx-text-color);outline-offset:3px}
-#app:focus{outline:none}
-@media(max-width:380px){nav button{padding-left:1px;padding-right:1px;gap:3px}nav button span{font-size:clamp(10px,var(--qx-fs-xs),12px)}}
+.hijri-info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: calc(16px * var(--qx-scale));
+  background: rgba(0,0,0,.62);
+  backdrop-filter: blur(3px);
+}
 
-/* Hijri special-day details popup */
-.hijri-day.event { cursor:pointer; }
-.hijri-upcoming { cursor:pointer; }
-.hijri-info-overlay{position:fixed;inset:0;z-index:10050;display:none;align-items:center;justify-content:center;padding:calc(16px * var(--qx-scale));background:rgba(0,0,0,.62);backdrop-filter:blur(3px)}
-.hijri-info-overlay.open{display:flex}
-.hijri-info-box{position:relative;width:min(100%,560px);max-height:min(84dvh,760px);overflow:auto;background:var(--qx-card-bg);color:var(--qx-text-color);border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:calc(22px * var(--qx-scale)) calc(20px * var(--qx-scale)) calc(20px * var(--qx-scale));box-shadow:0 18px 60px rgba(0,0,0,.32);overscroll-behavior:contain}
-.hijri-info-close{position:absolute;top:12px;right:12px;margin:0;width:calc(34px * var(--qx-scale));height:calc(34px * var(--qx-scale));border:1px solid var(--qx-border);border-radius:50%;background:var(--qx-hover);color:var(--qx-text-color);font-size:calc(20px * var(--qx-scale));line-height:1;display:grid;place-items:center;cursor:pointer}
-.hijri-info-title{font-size:calc(21px * var(--qx-scale));font-weight:800;color:var(--qx-main-color);margin:2px 42px 5px 0;line-height:1.35}
-.hijri-info-date{font-size:var(--qx-fs-sm);color:var(--qx-meta-color);margin-bottom:14px}
-.hijri-info-section{margin:13px 0 0;padding-top:11px;border-top:1px solid var(--qx-border)}
-.hijri-info-section b{display:block;font-size:var(--qx-fs-md);color:var(--qx-main-color);margin-bottom:5px}
-.hijri-info-section p{font-size:var(--qx-fs-md);line-height:1.75;margin:0;white-space:pre-line}
-.hijri-info-section p.hijri-info-source{font-size:var(--qx-fs-xs);color:var(--qx-meta-color);font-style:italic;line-height:1.65}
-.hijri-day.event:focus-visible,.hijri-upcoming:focus-visible{outline:2px solid var(--qx-main-color);outline-offset:2px}
-@media(max-width:420px){.hijri-info-overlay{padding:calc(10px * var(--qx-scale));align-items:flex-end}.hijri-info-box{max-height:88dvh;border-radius:var(--qx-radius-lg);padding:calc(17px * var(--qx-scale))}.hijri-info-title{font-size:var(--qx-fs-xl)}}
+.hijri-info-overlay.open {
+  display: flex;
+}
 
+.hijri-info-box {
+  position: relative;
+  width: min(100%,560px);
+  max-height: min(84dvh,760px);
+  overflow: auto;
+  background: var(--qx-card-bg);
+  color: var(--qx-text-color);
+  border: 1px solid var(--qx-border);
+  border-radius: var(--qx-radius-lg);
+  padding: calc(22px * var(--qx-scale)) calc(20px * var(--qx-scale)) calc(20px * var(--qx-scale));
+  box-shadow: 0 18px 60px rgba(0,0,0,.32);
+  overscroll-behavior: contain;
+}
 
+.hijri-info-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  margin: 0;
+  width: calc(34px * var(--qx-scale));
+  height: calc(34px * var(--qx-scale));
+  border: 1px solid var(--qx-border);
+  border-radius: 50%;
+  background: var(--qx-hover);
+  color: var(--qx-text-color);
+  font-size: calc(20px * var(--qx-scale));
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
 
-/* --- তালিকা প্যাটার্ন: একটা বর্ডারওয়ালা বাক্সে সারি --- */
+.hijri-info-title {
+  font-size: calc(21px * var(--qx-scale));
+  font-weight: 800;
+  color: var(--qx-main-color);
+  margin: 2px 42px 5px 0;
+  line-height: 1.35;
+}
+
+.hijri-info-date {
+  font-size: var(--qx-fs-sm);
+  color: var(--qx-meta-color);
+  margin-bottom: 14px;
+}
+
+.hijri-info-section {
+  margin: 13px 0 0;
+  padding-top: 11px;
+  border-top: 1px solid var(--qx-border);
+}
+
+.hijri-info-section b {
+  display: block;
+  font-size: var(--qx-fs-md);
+  color: var(--qx-main-color);
+  margin-bottom: 5px;
+}
+
+.hijri-info-section p {
+  font-size: var(--qx-fs-md);
+  line-height: 1.75;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.hijri-info-section p.hijri-info-source {
+  font-size: var(--qx-fs-xs);
+  color: var(--qx-meta-color);
+  font-style: italic;
+  line-height: 1.65;
+}
+
+.hijri-day.event:focus-visible,.hijri-upcoming:focus-visible {
+  outline: 2px solid var(--qx-main-color);
+  outline-offset: 2px;
+}
+
 .qx-list {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
@@ -4480,7 +4434,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   color: var(--qx-meta-color);
 }
 
-/* আরও পেজ: প্রতিটা সারি আলাদা বর্ডারওয়ালা বাক্স, মাঝে গ্যাপ */
 .qx-list.qx-list-spaced {
   background: none;
   border: 0;
@@ -4490,16 +4443,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   flex-direction: column;
   gap: 10px;
 }
+
 .qx-list.qx-list-spaced .qx-row {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius);
 }
+
 .qx-list.qx-list-spaced .qx-row:hover {
   background: var(--qx-hover);
 }
 
-/* নামাজ শিক্ষা পেজ: উপরের ট্যাব বারের সাথে লেগে না যাওয়ার প্যাডিং */
 .qx-nm {
   padding-top: 12px;
 }
@@ -4522,7 +4476,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   color: var(--qx-meta-color);
 }
 
-/* --- সংরক্ষিত --- */
 .qx-seg {
   display: flex;
   gap: 4px;
@@ -4638,97 +4591,318 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-size: var(--qx-fs);
 }
 
-.hadith-item {
-  position: relative;
-}
-
-.hadith-item .ref {
-  padding-right: 48px;
-}
-
 .hadith-item .qx-star {
   position: absolute;
   right: 8px;
   bottom: 8px;
 }
 
-/* PC reading width: default narrow, toggle in header (>=900px only), choice saved */
-#widthToggle { display: none; }
-#widthToggle .wt-narrow { display: none; }
-body.read-wide #widthToggle .wt-wide { display: none; }
-body.read-wide #widthToggle .wt-narrow { display: block; }
-#widthToggle { margin-right: 6px; }
-#widthToggle[aria-pressed="true"] { color: var(--qx-main-color); border-color: var(--qx-main-color); }
-@media (min-width:900px) {
-  #widthToggle { display: flex; }
-  body:not(.read-wide) #app,
-  body:not(.read-wide).inside-page #app { max-width: 720px; }
+#widthToggle {
+  display: none;
+  margin-right: 6px;
 }
 
-/* Quran lists (surah, para, topic): grid = 2 per row on phones, 3 per row on PC (>=900px); list = 1 per row */
-.surah-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
-.surah-grid .surah-item { margin: 0; min-height: 0; }
-.surah-grid:not(.is-list) .surah-item { padding: calc(10px * var(--qx-scale)); gap: 6px 8px; flex-wrap: wrap; align-content: flex-start; }
-.surah-grid:not(.is-list) .surah-item .num { order: 1; flex: 0 0 32px; min-width: calc(32px * var(--qx-scale)); height: calc(32px * var(--qx-scale)); font-size: var(--qx-fs-sm); }
-.surah-grid:not(.is-list) .surah-item .ar-name { order: 2; margin-left: auto; max-width: none; font-size: var(--qx-fs-xl); }
-.surah-grid:not(.is-list) .surah-item .mid { order: 3; flex: 1 1 100%; }
-.surah-grid.is-list { grid-template-columns: minmax(0,1fr); }
-.surah-grid.is-list .surah-item { padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale)); gap: 12px; flex-wrap: nowrap; align-items: center; }
-.surah-grid.is-list .surah-item .num { flex: 0 0 36px; min-width: calc(36px * var(--qx-scale)); height: calc(36px * var(--qx-scale)); font-size: var(--qx-fs-sm); }
-.surah-grid.is-list .surah-item .mid { flex: 1 1 auto; min-width: 0; }
-.surah-grid.is-list .surah-item .ar-name { margin-left: auto; max-width: none; font-size: var(--qx-fs-xl); }
-@media (min-width:900px) {
-  .surah-grid:not(.is-list) { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+#widthToggle .wt-narrow {
+  display: none;
 }
 
-/* B6: kalima/ramadan section cards — formerly repeated inline styles */
-.qx-sec-page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
-.qx-sec-page .item { margin: 0; border-radius: var(--qx-radius-lg); }
-.ayah.qx-sec-card { margin: 0; padding: calc(14px * var(--qx-scale)) calc(16px * var(--qx-scale)); box-shadow: none; }
-.ayah.qx-sec-card .no { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-.ayah.qx-sec-card .bn { margin-top: 8px; padding-top: 0; border-top: none; }
-.ayah.qx-sec-card .qx-sec-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; cursor: pointer; }
-.ayah.qx-sec-card .qx-sec-head .qx-num-badge,
-.ayah.qx-sec-card .qx-sec-head .qx-tri-badge { display: inline-flex; align-items: center; justify-content: center; width: calc(32px * var(--qx-scale)); height: calc(32px * var(--qx-scale)); border-radius: 50%; background: var(--qx-badge-bg); color: var(--qx-main-color); font-weight: 700; font-size: var(--qx-fs-md); }
-.ayah.qx-sec-card .qx-sec-head .qx-sec-title { border: none; background: none; color: var(--qx-main-color); padding: 0; font-size: var(--qx-fs-xl); font-weight: 700; min-height: 0; flex: 1; text-align: left; }
-.ayah.qx-sec-card .qx-sec-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-.ayah.qx-sec-card .qx-sec-body { display: none; }
-.ayah.qx-sec-card.open .qx-sec-body { display: block; }
+body.read-wide #widthToggle .wt-wide {
+  display: none;
+}
 
-/* namaz shikkha: arrows, source chip, nav buttons (scoped under .qx-nm) */
-.qx-nm .qx-nm-ic { display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
-.qx-nm .qx-nm-chev { display: inline-flex; align-items: center; justify-content: center; width: calc(32px * var(--qx-scale)); height: calc(32px * var(--qx-scale)); flex: 0 0 32px; border-radius: 50%; background: var(--qx-main-soft); color: var(--qx-main-color); transition: transform .15s ease, background .15s ease; }
-.qx-nm .item:hover .qx-nm-chev { transform: translateX(2px); background: var(--qx-main-color); color: var(--qx-on-main); }
-.qx-nm .qx-nm-back, .qx-nm .qx-nm-prev, .qx-nm .qx-nm-next { display: inline-flex; align-items: center; gap: 6px; min-height: calc(40px * var(--qx-scale)); padding: 0 calc(14px * var(--qx-scale)) 0 calc(10px * var(--qx-scale)); border-radius: var(--qx-radius-pill); font-weight: 600; font-size: var(--qx-fs-md); cursor: pointer; background: var(--qx-main-soft); color: var(--qx-main-color); border: 1px solid transparent; }
-.qx-nm .qx-nm-back { margin-bottom: 12px; }
-.qx-nm .qx-nm-next { padding: 0 calc(10px * var(--qx-scale)) 0 calc(14px * var(--qx-scale)); background: var(--qx-main-color); color: var(--qx-on-main); }
-.qx-nm .qx-nm-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 16px; }
-.qx-nm .qx-nm-nav .qx-nm-lbl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 36vw; }
-.qx-nm .qx-nm-src { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--qx-border); }
-.qx-nm .qx-nm-src-chip { display: inline-flex; align-items: center; gap: 6px; min-height: calc(30px * var(--qx-scale)); padding: 0 calc(12px * var(--qx-scale)) 0 calc(9px * var(--qx-scale)); border-radius: var(--qx-radius-pill); background: var(--qx-card-bg); border: 1px solid var(--qx-border); color: var(--qx-main-color); font-size: var(--qx-fs-md); }
-.qx-nm .qx-nm-src-chip b { font-weight: 600; color: var(--qx-text-color); }
-.qx-nm .qx-nm-src-chip svg { width: calc(15px * var(--qx-scale)); height: calc(15px * var(--qx-scale)); }
-.qx-nm .qx-nm-src-no { padding-left: 8px; margin-left: 2px; border-left: 1px solid var(--qx-border); color: var(--qx-meta-color); font-weight: 600; }
-.qx-nm .qx-nm-grade { display: inline-flex; align-items: center; gap: 4px; min-height: calc(30px * var(--qx-scale)); padding: 0 calc(12px * var(--qx-scale)) 0 calc(8px * var(--qx-scale)); border-radius: var(--qx-radius-pill); background: color-mix(in srgb, var(--qx-success) 14%, transparent); color: var(--qx-success); font-size: var(--qx-fs-md); font-weight: 700; }
-.qx-nm .qx-nm-grade svg { width: calc(15px * var(--qx-scale)); height: calc(15px * var(--qx-scale)); }
+body.read-wide #widthToggle .wt-narrow {
+  display: block;
+}
 
-/* খতম প্ল্যান: কাস্টম দিনের বাটন লাইন ভেঙে নামবে, আংশিক পড়া দিনের রং */
-.pp-tabs.wrap { flex-wrap: wrap; }
-.pp-tabs.wrap button { flex: 1 1 28%; }
-.khatam-dot.part {
-  background: color-mix(in srgb, var(--qx-main-color) 30%, var(--qx-card-bg));
+#widthToggle[aria-pressed="true"] {
+  color: var(--qx-main-color);
   border-color: var(--qx-main-color);
 }
 
+.surah-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px;
+}
 
-/* খতম প্ল্যান: দিনের ঘরে টিক (ফেজ ২) */
-.khatam-dot {
-  position: relative;
-  width: calc(28px * var(--qx-scale));
-  height: calc(30px * var(--qx-scale));
+.surah-grid .surah-item {
+  margin: 0;
+  min-height: 0;
+}
+
+.surah-grid:not(.is-list) .surah-item {
+  padding: calc(10px * var(--qx-scale));
+  gap: 6px 8px;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.surah-grid:not(.is-list) .surah-item .num {
+  order: 1;
+  flex: 0 0 32px;
+  min-width: calc(32px * var(--qx-scale));
+  height: calc(32px * var(--qx-scale));
+  font-size: var(--qx-fs-sm);
+}
+
+.surah-grid:not(.is-list) .surah-item .ar-name {
+  order: 2;
+  margin-left: auto;
+  max-width: none;
+  font-size: var(--qx-fs-xl);
+}
+
+.surah-grid:not(.is-list) .surah-item .mid {
+  order: 3;
+  flex: 1 1 100%;
+}
+
+.surah-grid.is-list {
+  grid-template-columns: minmax(0,1fr);
+}
+
+.surah-grid.is-list .surah-item {
+  padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  gap: 12px;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.surah-grid.is-list .surah-item .num {
+  flex: 0 0 36px;
+  min-width: calc(36px * var(--qx-scale));
+  height: calc(36px * var(--qx-scale));
+  font-size: var(--qx-fs-sm);
+}
+
+.surah-grid.is-list .surah-item .mid {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.surah-grid.is-list .surah-item .ar-name {
+  margin-left: auto;
+  max-width: none;
+  font-size: var(--qx-fs-xl);
+}
+
+.qx-sec-page {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qx-sec-page .item {
+  margin: 0;
+  border-radius: var(--qx-radius-lg);
+}
+
+.ayah.qx-sec-card {
+  margin: 0;
+  padding: calc(14px * var(--qx-scale)) calc(16px * var(--qx-scale));
+  box-shadow: none;
+}
+
+.ayah.qx-sec-card .no {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.ayah.qx-sec-card .bn {
+  margin-top: 8px;
+  padding-top: 0;
+  border-top: none;
+}
+
+.ayah.qx-sec-card .qx-sec-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
   cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
+}
+
+.ayah.qx-sec-card .qx-sec-head .qx-num-badge,
+.ayah.qx-sec-card .qx-sec-head .qx-tri-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(32px * var(--qx-scale));
+  height: calc(32px * var(--qx-scale));
+  border-radius: 50%;
+  background: var(--qx-badge-bg);
+  color: var(--qx-main-color);
+  font-weight: 700;
+  font-size: var(--qx-fs-md);
+}
+
+.ayah.qx-sec-card .qx-sec-head .qx-sec-title {
+  border: none;
+  background: none;
+  color: var(--qx-main-color);
+  padding: 0;
+  font-size: var(--qx-fs-xl);
+  font-weight: 700;
+  min-height: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.ayah.qx-sec-card .qx-sec-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ayah.qx-sec-card .qx-sec-body {
+  display: none;
+}
+
+.ayah.qx-sec-card.open .qx-sec-body {
+  display: block;
+}
+
+.qx-nm .qx-nm-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.qx-nm .qx-nm-chev {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(32px * var(--qx-scale));
+  height: calc(32px * var(--qx-scale));
+  flex: 0 0 32px;
+  border-radius: 50%;
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+  transition: transform .15s ease, background .15s ease;
+}
+
+.qx-nm .item:hover .qx-nm-chev {
+  transform: translateX(2px);
+  background: var(--qx-main-color);
+  color: var(--qx-on-main);
+}
+
+.qx-nm .qx-nm-back, .qx-nm .qx-nm-prev, .qx-nm .qx-nm-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: calc(40px * var(--qx-scale));
+  padding: 0 calc(14px * var(--qx-scale)) 0 calc(10px * var(--qx-scale));
+  border-radius: var(--qx-radius-pill);
+  font-weight: 600;
+  font-size: var(--qx-fs-md);
+  cursor: pointer;
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+  border: 1px solid transparent;
+}
+
+.qx-nm .qx-nm-back {
+  margin-bottom: 12px;
+}
+
+.qx-nm .qx-nm-next {
+  padding: 0 calc(10px * var(--qx-scale)) 0 calc(14px * var(--qx-scale));
+  background: var(--qx-main-color);
+  color: var(--qx-on-main);
+}
+
+.qx-nm .qx-nm-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.qx-nm .qx-nm-nav .qx-nm-lbl {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 36vw;
+}
+
+.qx-nm .qx-nm-src {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--qx-border);
+}
+
+.qx-nm .qx-nm-src-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: calc(30px * var(--qx-scale));
+  padding: 0 calc(12px * var(--qx-scale)) 0 calc(9px * var(--qx-scale));
+  border-radius: var(--qx-radius-pill);
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  color: var(--qx-main-color);
+  font-size: var(--qx-fs-md);
+}
+
+.qx-nm .qx-nm-src-chip b {
+  font-weight: 600;
+  color: var(--qx-text-color);
+}
+
+.qx-nm .qx-nm-src-chip svg {
+  width: calc(15px * var(--qx-scale));
+  height: calc(15px * var(--qx-scale));
+}
+
+.qx-nm .qx-nm-src-no {
+  padding-left: 8px;
+  margin-left: 2px;
+  border-left: 1px solid var(--qx-border);
+  color: var(--qx-meta-color);
+  font-weight: 600;
+}
+
+.qx-nm .qx-nm-grade {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: calc(30px * var(--qx-scale));
+  padding: 0 calc(12px * var(--qx-scale)) 0 calc(8px * var(--qx-scale));
+  border-radius: var(--qx-radius-pill);
+  background: color-mix(in srgb, var(--qx-success) 14%, transparent);
+  color: var(--qx-success);
+  font-size: var(--qx-fs-md);
+  font-weight: 700;
+}
+
+.qx-nm .qx-nm-grade svg {
+  width: calc(15px * var(--qx-scale));
+  height: calc(15px * var(--qx-scale));
+}
+
+.pp-tabs.wrap {
+  flex-wrap: wrap;
+}
+
+.pp-tabs.wrap button {
+  flex: 1 1 28%;
+}
+
+.khatam-dot.part {
+  background: color-mix(in srgb, var(--qx-main-color) 30%, var(--qx-card-bg));
+  border-color: var(--qx-main-color);
 }
 
 .khatam-dot.miss {
@@ -4762,7 +4936,6 @@ body.read-wide #widthToggle .wt-narrow { display: block; }
   outline-offset: 2px;
 }
 
-/* আইকন ফন্ট: লোড হওয়ার আগে লুকানো (blink বন্ধ), ব্যর্থ হলে চিহ্ন-ফলব্যাক */
 html.icons-pending .ms {
   visibility: hidden;
 }
@@ -4789,14 +4962,17 @@ body.no-icon-font .ms::before {
   text-align: center;
 }
 
-
-/* ===== Quranix V5: compact Home + balanced prayer/tracker page polish ===== */
 .home-section-title {
   margin: 14px 2px 8px;
   color: var(--qx-text-color);
   font-size: var(--qx-fs-lg);
   font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
+
 .home-quick-actions {
   display: grid;
   grid-template-columns: repeat(2,minmax(0,1fr));
@@ -4804,6 +4980,7 @@ body.no-icon-font .ms::before {
   margin: 0 auto 14px;
   width: 100%;
 }
+
 .home-quick-btn {
   min-width: 0;
   display: flex;
@@ -4817,6 +4994,7 @@ body.no-icon-font .ms::before {
   text-align: left;
   cursor: pointer;
 }
+
 .home-quick-btn>.ms:first-child {
   display: grid;
   place-items: center;
@@ -4828,88 +5006,154 @@ body.no-icon-font .ms::before {
   background: var(--qx-main-soft);
   font-size: calc(20px * var(--qx-scale));
 }
-.home-quick-copy { display:flex; flex-direction:column; min-width:0; gap:2px; }
-.home-quick-copy b { font-size:var(--qx-fs-sm); font-weight:700; }
-.home-quick-copy small { color:var(--qx-meta-color); font-size:var(--qx-fs-xs); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.home-quick-go { margin-left:auto; color:var(--qx-meta-color); font-size:calc(18px * var(--qx-scale)); }
-.home-category-grid { margin-top:0; }
-.home-category-grid .home-tile { min-height:calc(68px * var(--qx-scale)); }
-.home-category-grid .t-ic { width:calc(36px * var(--qx-scale)); height:calc(36px * var(--qx-scale)); border-radius:var(--qx-radius); }
-.home-category-grid .t-ic .ms { font-size:calc(22px * var(--qx-scale)); }
 
-/* Prayer sub-navigation and panels */
-.p3-tabs { padding:3px; gap:5px; border:1px solid var(--qx-border); border-radius:var(--qx-radius-lg); background:var(--qx-tile-bg); }
-.p3-tabs button { padding:calc(9px * var(--qx-scale)) calc(12px * var(--qx-scale)); border:1px solid transparent; border-radius:var(--qx-radius); }
-.p3-card { padding:calc(14px * var(--qx-scale)); box-shadow:var(--qx-shadow); }
-.hero { border-radius:var(--qx-radius-lg); box-shadow:var(--qx-shadow); }
-.qibla-box { gap:8px; }
-.compass-dial { width:min(68vw,250px); height:min(68vw,250px); max-width:250px; max-height:250px; border-width:3px; box-shadow:var(--qx-shadow); }
-.compass-mark.n { color:var(--qx-danger); }
-.kaaba-badge { box-shadow:var(--qx-shadow); }
-.alert-row { gap:12px; flex-wrap:wrap; padding:calc(11px * var(--qx-scale)) 0; }
-.alert-row>span:first-child { font-weight:600; }
-.alert-row select { max-width:58%; min-width:145px; }
-.switch-btn { min-width:88px; padding:calc(8px * var(--qx-scale)) calc(13px * var(--qx-scale)); border:1px solid var(--qx-border); background:var(--qx-tile-bg); color:var(--qx-text-color); }
-
-/* Tracker hierarchy: same palette and token registry, clearer grouping */
-.trk-head { box-shadow:var(--qx-shadow); padding:calc(18px * var(--qx-scale)) calc(14px * var(--qx-scale)); }
-.trk-head .big { font-size:var(--qx-fs-xl); margin:3px 0 5px; }
-.trk-cat { box-shadow:var(--qx-shadow); padding:calc(14px * var(--qx-scale)); }
-.trk-cat h3 { display:flex; align-items:center; gap:6px; }
-.trk-row { gap:10px; min-height:calc(42px * var(--qx-scale)); }
-.trk-row:focus-within { background:var(--qx-main-soft); }
-@media (min-width:700px) {
-  .home-quick-actions { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  .home-category-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  .p3-card { padding:calc(18px * var(--qx-scale)); }
-}
-@media (max-width:380px) {
-  .home-quick-actions { gap:6px; }
-  .home-quick-btn { padding:calc(8px * var(--qx-scale)) calc(7px * var(--qx-scale)); gap:6px; }
-  .home-quick-btn>.ms:first-child { flex-basis:28px; width:calc(28px * var(--qx-scale)); height:calc(28px * var(--qx-scale)); }
-  .home-category-grid .home-tile { padding:calc(9px * var(--qx-scale)); gap:8px; }
-  .alert-row select { max-width:100%; }
+.home-quick-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
 }
 
+.home-quick-copy b {
+  font-size: var(--qx-fs-sm);
+  font-weight: 700;
+}
 
-/* V6B: accessible focus and compact control feedback for the four scoped pages */
+.home-quick-copy small {
+  color: var(--qx-meta-color);
+  font-size: var(--qx-fs-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-quick-go {
+  margin-left: auto;
+  color: var(--qx-meta-color);
+  font-size: calc(18px * var(--qx-scale));
+}
+
+.home-category-grid {
+  margin-top: 0;
+}
+
+.home-category-grid .home-tile {
+  min-height: calc(68px * var(--qx-scale));
+}
+
+.home-category-grid .t-ic {
+  width: calc(36px * var(--qx-scale));
+  height: calc(36px * var(--qx-scale));
+  border-radius: var(--qx-radius);
+}
+
+.home-category-grid .t-ic .ms {
+  font-size: calc(22px * var(--qx-scale));
+}
+
+.alert-row>span:first-child {
+  font-weight: 600;
+}
+
+.alert-row select {
+  max-width: 58%;
+  min-width: 145px;
+}
+
+.trk-row:focus-within {
+  background: var(--qx-main-soft);
+}
+
 .trk-tick:focus-visible,.switch-btn:focus-visible,.p3-tabs button:focus-visible,.qibla-box button:focus-visible,.alert-row button:focus-visible,.alert-row select:focus-visible {
-  outline:2px solid var(--qx-main-color);
-  outline-offset:2px;
-}
-.trk-dot.done { background:var(--qx-main-soft); border-color:var(--qx-main-color); color:var(--qx-main-color); }
-.trk-row>div { min-width:0; overflow-wrap:anywhere; }
-.qibla-box .note { max-width:42rem; line-height:1.55; }
-.alert-row>div:first-child { min-width:0; flex:1 1 190px; }
-@media (max-width:380px) {
-  .compass-dial { width:min(76vw,230px); height:min(76vw,230px); }
-  .switch-btn { min-width:80px; }
+  outline: 2px solid var(--qx-main-color);
+  outline-offset: 2px;
 }
 
+.trk-row>div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 
-/* ফেজ C: ট্র্যাকারের সাপ্তাহিক তালিকা পূর্ণ প্রস্থে */
-.trk-dots { width: 100%; gap: 6px; }
-.trk-dot { flex: 1 1 0; width: auto; min-width: 0; height: calc(30px * var(--qx-scale)); border-radius: var(--qx-radius-pill); }
+.qibla-box .note {
+  max-width: 42rem;
+  line-height: 1.55;
+}
 
-/* ফেজ C: কিবলা কম্পাসে বৃত্তের ভেতরে শুধু আইকন-ব্যাজ */
-.kaaba-badge { top: 14px; width: calc(28px * var(--qx-scale)); height: calc(28px * var(--qx-scale)); padding: 0; border-radius: 50%; display: grid; place-items: center; font-size: var(--qx-fs-lg); }
-.kaaba-needle { top: 46px; }
+.alert-row>div:first-child {
+  min-width: 0;
+  flex: 1 1 190px;
+}
 
-/* ইসলামিক আইকন: fonts/islamic-icons.ttf (IslamicIcons, fontello)। data-i নাম → --qi-o আউটলাইন, --qi-s সলিড (সক্রিয়/.f অবস্থায়) */
-.ms.qi[data-i="asma"] { --qi-o: "\e800"; --qi-s: "\e825"; }
-.ms.qi[data-i="quran"] { --qi-o: "\e81e"; --qi-s: "\e83a"; }
-.ms.qi[data-i="hadith"] { --qi-o: "\e815"; --qi-s: "\e82f"; }
-.ms.qi[data-i="mosque"] { --qi-o: "\e839"; --qi-s: "\e830"; }
-.ms.qi[data-i="learn"] { --qi-o: "\e818"; --qi-s: "\e836"; }
-.ms.qi[data-i="dua"] { --qi-o: "\e817"; --qi-s: "\e835"; }
-.ms.qi[data-i="tasbih"] { --qi-o: "\e84a"; --qi-s: "\e83f"; }
-.ms.qi[data-i="ramadan"] { --qi-o: "\e81c"; --qi-s: "\e82a"; }
-.ms.qi[data-i="kalima"] { --qi-o: "\e847"; --qi-s: "\e843"; }
-.ms.qi[data-i="hajj"] { --qi-o: "\e810"; --qi-s: "\e829"; }
-.ms.qi[data-i="zakat"] { --qi-o: "\e848"; --qi-s: "\e845"; }
-.ms.qi[data-i="qibla"] { --qi-o: "\e81a"; --qi-s: "\e838"; }
-.ms.qi[data-i="hijri"] { --qi-o: "\e806"; --qi-s: "\e806"; }
-.ms.qi[data-i="qurbani"] { --qi-o: "\e804"; --qi-s: "\e826"; }
+.ms.qi[data-i="asma"] {
+  --qi-o: "\e800";
+  --qi-s: "\e825";
+}
+
+.ms.qi[data-i="quran"] {
+  --qi-o: "\e81e";
+  --qi-s: "\e83a";
+}
+
+.ms.qi[data-i="hadith"] {
+  --qi-o: "\e815";
+  --qi-s: "\e82f";
+}
+
+.ms.qi[data-i="mosque"] {
+  --qi-o: "\e839";
+  --qi-s: "\e830";
+}
+
+.ms.qi[data-i="learn"] {
+  --qi-o: "\e818";
+  --qi-s: "\e836";
+}
+
+.ms.qi[data-i="dua"] {
+  --qi-o: "\e817";
+  --qi-s: "\e835";
+}
+
+.ms.qi[data-i="tasbih"] {
+  --qi-o: "\e84a";
+  --qi-s: "\e83f";
+}
+
+.ms.qi[data-i="ramadan"] {
+  --qi-o: "\e81c";
+  --qi-s: "\e82a";
+}
+
+.ms.qi[data-i="kalima"] {
+  --qi-o: "\e847";
+  --qi-s: "\e843";
+}
+
+.ms.qi[data-i="hajj"] {
+  --qi-o: "\e810";
+  --qi-s: "\e829";
+}
+
+.ms.qi[data-i="zakat"] {
+  --qi-o: "\e848";
+  --qi-s: "\e845";
+}
+
+.ms.qi[data-i="qibla"] {
+  --qi-o: "\e81a";
+  --qi-s: "\e838";
+}
+
+.ms.qi[data-i="hijri"] {
+  --qi-o: "\e806";
+  --qi-s: "\e806";
+}
+
+.ms.qi[data-i="qurbani"] {
+  --qi-o: "\e804";
+  --qi-s: "\e826";
+}
+
 html body .ms.qi::before {
   content: var(--qi-o);
   font-family: 'QXIslamic';
@@ -4940,17 +5184,15 @@ body.no-icon-font .ms.qi {
   vertical-align: -.22em;
 }
 
-/* ডিফল্ট চেভরন/এক্সপ্যান্ড আইকন (chevron_right/left, expand_more/less) — মেনুর ডান পাশের তীর */
 .g-menu-item small .ms {
-  font-size: calc(20px * var(--qx-scale));
+  font-size: calc(22px * var(--qx-scale));
   color: var(--qx-meta-color);
   vertical-align: middle;
+  width: calc(22px * var(--qx-scale));
+  height: calc(22px * var(--qx-scale));
+  transition: transform .2s;
 }
 
-/* ===== Phase 1 polish ===== */
-
-/* Header: equal-size buttons, larger icons, softer border, even gaps */
-.header-tools { gap: 6px; }
 .header-btn,
 #back {
   width: calc(42px * var(--qx-scale));
@@ -4963,23 +5205,31 @@ body.no-icon-font .ms.qi {
   background: var(--qx-tile-bg);
   color: var(--qx-text-color);
 }
-#back:not(.back-btn-hidden) { display: inline-flex; align-items: center; justify-content: center; }
-.header-btn .ms,
-#back .ms { font-size: calc(24px * var(--qx-scale)); line-height: 1; vertical-align: 0; }
-.header-btn svg { width: calc(22px * var(--qx-scale)); height: calc(22px * var(--qx-scale)); }
-.header-btn:hover,
-#back:hover { border-color: var(--qx-main-color); color: var(--qx-main-color); }
-@media (max-width: 420px) {
-  .header-btn, #back { width: calc(38px * var(--qx-scale)); height: calc(38px * var(--qx-scale)); min-width: calc(38px * var(--qx-scale)); min-height: calc(38px * var(--qx-scale)); padding: 0; }
-  .header-btn .ms, #back .ms { font-size: calc(22px * var(--qx-scale)); }
-  .header-btn svg { width: calc(20px * var(--qx-scale)); height: calc(20px * var(--qx-scale)); }
-  .header-tools { gap: 4px; }
-}
-@media (max-width: 360px) {
-  .header-btn, #back { width: calc(36px * var(--qx-scale)); height: calc(36px * var(--qx-scale)); min-width: calc(36px * var(--qx-scale)); min-height: calc(36px * var(--qx-scale)); }
+
+#back:not(.back-btn-hidden) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Surah list: revelation / ayah-count tags use the ayah-number tag style */
+.header-btn .ms,
+#back .ms {
+  font-size: calc(24px * var(--qx-scale));
+  line-height: 1;
+  vertical-align: 0;
+}
+
+.header-btn svg {
+  width: calc(22px * var(--qx-scale));
+  height: calc(22px * var(--qx-scale));
+}
+
+.header-btn:hover,
+#back:hover {
+  border-color: var(--qx-main-color);
+  color: var(--qx-main-color);
+}
+
 .surah-meta .surah-revelation,
 .surah-meta .surah-ayah-count {
   display: inline-flex;
@@ -4996,14 +5246,14 @@ body.no-icon-font .ms.qi {
   line-height: 1;
   white-space: nowrap;
 }
+
 html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-revelation,
-html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count { background: var(--qx-tag-bg); color: var(--qx-tag-text); border-color: transparent; }
-@media (max-width: 520px) {
-  .surah-meta .surah-revelation,
-  .surah-meta .surah-ayah-count { min-height: calc(24px * var(--qx-scale)); padding: 0 calc(8px * var(--qx-scale)); font-size: var(--qx-fs-xs); }
+html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count {
+  background: var(--qx-tag-bg);
+  color: var(--qx-tag-text);
+  border-color: transparent;
 }
 
-/* Grid / list toggle: dark chip with a clearly visible accent icon (it is a single always-on toggle) */
 .qx-view-btn,
 .qx-view-btn.on {
   width: calc(40px * var(--qx-scale));
@@ -5012,10 +5262,17 @@ html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count { bac
   border: 1px solid var(--qx-border);
   color: var(--qx-main-color);
 }
-.qx-view-btn .ms { font-size: calc(22px * var(--qx-scale)); font-variation-settings: 'FILL' 1; }
-.qx-view-btn:hover { border-color: var(--qx-main-color); background: var(--qx-hover); }
 
-/* Dua card footer: source on the left, quick buttons on the right */
+.qx-view-btn .ms {
+  font-size: calc(22px * var(--qx-scale));
+  font-variation-settings: 'FILL' 1;
+}
+
+.qx-view-btn:hover {
+  border-color: var(--qx-main-color);
+  background: var(--qx-hover);
+}
+
 .qx-dua-foot {
   display: flex;
   align-items: center;
@@ -5024,97 +5281,132 @@ html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count { bac
   gap: 8px 12px;
   margin-top: 10px;
 }
-.qx-dua-foot .qx-dua-act { margin: 0 0 0 auto; flex: 0 0 auto; }
-.qx-dua-foot .qx-nm-src { display: flex; flex: 1 1 auto; min-width: 0; align-items: center; gap: 8px; margin: 0; padding: 0; border: 0; }
-.qx-dua-foot .qx-nm-src-chip { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; min-height: calc(30px * var(--qx-scale)); padding: 0 calc(12px * var(--qx-scale)) 0 calc(9px * var(--qx-scale)); border-radius: var(--qx-radius-pill); background: var(--qx-card-bg); border: 1px solid var(--qx-border); color: var(--qx-main-color); font-size: var(--qx-fs-md); }
-.qx-dua-foot .qx-nm-src-chip b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: var(--qx-text-color); }
-.qx-dua-foot .qx-nm-src-chip svg { width: calc(15px * var(--qx-scale)); height: calc(15px * var(--qx-scale)); flex: 0 0 15px; }
-.qx-dua-foot .qx-nm-ic { display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
-.qx-dua-foot .qx-nm-src-no { flex: 0 0 auto; padding-left: 8px; border-left: 1px solid var(--qx-border); color: var(--qx-meta-color); font-weight: 600; }
-.qx-dua-foot .qx-nm-grade { display: inline-flex; align-items: center; gap: 4px; min-height: calc(30px * var(--qx-scale)); padding: 0 calc(12px * var(--qx-scale)) 0 calc(8px * var(--qx-scale)); border-radius: var(--qx-radius-pill); background: color-mix(in srgb, var(--qx-success) 14%, transparent); color: var(--qx-success); font-size: var(--qx-fs-md); font-weight: 700; }
-.qx-dua-foot .qx-nm-grade svg { width: calc(15px * var(--qx-scale)); height: calc(15px * var(--qx-scale)); }
 
-/* ===== Phase 2: grid menu, customization panel and popups ===== */
-
-/* (a) Dropdown: wider, taller rows, one icon + label rhythm */
-#gridDropdown {
-  width: min(360px, calc(100vw - 2 * var(--qx-gutter)));
-  padding: calc(8px * var(--qx-scale));
-  border-radius: var(--qx-radius-lg);
+.qx-dua-foot .qx-dua-act {
+  margin: 0 0 0 auto;
+  flex: 0 0 auto;
 }
-#gridDropdown.g-settings-view { width: min(420px, calc(100vw - 2 * var(--qx-gutter))); }
-.g-quick { gap: 10px; padding: calc(4px * var(--qx-scale)) 0 calc(12px * var(--qx-scale)); margin-bottom: 6px; }
-.g-quick-btn {
-  min-height: calc(66px * var(--qx-scale));
-  padding: calc(10px * var(--qx-scale)) calc(6px * var(--qx-scale));
-  gap: 6px;
+
+.qx-dua-foot .qx-nm-src {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.qx-dua-foot .qx-nm-src-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  min-height: calc(30px * var(--qx-scale));
+  padding: 0 calc(12px * var(--qx-scale)) 0 calc(9px * var(--qx-scale));
+  border-radius: var(--qx-radius-pill);
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  color: var(--qx-main-color);
   font-size: var(--qx-fs-md);
-  border-radius: var(--qx-radius-lg);
 }
-.g-quick-btn .ms { font-size: calc(26px * var(--qx-scale)); }
-.g-menu-item {
-  min-height: calc(54px * var(--qx-scale));
-  margin: 2px 0;
-  padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
-  font-size: var(--qx-fs-lg);
-  border-radius: var(--qx-radius-lg);
+
+.qx-dua-foot .qx-nm-src-chip b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--qx-text-color);
 }
-.g-menu-item + .g-menu-item { border-top: 1px solid color-mix(in srgb, var(--qx-border) 55%, transparent); }
-.g-menu-item + .g-menu-item:hover { border-color: color-mix(in srgb, var(--qx-border) 55%, transparent); }
-.g-menu-item > span:first-child { display: flex; align-items: center; gap: 14px; min-width: 0; }
+
+.qx-dua-foot .qx-nm-src-chip svg {
+  width: calc(15px * var(--qx-scale));
+  height: calc(15px * var(--qx-scale));
+  flex: 0 0 15px;
+}
+
+.qx-dua-foot .qx-nm-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.qx-dua-foot .qx-nm-src-no {
+  flex: 0 0 auto;
+  padding-left: 8px;
+  border-left: 1px solid var(--qx-border);
+  color: var(--qx-meta-color);
+  font-weight: 600;
+}
+
+.qx-dua-foot .qx-nm-grade {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: calc(30px * var(--qx-scale));
+  padding: 0 calc(12px * var(--qx-scale)) 0 calc(8px * var(--qx-scale));
+  border-radius: var(--qx-radius-pill);
+  background: color-mix(in srgb, var(--qx-success) 14%, transparent);
+  color: var(--qx-success);
+  font-size: var(--qx-fs-md);
+  font-weight: 700;
+}
+
+.qx-dua-foot .qx-nm-grade svg {
+  width: calc(15px * var(--qx-scale));
+  height: calc(15px * var(--qx-scale));
+}
+
+#gridDropdown.g-settings-view {
+  width: min(420px, calc(100vw - 2 * var(--qx-gutter)));
+}
+
+.g-menu-item + .g-menu-item {
+  border-top: 1px solid color-mix(in srgb, var(--qx-border) 55%, transparent);
+}
+
+.g-menu-item + .g-menu-item:hover {
+  border-color: color-mix(in srgb, var(--qx-border) 55%, transparent);
+}
+
+.g-menu-item > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
 .g-menu-item .ms,
-.g-menu-item .ms-svg { flex: 0 0 auto; font-size: calc(24px * var(--qx-scale)); width: calc(24px * var(--qx-scale)); height: calc(24px * var(--qx-scale)); color: var(--qx-main-color); }
-.g-menu-item .ms-svg { font-size: 1em; }
-.g-menu-item small { font-size: var(--qx-fs-md); }
-.g-menu-item small .ms { font-size: calc(22px * var(--qx-scale)); width: calc(22px * var(--qx-scale)); height: calc(22px * var(--qx-scale)); color: var(--qx-meta-color); }
-
-/* (c) Customization panel: title left, a single close button right */
-.settings-modal-header { padding: calc(6px * var(--qx-scale)) calc(4px * var(--qx-scale)) calc(12px * var(--qx-scale)); }
-.settings-modal-title { display: flex; align-items: center; gap: 10px; font-size: var(--qx-fs-xl); }
-.settings-modal-title .ms-svg { width: calc(24px * var(--qx-scale)); height: calc(24px * var(--qx-scale)); font-size: 1em; color: var(--qx-main-color); flex: 0 0 auto; }
-.settings-modal-header .close-btn { width: calc(40px * var(--qx-scale)); height: calc(40px * var(--qx-scale)); font-size: calc(22px * var(--qx-scale)); }
-.settings-body { gap: 8px; font-size: var(--qx-fs-lg); }
-.set-sec { padding: calc(10px * var(--qx-scale)) calc(4px * var(--qx-scale)); }
-.set-title { font-size: var(--qx-fs-lg); gap: 12px; margin-bottom: 10px; }
-.set-title .ms { width: calc(34px * var(--qx-scale)); height: calc(34px * var(--qx-scale)); font-size: calc(22px * var(--qx-scale)); }
-.set-row { min-height: calc(54px * var(--qx-scale)); font-size: var(--qx-fs-lg); }
-.set-label small { font-size: var(--qx-fs-md); }
-.set-select { min-height: calc(48px * var(--qx-scale)); font-size: var(--qx-fs-lg); }
-.set-stepper button { min-width: calc(48px * var(--qx-scale)); min-height: calc(42px * var(--qx-scale)); font-size: var(--qx-fs-lg); }
-.set-switch { width: calc(42px * var(--qx-scale)); height: calc(24px * var(--qx-scale)); }
-.set-switch::after { width: calc(18px * var(--qx-scale)); height: calc(18px * var(--qx-scale)); }
-.set-switch:checked::after { transform: translateX(18px); }
-
-/* (d) Popups (backup, app install, search, translation, reciter ...): larger and easier to tap */
-#gridPopupBox {
-  width: min(540px, calc(100vw - 24px));
-  max-width: 540px;
-  padding: calc(18px * var(--qx-scale));
-}
-#gridPopupBox.wide { width: min(600px, calc(100vw - 24px)); max-width: 600px; padding: calc(20px * var(--qx-scale)); }
-#gridPopupBox.wide-fixed { height: min(600px, 80vh); }
-#gridPopupBox .pp-header { min-height: calc(44px * var(--qx-scale)); margin-bottom: 14px; }
-#gridPopupBox .pp-header h3 { font-size: var(--qx-fs-xl); }
-.pp-close { width: calc(40px * var(--qx-scale)); height: calc(40px * var(--qx-scale)); font-size: calc(22px * var(--qx-scale)); }
-.pp-header .pp-close { flex: 0 0 40px; }
-.pp-tabs button { padding: calc(12px * var(--qx-scale)) calc(10px * var(--qx-scale)); font-size: var(--qx-fs-lg); }
-.pp-mini { font-size: var(--qx-fs-md); line-height: 1.7; }
-#gridPopupBox .pp-input { padding: calc(13px * var(--qx-scale)) calc(14px * var(--qx-scale)); font-size: var(--qx-fs-lg); }
-#gridPopupBox .pp-opt { min-height: calc(54px * var(--qx-scale)); padding: calc(12px * var(--qx-scale)) calc(14px * var(--qx-scale)); font-size: var(--qx-fs-lg); }
-#gridPopupBox .pp-result { padding: calc(14px * var(--qx-scale)); }
-.pp-result b { font-size: var(--qx-fs-lg); }
-.pp-result small { font-size: var(--qx-fs-md); }
-.pp-btn, .dl-btn { min-height: calc(50px * var(--qx-scale)); font-size: var(--qx-fs-lg); }
-.pp-font-row { font-size: var(--qx-fs-lg); padding: calc(10px * var(--qx-scale)) 0; }
-.pp-font-row button { padding: calc(8px * var(--qx-scale)) calc(16px * var(--qx-scale)); }
-@media (max-width: 480px) {
-  #gridDropdown { width: min(360px, calc(100vw - 20px)); right: 10px; }
-  #gridPopupBox, #gridPopupBox.wide { width: calc(100vw - 20px); padding: calc(16px * var(--qx-scale)); }
+.g-menu-item .ms-svg {
+  flex: 0 0 auto;
+  font-size: calc(24px * var(--qx-scale));
+  width: calc(24px * var(--qx-scale));
+  height: calc(24px * var(--qx-scale));
+  color: var(--qx-main-color);
 }
 
-/* ===== Phase 3: ayah quick row + bottom nav notch ===== */
+.settings-modal-title .ms-svg {
+  width: calc(24px * var(--qx-scale));
+  height: calc(24px * var(--qx-scale));
+  font-size: 1em;
+  color: var(--qx-main-color);
+  flex: 0 0 auto;
+}
 
-/* Ayah quick row: audio, saved, copy, tafsir, more share one look */
+#gridPopupBox .pp-header {
+  min-height: calc(44px * var(--qx-scale));
+  margin-bottom: 14px;
+}
+
+.pp-btn, .dl-btn {
+  min-height: calc(50px * var(--qx-scale));
+  font-size: var(--qx-fs-lg);
+}
+
 .ayah-actions > .icon-btn,
 .ayah-actions > .star,
 .ayah-actions > .more-btn {
@@ -5126,20 +5418,17 @@ html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count { bac
   font-size: calc(22px * var(--qx-scale));
   color: var(--qx-meta-color);
 }
+
 .ayah-actions > .star .ms.f,
 .ayah-actions > .icon-btn.on,
-.ayah-actions > .icon-btn.on .ms { color: var(--qx-main-color); }
-.ayah-actions > .more-btn { font-size: calc(24px * var(--qx-scale)); }
-
-/* Bottom nav: the Quran circle floats in a round cut-out; the border line runs in from both sides,
-   curves down around the circle (with a small gap) and passes underneath it. */
-nav {
-  --qx-notch-r: 29px;   /* cut-out radius = circle radius (23px) + 6px gap */
-  --qx-notch-cy: 4px;   /* circle centre, measured from the top edge of the nav */
-  background: none;
-  border: 0;
-  box-shadow: none;
+.ayah-actions > .icon-btn.on .ms {
+  color: var(--qx-main-color);
 }
+
+.ayah-actions > .more-btn {
+  font-size: calc(24px * var(--qx-scale));
+}
+
 nav::before,
 nav::after {
   content: "";
@@ -5148,12 +5437,14 @@ nav::after {
   z-index: -1;
   pointer-events: none;
 }
+
 nav::before {
   background: var(--qx-card-bg);
   border-top: 1px solid var(--qx-border);
   -webkit-mask-image: radial-gradient(circle at 50% var(--qx-notch-cy), transparent var(--qx-notch-r), #000 calc(var(--qx-notch-r) + .5px));
   mask-image: radial-gradient(circle at 50% var(--qx-notch-cy), transparent var(--qx-notch-r), #000 calc(var(--qx-notch-r) + .5px));
 }
+
 nav::after {
   background: radial-gradient(circle at 50% var(--qx-notch-cy),
     transparent calc(var(--qx-notch-r) - .5px),
@@ -5161,8 +5452,1238 @@ nav::after {
     var(--qx-border) calc(var(--qx-notch-r) + 1px),
     transparent calc(var(--qx-notch-r) + 1.5px));
 }
-nav button[data-m="quran"] b { transform: translateY(-16px); }
-nav button[data-m="quran"] b::before { inset: -11px; }
+
+.qx-tsb-btn:focus-visible {
+  outline: 3px solid var(--qx-main-color);
+  outline-offset: 4px;
+}
+
+.qx-tsb-count.tap {
+  animation: qxTsbTap .18s ease-out;
+}
+
+@keyframes qxTsbTap {
+  0% { transform: scale(1);
+  } 40% { transform: scale(1.12);
+  } 100% { transform: scale(1);
+}
+
+.qx-tsb-btn.cycle-done {
+  animation: qxTsbDone .6s ease-out;
+}
+
+@keyframes qxTsbDone {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--qx-main-color) 55%, transparent);
+  } 100% { box-shadow: 0 0 0 22px transparent;
+}
+
+.qx-tsb-opt .ms {
+  font-size: calc(20px * var(--qx-scale));
+  width: calc(20px * var(--qx-scale));
+}
+
+.qx-tsb-opt:active {
+  transform: scale(.96);
+}
+
+.qx-tsb-opt:focus-visible {
+  outline: 2px solid var(--qx-main-color);
+  outline-offset: 2px;
+}
+
+.trk-tick.az-tick {
+  display: inline-grid;
+  place-items: center;
+  width: calc(36px * var(--qx-scale));
+  height: calc(36px * var(--qx-scale));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--qx-meta-color);
+}
+
+.trk-tick.az-tick .ms {
+  font-size: calc(30px * var(--qx-scale));
+}
+
+.trk-tick.az-tick.on {
+  background: none;
+  border: 0;
+  color: var(--qx-main-color);
+}
+
+.ms-svg-fill {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  stroke: none;
+  display: inline-block;
+  vertical-align: -.2em;
+}
+
+.qx-tsb-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--qx-main-color) 30%, transparent) 0, transparent 70%);
+  opacity: 0;
+  transform: scale(.6);
+  pointer-events: none;
+}
+
+.qx-tsb-btn.ripple::after {
+  animation: qxTsbRipple .38s ease-out;
+}
+
+@keyframes qxTsbRipple {
+  0% { opacity: 1;
+  transform: scale(1.05);
+  } 100% { opacity: 0;
+}
+
+.qx-tsb-arc.empty {
+  opacity: 0;
+}
+
+.qx-tsb-opt.danger .ms {
+  font-size: calc(20px * var(--qx-scale));
+}
+
+html[data-size="medium"] {
+  --qx-scale: 1.1;
+}
+
+html[data-size="lite"] {
+  --qx-scale: 1.2;
+}
+
+html.in-app #pwaBanner,
+html.in-app .install-menu-item {
+  display: none;
+}
+
+html.in-app .install-menu-item.show {
+  display: flex;
+}
+
+.audio-progress-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--qx-border);
+}
+
+.audio-progress-top input[type=range] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  z-index: 2;
+}
+
+.audio-progress-top input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--qx-main-color);
+  margin-top: -4px;
+}
+
+.audio-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: var(--qx-main-color);
+  width: 0%;
+  z-index: 1;
+  transition: width .2s;
+}
+
+.audio-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px 6px;
+}
+
+.audio-top-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.audio-top-actions button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  display: grid;
+  place-items: center;
+}
+
+.audio-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--qx-meta-color);
+  padding: 0 14px 10px;
+}
+
+.audio-float {
+  position: fixed;
+  bottom: 20px;
+  right: 16px;
+  z-index: 998;
+}
+
+.audio-float button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--qx-main-color);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  display: grid;
+  place-items: center;
+}
+
+.alert-row .qx-row-ic, .alert-row [data-i] {
+  margin-right: 8px;
+}
+
+.alert-row > span:first-child, .alert-row > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.prayer-next-card .countdown {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.prayer-next-card .countdown .flip-box {
+  min-width: 56px;
+  padding: 10px 8px;
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transition: transform .3s;
+}
+
+.prayer-next-card .countdown .flip-box small {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--qx-meta-color);
+  margin-top: 4px;
+}
+
+.asma-card, .asma-top {
+  border-bottom: 1px solid color-mix(in srgb, var(--qx-border) 80%, transparent);
+}
+
+.asma-card:last-child {
+  border-bottom: none;
+}
+
+.asma-top .asma-arrow {
+  transition: transform .2s;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+  font-size: 18px;
+}
+
+.asma-top.open .asma-arrow {
+  transform: rotate(90deg);
+}
+
+.qx-topic-sort .sort-label {
+  display: none;
+  font-size: 12px;
+  color: var(--qx-meta-color);
+  font-weight: 500;
+}
+
+.qx-topic-sort button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.g-menu-item:active small .ms {
+  transform: translateX(2px);
+}
+
+nav button b .ms {
+  margin: 0;
+}
+
+.p3-header, .prayer-edu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.p3-header h3, .prayer-edu-header h3 {
+  text-align: left;
+  flex: 1;
+  margin: 0;
+}
+
+.qx-topic-sort button.on {
+  background: var(--qx-main-color);
+  color: #fff;
+  border-color: var(--qx-main-color);
+}
+
+.qx-topic-sort .sort-label b {
+  color: var(--qx-text-color);
+  font-weight: 600;
+}
+
+.qx-search-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.qx-search-wrap input {
+  flex: 1;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--qx-border);
+  padding: 0 14px;
+  font-size: 14px;
+  background: var(--qx-card-bg);
+}
+
+.qx-search-wrap input:focus {
+  outline: 2px solid var(--qx-main-color);
+  border-color: var(--qx-main-color);
+}
+
+.tab-panel:not([data-tab="topic"]):not([data-tab="dictionary"]) .qx-topic-sort {
+  display: none;
+}
+
+.asma-popup, .asma-detail {
+  padding: 16px;
+  line-height: 1.7;
+}
+
+.asma-detail .asma-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--qx-border) 70%, transparent);
+}
+
+.asma-detail .asma-row:last-child {
+  border-bottom: none;
+}
+
+.asma-detail .asma-row .asma-name {
+  font-weight: 600;
+  color: var(--qx-text-color);
+}
+
+.asma-detail .asma-row .asma-meaning {
+  color: var(--qx-meta-color);
+  text-align: right;
+}
+
+.asma-detail .asma-ar {
+  font-size: 28px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.asma-top small {
+  line-height: 1.5;
+}
+
+.asma-top b {
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.prayer-next-card {
+  text-align: center;
+  padding: 18px 14px;
+}
+
+.prayer-next-card .next-prayer-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.prayer-next-card .next-prayer-time {
+  font-size: 14px;
+  color: var(--qx-meta-color);
+  margin-bottom: 14px;
+}
+
+.prayer-next-card .date-square {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  background: var(--qx-main-color);
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 10px auto;
+}
+
+.prayer-next-card .date-square small {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: .9;
+  display: block;
+}
+
+.prayer-next-card .countdown .flip-box.flip {
+  animation: qxFlip .3s ease;
+}
+
+@keyframes qxFlip {
+  0% { transform: rotateX(0);
+  } 50% { transform: rotateX(90deg);
+  } 100% { transform: rotateX(0);
+}
+
+.prayer-next-card .countdown .flip-box b {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.alert-row .qx-row-ic, .alert-row > span:first-child .ms, .alert-row > div:first-child .ms {
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.p3-header, .prayer-edu-header, .prayer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.p3-header .grid-icon-btn, .prayer-edu-header .grid-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+nav button, .bottom-nav button {
+  gap: 4px;
+  padding: 6px 2px;
+}
+
+.loc-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+}
+
+.loc-box .loc-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.loc-box .loc-options button {
+  flex: 1;
+  min-width: 100px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  font-weight: 600;
+}
+
+.loc-box .loc-options button.on {
+  background: var(--qx-main-color);
+  color: #fff;
+  border-color: var(--qx-main-color);
+}
+
+.g-quick-btn small {
+  font-size: 11px;
+  color: var(--qx-meta-color);
+}
+
+.g-quick-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 0;
+  border-top: 1px solid var(--qx-border);
+  border-bottom: 1px solid var(--qx-border);
+  margin: 4px 0 8px;
+}
+
+.g-quick-toggle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border: 1px solid var(--qx-border);
+  border-radius: 10px;
+  background: var(--qx-card-bg);
+  color: var(--qx-text-color);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.g-quick-toggle .ms {
+  font-size: 20px;
+  color: var(--qx-main-color);
+}
+
+.g-quick-toggle:active {
+  transform: scale(.97);
+  background: var(--qx-main-soft);
+}
+
+.g-quick-toggle.on {
+  background: var(--qx-main-color);
+  color: #fff;
+  border-color: var(--qx-main-color);
+}
+
+.g-quick-toggle.on .ms {
+  color: #fff;
+}
+
+.home-section-title .home-customize-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.home-section-title .home-customize-btn .ms {
+  font-size: 18px;
+  color: var(--qx-main-color);
+}
+
+.g-quick-toggle, .g-quick-btn {
+  min-height: 52px;
+}
+
+.g-menu-item .ms, .g-quick-btn .ms, .g-quick-toggle .ms {
+  color: var(--qx-main-color);
+}
+
+.tasbih-wrap, .tasbih-circle-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.tbtn .tcount {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.surah-item, .g-menu-item {
+  min-height: 52px;
+}
+
+.dl-card {
+  padding: 14px;
+  border: 1px solid var(--qx-border);
+  border-radius: 12px;
+  background: var(--qx-card-bg);
+  margin-bottom: 10px;
+}
+
+.dl-card .dl-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.dl-card .dl-head b {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.dl-card .dl-head small {
+  color: var(--qx-meta-color);
+  display: block;
+  margin-top: 2px;
+}
+
+.dl-card .dl-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+  white-space: nowrap;
+}
+
+.dl-card .dl-status.done {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.dl-card .dl-status.downloading {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.dl-card .dl-status.failed {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.dl-progress {
+  height: 6px;
+  background: var(--qx-border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 6px;
+}
+
+.dl-progress .dl-fill {
+  height: 100%;
+  background: var(--qx-main-color);
+  width: 0%;
+  transition: width .3s;
+  border-radius: 999px;
+}
+
+.dl-progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--qx-meta-color);
+}
+
+.dl-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.dl-actions button {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.dl-actions button.primary {
+  background: var(--qx-main-color);
+  color: #fff;
+  border-color: var(--qx-main-color);
+}
+
+.dl-actions button.danger {
+  color: #c62828;
+  border-color: #ffcdd2;
+}
+
+.dl-actions button:disabled {
+  opacity: .5;
+}
+
+.offline-badge.offline {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.offline-badge .ms {
+  font-size: 14px;
+}
+
+.cache-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--qx-border);
+  border-radius: 10px;
+  background: var(--qx-card-bg);
+  font-size: 13px;
+}
+
+.cache-status .ms {
+  color: var(--qx-main-color);
+  font-size: 20px;
+}
+
+html.qx-final-test .qx-debug {
+  outline: 1px dashed #e65100;
+}
+
+.g-menu-item, .g-quick-btn, .audio-ctrls button, nav button {
+  min-height: var(--qx-btn-h);
+  box-sizing: border-box;
+}
+
+@media (max-height:480px) and (orientation:landscape) {
+  nav button[data-m="quran"] b {
+    transform: none;
+  }
+  nav button[data-m="quran"] b::before {
+    display: none;
+  }
+  nav button[data-m="quran"].on b {
+    color: var(--qx-main-color);
+  }
+  body .audio-bar.with-nav {
+    bottom: calc(36px + env(safe-area-inset-bottom));
+  }
+  header {
+    padding-top: calc(6px + env(safe-area-inset-top));
+    padding-bottom: 6px;
+  }
+  .tbtn {
+    width: 150px;
+    height: 150px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+  }
+  .tcount {
+    font-size: calc(44px * var(--qx-scale));
+  }
+  .compass-dial {
+    width: 170px;
+  }
+  nav button {
+    padding: calc(4px * var(--qx-scale)) 0;
+    flex-direction: row;
+    justify-content: center;
+    gap: 6px;
+  }
+  .audio-bar.with-nav {
+    bottom: calc(36px + env(safe-area-inset-bottom));
+  }
+  .hero {
+    padding: calc(10px * var(--qx-scale));
+  }
+  .ww-sheet .ww-ar {
+    font-size: calc(32px * var(--qx-scale));
+  }
+}
+
+@media (max-width: 599px) {
+  html:not([data-reduced-motion]) nav button[data-m="more"]:not(.on) b {
+    animation: qxMorePulse 2.4s ease-in-out infinite;
+  }
+}
+
+@media (max-width: 480px) {
+  #controls {
+    width: calc(100vw - 24px);
+    max-height: 84vh;
+    padding: calc(16px * var(--qx-scale));
+    border-radius: var(--qx-radius-lg);
+  }
+  #gridDropdown {
+    width: min(360px, calc(100vw - 20px));
+    right: 10px;
+  }
+  #gridPopupBox, #gridPopupBox.wide {
+    width: calc(100vw - 20px);
+    padding: calc(16px * var(--qx-scale));
+  }
+}
+
+@media (max-width: 520px) {
+  .dl-grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+  .surah-meta .surah-revelation,
+  .surah-meta .surah-ayah-count {
+    min-height: calc(24px * var(--qx-scale));
+    padding: 0 calc(8px * var(--qx-scale));
+    font-size: var(--qx-fs-xs);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms;
+    animation-iteration-count: 1;
+    transition-duration: .01ms;
+  }
+  .reader-progress,.reader-progress-fill {
+    transition: none;
+  }
+  .p3-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width:900px) {
+  nav {
+    left: 50%;
+    right: auto;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: min(560px,100%);
+    border: 1px solid var(--qx-border);
+    border-bottom: 0;
+    border-radius: var(--qx-radius-lg);
+    padding: calc(4px * var(--qx-scale)) calc(8px * var(--qx-scale)) calc(4px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+  }
+  nav button {
+    min-height: calc(48px * var(--qx-scale));
+  }
+  main {
+    padding: clamp(16px,2.5vw,calc(32px * var(--qx-scale))) clamp(16px,3vw,calc(48px * var(--qx-scale))) calc(120px * var(--qx-scale));
+    max-width: 100%;
+  }
+  #app {
+    max-width: 100%;
+  }
+  #app>.item {
+    max-width: 100%;
+  }
+  #app>.ayah {
+    max-width: 100%;
+  }
+  .home-tiles {
+    gap: 14px;
+  }
+  .item {
+    padding: calc(16px * var(--qx-scale));
+  }
+  :root {
+    --qx-content-max: 100%;
+    --qx-gutter: 16px;
+  }
+  .asma-grid {
+    grid-template-columns: repeat(4,1fr);
+  }
+  .ac-box,.sheet-box {
+    border-radius: var(--qx-radius-lg);
+    margin-bottom: 5vh;
+  }
+  .ac-ov,.sheet-ov {
+    align-items: center;
+  }
+  .ww-sheet {
+    left: 50%;
+  }
+  .hijri-cal {
+    gap: 6px;
+  }
+  body.inside-page #app {
+    max-width: 940px;
+    margin: 14px auto;
+  }
+  body.inside-page .ayah {
+    padding: calc(22px * var(--qx-scale)) calc(26px * var(--qx-scale));
+  }
+  body.inside-page .ayah .ar {
+    line-height: 2.25;
+  }
+  #widthToggle {
+    display: flex;
+  }
+  body:not(.read-wide) #app,
+  body:not(.read-wide).inside-page #app {
+    max-width: 720px;
+  }
+  .surah-grid:not(.is-list) {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 10px;
+  }
+}
+
+@media(max-width:520px) {
+  .audio-progress {
+    order: 3;
+  }
+  .audio-status {
+    order: 4;
+  }
+  .audio-inner {
+    row-gap: 5px;
+  }
+  body.inside-page main {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  body.inside-page .ayah {
+    border-radius: var(--qx-radius-lg);
+    padding: 2px calc(6px * var(--qx-scale));
+    margin: 10px auto;
+  }
+  body.inside-page .ayah .ar {
+    line-height: 2.25;
+  }
+  body.inside-page .ayah .bn {
+    line-height: 1.85;
+    text-align: start;
+  }
+  body.inside-page .ayah-actions {
+    gap: 5px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  body.inside-page .icon-btn,body.inside-page .star {
+    min-width: calc(40px * var(--qx-scale));
+    min-height: calc(40px * var(--qx-scale));
+  }
+  .surah-meta {
+    gap: 5px;
+  }
+  .surah-meta .surah-meaning {
+    flex-basis: 100%;
+    font-size: var(--qx-fs-xs);
+  }
+  .surah-meta .surah-revelation,.surah-meta .surah-ayah-count {
+    font-size: var(--qx-fs-xs);
+  }
+  .surah-item .ar-name {
+    font-size: var(--qx-fs-xl);
+  }
+  body.inside-page .ayah .no {
+    align-items: flex-start;
+    row-gap: 8px;
+  }
+  body.inside-page .ayah .no>span:first-child {
+    flex: 1 1 100%;
+  }
+}
+
+@media(max-width:480px) {
+  #gridPopupOverlay {
+    padding: calc(10px * var(--qx-scale));
+  }
+  #gridPopupBox {
+    padding: calc(12px * var(--qx-scale));
+  }
+  .pp-row {
+    gap: 6px;
+  }
+  .pp-row select {
+    min-width: 0;
+    font-size: var(--qx-fs-md);
+  }
+  .pp-result {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media(min-width:481px) and (max-height:560px) {
+  #gridPopupBox {
+    max-height: 90vh;
+  }
+}
+
+@media(max-width:380px) {
+  .quick-jump {
+    gap: 5px;
+  }
+  .quick-jump select,.quick-jump input {
+    font-size: var(--qx-fs-sm);
+    padding-left: 7px;
+    padding-right: 9px;
+  }
+  .quick-jump button {
+    padding-left: 9px;
+  }
+  #gridPopupBox {
+    width: calc(100vw - 20px);
+    padding: calc(12px * var(--qx-scale));
+  }
+  #gridDropdown {
+    width: min(300px,calc(100vw - 20px));
+  }
+  nav button {
+    padding-left: 1px;
+    padding-right: 1px;
+    gap: 3px;
+  }
+  nav button span {
+    font-size: clamp(10px,var(--qx-fs-xs),12px);
+  }
+}
+
+@media(max-width:420px) {
+  .surah-item {
+    gap: 9px;
+    padding: calc(10px * var(--qx-scale));
+  }
+  .surah-item .num {
+    flex-basis: 32px;
+    min-width: calc(32px * var(--qx-scale));
+    height: calc(32px * var(--qx-scale));
+    font-size: var(--qx-fs-sm);
+  }
+  .surah-item .mid b {
+    font-size: var(--qx-fs);
+  }
+  .surah-item .mid small {
+    font-size: var(--qx-fs-xs);
+  }
+  .surah-item .ar-name {
+    font-size: var(--qx-fs-xl);
+    max-width: 31%;
+  }
+  header {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .bar {
+    gap: 7px;
+  }
+  .app-logo {
+    width: calc(28px * var(--qx-scale));
+    height: calc(28px * var(--qx-scale));
+  }
+  .header-btn {
+    min-width: calc(36px * var(--qx-scale));
+    padding: calc(5px * var(--qx-scale)) calc(8px * var(--qx-scale));
+  }
+  header .bar {
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 8px;
+  }
+  header h1#title {
+    font-size: var(--qx-fs-xl);
+  }
+  .home-tiles {
+    gap: 10px;
+  }
+  .hijri-info-overlay {
+    padding: calc(10px * var(--qx-scale));
+    align-items: flex-end;
+  }
+  .hijri-info-box {
+    max-height: 88dvh;
+    border-radius: var(--qx-radius-lg);
+    padding: calc(17px * var(--qx-scale));
+  }
+  .hijri-info-title {
+    font-size: var(--qx-fs-xl);
+  }
+}
+
+@media(max-width:340px) {
+  .surah-item .ar-name {
+    display: none;
+  }
+}
+
+@media (min-width:600px) {
+  .asma-grid {
+    grid-template-columns: repeat(3,1fr);
+  }
+  .hijri-day {
+    min-height: calc(56px * var(--qx-scale));
+    font-size: var(--qx-fs-sm);
+  }
+  .ac-box {
+    max-width: 600px;
+  }
+  nav button {
+    font-size: var(--qx-fs-sm);
+    flex: 0 1 150px;
+  }
+  .tbtn {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+@media (min-width:700px) {
+  #app {
+    display: block;
+  }
+  .hadith-pkg,.trk-cat {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .ayah .ar {
+    line-height: 2.2;
+  }
+  .modal-content {
+    padding: calc(24px * var(--qx-scale));
+  }
+  .home-quick-actions {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+  .home-category-grid {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+  .p3-card {
+    padding: calc(18px * var(--qx-scale));
+  }
+}
+
+@media (hover:hover) {
+  .item:hover,.hadith-pkg:hover,.asma-card:hover,.khatam-card:hover {
+    border-color: var(--qx-main-color);
+  }
+}
+
+@media (min-width:520px) {
+  .home-tiles {
+    gap: 12px;
+  }
+  .home-tile {
+    min-height: 88px;
+    padding: calc(14px * var(--qx-scale));
+  }
+}
+
+@media (hover:none) {
+  .home-tile:hover {
+    transform: none;
+    box-shadow: var(--qx-shadow);
+  }
+}
+
+@media(max-width:360px) {
+  .home-browse-nav {
+    gap: 6px;
+  }
+  .home-browse-nav button {
+    padding: calc(7px * var(--qx-scale)) calc(12px * var(--qx-scale));
+    font-size: var(--qx-fs-sm);
+    min-height: calc(36px * var(--qx-scale));
+  }
+  body.inside-page .ayah {
+    padding: calc(11px * var(--qx-scale));
+  }
+  body.inside-page .ayah-actions {
+    justify-content: flex-start;
+  }
+  body.inside-page .ayah .ar {
+    overflow-wrap: anywhere;
+  }
+  .header-btn {
+    min-width: calc(40px * var(--qx-scale));
+    min-height: calc(40px * var(--qx-scale));
+    width: calc(40px * var(--qx-scale));
+    height: calc(40px * var(--qx-scale));
+  }
+}
+
+@media (max-width:380px) {
+  .home-quick-actions {
+    gap: 6px;
+  }
+  .home-quick-btn {
+    padding: calc(8px * var(--qx-scale)) calc(7px * var(--qx-scale));
+    gap: 6px;
+  }
+  .home-quick-btn>.ms:first-child {
+    flex-basis: 28px;
+    width: calc(28px * var(--qx-scale));
+    height: calc(28px * var(--qx-scale));
+  }
+  .home-category-grid .home-tile {
+    padding: calc(9px * var(--qx-scale));
+    gap: 8px;
+  }
+  .alert-row select {
+    max-width: 100%;
+  }
+  .compass-dial {
+    width: min(76vw,230px);
+    height: min(76vw,230px);
+  }
+  .switch-btn {
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-btn, #back {
+    width: calc(38px * var(--qx-scale));
+    height: calc(38px * var(--qx-scale));
+    min-width: calc(38px * var(--qx-scale));
+    min-height: calc(38px * var(--qx-scale));
+    padding: 0;
+  }
+  .header-btn .ms, #back .ms {
+    font-size: calc(22px * var(--qx-scale));
+  }
+  .header-btn svg {
+    width: calc(20px * var(--qx-scale));
+    height: calc(20px * var(--qx-scale));
+  }
+  .header-tools {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-btn, #back {
+    width: calc(36px * var(--qx-scale));
+    height: calc(36px * var(--qx-scale));
+    min-width: calc(36px * var(--qx-scale));
+    min-height: calc(36px * var(--qx-scale));
+  }
+}
 
 @media (min-width: 900px) {
   nav {
@@ -5175,79 +6696,154 @@ nav button[data-m="quran"] b::before { inset: -11px; }
     border-bottom: 0;
     border-radius: var(--qx-radius-lg) var(--qx-radius-lg) 0 0;
   }
-  nav::after { border-radius: var(--qx-radius-lg) var(--qx-radius-lg) 0 0; }
+  nav::after {
+    border-radius: var(--qx-radius-lg) var(--qx-radius-lg) 0 0;
+  }
 }
 
-/* Short landscape screens: the circle is flattened, so the cut-out goes away too */
 @media (max-height: 480px) and (orientation: landscape) {
-  nav::after { display: none; }
-  nav::before { -webkit-mask-image: none; mask-image: none; }
-  nav button[data-m="quran"] b { transform: none; }
+  nav::after {
+    display: none;
+  }
+  nav::before {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  nav button[data-m="quran"] b {
+    transform: none;
+  }
 }
 
-/* ===== Tasbih fine tuning ===== */
-.qx-tsb-in { gap: 8px; }
-.qx-tsb-count { font-variant-numeric: tabular-nums; letter-spacing: 0; }
-.qx-tsb-in small { font-size: var(--qx-fs-md); line-height: 1.3; }
-.qx-tsb-btn { transition: transform .12s ease, box-shadow .2s ease; }
-.qx-tsb-btn:active { transform: scale(.96); }
-.qx-tsb-btn:focus-visible { outline: 3px solid var(--qx-main-color); outline-offset: 4px; }
-.qx-tsb-count.tap { animation: qxTsbTap .18s ease-out; }
-@keyframes qxTsbTap { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 100% { transform: scale(1); } }
-.qx-tsb-btn.cycle-done { animation: qxTsbDone .6s ease-out; }
-@keyframes qxTsbDone { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--qx-main-color) 55%, transparent); } 100% { box-shadow: 0 0 0 22px transparent; } }
-.qx-tsb-arc { transition: stroke-dashoffset .22s ease-out; }
-.qx-tsb-ctl { gap: 10px; margin-top: 6px; }
-.qx-tsb-opt { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: calc(44px * var(--qx-scale)); min-width: calc(44px * var(--qx-scale)); line-height: 1; transition: background-color .15s ease, border-color .15s ease, transform .1s ease; }
-.qx-tsb-opt .ms { font-size: calc(20px * var(--qx-scale)); width: calc(20px * var(--qx-scale)); }
-.qx-tsb-opt:active { transform: scale(.96); }
-.qx-tsb-opt:focus-visible { outline: 2px solid var(--qx-main-color); outline-offset: 2px; }
 
-/* আজান অ্যালার্টের টিক: বৃত্তের ভেতরে বৃত্ত না করে সরাসরি check_circle আইকন */
-.trk-tick.az-tick {
-  display: inline-grid;
-  place-items: center;
-  width: calc(36px * var(--qx-scale));
-  height: calc(36px * var(--qx-scale));
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--qx-meta-color);
+/* P13 Home / More menu - separate roles */
+body.qx-home-edit-mode .home-quick-btn {
+  position: relative;
+  outline: 1px dashed var(--qx-main-color);
 }
-.trk-tick.az-tick .ms { font-size: calc(30px * var(--qx-scale)); }
-.trk-tick.az-tick.on { background: none; border: 0; color: var(--qx-main-color); }
-
-/* fit_page_width: ফন্টে নেই, তাই ইনলাইন SVG (fill ধরনের আইকন) */
-.ms-svg-fill { width: 1em; height: 1em; fill: currentColor; stroke: none; display: inline-block; vertical-align: -.2em; }
-
-/* ===== তাসবিহ ফাইন টিউনিং (ফেজ ৪) ===== */
-.qx-tsb-btn { overflow: hidden; will-change: transform; -webkit-touch-callout: none; }
-.qx-tsb-btn::after {
-  content: "";
+body.qx-home-edit-mode .home-quick-btn::after {
+  content: "×";
   position: absolute;
-  inset: 0;
+  top: 4px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--qx-main-color) 30%, transparent) 0, transparent 70%);
-  opacity: 0;
-  transform: scale(.6);
-  pointer-events: none;
+  background: #c62828;
+  color: #fff;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  z-index: 2;
 }
-.qx-tsb-btn.ripple::after { animation: qxTsbRipple .38s ease-out; }
-@keyframes qxTsbRipple { 0% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.05); } }
-.qx-tsb-in { z-index: 1; max-width: 74%; text-align: center; }
-.qx-tsb-in small { text-wrap: balance; }
-.qx-tsb-count { min-width: 2ch; }
-/* অগ্রগতির রিং: শূন্যে গোল ক্যাপের ফোঁটা লুকানো, মসৃণ ইজ */
-.qx-tsb-arc { transition: stroke-dashoffset .3s cubic-bezier(.22,.8,.3,1), opacity .15s ease; }
-.qx-tsb-arc.empty { opacity: 0; }
-.qx-tsb-opt.danger .ms { font-size: calc(20px * var(--qx-scale)); }
+.home-section-title .home-edit-done {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--qx-main-color);
+  background: var(--qx-main-color);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+.g-quick-toggle.active-home {
+  background: var(--qx-main-color);
+  color: #fff;
+  border-color: var(--qx-main-color);
+}
+.g-quick-toggle.active-dash {
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+  border-color: var(--qx-main-color);
+}
 
-/* ===== অ্যাপের সাইজ: Small (এখনকার) / Medium / Lite (সবচেয়ে বড়) ===== */
-html[data-size="medium"] { --qx-scale: 1.1; }
-html[data-size="lite"] { --qx-scale: 1.2; }
-/* অ্যাপের ভিতরে ইনস্টল প্রম্পট/ব্যানার/মেনু আইটেম দেখাবে না */
-html.in-app #pwaBanner,
-html.in-app .install-menu-item { display: none !important; }
+
+/* P14 A - Light mode blur color fix */
+.hijri-info-overlay {
+  background: rgba(0,0,0,.32);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+html[data-theme="dark"] .hijri-info-overlay {
+  background: rgba(0,0,0,.62);
+}
+.ayah .ar.hifz-hide {
+  filter: blur(9px);
+  background: var(--qx-card-bg);
+}
+.ayah .ar.hifz-hide::after {
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  backdrop-filter: blur(2px);
+}
+html[data-theme="dark"] .ayah .ar.hifz-hide::after {
+  box-shadow: 0 4px 12px rgba(0,0,0,.32);
+}
+
+/* P14 B - LITE size fix */
+html[data-size="small"] {
+  --qx-scale: 1;
+}
+html[data-size="medium"] {
+  --qx-scale: 1.12;
+}
+html[data-size="lite"] {
+  --qx-scale: 1.25;
+}
+html[data-size="lite"] .ayah .ar {
+  line-height: 2.4;
+}
+html[data-size="lite"] .g-menu-item,
+html[data-size="lite"] .g-quick-btn,
+html[data-size="lite"] .home-quick-btn,
+html[data-size="lite"] .home-tile {
+  min-height: 58px;
+}
+
+/* P14 J-11 - Tracker design */
+.trk-head {
+  padding: 16px 14px;
+  margin: 0 0 12px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--qx-main-color), var(--qx-main-soft));
+  color: var(--qx-on-main);
+  border: 1px solid var(--qx-border);
+}
+.trk-head small {
+  opacity: .85;
+  font-size: var(--qx-fs-xs);
+}
+.trk-head .big {
+  font-size: var(--qx-fs-xl);
+  font-weight: 800;
+  margin: 4px 0;
+}
+.trk-cat {
+  margin: 0 0 14px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+  box-shadow: 0 1px 6px rgba(0,0,0,.04);
+}
+.trk-cat h3 {
+  margin: 0 0 4px;
+  font-size: var(--qx-fs-md);
+  font-weight: 700;
+}
+.trk-cat .sub {
+  color: var(--qx-meta-color);
+  font-size: var(--qx-fs-xs);
+  margin-bottom: 8px;
+}
+.trk-mini {
+  color: var(--qx-meta-color);
+  font-size: var(--qx-fs-xs);
+}
+html[data-theme="dark"] .trk-cat {
+  box-shadow: 0 1px 8px rgba(0,0,0,.2);
+}
+
 </style>
 </head>
 <body>
@@ -5266,12 +6862,17 @@ html.in-app .install-menu-item { display: none !important; }
       </button>
       <div id="gridDropdown">
         <div class="g-quick" id="gQuick"></div>
-        <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span>উৎস ও তথ্যসূত্র</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span>ব্যাকআপ ও রিস্টোর</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span>Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন <span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>কাস্টমাইজেশন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <div class="g-quick-bar">
+          <button class="g-quick-toggle" id="gQuickGridList" type="button" aria-label="গ্রিড / লিস্ট দেখুন"><span class="ms">grid_view</span><span>গ্রিড / লিস্ট</span></button>
+          <button class="g-quick-toggle" id="gHomeCustomize" type="button" aria-label="হোম কাস্টমাইজ"><span class="ms">edit</span><span>হোম কাস্টমাইজ</span></button>
+          <button class="g-quick-toggle" id="gDashboardEdit" type="button" aria-label="ড্যাশবোর্ড এডিট"><span class="ms">dashboard_customize</span><span>ড্যাশবোর্ড এডিট</span></button>
+        </div>
+        <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
+        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
+        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span>উৎস ও তথ্যসূত্র</span><small><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
+        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span>ব্যাকআপ ও রিস্টোর</span><small><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
+        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span>Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন <span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
+        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>কাস্টমাইজেশন</span><small><span class="ms" aria-hidden="true">arrow_forward_ios</span></small></button>
       </div>
     </div>
   </div>
@@ -5306,7 +6907,16 @@ html.in-app .install-menu-item { display: none !important; }
 <div id="wwBar" class="ww-bar"><span class="ms" aria-hidden="true">abc</span> <b>শব্দে শব্দে মোড</b><span>যেকোনো আরবি শব্দে ট্যাপ করো</span><span id="wwBarClose" style="margin-left:auto;cursor:pointer"><span class="ms" aria-hidden="true">close</span></span></div>
 <div id="tajweedLegend"><b><span class="ms" aria-hidden="true">palette</span> তাজভিদ:</b><span><i class="tj-dot" style="background:var(--qx-tj-ghunnah)"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-qalqalah)"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-ikhfa)"></i>ইখফা</span><span><i class="tj-dot" style="background:var(--qx-tj-idgham)"></i>ইদগাম</span><span><i class="tj-dot" style="background:var(--qx-tj-iqlab)"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:var(--qx-tj-madd)"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto"><span class="ms" aria-hidden="true">close</span></span></div>
 <div id="dlBar"><div class="dl-txt"><b id="dlTitle"><span class="ms" aria-hidden="true">download</span> এই সূরার তেলাওয়াত</b><small id="dlSub">অফলাইনে শোনার জন্য</small></div><button class="dl-btn" id="dlBtn"><span class="ms" aria-hidden="true">download</span> ডাউনলোড</button><button class="dl-btn ghost" id="dlManageBtn"><span class="ms" aria-hidden="true">folder_open</span> ম্যানেজ</button></div>
-<div id="audioBar" class="audio-bar" role="region" aria-label="অডিও প্লেয়ার"><div class="audio-inner"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-ctrls"><button id="audioPrev" type="button" aria-label="আগের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button><button id="audioPlayPause" type="button" class="primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true">play_arrow</span></button><button id="audioNext" type="button" aria-label="পরের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button><button id="audioAuto" type="button" aria-label="অটো-প্লে"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg></button><button id="audioSpeed" type="button" aria-label="তেলাওয়াতের গতি">1x</button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো"><span class="ms" aria-hidden="true">close</span></button></div><div class="audio-progress"><span id="audioCurrentTime">০:০০</span><input id="audioSeek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="অডিও অগ্রগতি"><span id="audioDuration">০:০০</span></div><div class="audio-status" id="audioStatus" aria-live="polite"></div></div></div>
+<div id="audioBar" class="audio-bar" role="region" aria-label="অডিও প্লেয়ার">
+  <div class="audio-inner">
+    <div class="audio-progress-top"><input id="audioSeek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="অডিও অগ্রগতি"><div class="audio-progress-fill" id="audioProgressFill"></div></div>
+    <div class="audio-top-row"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-top-actions"><button id="audioHide" type="button" aria-label="মিনিমাইজ"><span class="ms" aria-hidden="true">expand_more</span></button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো"><span class="ms" aria-hidden="true">close</span></button></div></div>
+    <div class="audio-ctrls"><button id="audioSpeed" type="button" aria-label="তেলাওয়াতের গতি">1x</button><button id="audioPrev" type="button" aria-label="আগের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button><button id="audioPlayPause" type="button" class="primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true">play_arrow</span></button><button id="audioNext" type="button" aria-label="পরের আয়াত"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button><button id="audioAuto" type="button" aria-label="অটো-প্লে"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg></button></div>
+    <div class="audio-bottom"><span id="audioCurrentTime">০:০০</span><span id="audioDuration">০:০০</span></div>
+    <div class="audio-status" id="audioStatus" aria-live="polite"></div>
+  </div>
+</div>
+<div id="audioFloat" class="audio-float" style="display:none"><button id="audioFloatBtn" type="button" aria-label="অডিও দেখাও"><span class="ms">headphones</span></button></div>
 
 <nav id="nav" aria-label="প্রধান নেভিগেশন">
   <button id="navHome" type="button"><b><span class="ms" aria-hidden="true">home</span></b><span>হোম</span></button>
@@ -5323,5 +6933,6 @@ html.in-app .install-menu-item { display: none !important; }
 <script src="data/district.js"></script>
 <script src="js/quran.js"></script>
 <script src="js/apps.js"></script>
+
 </body>
 </html>

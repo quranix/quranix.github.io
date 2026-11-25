@@ -9,7 +9,7 @@
    2. Change a function where it is. Do not keep the old one and add a new one with the same name.
    3. Before you rename a function or a window.* name, search js/apps.js too. It may use it.
    4. Put big new data lists in the data/ folder, not here.
-   5. After any change, raise the CACHE number in sw.js (example: quranix-v23 to quranix-v24).
+   5. After any change, raise the CACHE number in sw.js (example: quranix-v2.0.32 to quranix-v2.0.33).
 
    LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
 */
@@ -329,6 +329,7 @@ window.loadSurah = loadSurah;
           highlightPlayingCard(item.s.number, item.no);
           await audioObj.play();
           audioPlayPause.textContent = '{{pause}}';
+  try{ qxPreloadNextAyah(); }catch(e){}
           return;
         }
       }
@@ -896,7 +897,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
 var ASMA_DATA=[["الله", "আল্লাহ", "একমাত্র উপাস্য", "১:১", "সব নামের মূল। সূরা ফাতিহায় আল্লাহ নাম দিয়েই শুরু।"], ["الرَّحْمَنُ", "আর-রহমান", "পরম করুণাময়", "৫৫:১", "যাঁর দয়া সব সৃষ্টিকে ঘিরে আছে। সূরা আর-রহমানের শুরু।"], ["الرَّحِيمُ", "আর-রহিম", "অতি দয়ালু", "১:১", "মুমিনদের প্রতি বিশেষ দয়ালু। ফাতিহার প্রতিটি রাকাতে পড়ি।"], ["الْمَلِكُ", "আল-মালিক", "সার্বভৌম অধিপতি", "৫৯:২৩", "সব রাজত্বের মালিক একমাত্র তিনি।"], ["الْقُدُّوسُ", "আল-কুদ্দুস", "পরম পবিত্র", "৫৯:২৩", "সব দোষ-ত্রুটি থেকে পবিত্র।"], ["السَّلَامُ", "আস-সালাম", "শান্তির উৎস", "৫৯:২৩", "যাঁর থেকে সব শান্তি ও নিরাপত্তা আসে।"], ["الْمُؤْمِنُ", "আল-মুমিন", "নিরাপত্তাদানকারী", "৫৯:২৩", "বান্দাকে ভয় থেকে নিরাপত্তা দেন।"], ["الْمُهَيْمِنُ", "আল-মুহাইমিন", "সবকিছুর তত্ত্বাবধায়ক", "৫৯:২৩", "সবকিছু দেখেন, রক্ষা করেন, নিয়ন্ত্রণ করেন।"], ["الْعَزِيزُ", "আল-আজিজ", "পরাক্রমশালী", "৫৯:২৩", "যাঁকে কেউ পরাজিত করতে পারে না।"], ["الْجَبَّارُ", "আল-জাব্বার", "প্রতাপশালী", "৫৯:২৩", "অহংকারীদের দমনকারী, ভাঙা হৃদয় জোড়া লাগান।"], ["الْمُتَكَبِّرُ", "আল-মুতাকাব্বির", "মহিমান্বিত", "৫৯:২৩", "বড়ত্ব শুধু তাঁরই শোভা পায়।"], ["الْخَالِقُ", "আল-খালিক", "সৃষ্টিকর্তা", "৫৯:২৪", "সবকিছু শূন্য থেকে সৃষ্টি করেছেন।"], ["الْبَارِئُ", "আল-বারি", "নিখুঁত সৃষ্টিকারী", "৫৯:২৪", "কোনো নমুনা ছাড়াই সৃষ্টি করেন।"], ["الْمُصَوِّرُ", "আল-মুসাওয়ির", "আকৃতিদানকারী", "৫৯:২৪", "প্রত্যেককে আলাদা আকৃতি দিয়েছেন।"], ["الْغَفَّارُ", "আল-গাফফার", "বারবার ক্ষমাকারী", "৩৮:৬৬", "যতবারই ফিরে আসো, ক্ষমা করেন।"], ["الْقَهَّارُ", "আল-কাহহার", "সবার উপর বিজয়ী", "৩৮:৬৫", "সবকিছু তাঁর ক্ষমতার অধীন।"], ["الْوَهَّابُ", "আল-ওয়াহহাব", "অফুরন্ত দানকারী", "৩:৮", "চাওয়া ছাড়াও দান করেন, বিনিময় চান না।"], ["الرَّزَّاقُ", "আর-রজ্জাক", "রিজিকদাতা", "৫১:৫৮", "সবার রিজিক তাঁর হাতে।"], ["الْفَتَّاحُ", "আল-ফাত্তাহ", "বিজয় ও সমাধানদানকারী", "৩৪:২৬", "বন্ধ দরজা খুলে দেন, ফয়সালা করেন।"], ["الْعَلِيمُ", "আল-আলিম", "সর্বজ্ঞ", "২:২৯", "প্রকাশ্য-গোপন সব জানেন।"], ["الْقَابِضُ", "আল-কাবিদ", "সংকোচনকারী", "২:২৪৫", "রিজিক ও জীবন সংকুচিত করেন হিকমত অনুযায়ী।"], ["الْبَاسِطُ", "আল-বাসিত", "প্রসারিতকারী", "২:২৪৫", "রিজিক ও বরকত প্রশস্ত করেন।"], ["الْخَافِضُ", "আল-খাফিদ", "নতকারী", "৫৬:৩", "অহংকারীকে নত করেন।"], ["الرَّافِعُ", "আর-রাফি", "উন্নতকারী", "৫৮:১১", "বিনয়ীদের মর্যাদা বাড়িয়ে দেন।"], ["الْمُعِزُّ", "আল-মুইজ্জ", "সম্মানদানকারী", "৩:২৬", "যাকে চান সম্মান দেন।"], ["الْمُذِلُّ", "আল-মুযিল্ল", "অপমানকারী", "৩:২৬", "যাকে চান অপমান করেন — সবই ন্যায়।"], ["السَّمِيعُ", "আস-সামি", "সর্বশ্রোতা", "২:১২৭", "ফিসফিস দোয়াও শোনেন।"], ["الْبَصِيرُ", "আল-বাসির", "সর্বদ্রষ্টা", "২:১১০", "চোখের পলকও তাঁর অগোচর নয়।"], ["الْحَكَمُ", "আল-হাকাম", "ন্যায়বিচারক", "২২:৬৯", "কিয়ামতে চূড়ান্ত ফয়সালা করবেন।"], ["الْعَدْلُ", "আল-আদল", "পরম ন্যায়পরায়ণ", "৬:১১৫", "তাঁর বিচারে বিন্দুমাত্র জুলুম নেই।"], ["اللَّطِيفُ", "আল-লতিফ", "সূক্ষ্মদর্শী, কোমল", "২২:৬৩", "সূক্ষ্ম উপায়ে বান্দার উপকার করেন।"], ["الْخَبِيرُ", "আল-খাবির", "সব খবর রাখেন", "৬:১৮", "ভেতরের খবরও জানেন।"], ["الْحَلِيمُ", "আল-হালিম", "পরম সহনশীল", "২:২২৫", "পাপের পরও সাথে সাথে শাস্তি দেন না।"], ["الْعَظِيمُ", "আল-আজিম", "মহান", "২:২৫৫", "আয়াতুল কুরসিতে এই নাম এসেছে।"], ["الْغَفُورُ", "আল-গাফুর", "ক্ষমাশীল", "২:১৭৩", "তওবা করলেই ক্ষমা করেন।"], ["الشَّكُورُ", "আশ-শাকুর", "কৃতজ্ঞতা গ্রহণকারী", "৩৫:৩০", "ছোট আমলকেও বড় প্রতিদান দেন।"], ["الْعَلِيُّ", "আল-আলিয়্য", "সুমহান", "৪:৩৪", "সবার ঊর্ধ্বে, সবচেয়ে উঁচু।"], ["الْكَبِيرُ", "আল-কাবির", "সুমহান, বড়", "২২:৬২", "তাঁর চেয়ে বড় কেউ নেই।"], ["الْحَفِيظُ", "আল-হাফিজ", "রক্ষাকারী", "১১:৫৭", "বান্দাকে সব বিপদ থেকে রক্ষা করেন।"], ["الْمُقِيتُ", "আল-মুকিত", "সবার খাদ্য ও শক্তিদাতা", "৪:৮৫", "সবার প্রয়োজন মেটান।"], ["الْحَسِيبُ", "আল-হাসিব", "হিসাব গ্রহণকারী", "৪:৬", "প্রতিটি কাজের হিসাব নেবেন।"], ["الْجَلِيلُ", "আল-জালিল", "মহিমান্বিত", "৫৫:২৭", "মর্যাদা ও মহিমার অধিকারী।"], ["الْكَرِيمُ", "আল-কারিম", "পরম দয়ালু, সম্মানিত", "২৭:৪০", "দানেও সম্মানিত, ক্ষমায়ও।"], ["الرَّقِيبُ", "আর-রকিব", "পর্যবেক্ষণকারী", "৪:১", "সবসময় তোমাকে দেখছেন।"], ["الْمُجِيبُ", "আল-মুজিব", "দোয়া কবুলকারী", "১১:৬১", "ডাকলেই সাড়া দেন।"], ["الْوَاسِعُ", "আল-ওয়াসি", "সবকিছু পরিবেষ্টনকারী", "২:১১৫", "তাঁর দয়া ও জ্ঞান সীমাহীন।"], ["الْحَكِيمُ", "আল-হাকিম", "প্রজ্ঞাময়", "৩১:২৭", "প্রতিটি সিদ্ধান্তে হিকমত আছে।"], ["الْوَدُودُ", "আল-ওয়াদুদ", "অতি স্নেহময়", "১১:৯০", "বান্দাকে গভীরভাবে ভালোবাসেন।"], ["الْمَجِيدُ", "আল-মাজিদ", "মহা সম্মানিত", "১১:৭৩", "সম্মান ও মর্যাদায় পরিপূর্ণ।"], ["الْبَاعِثُ", "আল-বায়িস", "পুনরুত্থানকারী", "২২:৭", "মৃতদের আবার জীবিত করবেন।"], ["الشَّهِيدُ", "আশ-শাহিদ", "সাক্ষী", "৪:৭৯", "সবকিছুর সাক্ষী তিনি।"], ["الْحَقُّ", "আল-হাক্ক", "চিরন্তন সত্য", "২২:৬", "তিনিই একমাত্র সত্য।"], ["الْوَكِيلُ", "আল-ওয়াকিল", "কর্মবিধায়ক", "৩:১৭৩", "তাঁর উপর ভরসা করাই যথেষ্ট।"], ["الْقَوِيُّ", "আল-কাওয়িয়্য", "মহাশক্তিশালী", "১১:৬৬", "তাঁর শক্তির কোনো সীমা নেই।"], ["الْمَتِينُ", "আল-মাতিন", "সুদৃঢ়", "৫১:৫৮", "তাঁর শক্তি কখনো কমে না।"], ["الْوَلِيُّ", "আল-ওয়ালিয়্য", "অভিভাবক, বন্ধু", "২:২৫৭", "মুমিনদের অভিভাবক তিনি।"], ["الْحَمِيدُ", "আল-হামিদ", "প্রশংসিত", "১১:৭৩", "সব প্রশংসা তাঁরই।"], ["الْمُحْصِي", "আল-মুহসি", "সবকিছু গণনাকারী", "৭৮:২৯", "কিছুই তাঁর গণনার বাইরে নয়।"], ["الْمُبْدِئُ", "আল-মুবদি", "প্রথম সৃষ্টিকারী", "৩০:২৭", "সৃষ্টির শুরু তাঁর হাতে।"], ["الْمُعِيدُ", "আল-মুয়িদ", "পুনরায় সৃষ্টিকারী", "৩০:২৭", "আবার ফিরিয়ে আনবেন।"], ["الْمُحْيِي", "আল-মুহয়ি", "জীবনদানকারী", "৩০:৫০", "মৃত জমিনকেও জীবিত করেন।"], ["الْمُمِيتُ", "আল-মুমিত", "মৃত্যুদানকারী", "৩:১৫৬", "জীবন-মৃত্যু তাঁর হাতে।"], ["الْحَيُّ", "আল-হায়্য", "চিরঞ্জীব", "২:২৫৫", "আয়াতুল কুরসির নাম — কখনো মরেন না।"], ["الْقَيُّومُ", "আল-কাইয়্যুম", "সবকিছুর ধারক", "২:২৫৫", "সবকিছু তাঁর উপর নির্ভরশীল।"], ["الْوَاجِدُ", "আল-ওয়াজিদ", "সবকিছু পাওয়া যায় যাঁর কাছে", "৩৮:৩৭", "কোনো কিছুর অভাব নেই তাঁর।"], ["الْمَاجِدُ", "আল-মাজিদ", "মহা মর্যাদাবান", "৮৫:১৫", "আরশের মালিক, মর্যাদাবান।"], ["الْوَاحِدُ", "আল-ওয়াহিদ", "একক", "১৩:১৬", "তিনি এক, তাঁর কোনো শরিক নেই।"], ["الصَّمَدُ", "আস-সামাদ", "অমুখাপেক্ষী", "১১২:২", "সবাই তাঁর মুখাপেক্ষী, তিনি কারো নন।"], ["الْقَادِرُ", "আল-কাদির", "সর্বশক্তিমান", "৬:৬৫", "সবকিছু করতে সক্ষম।"], ["الْمُقْتَدِرُ", "আল-মুকতাদির", "পূর্ণ ক্ষমতাবান", "৫৪:৫৫", "তাঁর ক্ষমতা পরিপূর্ণ।"], ["الْمُقَدِّمُ", "আল-মুকাদ্দিম", "অগ্রবর্তীকারী", "১৬:৬১", "যাকে চান আগে আনেন।"], ["الْمُؤَخِّرُ", "আল-মুআখখির", "পশ্চাৎবর্তীকারী", "৭১:৪", "যাকে চান পিছিয়ে দেন।"], ["الْأَوَّلُ", "আল-আউয়াল", "প্রথম", "৫৭:৩", "সবকিছুর আগে ছিলেন।"], ["الْآخِرُ", "আল-আখির", "শেষ", "৫৭:৩", "সবকিছুর পরেও থাকবেন।"], ["الظَّاهِرُ", "আজ-জাহির", "প্রকাশ্য", "৫৭:৩", "নিদর্শনে প্রকাশ্য।"], ["الْبَاطِنُ", "আল-বাতিন", "গোপন", "৫৭:৩", "গোপন রহস্য জানেন।"], ["الْوَالِي", "আল-ওয়ালি", "পরিচালক", "১৩:১১", "সবকিছুর পরিচালনা করেন।"], ["الْمُتَعَالِي", "আল-মুতাআলি", "সবার ঊর্ধ্বে", "১৩:৯", "সব ত্রুটির ঊর্ধ্বে।"], ["الْبَرُّ", "আল-বার্র", "পরম কল্যাণকারী", "৫২:২৮", "বান্দার প্রতি দয়ায় ভরা।"], ["التَّوَّابُ", "আত-তাওয়াব", "তওবা কবুলকারী", "২:৩৭", "বারবার তওবা কবুল করেন।"], ["الْمُنْتَقِمُ", "আল-মুনতাকিম", "প্রতিশোধ গ্রহণকারী", "৩২:২২", "জালিমদের শাস্তি দেন।"], ["الْعَفُوُّ", "আল-আফুও", "ক্ষমাকারী, মুছে দেন", "৪:৯৯", "পাপ পুরো মুছে দেন।"], ["الرَّؤُوفُ", "আর-রাউফ", "পরম স্নেহশীল", "৯:১১৭", "বান্দার প্রতি দয়ায় ভরা।"], ["مَالِكُ الْمُلْكِ", "মালিকুল মুলক", "রাজত্বের মালিক", "৩:২৬", "রাজত্ব দেন, কেড়ে নেন।"], ["ذُو الْجَلَالِ وَالْإِكْرَامِ", "যুল-জালালি ওয়াল-ইকরাম", "মহিমা ও সম্মানের অধিকারী", "৫৫:২৭", "সূরা আর-রহমানে বারবার এসেছে।"], ["الْمُقْسِطُ", "আল-মুকসিত", "ন্যায় প্রতিষ্ঠাকারী", "৭:২৯", "সবাইকে ন্যায় দেন।"], ["الْجَامِعُ", "আল-জামি", "একত্রকারী", "৩:৯", "কিয়ামতে সবাইকে জমা করবেন।"], ["الْغَنِيُّ", "আল-গানিয়্য", "অমুখাপেক্ষী", "৩৫:১৫", "তাঁর কিছুই লাগে না।"], ["الْمُغْنِي", "আল-মুগনি", "অভাব দূরকারী", "৯৩:৮", "অভাবীকে ধনী করেন।"], ["الْمَانِعُ", "আল-মানি", "বাধাদানকারী", "৬৭:২১", "যা দিতে চান না, কেউ দিতে পারে না।"], ["الضَّارُّ", "আদ-দার্র", "ক্ষতির মালিক", "৬:১৭", "ক্ষতিও তাঁর হুকুমে হয়।"], ["النَّافِعُ", "আন-নাফি", "উপকারকারী", "৬:১৭", "উপকারও তাঁর হাতেই।"], ["النُّورُ", "আন-নূর", "আলো", "২৪:৩৫", "আসমান-জমিনের আলো। সূরা নূর।"], ["الْهَادِي", "আল-হাদি", "পথপ্রদর্শক", "২৫:৩১", "সঠিক পথ দেখান।"], ["الْبَدِيعُ", "আল-বাদি", "অতুলনীয় স্রষ্টা", "২:১১৭", "যেমন আগে কেউ বানায়নি।"], ["الْبَاقِي", "আল-বাকি", "চিরস্থায়ী", "৫৫:২৭", "সব ধ্বংস হবে, তিনি থাকবেন।"], ["الْوَارِثُ", "আল-ওয়ারিস", "উত্তরাধিকারী", "১৫:২৩", "সবকিছুর শেষ মালিক।"], ["الرَّشِيدُ", "আর-রশিদ", "সঠিক পথ দেখানেওয়ালা", "১১:৮৭", "ভুল পথে যেতে দেন না।"], ["الصَّبُورُ", "আস-সাবুর", "পরম ধৈর্যশীল", "২:১৫৩", "বান্দার ভুলেও সাথে সাথে ধরেন না।"]];
 function asmaToday(){var d=new Date();return ASMA_DATA[(d.getDate()-1)%99];}
 function buildAsmaCard(){var t=asmaToday();var idx=ASMA_DATA.indexOf(t);var box=document.createElement('div');box.className='khatam-card';box.innerHTML='<div class="khatam-row"><b>{{i_asma}} আজকের নাম</b><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯</span></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:30px;color:var(--qx-main-color)">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div class="trk-mini">'+t[4]+'</div></div><div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">৯৯ নাম দেখো →</span><span>সূরা '+t[3]+'</span></div>';box.onclick=function(){if(typeof setMode==='function')setMode('asma');};return box;}
-function renderAsma(){if(typeof showOther==='function')showOther('{{i_asma}} আসমাউল হুসনা');const appEl = document.getElementById('app');var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var t=asmaToday();var top=document.createElement('div');top.className='asma-top';top.innerHTML='<small>{{i_asma}} আজকের নাম · '+(ASMA_DATA.indexOf(t)+1)+' / ৯৯</small><div class="ar">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div><small>রেফারেন্স: সূরা '+t[3]+' · '+t[4]+'</small></div>';top.onclick=function(){openAsmaDetail(ASMA_DATA.indexOf(t));};appEl.appendChild(top);var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='৯৯টি নাম মুখস্থ করো, প্রতিটা নামে ট্যাপ করে অর্থ + কুরআনের রেফারেন্স দেখো। {{star:f}} প্রিয় করো, {{i_tasbih}} জিকির করো।';appEl.appendChild(info);var search=document.createElement('input');search.className='asma-search';search.placeholder='নাম খুঁজুন... যেমন: রহমান, গাফুর, রজ্জাক';appEl.appendChild(search);var grid=document.createElement('div');grid.className='asma-grid';appEl.appendChild(grid);function draw(filter){grid.innerHTML='';ASMA_DATA.forEach(function(item,i){var txt=(item[1]+' '+item[2]+' '+item[0]).toLowerCase();if(filter&&txt.indexOf(filter.toLowerCase())<0)return;var c=document.createElement('div');c.className='asma-card'+(favs[i]?' fav':'');c.innerHTML='<div class="ar">'+item[0]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+item[1]+'</b><small>'+item[2]+'</small><div class="trk-mini">সূরা '+item[3]+(counts[i]?' · {{i_tasbih}} '+counts[i]+' বার':'')+'</div>';c.onclick=function(){openAsmaDetail(i);};grid.appendChild(c);});}search.oninput=function(){draw(search.value);};draw('');}
+function renderAsma(){if(typeof showOther==='function')showOther('{{i_asma}} আসমাউল হুসনা');const appEl = document.getElementById('app');var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var t=asmaToday();var top=document.createElement('div');top.className='asma-top';top.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><small>{{i_asma}} আজকের নাম · '+(ASMA_DATA.indexOf(t)+1)+' / ৯৯</small><span class="asma-arrow ms">arrow_forward_ios</span></div><div class="ar">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div><small>রেফারেন্স: সূরা '+t[3]+' · '+t[4]+'</small></div>';top.onclick=function(){openAsmaDetail(ASMA_DATA.indexOf(t));};appEl.appendChild(top);var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='৯৯টি নাম মুখস্থ করো, প্রতিটা নামে ট্যাপ করে অর্থ + কুরআনের রেফারেন্স দেখো। {{star:f}} প্রিয় করো, {{i_tasbih}} জিকির করো।';appEl.appendChild(info);var search=document.createElement('input');search.className='asma-search';search.placeholder='নাম খুঁজুন... যেমন: রহমান, গাফুর, রজ্জাক';appEl.appendChild(search);var grid=document.createElement('div');grid.className='asma-grid';appEl.appendChild(grid);function draw(filter){grid.innerHTML='';ASMA_DATA.forEach(function(item,i){var txt=(item[1]+' '+item[2]+' '+item[0]).toLowerCase();if(filter&&txt.indexOf(filter.toLowerCase())<0)return;var c=document.createElement('div');c.className='asma-card'+(favs[i]?' fav':'');c.innerHTML='<div class="ar">'+item[0]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+item[1]+'</b><small>'+item[2]+'</small><div class="trk-mini">সূরা '+item[3]+(counts[i]?' · {{i_tasbih}} '+counts[i]+' বার':'')+'</div>';c.onclick=function(){openAsmaDetail(i);};grid.appendChild(c);});}search.oninput=function(){draw(search.value);};draw('');}
 function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:48px;color:var(--qx-main-color);direction:rtl;line-height:1.6">'+item[0]+'</div><b style="font-size:var(--qx-fs-xl)">'+item[1]+'</b><div style="color:var(--qx-meta-color)">'+item[2]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{i_tasbih}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">← আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম →</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';await shareTextOrCopy(text,item[1],'শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!');};}
 window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaDetail=openAsmaDetail;
 
@@ -1027,6 +1028,14 @@ window.renderHadith=renderHadith;window.openOfflineHadithCollection=openOfflineH
 
 
 /* আইকন সাহায্যকারী: i_ দিয়ে শুরু নাম = ইসলামিক আইকন ফন্ট (fonts/islamic-icons.ttf), বাকিগুলো Material */
+function qxTopicSortOnly(){
+  // Phase 3: sort শুধু topic + dictionary tab-এ
+  try{
+    const active = document.querySelector('.tab-btn.on')?.dataset?.tab || window.tab;
+    const sortEl = document.querySelector('.qx-topic-sort');
+    if(sortEl) sortEl.style.display = (active==='topic'||active==='dictionary') ? 'flex' : 'none';
+  }catch(e){}
+}
 function qxIco(name, filled){
   name = String(name);
   if(name.indexOf('i_') === 0) return '<span class="ms qi' + (filled ? ' f' : '') + '" data-i="' + name.slice(2) + '" aria-hidden="true"></span>';
@@ -1399,7 +1408,175 @@ if (!RECITERS.some(r => r[0] === currentReciter)) currentReciter = RECITERS[0][0
 let autoPlayNext = lsGet("autoPlayNext", true);
 let currentPlaylist = [];
 let currentPlayIdx = -1;
-const audioObj = new Audio();
+let audioObj = new Audio();
+let _nextAudioObj = new Audio();
+let _nextPreloadedIdx = -1;
+let _crossfadeTimer = null;
+let _crossfadeRaf = null;
+
+// --- P11: blob revoke + room-tone + real 300ms crossfade ---
+function qxIsBlobUrl(u){ return typeof u === 'string' && u.indexOf('blob:') === 0; }
+function qxRevokeBlobUrl(u){ if(qxIsBlobUrl(u)){ try{ URL.revokeObjectURL(u); }catch(e){} } }
+function qxSafeRevokeAudioSrc(aud){
+  try{
+    const s = aud && aud.src ? aud.src : '';
+    if(qxIsBlobUrl(s)) qxRevokeBlobUrl(s);
+  }catch(e){}
+}
+
+// Room-tone (Decision 3): very low pink noise to avoid dead silence between ayahs
+let qxRoomCtx = null;
+let qxRoomGain = null;
+function qxEnsureRoomTone(){
+  try{
+    if(qxRoomCtx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    const ctx = new AC();
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    gain.connect(ctx.destination);
+    const len = ctx.sampleRate * 1;
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const ch = buf.getChannelData(0);
+    for(let i=0;i<len;i++){ ch[i] = (Math.random()*2-1) * 0.006; }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    src.connect(gain);
+    src.start(0);
+    qxRoomCtx = ctx;
+    qxRoomGain = gain;
+  }catch(e){}
+}
+function qxRoomToneFade(to, durMs){
+  try{
+    qxEnsureRoomTone();
+    if(!qxRoomCtx || !qxRoomGain) return;
+    if(qxRoomCtx.state === 'suspended') qxRoomCtx.resume().catch(()=>{});
+    const g = qxRoomGain.gain;
+    const now = qxRoomCtx.currentTime;
+    g.cancelScheduledValues(now);
+    g.setValueAtTime(g.value, now);
+    g.linearRampToValueAtTime(to, now + durMs/1000);
+  }catch(e){}
+}
+
+function qxPreloadNextAyah(){
+  try{
+    if(!autoPlayNext) return;
+    const nextIdx = currentPlayIdx + 1;
+    if(nextIdx < 0 || nextIdx >= currentPlaylist.length) return;
+    if(_nextPreloadedIdx === nextIdx && _nextAudioObj.src) return;
+    const nextItem = currentPlaylist[nextIdx];
+    if(!nextItem) return;
+    const rec = reciterNow();
+    get(keyFor(rec, nextItem.s.number, nextItem.no)).then(blob => {
+      if(blob){
+        qxSafeRevokeAudioSrc(_nextAudioObj);
+        _nextAudioObj.src = URL.createObjectURL(blob);
+      } else {
+        if(qxIsBlobUrl(_nextAudioObj.src)) qxSafeRevokeAudioSrc(_nextAudioObj);
+        const url = `https://cdn.islamic.network/quran/audio-surah/128/${rec}/${nextItem.s.number}.mp3`;
+        try{ _nextAudioObj.src = (typeof audioUrl === 'function' ? audioUrl(nextItem, rec) : url); }catch(e){ _nextAudioObj.src = url; }
+      }
+      _nextAudioObj.preload = 'auto';
+      _nextAudioObj.volume = 1;
+      try{ _nextAudioObj.load(); }catch(e){}
+      _nextPreloadedIdx = nextIdx;
+    }).catch(()=>{});
+  }catch(e){}
+}
+
+function qxDoRealCrossfade(oldAud, newAud, duration){
+  return new Promise((resolve)=>{
+    try{
+      const start = performance.now();
+      const fromVol = oldAud.volume;
+      newAud.volume = 0;
+      const tick = (now)=>{
+        const elapsed = now - start;
+        const t = Math.min(1, elapsed / duration);
+        const ease = t < 0.5 ? 2*t*t : -1 + (4-2*t)*t;
+        oldAud.volume = Math.max(0, fromVol * (1 - ease));
+        newAud.volume = Math.min(1, ease);
+        if(t < 1){
+          _crossfadeRaf = requestAnimationFrame(tick);
+        } else {
+          oldAud.volume = 0;
+          newAud.volume = 1;
+          resolve();
+        }
+      };
+      _crossfadeRaf = requestAnimationFrame(tick);
+    }catch(e){ resolve(); }
+  });
+}
+
+function qxPlayWithCrossfade(nextIdx){
+  try{
+    if(_nextPreloadedIdx === nextIdx && _nextAudioObj.src){
+      const oldAud = audioObj;
+      const newAud = _nextAudioObj;
+      newAud.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+      // Start newAud for overlap
+      try{ newAud.currentTime = 0; }catch(e){}
+      const playP = newAud.play().catch(()=>{});
+      qxEnsureRoomTone();
+      qxRoomToneFade(0.012, 80);
+      qxDoRealCrossfade(oldAud, newAud, 300).then(()=>{
+        try{ oldAud.pause(); }catch(e){}
+        qxSafeRevokeAudioSrc(oldAud);
+        oldAud.src = '';
+        oldAud.volume = 1;
+        // Swap: newAud becomes main audioObj, old becomes preload holder
+        const tmp = audioObj;
+        audioObj = _nextAudioObj;
+        _nextAudioObj = tmp;
+        _nextAudioObj.volume = 1;
+        _nextAudioObj.src = '';
+        _nextPreloadedIdx = -1;
+        qxRoomToneFade(0, 200);
+        // Re-attach listeners for new main if needed
+        qxRebindAudioEvents();
+        qxPreloadNextAyah();
+      });
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+let _qxAudioEventsBound = false;
+function qxRebindAudioEvents(){
+  if(_qxAudioEventsBound) return;
+  _qxAudioEventsBound = true;
+  // This will be called after swap to ensure both audios have listeners via global handlers
+  try{
+    // timeupdate, playing etc are bound to audioObj variable dynamically via wrapper below
+  }catch(e){}
+}
+
+// Phase 2 — Hide / Float button
+function qxInitAudioHide(){
+  const hideBtn = document.getElementById('audioHide');
+  const floatWrap = document.getElementById('audioFloat');
+  const floatBtn = document.getElementById('audioFloatBtn');
+  if(hideBtn && floatWrap){
+    hideBtn.onclick = () => {
+      audioBar.style.display = 'none';
+      floatWrap.style.display = 'block';
+    };
+  }
+  if(floatBtn && floatWrap){
+    floatBtn.onclick = () => {
+      floatWrap.style.display = 'none';
+      audioBar.style.display = 'block';
+      updateAudioBarPos();
+    };
+  }
+}
+
 const audioBar = document.getElementById("audioBar");
 const audioTitle = document.getElementById("audioTitle");
 const audioReciterLabel = document.getElementById("audioReciterLabel");
@@ -1430,22 +1607,57 @@ function playAyahAtIndex(idx){
   }
   currentPlayIdx = idx;
   const item = currentPlaylist[idx];
-  const url = `https://everyayah.com/data/${currentReciter}/${pad3(item.s.number)}${pad3(item.no)}.mp3`;
-  audioObj.src = url;
-  audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
-  audioTitle.textContent = `${item.s.englishName} · আয়াত ${toBn(item.no)}`;
-  audioReciterLabel.textContent = getReciterName(currentReciter);
-  audioBar.style.display = "block";
-  updateAudioBarPos();
-  audioAuto.classList.toggle("on", autoPlayNext);
-  highlightPlayingCard(item.s.number, item.no);
-  audioObj.play().then(() => {
-    audioPlayPause.textContent = "{{pause}}";
-    audioPlayPause.setAttribute("aria-label", "অডিও বিরতি দাও");
-  }).catch(() => {
-    showToast("অডিও লোড করা যায়নি। ইন্টারনেট সংযোগ চেক করুন।");
-    audioPlayPause.textContent = "{{play_arrow}}";
-    audioPlayPause.setAttribute("aria-label", "আবার চালাও");
+  const rec = reciterNow();
+  // P11: try offline blob first, revoke old blob url
+  qxSafeRevokeAudioSrc(audioObj);
+  const remoteUrl = `https://everyayah.com/data/${currentReciter}/${pad3(item.s.number)}${pad3(item.no)}.mp3`;
+  // Async offline check
+  get(keyFor(rec, item.s.number, item.no)).then(blob => {
+    if(blob){
+      audioObj.src = URL.createObjectURL(blob);
+    } else {
+      audioObj.src = remoteUrl;
+    }
+    audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+    audioObj.volume = 1;
+    audioTitle.textContent = `${item.s.englishName} · আয়াত ${toBn(item.no)}`;
+    audioReciterLabel.textContent = getReciterName(currentReciter);
+    audioBar.style.display = "block";
+    updateAudioBarPos();
+    audioAuto.classList.toggle("on", autoPlayNext);
+    highlightPlayingCard(item.s.number, item.no);
+    // Ensure room tone ctx resumed on user gesture
+    qxEnsureRoomTone();
+    if(qxRoomCtx && qxRoomCtx.state === 'suspended') qxRoomCtx.resume().catch(()=>{});
+    audioObj.play().then(() => {
+      audioPlayPause.textContent = "{{pause}}";
+      audioPlayPause.setAttribute("aria-label", "অডিও বিরতি দাও");
+      qxPreloadNextAyah();
+    }).catch(() => {
+      showToast("অডিও লোড করা যায়নি। ইন্টারনেট সংযোগ চেক করুন।");
+      audioPlayPause.textContent = "{{play_arrow}}";
+      audioPlayPause.setAttribute("aria-label", "আবার চালাও");
+    });
+  }).catch(()=>{
+    audioObj.src = remoteUrl;
+    audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+    audioObj.volume = 1;
+    audioTitle.textContent = `${item.s.englishName} · আয়াত ${toBn(item.no)}`;
+    audioReciterLabel.textContent = getReciterName(currentReciter);
+    audioBar.style.display = "block";
+    updateAudioBarPos();
+    audioAuto.classList.toggle("on", autoPlayNext);
+    highlightPlayingCard(item.s.number, item.no);
+    qxEnsureRoomTone();
+    audioObj.play().then(() => {
+      audioPlayPause.textContent = "{{pause}}";
+      audioPlayPause.setAttribute("aria-label", "অডিও বিরতি দাও");
+      qxPreloadNextAyah();
+    }).catch(() => {
+      showToast("অডিও লোড করা যায়নি। ইন্টারনেট সংযোগ চেক করুন।");
+      audioPlayPause.textContent = "{{play_arrow}}";
+      audioPlayPause.setAttribute("aria-label", "আবার চালাও");
+    });
   });
 }
 
@@ -1456,10 +1668,19 @@ function playAyahFromList(list, targetSurah, targetAyah){
 }
 
 function stopAudio(){
-  audioObj.pause();
-  audioObj.src = "";
+  try{ audioObj.pause(); }catch(e){}
+  qxSafeRevokeAudioSrc(audioObj);
+  // Also revoke next preloaded if blob
+  qxSafeRevokeAudioSrc(_nextAudioObj);
+  if(_crossfadeRaf){ try{ cancelAnimationFrame(_crossfadeRaf); }catch(e){} _crossfadeRaf=null; }
+  try{ audioObj.src = ""; }catch(e){}
+  try{ _nextAudioObj.src = ""; }catch(e){}
+  _nextPreloadedIdx = -1;
   audioBar.style.display = "none";
   currentPlayIdx = -1;
+  qxRoomToneFade(0, 150);
+  const statusEl = document.getElementById('audioStatus');
+  if(statusEl) statusEl.textContent = 'বন্ধ';
   document.querySelectorAll(".ayah.playing").forEach(el => el.classList.remove("playing"));
 }
 
@@ -1485,9 +1706,19 @@ audioAuto.onclick = () => {
   showToast(autoPlayNext ? "অটো-প্লে চালু হয়েছে" : "অটো-প্লে বন্ধ হয়েছে");
 };
 document.getElementById("audioClose").onclick = stopAudio;
+try{ qxInitAudioHide(); }catch(e){}
 audioObj.onended = () => {
   if (autoPlayNext && currentPlayIdx + 1 < currentPlaylist.length) {
-    playAyahAtIndex(currentPlayIdx + 1);
+    // Phase 2: try preloaded crossfade first, else normal
+    if(!qxPlayWithCrossfade(currentPlayIdx + 1)){
+      playAyahAtIndex(currentPlayIdx + 1);
+    } else {
+      // Update title for next item
+      try{
+        const ni = currentPlaylist[currentPlayIdx + 1];
+        if(ni){ currentPlayIdx = currentPlayIdx + 1; audioTitle.textContent = ni.s.englishName + ' · আয়াত ' + toBn(ni.no); highlightPlayingCard(ni.s.number, ni.no); }
+      }catch(e){}
+    }
   } else {
     audioPlayPause.textContent = "{{play_arrow}}";
   }
@@ -1511,64 +1742,117 @@ function qxSyncPlayButtons(){
 }
 ["play", "playing", "pause", "ended", "emptied", "error"].forEach(ev => audioObj.addEventListener(ev, qxSyncPlayButtons));
 
-/* Phase 4: accessible playback progress, network feedback and lock-screen controls */
+/* Phase 4 + P11: progress, network, lock-screen, background check, blob revoke, বিরতি যাচাই */
 (function(){
   const seek=document.getElementById('audioSeek');
-  const current=document.getElementById('audioCurrentTime');
-  const duration=document.getElementById('audioDuration');
+  const curEl=document.getElementById('audioCurrentTime');
+  const durEl=document.getElementById('audioDuration');
   const status=document.getElementById('audioStatus');
-  if(!seek||!current||!duration||!status) return;
-  const bnTime=function(seconds){
-    if(!Number.isFinite(seconds)||seconds<0) seconds=0;
-    const m=Math.floor(seconds/60), sec=Math.floor(seconds%60);
+  if(!seek||!curEl||!durEl||!status) return;
+  const getMain = ()=> audioObj;
+  const bnTime=function(s){
+    if(!Number.isFinite(s)||s<0) s=0;
+    const m=Math.floor(s/60), sec=Math.floor(s%60);
     return toBn(m)+':'+toBn(String(sec).padStart(2,'0'));
   };
   const updateProgress=function(){
-    const d=audioObj.duration, t=audioObj.currentTime||0;
-    current.textContent=bnTime(t);
+    const aud = getMain();
+    const d=aud.duration, t=aud.currentTime||0;
+    curEl.textContent=bnTime(t);
     if(Number.isFinite(d)&&d>0){
-      duration.textContent=bnTime(d);
+      durEl.textContent=bnTime(d);
       if(document.activeElement!==seek) seek.value=String(Math.round(t/d*1000));
       seek.disabled=false;
-    }else{duration.textContent='০:০০';seek.value='0';seek.disabled=true;}
+    }else{durEl.textContent='০:০০';seek.value='0';seek.disabled=true;}
   };
   seek.addEventListener('input',function(){
-    if(Number.isFinite(audioObj.duration)&&audioObj.duration>0){
-      audioObj.currentTime=(Number(seek.value)/1000)*audioObj.duration;
+    const aud = getMain();
+    if(Number.isFinite(aud.duration)&&aud.duration>0){
+      aud.currentTime=(Number(seek.value)/1000)*aud.duration;
       updateProgress();
     }
   });
-  audioObj.addEventListener('timeupdate',updateProgress);
-  audioObj.addEventListener('durationchange',updateProgress);
-  audioObj.addEventListener('loadedmetadata',function(){updateProgress();status.textContent='অডিও চলছে';});
-  audioObj.addEventListener('waiting',function(){status.textContent='অডিও লোড হচ্ছে…';});
-  audioObj.addEventListener('playing',function(){status.textContent='অডিও চলছে';audioPlayPause.textContent='{{pause}}';});
-  audioObj.addEventListener('pause',function(){if(audioObj.src)status.textContent='বিরতি';});
-  audioObj.addEventListener('error',function(){
-    if(!audioObj.src)return;
-    status.textContent=navigator.onLine?'অডিও পাওয়া যাচ্ছে না — আবার চেষ্টা করো':'ইন্টারনেট সংযোগ নেই';
-    audioPlayPause.textContent='{{play_arrow}}';
-  });
-  audioObj.addEventListener('emptied',function(){seek.value='0';seek.disabled=true;current.textContent='০:০০';duration.textContent='০:০০';status.textContent='বন্ধ';});
+  function bindAud(aud){
+    if(!aud || aud._qxP4Bound) return;
+    aud._qxP4Bound = true;
+    aud.addEventListener('timeupdate',function(){ if(aud===getMain()) updateProgress(); });
+    aud.addEventListener('durationchange',function(){ if(aud===getMain()) updateProgress(); });
+    aud.addEventListener('loadedmetadata',function(){
+      if(aud!==getMain()) return;
+      updateProgress();
+      status.textContent='অডিও চলছে';
+      // MediaMetadata
+      try{
+        const item=currentPlaylist[currentPlayIdx];
+        if(item && 'mediaSession' in navigator && 'MediaMetadata' in window){
+          navigator.mediaSession.metadata=new MediaMetadata({title:'আয়াত '+toBn(item.no),artist:getReciterName(currentReciter),album:item.s.englishName+' · Quranix'});
+        }
+      }catch(e){}
+    });
+    aud.addEventListener('waiting',function(){ if(aud===getMain()) status.textContent='অডিও লোড হচ্ছে…'; });
+    aud.addEventListener('playing',function(){
+      if(aud!==getMain()) return;
+      status.textContent='অডিও চলছে';
+      audioPlayPause.textContent='{{pause}}';
+      // P11: background check - ensure room tone off when playing
+      qxRoomToneFade(0, 150);
+    });
+    aud.addEventListener('pause',function(){
+      if(aud!==getMain()) return;
+      // P11: বিরতি মোছা যাচাই - only show বিরতি if src exists and not ended, and will be cleared on play/emptied
+      if(aud.src && !aud.ended){
+        status.textContent='বিরতি';
+      }
+    });
+    aud.addEventListener('error',function(){
+      if(aud!==getMain() || !aud.src) return;
+      status.textContent=navigator.onLine?'অডিও পাওয়া যাচ্ছে না — আবার চেষ্টা করো':'ইন্টারনেট সংযোগ নেই';
+      audioPlayPause.textContent='{{play_arrow}}';
+    });
+    aud.addEventListener('emptied',function(){
+      if(aud!==getMain()) return;
+      seek.value='0';seek.disabled=true;curEl.textContent='০:০০';durEl.textContent='০:০০';status.textContent='বন্ধ';
+      // P11: revoke blob on emptied to prevent leak
+      qxSafeRevokeAudioSrc(aud);
+    });
+    aud.addEventListener('timeupdate',function(){
+      if(aud!==getMain()) return;
+      if('mediaSession' in navigator && navigator.mediaSession.setPositionState && Number.isFinite(aud.duration) && aud.duration>0){
+        try{navigator.mediaSession.setPositionState({duration:aud.duration,playbackRate:aud.playbackRate,position:Math.min(aud.currentTime,aud.duration)});}catch(e){}
+      }
+    });
+  }
+  bindAud(audioObj);
+  bindAud(_nextAudioObj);
+  // Re-bind after swap
+  const origRebind = window.qxRebindAudioEvents;
+  window.qxRebindAudioEvents = function(){
+    try{ if(origRebind) origRebind(); }catch(e){}
+    bindAud(audioObj);
+    bindAud(_nextAudioObj);
+  };
   window.addEventListener('online',function(){if(status.textContent==='ইন্টারনেট সংযোগ নেই')status.textContent='সংযোগ ফিরে এসেছে';});
-  window.addEventListener('offline',function(){if(audioObj.paused)status.textContent='অফলাইন — সংরক্ষিত অডিও থাকলে চালানো যাবে';});
+  window.addEventListener('offline',function(){const aud=getMain(); if(aud.paused)status.textContent='অফলাইন — সংরক্ষিত অডিও থাকলে চালানো যাবে';});
+  // P11: background check - audio should continue in background, do NOT pause on visibilitychange
+  document.addEventListener('visibilitychange',function(){
+    // Explicitly do nothing - let audio continue
+    // If browser pauses, try resume if was playing
+    if(document.visibilityState === 'visible'){
+      // No auto-resume, just ensure status correct
+    }
+  });
   if('mediaSession' in navigator){
     const action=function(name,handler){try{navigator.mediaSession.setActionHandler(name,handler);}catch(e){}}
-    action('play',function(){audioObj.play().catch(function(){});});
-    action('pause',function(){audioObj.pause();});
+    action('play',function(){ getMain().play().catch(function(){}); });
+    action('pause',function(){ getMain().pause(); });
     action('previoustrack',function(){if(currentPlayIdx>0)playAyahAtIndex(currentPlayIdx-1);});
     action('nexttrack',function(){if(currentPlayIdx+1<currentPlaylist.length)playAyahAtIndex(currentPlayIdx+1);});
-    audioObj.addEventListener('loadedmetadata',function(){
-      const item=currentPlaylist[currentPlayIdx];
-      if(item&&'MediaMetadata' in window){
-        try{navigator.mediaSession.metadata=new MediaMetadata({title:'আয়াত '+toBn(item.no),artist:getReciterName(currentReciter),album:item.s.englishName+' · Quranix'});}catch(e){}
-      }
-      updateProgress();
-    });
-    audioObj.addEventListener('timeupdate',function(){
-      if(navigator.mediaSession.setPositionState&&Number.isFinite(audioObj.duration)&&audioObj.duration>0){
-        try{navigator.mediaSession.setPositionState({duration:audioObj.duration,playbackRate:audioObj.playbackRate,position:Math.min(audioObj.currentTime,audioObj.duration)});}catch(e){}
-      }
+    action('seekto',function(details){
+      try{
+        const aud=getMain();
+        if(details.fastSeek && 'fastSeek' in aud){ aud.fastSeek(details.seekTime); return; }
+        aud.currentTime = details.seekTime;
+      }catch(e){}
     });
   }
   updateProgress();
@@ -1583,17 +1867,25 @@ function qxScrollBehavior(){
 function lsGet(k,d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
 function lsSet(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 
+/* P9 v2.0.32 — F-05: তাফসির HTML allowlist sanitizer (লাইব্রেরি ছাড়া, অফলাইনে চলে)
+   শুধু নিচের ট্যাগ থাকে, কোনো attribute থাকে না। বিপজ্জনক ট্যাগ লেখাসহ বাদ যায়,
+   অন্য অচেনা ট্যাগ খুলে ভেতরের লেখা রাখা হয়। */
+const QX_SAFE_TAGS = new Set(["p","br","b","strong","i","em","u","ul","ol","li","blockquote","span","div","sub","sup","small","h1","h2","h3","h4","h5","h6"]);
+const QX_DROP_TAGS = new Set(["script","style","iframe","object","embed","link","meta","form","input","button","textarea","select","svg","math","template","noscript","title"]);
 function safeHtml(html){
-  const doc = new DOMParser().parseFromString("<div>" + String(html) + "</div>", "text/html");
-  const root = doc.body.firstChild;
-  root.querySelectorAll("script,style,iframe,object,embed,link,meta,form,input,button,textarea,svg,math").forEach(n => n.remove());
-  root.querySelectorAll("*").forEach(el => {
-    Array.from(el.attributes).forEach(a => {
-      const n = a.name.toLowerCase();
-      if (n.startsWith("on") || n === "href" || n === "src" || n === "xlink:href" || n === "style") el.removeAttribute(a.name);
+  const doc = new DOMParser().parseFromString(String(html == null ? "" : html), "text/html");
+  const out = document.createElement("div");
+  (function walk(src, dst){
+    src.childNodes.forEach(n => {
+      if (n.nodeType === 3) { dst.appendChild(document.createTextNode(n.nodeValue)); return; }
+      if (n.nodeType !== 1) return;
+      const t = n.tagName.toLowerCase();
+      if (QX_DROP_TAGS.has(t)) return;
+      if (QX_SAFE_TAGS.has(t)) { const e = document.createElement(t); walk(n, e); dst.appendChild(e); }
+      else walk(n, dst);
     });
-  });
-  return root.innerHTML;
+  })(doc.body, out);
+  return out.innerHTML;
 }
 
 /* Sources & references: one list used by the settings sheet and the menu popup. */
@@ -2776,3 +3068,49 @@ async function openJuz(n, y){
     if (renderToken === readerRenderToken) msg("লোড করা যায়নি। ইন্টারনেট চেক করে আবার চেষ্টা করুন।");
   }
 }
+
+// Phase 7 v2.0.31 — Download + Offline + Cache helpers
+function qxP7DownloadHelpers(){
+  // Offline badge: online/offline status
+  function updateOfflineBadge(){
+    const badge = document.querySelector('.offline-badge');
+    if(!badge) return;
+    const online = navigator.onLine;
+    badge.classList.toggle('offline', !online);
+    badge.innerHTML = '<span class="ms">' + (online ? 'wifi' : 'wifi_off') + '</span>' + (online ? 'অনলাইন' : 'অফলাইন — সংরক্ষিত');
+  }
+  window.addEventListener('online', updateOfflineBadge);
+  window.addEventListener('offline', updateOfflineBadge);
+  setTimeout(updateOfflineBadge, 500);
+  // Download retry: if package failed, allow retry via existing runPackage
+  document.addEventListener('click', (e) => {
+    const retryBtn = e.target.closest('[data-qx-retry-package]');
+    if(retryBtn){
+      const type = retryBtn.dataset.qxRetryPackage;
+      const id = retryBtn.dataset.qxRetryId;
+      const label = retryBtn.dataset.qxRetryLabel || '';
+      if(typeof runPackage === 'function') runPackage(type, id, label);
+    }
+    const cancelBtn = e.target.closest('[data-qx-cancel-package]');
+    if(cancelBtn){
+      const jobKey = cancelBtn.dataset.qxCancelPackage;
+      // Cancel via jobPause / job cancel if available
+      try{
+        if(window._activeDownloadJobs && window._activeDownloadJobs[jobKey]){
+          window._activeDownloadJobs[jobKey].cancelled = true;
+        }
+      }catch(err){}
+    }
+  });
+  // Cache status: show sw.js version
+  try{
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.getRegistration().then(reg => {
+        const el = document.querySelector('.cache-status-version');
+        if(el && reg) el.textContent = 'Cache: ' + (reg.active ? 'সক্রিয়' : 'প্রস্তুত');
+      });
+    }
+  }catch(e){}
+}
+try{ qxP7DownloadHelpers(); }catch(e){}
+

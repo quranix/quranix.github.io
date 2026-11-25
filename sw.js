@@ -1,104 +1,72 @@
-/* sw.js
-   WHAT IT IS: the service worker. It saves the app files on the phone so the app works offline.
-
-   EDIT RULES
-   1. Add every new file to the ASSETS list. A wrong path does not show an error,
-      the file is just missing when the phone is offline. Check the spelling.
-   2. After you change any file in the app, raise the CACHE number (example: quranix-v23 to quranix-v24).
-      This clears the old files from users' phones.
-   3. Keep sw.js and manifest.json in the root folder, next to index.html.
-*/
-
-/* Quranix service worker — NETWORK-FIRST
-   অনলাইনে থাকলে সবসময় সার্ভার থেকে নতুন ফাইল আনে (এবং ক্যাশ আপডেট করে)।
-   নেট না থাকলে বা সার্ভার ৪ সেকেন্ডে সাড়া না দিলে ক্যাশ থেকে চালায়, তাই অফলাইনেও চলে।
-   ফাইল বদলালে নিচের CACHE-এর ভার্সন নম্বর বাড়িয়ে দাও (v22 → v23), না বাড়ালেও নতুন ফাইল অনলাইনে আসবে,
-   কিন্তু পুরোনো ক্যাশ পরিষ্কার হবে ভার্সন বদলালেই। */
-const CACHE = 'quranix-v2.0.0';
-const NETWORK_TIMEOUT_MS = 4000;
+const CACHE = 'quranix-v2.0.36';
 const ASSETS = [
-  './',
-  './index.html',
-  './data/topics.js',
-  './data/dictionary.js',
-  './data/district.js',
-  './js/quran.js',
-  './js/apps.js',
-  './quran-data.js',
-  './manifest.json',
-  './icons/favicon.ico',
-  './icons/apple-touch-icon.png',
-  './icons/icon-192x192.png',
-  './icons/icon-512x512.png',
-  './icons/icon-maskable-192x192.png',
-  './icons/icon-maskable-512x512.png',
-  './fonts/hind-siliguri-300.woff',
-  './fonts/hind-siliguri-400.woff',
-  './fonts/hind-siliguri-500.woff',
-  './fonts/hind-siliguri-600.woff',
-  './fonts/hind-siliguri-700.woff',
-  './fonts/noto-naskh-arabic.woff',
-  './fonts/amiri-quran.woff2',
-  './fonts/kalpurush.woff2',
-  './fonts/noto-serif-bengali-400.woff2',
-  './fonts/noto-serif-bengali-700.woff2',
-  './fonts/material-symbols-rounded.woff2',
-  './fonts/islamic-icons.ttf'
+  '/',
+  '/index.html',
+  '/js/quran.js',
+  '/js/apps.js',
+  '/quran-data.js',
+  '/data/topics.js',
+  '/data/dictionary.js',
+  '/data/district.js',
+  '/icons/icon-32.png',
+  '/icons/icon-48.png',
+  '/icons/icon-72.png',
+  '/icons/icon-96.png',
+  '/icons/icon-128.png',
+  '/icons/icon-180.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
-/* একটা ফাইল না পেলেও বাকিগুলো ক্যাশ হবে (আগে একটা ফেল করলে সব ক্যাশ ফেল করত) */
-self.addEventListener('install', e => {
+// P9: clean old caches
+async function clean(){
+  const keys = await caches.keys();
+  await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
+}
+
+self.addEventListener('install', e=>{
   e.waitUntil(
-    caches.open(CACHE).then(c => Promise.all(ASSETS.map(a => c.add(a).catch(() => {}))))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', e => {
+self.addEventListener('activate', e=>{
   e.waitUntil(
-    caches.keys()
-      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
+    clean().then(()=>self.clients.claim())
   );
 });
 
-function fetchWithTimeout(request){
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('timeout')), NETWORK_TIMEOUT_MS);
-    fetch(request, { cache: 'no-cache' }).then(
-      r => { clearTimeout(timer); resolve(r); },
-      err => { clearTimeout(timer); reject(err); }
-    );
-  });
-}
-
-/* redirect-করা রেসপন্স দিয়ে পেজ খোলা ব্রাউজার আটকায় (অফলাইনে "You are offline"/এরর পেজ আসে), তাই কপি করে সাধারণ রেসপন্স বানাই */
-function clean(res){
-  if (!res || !res.redirected) return Promise.resolve(res);
-  return res.blob().then(b => new Response(b, { headers: res.headers, status: res.status, statusText: res.statusText }));
-}
-
-function offlineFallback(req){
-  return caches.match(req, { ignoreSearch: true })
-    .then(hit => hit || (req.mode === 'navigate'
-      ? caches.match('./index.html', { ignoreSearch: true }).then(h => h || caches.match('./', { ignoreSearch: true }))
-      : undefined))
-    .then(hit => clean(hit))
-    .then(hit => hit || new Response('Offline', { status: 503, statusText: 'Offline' }));
-}
-
-self.addEventListener('fetch', e => {
+self.addEventListener('fetch', e=>{
   const req = e.request;
-  if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;   /* API/অডিও ইত্যাদি বাইরের রিকোয়েস্ট যেমন আছে তেমনই যাবে */
+  // P9: same-origin only
+  if(url.origin !== self.location.origin) return;
+  // P9: ignoreSearch for api / quran data
+  const ignoreSearch = url.pathname.includes('/api/') || url.pathname.includes('quran-data');
+  const cacheReq = ignoreSearch ? new Request(url.origin + url.pathname, {method: req.method, headers: req.headers}) : req;
+  
+  if(req.method !== 'GET'){
+    return;
+  }
+
   e.respondWith(
-    fetchWithTimeout(req).then(res => {
-      if (res && res.ok && !res.redirected) {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+    (async ()=>{
+      try{
+        const cached = await caches.match(cacheReq);
+        if(cached) return cached;
+        const res = await fetch(req);
+        if(res && res.ok){
+          const clone = res.clone();
+          const cache = await caches.open(CACHE);
+          cache.put(cacheReq, clone);
+        }
+        return res;
+      }catch(err){
+        // P9: 503 fallback
+        const cached = await caches.match(cacheReq);
+        if(cached) return cached;
+        return new Response('Offline', {status: 503, statusText: 'Service Unavailable', headers: {'Content-Type':'text/plain'}});
       }
-      return res;
-    }).catch(() => offlineFallback(req))
+    })()
   );
 });

@@ -426,6 +426,26 @@ let loc = lsGet("loc", { n:"ঢাকা", lat:23.8103, lng:90.4125 });
 let asrF = lsGet("asr", 2);
 function fmtTime(d){ if (!d) return "—"; let h = d.getHours(); const m = d.getMinutes(), ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return toBn(String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0")) + " " + ap; }
 function fmtCd(ms){ const s = Math.max(0, Math.floor(ms/1000)); return toBn([Math.floor(s/3600), Math.floor(s%3600/60), s%60].map(v => String(v).padStart(2,"0")).join(":")); }
+// Phase 4 v2.0.31 — Flip clock: HH MM SS আলাদা ঘরে
+function fmtCdFlip(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  const hh = String(Math.floor(s/3600)).padStart(2,"0");
+  const mm = String(Math.floor(s%3600/60)).padStart(2,"0");
+  const ss = String(s%60).padStart(2,"0");
+  return { hh: toBn(hh), mm: toBn(mm), ss: toBn(ss), raw: hh+":"+mm+":"+ss };
+}
+function qxRenderFlipClock(el, ms){
+  if(!el) return;
+  const t = fmtCdFlip(ms);
+  const boxes = el.querySelectorAll('.flip-box b');
+  if(boxes.length >= 3){
+    if(boxes[0].textContent !== t.hh){ boxes[0].textContent = t.hh; boxes[0].parentElement.classList.remove('flip'); void boxes[0].offsetWidth; boxes[0].parentElement.classList.add('flip'); }
+    if(boxes[1].textContent !== t.mm){ boxes[1].textContent = t.mm; boxes[1].parentElement.classList.remove('flip'); void boxes[1].offsetWidth; boxes[1].parentElement.classList.add('flip'); }
+    if(boxes[2].textContent !== t.ss){ boxes[2].textContent = t.ss; boxes[2].parentElement.classList.remove('flip'); void boxes[2].offsetWidth; boxes[2].parentElement.classList.add('flip'); }
+  } else {
+    el.innerHTML = '<div class="flip-box"><b>'+t.hh+'</b><small>ঘণ্টা</small></div><div class="flip-box"><b>'+t.mm+'</b><small>মিনিট</small></div><div class="flip-box"><b>'+t.ss+'</b><small>সেকেন্ড</small></div>';
+  }
+}
 function nextPrayer(now){
   const t = calcDay(now, loc.lat, loc.lng, asrF);
   for (const [k,l] of PRAYERS) { if (k !== "sunrise" && t[k] && t[k] > now) return { k, l, at:t[k], today:true }; }
@@ -1684,11 +1704,86 @@ try {
 } catch(e){}
 
 // Backup & Restore Utilities
+function qxEscapeHtml(str){
+  const d=document.createElement('div'); d.textContent=String(str??''); return d.innerHTML;
+}
+function safeHtmlAllowIcons(str){
+  const tmp=String(str??'').replace(/\{\{([a-z_0-9]+)(:f)?\}\}/g, (_,n,f)=>'%%QXICO_'+n+(f||'')+'%%');
+  const esc=qxEscapeHtml(tmp);
+  return esc.replace(/%%QXICO_([a-z_0-9]+)(:f)?%%/g, (_,n,f)=>{ try{ return qxIco(n,f); }catch(e){ return ''; } });
+}
+
+/* P9 v2.0.32 — F-01/F-02: ব্যাকআপ যাচাই ও পরিষ্কার */
+const QX_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
+/* tzMode: "auto" বা -12..14 সংখ্যা। select-এর মতো string-এ রাখা হয় ("6", "5.5") */
+function qxNormTz(v){
+  if (v === "auto") return "auto";
+  if (typeof v !== "string" && typeof v !== "number") return null;
+  if (typeof v === "string" && v.trim() === "") return null;
+  const n = Number(v);
+  if (!Number.isFinite(n) || n < -12 || n > 14) return null;
+  return String(n);
+}
+/* নোট: কী "সূরা:আয়াত", মান string। ভুল এন্ট্রি বাদ যায়, বাকি থাকে */
+function qxCleanNotes(n){
+  if (!n || typeof n !== "object" || Array.isArray(n)) return undefined;
+  const out = {};
+  let c = 0;
+  for (const k of Object.keys(n)) {
+    if (!/^\d{1,3}:\d{1,3}$/.test(k)) continue;
+    if (typeof n[k] !== "string") continue;
+    const t = n[k].trim().slice(0, 50000);
+    if (!t) continue;
+    out[k] = t;
+    if (++c >= 7000) break;
+  }
+  return out;
+}
+/* লক্ষ্য: readKeys string-এর array না হলে পুরো goal বাদ (আগের মতো) */
+function qxCleanGoal(g){
+  if (!g || typeof g !== "object" || Array.isArray(g) || !Array.isArray(g.readKeys)) return undefined;
+  const seen = new Set();
+  const keys = [];
+  for (const k of g.readKeys) {
+    if (typeof k !== "string" || k.length > 20 || seen.has(k)) continue;
+    seen.add(k);
+    keys.push(k);
+    if (keys.length >= 7000) break;
+  }
+  const target = Number.isFinite(g.target) && g.target >= 1 && g.target <= 1000 ? Math.floor(g.target) : 10;
+  const date = typeof g.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(g.date) ? g.date : todayStr();
+  return { target: target, date: date, readKeys: keys };
+}
+/* আজান অ্যালার্ট: অ্যাপ চালুর সময়কার normalize-এর মতোই */
+function qxCleanAlerts(x){
+  if (!x || typeof x !== "object" || Array.isArray(x)) return undefined;
+  if (!x.prayers || typeof x.prayers !== "object" || Array.isArray(x.prayers)) return undefined;
+  const p = {};
+  ["fajr", "dhuhr", "asr", "maghrib", "isha"].forEach(k => { p[k] = x.prayers[k] !== false; });
+  return {
+    enabled: x.enabled === true,
+    sound: ["adhan", "beep", "silent"].includes(x.sound) ? x.sound : "adhan",
+    prayers: p
+  };
+}
+
+function getLocalISO(){
+  const d = new Date();
+  const tzOffset = -d.getTimezoneOffset();
+  const sign = tzOffset >= 0 ? '+' : '-';
+  const pad = n => String(Math.floor(Math.abs(n))).padStart(2,'0');
+  const hh = pad(tzOffset/60), mm = pad(tzOffset%60);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+sign+hh+':'+mm;
+}
+
 async function exportUserBackup(){
   const backup = {
     app: "Quranix",
     version: 4,
-    exportedAt: new Date().toISOString(),
+    exportedAt: getLocalISO(),
+    exportedAtUTC: new Date().toISOString(),
+    tz: (typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : ''),
+    tzOffsetMinutes: -new Date().getTimezoneOffset(),
     data: {
       saved: lsGet("saved", null),
       last: lsGet("last", null),
@@ -1739,11 +1834,14 @@ function qxSafeParseBackup(raw){
     const d = parsed.data;
     if(d.bm !== undefined && !Array.isArray(d.bm)) return null;
     if(d.notes !== undefined && (!d.notes || typeof d.notes !== "object" || Array.isArray(d.notes))) return null;
-    if(d.tzMode !== undefined && d.tzMode !== "auto" && !Number.isFinite(d.tzMode)) return null;
+    if(d.tzMode !== undefined){ const tzN = qxNormTz(d.tzMode); if(tzN === null) return null; d.tzMode = tzN; }
     if(d.dstAdd !== undefined && !Number.isFinite(d.dstAdd)) return null;
     if(d.fs !== undefined && (!Number.isFinite(d.fs) || d.fs < 20 || d.fs > 48)) return null;
     if(d.theme !== undefined && d.theme !== null && d.theme !== "dark" && d.theme !== "light") return null;
     if(d.appPrefs !== undefined && (!d.appPrefs || typeof d.appPrefs !== "object" || Array.isArray(d.appPrefs))) return null;
+    if(d.notes !== undefined) d.notes = qxCleanNotes(d.notes);
+    if(d.goal !== undefined) d.goal = qxCleanGoal(d.goal);
+    if(d.prayerAlerts !== undefined) d.prayerAlerts = qxCleanAlerts(d.prayerAlerts);
     return parsed;
   }catch(e){
     return null;
@@ -1753,6 +1851,10 @@ window.qxSafeParseBackup = qxSafeParseBackup;
 
 function importUserBackup(file, onDone){
   if(!file) return;
+  if(file.size > QX_BACKUP_MAX_BYTES){
+    showToast("ব্যাকআপ ফাইল অনেক বড় (সর্বোচ্চ ৫ MB)। সঠিক Quranix ব্যাকআপ দিন।");
+    return;
+  }
   const reader = new FileReader();
   reader.onload = () => {
     const parsed = qxSafeParseBackup(reader.result);
@@ -1773,7 +1875,7 @@ function importUserBackup(file, onDone){
     if(d.loc && Number.isFinite(d.loc.lat) && Number.isFinite(d.loc.lng) && typeof d.loc.n === "string") add("loc", d.loc);
     if(d.asr === 1 || d.asr === 2) add("asr", d.asr);
     if(d.calcMethod && CALC_METHODS[d.calcMethod]) add("calcMethod", d.calcMethod);
-    if(d.tzMode === "auto" || Number.isFinite(d.tzMode)) add("tzMode", d.tzMode);
+    if(typeof d.tzMode === "string") add("tzMode", d.tzMode);
     if(Number.isFinite(d.dstAdd)) add("dstAdd", d.dstAdd);
     if(d.prayerAlerts && d.prayerAlerts.prayers && typeof d.prayerAlerts.prayers === "object") add("prayerAlerts", d.prayerAlerts);
     if(d.tracker && typeof d.tracker === "object" && !Array.isArray(d.tracker)) {
@@ -1818,7 +1920,7 @@ function importUserBackup(file, onDone){
     if(d.loc && Number.isFinite(d.loc.lat) && Number.isFinite(d.loc.lng) && typeof d.loc.n === "string") loc = d.loc;
     if(d.asr === 1 || d.asr === 2) asrF = d.asr;
     if(d.calcMethod && CALC_METHODS[d.calcMethod]) calcMethodKey = d.calcMethod;
-    if(d.tzMode === "auto" || Number.isFinite(d.tzMode)) tzMode = d.tzMode;
+    if(typeof d.tzMode === "string") tzMode = d.tzMode;
     if(Number.isFinite(d.dstAdd)) dstAdd = d.dstAdd;
     if(d.prayerAlerts && d.prayerAlerts.prayers && typeof d.prayerAlerts.prayers === "object") alertCfg = d.prayerAlerts;
     if(d.edition === "bn.bengali" || d.edition === "bn.zakaria"){
@@ -4090,3 +4192,167 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   apply(w);
   btn.onclick=function(){ w=!w; apply(w); try{ localStorage.setItem(K, w?'1':'0'); }catch(e){} };
 })();
+
+// Phase 5 v2.0.31 — Quick Actions বাংলা নাম + grid/list + Home customize + Dashboard Edit
+window.QX_QUICK_ACTIONS_BN = {
+  "hijri": "হিজরি ক্যালেন্ডার",
+  "downloads": "ডাউনলোড",
+  "source": "উৎস ও তথ্যসূত্র",
+  "backup": "ব্যাকআপ ও রিস্টোর",
+  "pwa": "Quranix অ্যাপ",
+  "settings": "কাস্টমাইজেশন",
+  "prayer": "নামাজের সময়",
+  "qibla": "কিবলা কম্পাস",
+  "tasbih": "তাসবিহ",
+  "tracker": "আমল ট্র্যাকার",
+  "khatm": "খতম",
+  "hadith": "হাদিস",
+  "dua": "দোয়া ও তাসবিহ",
+  "asma": "আসমাউল হুসনা",
+  "ramadan": "রমজান",
+  "kalima": "কালিমা",
+  "quran": "কুরআন",
+  "more": "আরও",
+  "home": "হোম"
+};
+function qxApplyQuickActionsBN(){
+  try{
+    document.querySelectorAll('.g-quick-btn').forEach(btn => {
+      const key = btn.dataset.popup || btn.dataset.type || btn.textContent.trim().toLowerCase();
+      const bn = window.QX_QUICK_ACTIONS_BN[key];
+      if(bn){
+        const label = btn.querySelector('.g-quick-label') || btn.querySelector('span:last-child');
+        if(label) label.textContent = bn;
+      }
+    });
+    document.querySelectorAll('.g-menu-item').forEach(item => {
+      const key = item.dataset.popup;
+      const bn = window.QX_QUICK_ACTIONS_BN[key];
+      if(bn){
+        // Keep existing Bengali text - already Bengali in HTML, ensure no English remains
+      }
+    });
+  }catch(e){}
+}
+function qxInitHomeCustomize(){
+  const gridListBtn = document.getElementById('gQuickGridList');
+  const homeBtn = document.getElementById('gHomeCustomize');
+  const dashBtn = document.getElementById('gDashboardEdit');
+  if(gridListBtn && !gridListBtn.dataset.qxInit){
+    gridListBtn.dataset.qxInit = '1';
+    try{
+      const sv = localStorage.getItem('quranix_home_view');
+      if(sv === 'grid' || sv === 'list'){
+        const g = sv === 'grid';
+        document.body.classList.toggle('qx-view-grid', g);
+        document.body.classList.toggle('qx-view-list', !g);
+        gridListBtn.classList.toggle('on', g);
+        const ic = gridListBtn.querySelector('.ms');
+        if(ic) ic.textContent = g ? 'view_list' : 'grid_view';
+      }
+    }catch(e){}
+    gridListBtn.onclick = () => {
+      const isGrid = document.body.classList.toggle('qx-view-grid');
+      document.body.classList.toggle('qx-view-list', !isGrid);
+      gridListBtn.classList.toggle('on', isGrid);
+      const ms = gridListBtn.querySelector('.ms');
+      if(ms) ms.textContent = isGrid ? 'view_list' : 'grid_view';
+      try{ localStorage.setItem('quranix_home_view', isGrid ? 'grid' : 'list'); }catch(e){}
+    };
+  }
+  // P13 J-7: More menu customize + separate roles
+  if(homeBtn && !homeBtn.dataset.qxInit){
+    homeBtn.dataset.qxInit = '1';
+    homeBtn.onclick = () => {
+      const dd = document.getElementById('gridDropdown');
+      if(dd) dd.classList.remove('open');
+      // Toggle home edit mode - separate from dashboard
+      const isEdit = document.body.classList.toggle('qx-home-edit-mode');
+      homeBtn.classList.toggle('active-home', isEdit);
+      homeBtn.classList.toggle('on', isEdit);
+      try{
+        localStorage.setItem('quranix_home_edit', isEdit ? '1' : '0');
+        if(isEdit){
+          if(typeof showToast === 'function') showToast('হোম এডিট মোড চালু — কার্ডে ট্যাপ করে লুকান');
+        } else {
+          if(typeof showToast === 'function') showToast('হোম এডিট শেষ');
+        }
+      }catch(e){}
+      // Add done button in home section titles if entering edit
+      if(isEdit){
+        document.querySelectorAll('.home-section-title').forEach(t=>{
+          if(t.querySelector('.home-edit-done')) return;
+          const done = document.createElement('button');
+          done.className='home-edit-done';
+          done.textContent='শেষ';
+          done.onclick=()=>{ homeBtn.click(); };
+          t.appendChild(done);
+        });
+      } else {
+        document.querySelectorAll('.home-edit-done').forEach(el=>el.remove());
+      }
+    };
+    // Restore edit state
+    try{
+      if(localStorage.getItem('quranix_home_edit')==='1'){
+        setTimeout(()=>{ if(!document.body.classList.contains('qx-home-edit-mode')) homeBtn.click(); }, 300);
+      }
+    }catch(e){}
+  }
+  if(dashBtn && !dashBtn.dataset.qxInit){
+    dashBtn.dataset.qxInit = '1';
+    dashBtn.onclick = () => {
+      const dd = document.getElementById('gridDropdown');
+      if(dd) dd.classList.remove('open');
+      // Dashboard edit = separate role - opens tracker/dashboard
+      dashBtn.classList.add('active-dash');
+      setTimeout(()=>dashBtn.classList.remove('active-dash'), 800);
+      try{
+        if(typeof setMode === 'function'){
+          setMode('tracker');
+          if(typeof showToast === 'function') showToast('ড্যাশবোর্ড এডিট — ট্র্যাকারে কাস্টমাইজ করুন');
+        } else if(window.openGridPopup){
+          window.openGridPopup('settings');
+        }
+      }catch(e){
+        if(window.openGridPopup) window.openGridPopup('settings');
+      }
+    };
+  }
+  // P13 J-5: Quick Actions Bangla + hide logic
+  try{
+    const hidden = JSON.parse(localStorage.getItem('quranix_home_hidden')||'[]');
+    if(Array.isArray(hidden) && hidden.length){
+      document.querySelectorAll('.home-quick-btn').forEach(btn=>{
+        const key = btn.textContent.trim().slice(0,20);
+        // Use data key if available
+        if(hidden.includes(key) || hidden.includes(btn.getAttribute('aria-label'))){
+          btn.style.display='none';
+        }
+      });
+    }
+  }catch(e){}
+  // Delegate hide on edit mode
+  if(!window._qxHomeEditDelegated){
+    window._qxHomeEditDelegated = true;
+    document.addEventListener('click', function(e){
+      if(!document.body.classList.contains('qx-home-edit-mode')) return;
+      const btn = e.target.closest('.home-quick-btn');
+      if(!btn) return;
+      e.preventDefault(); e.stopPropagation();
+      const label = btn.getAttribute('aria-label') || btn.textContent.trim().slice(0,30);
+      try{
+        const cur = JSON.parse(localStorage.getItem('quranix_home_hidden')||'[]');
+        cur.push(label);
+        localStorage.setItem('quranix_home_hidden', JSON.stringify(cur));
+      }catch(e){}
+      btn.style.display='none';
+      if(typeof showToast === 'function') showToast('লুকানো হলো — রিসেট করতে হোম কাস্টমাইজ থেকে রিসেট করুন');
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  try{ qxApplyQuickActionsBN(); qxInitHomeCustomize(); }catch(e){}
+});
+setTimeout(() => { try{ qxApplyQuickActionsBN(); qxInitHomeCustomize(); }catch(e){} }, 800);
+
