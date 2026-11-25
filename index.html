@@ -6875,6 +6875,318 @@ html[data-reduced-motion] .qx-fd.flip b {
   margin: 6px 0 0;
 }
 
+.hero-snd.off {
+  opacity: .6;
+}
+
+.hero-snd.off::after {
+  content: "";
+  position: absolute;
+  width: 55%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transform: rotate(-45deg);
+}
+
+.hero {
+  padding-top: calc(18px * var(--qx-scale));
+}
+
+.hero > small {
+  display: block;
+  margin: 0 calc(52px * var(--qx-scale));
+}
+
+/* নামাজ শিক্ষা: অধ্যায় সংখ্যা বামে, গ্রিড/লিস্ট বাটন ডানে (DOM ক্রম যাই হোক) */
+.qx-sec-page .surah-list-heading {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.qx-sec-page .surah-list-heading > span {
+  order: 0;
+  margin-right: auto;
+}
+
+.qx-sec-page .surah-list-heading > :not(span) {
+  order: 2;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* ===== ড্যাশবোর্ড সাজান (হোম ও আরও পেজ) ===== */
+.qx-de-box {
+  padding: calc(20px * var(--qx-scale)) calc(16px * var(--qx-scale)) calc(20px + env(safe-area-inset-bottom));
+}
+
+.qx-de-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.qx-de-ttl h3 {
+  margin: 0;
+  font-size: calc(24px * var(--qx-scale));
+  font-weight: 700;
+  color: var(--qx-text-color);
+}
+
+.qx-de-ttl p {
+  margin: 4px 0 0;
+  font-size: var(--qx-fs-sm);
+  color: var(--qx-meta-color);
+}
+
+.qx-de-reset {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+  padding: calc(8px * var(--qx-scale)) calc(14px * var(--qx-scale));
+  border: 1px solid var(--qx-border);
+  border-radius: 999px;
+  background: var(--qx-card-bg);
+  color: var(--qx-main-color);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.qx-de-sec {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 4px 8px;
+  font-size: var(--qx-fs-sm);
+  color: var(--qx-meta-color);
+}
+
+.qx-de-card {
+  padding: calc(6px * var(--qx-scale)) calc(10px * var(--qx-scale));
+  border-radius: calc(var(--qx-radius-lg) + 8px);
+  background: var(--qx-card-bg);
+  box-shadow: var(--qx-shadow);
+}
+
+.qx-de-gt {
+  margin: 10px 4px 2px;
+  font-size: var(--qx-fs-xs);
+  font-weight: 700;
+  color: var(--qx-meta-color);
+}
+
+.qx-de-row {
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--qx-scale));
+  padding: calc(10px * var(--qx-scale)) 0;
+  border-bottom: 1px solid var(--qx-border);
+  background: var(--qx-card-bg);
+}
+
+.qx-de-list > .qx-de-row:last-child {
+  border-bottom: none;
+}
+
+.qx-de-row.dragging {
+  position: relative;
+  z-index: 2;
+  border-radius: 16px;
+  border-bottom-color: transparent;
+  background: var(--qx-main-soft);
+  box-shadow: 0 8px 22px rgba(0,0,0,.2);
+  transform: scale(1.02);
+}
+
+.qx-de-grip {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 5px);
+  gap: 4px;
+  align-content: center;
+  justify-content: center;
+  width: calc(30px * var(--qx-scale));
+  height: calc(40px * var(--qx-scale));
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+}
+
+.qx-de-grip i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--qx-meta-color);
+  opacity: .6;
+}
+
+.qx-de-num {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: calc(32px * var(--qx-scale));
+  height: calc(32px * var(--qx-scale));
+  border-radius: 50%;
+  background: var(--qx-main-color);
+  color: var(--qx-on-main);
+  font-size: var(--qx-fs-sm);
+  font-weight: 700;
+}
+
+.qx-de-ic {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: calc(44px * var(--qx-scale));
+  height: calc(44px * var(--qx-scale));
+  border-radius: 14px;
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+}
+
+.qx-de-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--qx-fs-lg);
+  color: var(--qx-text-color);
+}
+
+.qx-de-rm {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: calc(40px * var(--qx-scale));
+  height: calc(40px * var(--qx-scale));
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, #d64545 14%, transparent);
+  color: #c0392b;
+  cursor: pointer;
+}
+
+.qx-de-add {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.qx-de-addcard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 0;
+  padding: calc(10px * var(--qx-scale));
+  border: 1.5px dashed var(--qx-border);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--qx-main-soft) 45%, transparent);
+  text-align: left;
+  cursor: pointer;
+}
+
+.qx-de-addcard .qx-de-ic {
+  width: calc(38px * var(--qx-scale));
+  height: calc(38px * var(--qx-scale));
+  background: var(--qx-card-bg);
+}
+
+.qx-de-addcard .qx-de-name {
+  font-size: var(--qx-fs-sm);
+}
+
+.qx-de-plus {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: calc(34px * var(--qx-scale));
+  height: calc(34px * var(--qx-scale));
+  border-radius: 50%;
+  background: var(--qx-main-color);
+  color: var(--qx-on-main);
+}
+
+.qx-de-empty {
+  grid-column: 1 / -1;
+  padding: 14px 6px;
+  text-align: center;
+  font-size: var(--qx-fs-sm);
+  color: var(--qx-meta-color);
+}
+
+.qx-de-box .ac-row {
+  margin-top: 18px;
+}
+
+/* ===== জেসচার: টেনে রিফ্রেশ, ডাবল ট্যাপ ইফেক্ট, সেটিংসের হিন্ট ===== */
+body.qx-g-ptr {
+  overscroll-behavior-y: contain;
+}
+
+.qx-ptr {
+  position: fixed;
+  left: 50%;
+  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  z-index: 140;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  border: 1px solid var(--qx-border);
+  border-radius: 50%;
+  background: var(--qx-card-bg);
+  color: var(--qx-main-color);
+  box-shadow: var(--qx-shadow);
+  opacity: 0;
+  transform: translateY(-70px);
+  pointer-events: none;
+}
+
+.qx-ptr.snap {
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.qx-ptr.spin .ms {
+  animation: qxPtrSpin .8s linear infinite;
+}
+
+@keyframes qxPtrSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes qxDblPulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--qx-main-color) 55%, transparent); }
+  100% { box-shadow: 0 0 0 14px transparent; }
+}
+
+.ayah.qx-dbl-pulse {
+  animation: qxDblPulse .45s ease-out;
+}
+
+html[data-reduced-motion] .qx-ptr.spin .ms,
+html[data-reduced-motion] .ayah.qx-dbl-pulse {
+  animation: none;
+}
+
+.set-label .qx-g-hint {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--qx-fs-xs);
+  font-weight: 400;
+  color: var(--qx-meta-color);
+}
+
 .qx-sheet-group {
   margin: 12px 0 4px;
   font-weight: 700;
@@ -7189,11 +7501,6 @@ html[data-theme="dark"] .trk-cat {
       </button>
       <div id="gridDropdown">
         <div class="g-quick" id="gQuick"></div>
-        <div class="g-quick-bar">
-          <button class="g-quick-toggle" id="gQuickGridList" type="button" aria-label="গ্রিড / লিস্ট দেখুন"><span class="ms">grid_view</span><span>গ্রিড / লিস্ট</span></button>
-          <button class="g-quick-toggle" id="gHomeCustomize" type="button" aria-label="হোম কাস্টমাইজ"><span class="ms">edit</span><span>হোম কাস্টমাইজ</span></button>
-          <button class="g-quick-toggle" id="gDashboardEdit" type="button" aria-label="ড্যাশবোর্ড এডিট"><svg class="ms-svg-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M11,11V4H22v7H11ZM2,20V13H12v7H2Zm0-9V4H9v7H2ZM13,9h7V6H13V9ZM4,18h6V15H4v3ZM4,9H7V6H4V9Zm9,0Zm-3,6ZM7,9Zm7,13V18.93l5.53-5.5q0.22-0.22 0.5-0.32T20.58,13q0.3,0 0.57,0.11q0.27,0.11 0.5,0.34l0.93,0.93q0.22,0.22 0.32,0.5T23,15.43t-0.1,0.56T22.58,16.5L17.08,22H14Zm7.5-6.58L20.58,14.5l0.92,0.92Zm-6,5.08h0.95l3.03-3.05l-0.45-0.47l-0.48-0.45L15.5,19.55V20.5Zm3.53-3.52l-0.48-0.45l0.93,0.93l-0.45-0.47Z"/></svg><span>ড্যাশবোর্ড এডিট</span></button>
-        </div>
         <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span>উৎস ও তথ্যসূত্র</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>

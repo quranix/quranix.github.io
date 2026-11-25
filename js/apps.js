@@ -86,7 +86,7 @@ function qxRow(icon, title, sub, onclick){
    পছন্দ localStorage-এ সেভ থাকে, রিফ্রেশ দিলেও থাকে। প্রতিটা পেজের নিজস্ব সেভ:
      ভিউ:   quranix_view_home / quranix_view_more   ("grid" = ডিফল্ট, "list")
      কার্ড: quranix_cards_home / quranix_cards_more  ({ order: [id...], hidden: [id...] })
-   qxPageTools(page, groups, onChange) টুলবার বানায়; groups = [{ title, items: [{ id, title }] }] (ডিফল্ট ক্রমে) */
+   qxPageTools(page, groups, onChange) টুলবার বানায়; groups = [{ title, items: [{ id, title, icon }] }] (ডিফল্ট ক্রমে; icon ঐচ্ছিক) */
 const QX_VIEW_KEY = { home: "quranix_view_home", more: "quranix_view_more" };
 const QX_CARDS_KEY = { home: "quranix_cards_home", more: "quranix_cards_more" };
 const QX_DASH_EDIT_PATH = "M11,11V4H22v7H11ZM2,20V13H12v7H2Zm0-9V4H9v7H2ZM13,9h7V6H13V9ZM4,18h6V15H4v3ZM4,9H7V6H4V9Zm9,0Zm-3,6ZM7,9Zm7,13V18.93l5.53-5.5q0.22-0.22 0.5-0.32T20.58,13q0.3,0 0.57,0.11q0.27,0.11 0.5,0.34l0.93,0.93q0.22,0.22 0.32,0.5T23,15.43t-0.1,0.56T22.58,16.5L17.08,22H14Zm7.5-6.58L20.58,14.5l0.92,0.92Zm-6,5.08h0.95l3.03-3.05l-0.45-0.47l-0.48-0.45L15.5,19.55V20.5Zm3.53-3.52l-0.48-0.45l0.93,0.93l-0.45-0.47Z";
@@ -109,59 +109,132 @@ function qxPageArrange(page, items){
   const all = items.slice().sort((a, b) => pos(a.id) - pos(b.id));
   return { all: all, visible: all.filter(x => c.hidden.indexOf(x.id) < 0) };
 }
-function qxOpenCardSheet(page, mode, groups, onChange){
-  const ov = document.createElement("div"); ov.className = "ac-ov"; ov.style.zIndex = "130";
-  const box = document.createElement("div"); box.className = "ac-box";
+function qxOpenCardSheet(page, groups, onChange){
+  if (document.querySelector(".qx-de-ov")) return;
+  const pn = ({ home: "হোম", more: "আরও" })[page] || "";
+  const bnNum = (n) => (typeof toBn === "function" ? toBn(n) : String(n));
+  const ov = document.createElement("div"); ov.className = "ac-ov qx-de-ov"; ov.style.zIndex = "130";
+  const box = document.createElement("div"); box.className = "ac-box qx-de-box";
+  box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "ড্যাশবোর্ড সাজান");
   ov.appendChild(box); document.body.appendChild(ov);
-  const close = () => ov.remove();
-  ov.onclick = (e) => { if(e.target === ov) close(); };
-  const smallBtn = (icon, label, disabled, fn) => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "qx-sheet-btn";
-    b.setAttribute("aria-label", label); b.disabled = !!disabled; b.innerHTML = qxIco(icon); b.onclick = fn;
-    return b;
+  const onKey = (e) => {
+    if (!ov.isConnected) { document.removeEventListener("keydown", onKey); return; }
+    if (e.key === "Escape") { e.preventDefault(); close(); }
   };
-  const changed = () => { try{ onChange(); }catch(e){} draw(); };
-  function draw(){
-    box.innerHTML = "";
-    const head = document.createElement("div"); head.className = "ac-head";
-    const ttl = document.createElement("span"); ttl.textContent = mode === "order" ? "কার্ড সাজান" : "কার্ড দেখান / লুকান";
-    const x = document.createElement("button"); x.type = "button"; x.setAttribute("aria-label", "বন্ধ করুন"); x.innerHTML = qxIco("close"); x.onclick = close;
-    head.append(ttl, x); box.appendChild(head);
-    const cfg = qxPageCfg(page);
-    groups.forEach((g) => {
-      const gt = document.createElement("div"); gt.className = "qx-sheet-group"; gt.textContent = g.title; box.appendChild(gt);
-      const arr = qxPageArrange(page, g.items).all;
-      arr.forEach((it, i) => {
-        const off = cfg.hidden.indexOf(it.id) >= 0;
-        const row = document.createElement("div"); row.className = "qx-sheet-row" + (off ? " is-off" : "");
-        const name = document.createElement("span"); name.textContent = it.title; row.appendChild(name);
-        if(mode === "order"){
-          const move = (d) => () => {
-            const ids = arr.map(z => z.id); const j = i + d; if(j < 0 || j >= ids.length) return;
-            const t = ids[i]; ids[i] = ids[j]; ids[j] = t;
-            const c = qxPageCfg(page);
-            c.order = c.order.filter(id => ids.indexOf(id) < 0).concat(ids);
-            qxPageCfgSave(page, c); changed();
-          };
-          row.append(smallBtn("arrow_upward", "ওপরে নিন", i === 0, move(-1)), smallBtn("arrow_downward", "নিচে নিন", i === arr.length - 1, move(1)));
-        } else {
-          const sw = document.createElement("button"); sw.type = "button"; sw.className = "qx-sheet-switch" + (off ? "" : " on");
-          sw.setAttribute("role", "switch"); sw.setAttribute("aria-checked", off ? "false" : "true"); sw.setAttribute("aria-label", it.title);
-          sw.onclick = () => {
-            const c = qxPageCfg(page); const k = c.hidden.indexOf(it.id);
-            if(k >= 0) c.hidden.splice(k, 1); else c.hidden.push(it.id);
-            qxPageCfgSave(page, c); changed();
-          };
-          row.appendChild(sw);
-        }
-        box.appendChild(row);
-      });
-    });
-    const foot = document.createElement("div"); foot.className = "ac-row";
-    const reset = document.createElement("button"); reset.type = "button"; reset.className = "ac-btn ghost"; reset.textContent = "ডিফল্টে ফেরান";
+  const close = () => { document.removeEventListener("keydown", onKey); ov.remove(); };
+  document.addEventListener("keydown", onKey);
+  ov.onclick = (e) => { if (e.target === ov) close(); };
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const icoHtml = (it) => (it.icon ? qxIco(it.icon) : "");
+  const changed = (focusId) => { try{ onChange(); }catch(e){} draw(focusId); };
+
+  /* একটা গ্রুপের দেখানো আইটেমের নতুন ক্রম সেভ: বাকিগুলো লুকানো তালিকায় যায় */
+  function applyGroup(gi, shownIds, focusId){
+    const all = groups[gi].items.map(x => x.id);
+    const hid = all.filter(id => shownIds.indexOf(id) < 0);
+    const c = qxPageCfg(page);
+    c.order = c.order.filter(id => all.indexOf(id) < 0).concat(shownIds, hid);
+    c.hidden = c.hidden.filter(id => all.indexOf(id) < 0).concat(hid);
+    qxPageCfgSave(page, c); changed(focusId);
+  }
+  const shownOf = (gi) => qxPageArrange(page, groups[gi].items).visible.map(x => x.id);
+
+  function startDrag(e, row, list, gi){
+    if (e.button != null && e.button > 0) return;
+    e.preventDefault();
+    const grip = e.currentTarget;
+    try{ grip.setPointerCapture(e.pointerId); }catch(_){}
+    row.classList.add("dragging");
+    const move = (ev) => {
+      const y = ev.clientY, br = box.getBoundingClientRect();
+      if (y < br.top + 50) box.scrollTop -= 12; else if (y > br.bottom - 50) box.scrollTop += 12;
+      let before = null;
+      const sibs = list.querySelectorAll(".qx-de-row:not(.dragging)");
+      for (let i = 0; i < sibs.length; i++) {
+        const r = sibs[i].getBoundingClientRect();
+        if (y < r.top + r.height / 2) { before = sibs[i]; break; }
+      }
+      if (before) { if (row.nextElementSibling !== before) list.insertBefore(row, before); }
+      else if (list.lastElementChild !== row) list.appendChild(row);
+    };
+    const up = () => {
+      grip.removeEventListener("pointermove", move); grip.removeEventListener("pointerup", up); grip.removeEventListener("pointercancel", up);
+      row.classList.remove("dragging");
+      applyGroup(gi, Array.prototype.map.call(list.querySelectorAll(".qx-de-row"), r => r.dataset.id));
+    };
+    grip.addEventListener("pointermove", move); grip.addEventListener("pointerup", up); grip.addEventListener("pointercancel", up);
+  }
+
+  function draw(focusId){
+    const top = box.scrollTop; box.innerHTML = "";
+    const head = el("div", "qx-de-head");
+    const ttlWrap = el("div", "qx-de-ttl");
+    ttlWrap.appendChild(el("h3", null, "ড্যাশবোর্ড সাজান"));
+    ttlWrap.appendChild(el("p", null, (pn ? pn + " পেজে" : "পেজে") + " যা দেখতে চান বেছে নিন"));
+    const reset = el("button", "qx-de-reset"); reset.type = "button"; reset.innerHTML = qxIco("refresh") + "<span>ডিফল্ট</span>";
     reset.onclick = () => { qxPageCfgSave(page, { order: [], hidden: [] }); changed(); };
-    const done = document.createElement("button"); done.type = "button"; done.className = "ac-btn"; done.textContent = "সম্পন্ন"; done.onclick = close;
-    foot.append(reset, done); box.appendChild(foot);
+    head.append(ttlWrap, reset); box.appendChild(head);
+
+    const arranged = groups.map((g, gi) => qxPageArrange(page, g.items));
+    const totalShown = arranged.reduce((n, a) => n + a.visible.length, 0);
+    const hiddenAll = [];
+    arranged.forEach((a, gi) => a.all.forEach(it => { if (a.visible.indexOf(it) < 0) hiddenAll.push({ gi: gi, it: it }); }));
+
+    const sec1 = el("div", "qx-de-sec");
+    sec1.append(el("span", null, (page === "home" ? "হোমে" : (pn ? pn + " পেজে" : "পেজে")) + " দেখাচ্ছে"), el("span", null, bnNum(totalShown) + "টি"));
+    box.appendChild(sec1);
+    const card = el("div", "qx-de-card");
+    if (!totalShown) card.appendChild(el("div", "qx-de-empty", "কিছুই দেখানো হচ্ছে না। নিচ থেকে যোগ করুন।"));
+    arranged.forEach((a, gi) => {
+      if (!a.visible.length) return;
+      if (groups.length > 1) card.appendChild(el("div", "qx-de-gt", groups[gi].title));
+      const list = el("div", "qx-de-list");
+      a.visible.forEach((it, i) => {
+        const row = el("div", "qx-de-row"); row.dataset.id = it.id;
+        const grip = el("button", "qx-de-grip"); grip.type = "button";
+        grip.setAttribute("aria-label", it.title + " — সরাতে টেনে ধরুন, কিবোর্ডে ওপর-নিচ তীর চাপুন");
+        grip.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i>";
+        grip.addEventListener("pointerdown", (e) => startDrag(e, row, list, gi));
+        grip.addEventListener("keydown", (e) => {
+          if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+          e.preventDefault();
+          const ids = shownOf(gi), idx = ids.indexOf(it.id), j = idx + (e.key === "ArrowUp" ? -1 : 1);
+          if (j < 0 || j >= ids.length) return;
+          const tmp = ids[idx]; ids[idx] = ids[j]; ids[j] = tmp;
+          applyGroup(gi, ids, it.id);
+        });
+        const num = el("span", "qx-de-num", bnNum(i + 1));
+        const ic = el("span", "qx-de-ic"); ic.innerHTML = icoHtml(it);
+        const name = el("span", "qx-de-name", it.title);
+        const rm = el("button", "qx-de-rm"); rm.type = "button"; rm.setAttribute("aria-label", it.title + " সরান"); rm.innerHTML = qxIco("close");
+        rm.onclick = () => applyGroup(gi, shownOf(gi).filter(id => id !== it.id));
+        row.append(grip, num, ic, name, rm); list.appendChild(row);
+      });
+      card.appendChild(list);
+    });
+    box.appendChild(card);
+
+    const sec2 = el("div", "qx-de-sec");
+    sec2.append(el("span", null, "যোগ করতে পারেন"), el("span", null, bnNum(hiddenAll.length) + "টি"));
+    box.appendChild(sec2);
+    const addGrid = el("div", "qx-de-add");
+    if (!hiddenAll.length) addGrid.appendChild(el("div", "qx-de-empty", "সবকিছুই যোগ করা আছে।"));
+    hiddenAll.forEach(h => {
+      const b = el("button", "qx-de-addcard"); b.type = "button"; b.setAttribute("aria-label", h.it.title + " যোগ করুন");
+      const ic = el("span", "qx-de-ic"); ic.innerHTML = icoHtml(h.it);
+      const plus = el("span", "qx-de-plus"); plus.innerHTML = qxIco("add");
+      b.append(ic, el("span", "qx-de-name", h.it.title), plus);
+      b.onclick = () => applyGroup(h.gi, shownOf(h.gi).concat([h.it.id]));
+      addGrid.appendChild(b);
+    });
+    box.appendChild(addGrid);
+
+    const foot = el("div", "ac-row");
+    const done = el("button", "ac-btn"); done.type = "button"; done.textContent = "সম্পন্ন"; done.onclick = close;
+    foot.appendChild(done); box.appendChild(foot);
+
+    box.scrollTop = top;
+    if (focusId) { const g = box.querySelector('.qx-de-row[data-id="' + String(focusId).replace(/"/g, '\\"') + '"] .qx-de-grip'); if (g) g.focus(); }
   }
   draw();
 }
@@ -179,8 +252,8 @@ function qxPageTools(page, groups, onChange){
     try{ localStorage.setItem(QX_VIEW_KEY[page], next); }catch(e){}
     onChange();
   }));
-  bar.appendChild(mkBtn(qxIco("edit"), "হোম কাস্টমাইজ — কার্ড দেখান/লুকান", () => qxOpenCardSheet(page, "show", groups, onChange)));
-  bar.appendChild(mkBtn('<svg class="ms-svg-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="' + QX_DASH_EDIT_PATH + '"/></svg>', "ড্যাশবোর্ড এডিট — কার্ড সাজান", () => qxOpenCardSheet(page, "order", groups, onChange)));
+  window.qxPageEditCtx = { page: page, groups: groups, onChange: onChange };   // লং প্রেসে ড্যাশবোর্ড সাজান খুলতে
+  bar.appendChild(mkBtn('<svg class="ms-svg-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="' + QX_DASH_EDIT_PATH + '"/></svg>', "ড্যাশবোর্ড সাজান — কার্ড সাজান, যোগ ও সরান", () => qxOpenCardSheet(page, groups, onChange)));
   return bar;
 }
 function renderMore(){
@@ -197,7 +270,7 @@ function renderMore(){
   ];
   const draw = () => {
     app.innerHTML = "";
-    app.appendChild(qxPageTools("more", [{ title: "আরও", items: defs.map(d => ({ id: d[0], title: d[2] })) }], draw));
+    app.appendChild(qxPageTools("more", [{ title: "আরও", items: defs.map(d => ({ id: d[0], title: d[2], icon: d[1] })) }], draw));
     const box = mk("div", "qx-list qx-list-spaced qx-vw-" + qxPageView("more"));
     qxPageArrange("more", defs.map(d => ({ id: d[0], d: d }))).visible.forEach(o => {
       const d = o.d; box.appendChild(qxRow(d[1], d[2], d[3], d[4]));
@@ -1146,7 +1219,61 @@ container.appendChild(qxListHeading(toBn(NAMAZ_NABVI_DATA.length) + "টি অ�
 }
 
 
+/* --- নামাজের সময়: ফ্লিপ ক্লক (বাংলা সংখ্যা) + সেকেন্ডের টিক শব্দ --- */
+let qxTickCtx = null, qxTickOn = true, qxTickPhase = 0, qxCdTok = 0;
+try{ qxTickOn = localStorage.getItem("qxTick") !== "0"; }catch(e){}
+function qxTickUnlock(){
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!qxTickCtx) qxTickCtx = new AC();
+    if (qxTickCtx.state === "suspended") qxTickCtx.resume();
+  }catch(e){}
+}
+/* ব্রাউজার নিয়মে শব্দ চালাতে প্রথম টাচ/ক্লিক লাগে; তাই প্রথম ইন্টারঅ্যাকশনেই অডিও চালু হয় */
+["pointerdown","keydown","touchstart"].forEach(ev => document.addEventListener(ev, qxTickUnlock, { once:true, passive:true }));
+function qxTick(){
+  if (!qxTickOn || document.hidden || !qxTickCtx || qxTickCtx.state !== "running") return;
+  try{
+    const ctx = qxTickCtx, t0 = ctx.currentTime, dur = 0.045;
+    const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 2.2;
+    bp.frequency.value = (qxTickPhase++ % 2) ? 1900 : 2600;   // টিক-টক
+    const g = ctx.createGain(); g.gain.value = 0.9;
+    src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+    src.start(t0);
+  }catch(e){}
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && typeof window.qxCdResync === "function") window.qxCdResync(); });
+function qxFlipBuild(){
+  const el = mk("div", "qx-flip"); el.setAttribute("role", "timer");
+  [["ঘণ্টা"], ["মিনিট"], ["সেকেন্ড"]].forEach(([lb], i) => {
+    if (i) el.appendChild(mk("div", "qx-flip-colon", ":"));
+    const grp = mk("div", "qx-flip-grp"), digs = mk("div", "qx-flip-digs");
+    for (let k = 0; k < 2; k++){ const fd = mk("span", "qx-fd"); fd.appendChild(mk("b", null, "০")); digs.appendChild(fd); }
+    grp.appendChild(digs); grp.appendChild(mk("small", null, lb));
+    el.appendChild(grp);
+  });
+  return el;
+}
+function qxFlipSet(el, ms, noAnim){
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const str = [Math.floor(s / 3600), Math.floor(s % 3600 / 60), s % 60].map(v => String(v).padStart(2, "0")).join("");
+  const boxes = el.querySelectorAll(".qx-fd");
+  for (let i = 0; i < boxes.length && i < str.length; i++){
+    const b = boxes[i].firstChild, v = toBn(str[i]);
+    if (b.textContent !== v){
+      b.textContent = v;
+      if (!noAnim){ boxes[i].classList.remove("flip"); void boxes[i].offsetWidth; boxes[i].classList.add("flip"); }
+    }
+  }
+  el.setAttribute("aria-label", "আর " + fmtCd(ms) + " বাকি");
+}
+
 function renderPrayer(){
+  window.qxCdResync = null;
   stopCompass();
   showOther("নামাজ ও কিবলা");
 
@@ -1168,12 +1295,22 @@ function renderPrayer(){
   const hero = mk("div","hero");
   hero.appendChild(mk("small", null, "পরবর্তী নামাজ · " + loc.n));
   hero.appendChild(mk("div","big", nx.l + (nx.at ? " · " + fmtTime(nx.at) : "")));
-  const cd = mk("div","cd", nx.at ? "আর " + fmtCd(nx.at - now) + " বাকি" : "");
+  const cd = qxFlipBuild();
+  if (nx.at) qxFlipSet(cd, (Math.floor(nx.at.getTime() / 1000) - Math.floor(now.getTime() / 1000)) * 1000, true); else cd.style.display = "none";
   hero.appendChild(cd);
-  const chip = mk("div", "hero-date"); chip.title = ds; chip.setAttribute("aria-label", ds);
-  chip.appendChild(mk("span", "hd-m", now.toLocaleDateString("bn-BD", { month: "short" })));
-  chip.appendChild(mk("b", "hd-d", now.toLocaleDateString("bn-BD", { day: "numeric" })));
+  const chip = mk("div", "hero-date hero-date-ic"); chip.title = ds; chip.setAttribute("aria-label", ds);
+  chip.innerHTML = '<span class="ms" aria-hidden="true">calendar_month</span>';
   hero.appendChild(chip);
+  const snd = mk("button", "hero-snd" + (qxTickOn ? "" : " off")); snd.type = "button";
+  snd.innerHTML = '<span class="ms" aria-hidden="true">volume_up</span>';
+  const sndLbl = () => { snd.setAttribute("aria-label", qxTickOn ? "টিক শব্দ বন্ধ করুন" : "টিক শব্দ চালু করুন"); snd.title = snd.getAttribute("aria-label"); snd.setAttribute("aria-pressed", qxTickOn ? "true" : "false"); };
+  sndLbl();
+  snd.onclick = () => {
+    qxTickUnlock(); qxTickOn = !qxTickOn;
+    try{ localStorage.setItem("qxTick", qxTickOn ? "1" : "0"); }catch(e){}
+    snd.classList.toggle("off", !qxTickOn); sndLbl(); if (qxTickOn) qxTick();
+  };
+  hero.appendChild(snd);
   app.appendChild(hero);
 
   // Location & Asr method row
@@ -1358,11 +1495,29 @@ function renderPrayer(){
   const activeMethod = CALC_METHODS[calcMethodKey] || CALC_METHODS.karachi;
   app.appendChild(mk("div","note",`গণনা: ${activeMethod.name}, ইন্টারনেট ছাড়াই ডিভাইসে হিসাব হয়। স্থানীয় মসজিদের সময়সূচির সাথে কয়েক মিনিটের পার্থক্য হতে পারে; জামাতের সময় মসজিদের সূচিই অনুসরণ করুন।`));
 
-  if (nx.at) tmr = setInterval(() => {
-    const n = new Date();
-    if (n >= nx.at) { renderPrayer(); return; }
-    cd.textContent = "আর " + fmtCd(nx.at - n) + " বাকি";
-  }, 1000);
+  /* কাউন্টডাউন ডিভাইসের ঘড়ির সেকেন্ডের সাথে মেলানো: প্রতিটি টিক ঠিক সেকেন্ড বদলের মুহূর্তে চলে, দেরি জমে না;
+     অ্যাপ ব্যাকগ্রাউন্ড থেকে ফিরলে সাথে সাথে ঘড়ির সময়ে ফিরে আসে */
+  if (nx.at) {
+    const tok = ++qxCdTok;
+    const secLeft = () => Math.floor(nx.at.getTime() / 1000) - Math.floor(Date.now() / 1000);
+    const step = () => {
+      if (tok !== qxCdTok) return;
+      if (new Date() >= nx.at) { renderPrayer(); return; }
+      qxFlipSet(cd, secLeft() * 1000);
+      qxTick();
+    };
+    const arm = () => {
+      tmr = setTimeout(() => { step(); if (tok === qxCdTok && cd.isConnected) arm(); }, 1000 - (Date.now() % 1000) + 5);
+    };
+    window.qxCdResync = () => {
+      if (tok !== qxCdTok || !cd.isConnected) return;
+      clearTimeout(tmr);
+      if (new Date() >= nx.at) { renderPrayer(); return; }
+      qxFlipSet(cd, secLeft() * 1000, true);
+      arm();
+    };
+    arm();
+  }
 }
 
 /* --- তাসবিহ --- */
@@ -1773,11 +1928,63 @@ openSurah = async function(n, y, targetAyah){ pushReaderState(); return _origOpe
 const _origOpenJuz = openJuz;
 openJuz = async function(n, y){ pushReaderState(); return _origOpenJuz(n, y); };
 
-/* Swipe back: installed app only (home-screen web app or Capacitor), phone-size screens.
-   A swipe in either direction goes back; ignored on inputs, sliders and sideways-scrolling areas. */
+/* ===== জেসচার সিস্টেম =====
+   নতুন জেসচার যোগ করতে: ১) QX_GESTURES তালিকায় একটা এন্ট্রি দিন, ২) নিচে তার হ্যান্ডলার লিখুন, শুরুতে qxGestureOn("id") দিয়ে চেক করুন।
+   কাস্টমাইজেশন মেনুর "জেসচার" অংশে অন/অফ সুইচ নিজে থেকেই চলে আসবে। */
+const QX_GESTURES = [
+  { id: "swipe",    label: "সোয়াইপ বাঁ/ডান",   hint: "কুরআন পড়ার সময় পরের বা আগের সূরা (পারা হলে পারা), অন্য পেজে নিচের ট্যাব বদল" },
+  { id: "dbl",      label: "ডাবল ট্যাপ",        hint: "আয়াতে দুবার ট্যাপ করলে সংরক্ষণ (বুকমার্ক) হবে" },
+  { id: "long",     label: "লং প্রেস",           hint: "আয়াত চেপে ধরলে ⋯ মেনু খুলবে" },
+  { id: "ptr",      label: "টেনে রিফ্রেশ",       hint: "পেজের উপরে গিয়ে নিচে টেনে ছাড়লে নামাজের সময় বা বর্তমান পেজ রিফ্রেশ হবে" },
+  { id: "homeEdit", label: "হোমে লং প্রেস",      hint: "হোম ও আরও পেজে চেপে ধরলে ড্যাশবোর্ড সাজান খুলবে" }
+];
+function qxGestureCfg(){
+  try{ return JSON.parse(localStorage.getItem("qxGestures") || "{}") || {}; }catch(e){ return {}; }
+}
+function qxGestureOn(id){ return qxGestureCfg()[id] !== false; }
+function qxGestureApply(){ document.body.classList.toggle("qx-g-ptr", qxGestureOn("ptr")); }
+function qxGestureSet(id, on){
+  const c = qxGestureCfg(); c[id] = !!on;
+  try{ localStorage.setItem("qxGestures", JSON.stringify(c)); }catch(e){}
+  qxGestureApply();
+}
+qxGestureApply();
+
+/* বর্তমান পেজ রিফ্রেশ: নামাজের সময় হলে নতুন করে হিসাব, নইলে বর্তমান পেজ আবার আঁকা */
+function qxRefreshNow(){
+  if (mode === "prayer" && typeof renderPrayer === "function") renderPrayer();
+  else renderHome();
+  if (typeof showToast === "function") showToast(mode === "prayer" ? "নামাজের সময় রিফ্রেশ হয়েছে" : "রিফ্রেশ হয়েছে");
+}
+
+/* কুরআন পড়ার পেজে পরের/আগের সূরা বা পারা খোলে। dir: +1 পরের, −1 আগের */
+function qxReaderStep(dir){
+  if (window.qxTopicOpen) return false;
+  const r = (typeof reading !== "undefined" && reading) ? reading : {};
+  let t = r.t || r.type || null;
+  let n = Number(r.n != null ? r.n : (r.number != null ? r.number : r.id));
+  if (!t || !isFinite(n)) {
+    const set = new Set(Array.from(document.querySelectorAll(".ayah .ar[data-surah]")).map(el => el.dataset.surah));
+    if (set.size === 1) { t = "s"; n = Number(Array.from(set)[0]); }
+  }
+  if (!isFinite(n) || n < 1) return false;
+  if (t && ["s", "surah", "j", "juz"].indexOf(t) < 0) return false;
+  const juz = t === "j" || t === "juz";
+  const m = n + dir, max = juz ? 30 : 114;
+  if (m < 1 || m > max) {
+    if (typeof showToast === "function") showToast(dir > 0 ? (juz ? "এটাই শেষ পারা" : "এটাই শেষ সূরা") : (juz ? "এটাই প্রথম পারা" : "এটাই প্রথম সূরা"));
+    return true;
+  }
+  try{ if (typeof saveScroll === "function") saveScroll(); }catch(e){}
+  window.scrollTo(0, 0);
+  if (juz) openJuz(m, 0); else openSurah(m, 0);
+  return true;
+}
+
+/* সোয়াইপ: ১) কুরআন পড়ার পেজে পরের/আগের সূরা ২) শীর্ষ স্তরের পেজে নিচের ট্যাব বদল।
+   অন্য ভিতরের পেজে আগের মতোই পিছনে যাওয়া (শুধু ইনস্টল করা অ্যাপে)। ইনপুট, স্লাইডার ও পাশে-স্ক্রল হয় এমন জায়গায় চলবে না। */
 (function(){
   const standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true || !!window.Capacitor;
-  if (!standalone) return;
   const MIN_DX = 80, MAX_MS = 600;
   let sx = 0, sy = 0, st = 0, track = false;
   function blocked(el){
@@ -1788,6 +1995,22 @@ openJuz = async function(n, y){ pushReaderState(); return _origOpenJuz(n, y); };
       if (el.scrollWidth > el.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(el).overflowX)) return true;
     }
     return false;
+  }
+  function swipeNav(dx){
+    if (!qxGestureOn("swipe")) return false;
+    if (qxNav.ovPushed > 0 || document.querySelector(qxNav.overlaySelector)) return false;
+    const dir = dx < 0 ? 1 : -1;               // বামে সোয়াইপ = পরের, ডানে = আগের
+    const inReader = document.body.classList.contains("reader-active") && typeof reading !== "undefined" && reading;
+    if (inReader) return qxReaderStep(dir);
+    if ((typeof reading !== "undefined" && reading) || window.qxTopicOpen || window.qxNamazChapter || document.querySelector(".qx-dict-detail")) return false;
+    const btns = Array.prototype.filter.call(document.querySelectorAll("#nav button"), b => b.offsetParent !== null);
+    const cur = btns.findIndex(b => b.classList.contains("on"));
+    if (cur < 0) return false;
+    const isRoot = btns[cur].id === "navHome" ? (mode === "quran" && tab === "home") : btns[cur].dataset.m === mode;
+    if (!isRoot) return false;
+    const nb = btns[cur + dir];
+    if (nb) nb.click();
+    return true;                                // প্রথম/শেষ ট্যাবে কিছু হয় না, পিছনেও যায় না
   }
   document.addEventListener("touchstart", function(e){
     track = e.touches.length === 1 && window.innerWidth < 900 && !blocked(e.target);
@@ -1802,8 +2025,140 @@ openJuz = async function(n, y){ pushReaderState(); return _origOpenJuz(n, y); };
     if (Date.now() - st > MAX_MS || Math.abs(dx) < MIN_DX || Math.abs(dy) > Math.abs(dx) * 0.5) return;
     const sel = window.getSelection && window.getSelection();
     if (sel && String(sel).length) return;
-    qxNav.swipeBack();
+    if (swipeNav(dx)) return;
+    if (standalone) qxNav.swipeBack();
   }, { passive: true });
+})();
+
+/* টেনে রিফ্রেশ: পেজের একদম উপরে থাকলে নিচে টেনে ছাড়লে বর্তমান পেজ রিফ্রেশ হয় (কুরআন পড়ার পেজ ও পপআপে নয়) */
+(function(){
+  const TRIGGER = 60, MAXPULL = 100;
+  let sy = 0, sx = 0, pulling = false, dist = 0, busy = false, ind = null;
+  function indicator(){
+    if (ind) return ind;
+    ind = document.createElement("div"); ind.className = "qx-ptr"; ind.setAttribute("aria-hidden", "true");
+    ind.innerHTML = '<span class="ms">refresh</span>';
+    document.body.appendChild(ind);
+    return ind;
+  }
+  function eligible(e){
+    if (!qxGestureOn("ptr") || busy || e.touches.length !== 1) return false;
+    if ((window.scrollY || document.documentElement.scrollTop) > 0) return false;
+    if (document.body.classList.contains("reader-active") || (typeof reading !== "undefined" && reading)) return false;
+    if (qxNav.ovPushed > 0 || document.querySelector(qxNav.overlaySelector)) return false;
+    const dd = document.getElementById("gridDropdown"); if (dd && dd.classList.contains("open")) return false;
+    for (let el = e.target; el && el !== document.body; el = el.parentElement) {
+      const tag = el.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "AUDIO") return false;
+      if (el.hasAttribute && el.hasAttribute("data-no-swipe")) return false;
+      if (el.scrollHeight > el.clientHeight + 4 && el.scrollTop > 0 && /(auto|scroll)/.test(getComputedStyle(el).overflowY)) return false;
+    }
+    return true;
+  }
+  function reset(){
+    pulling = false; dist = 0;
+    if (ind) { ind.classList.add("snap"); ind.style.opacity = "0"; ind.style.transform = ""; }
+  }
+  document.addEventListener("touchstart", function(e){
+    pulling = eligible(e);
+    if (!pulling) return;
+    sy = e.touches[0].clientY; sx = e.touches[0].clientX; dist = 0;
+    if (ind) ind.classList.remove("snap");
+  }, { passive: true });
+  document.addEventListener("touchmove", function(e){
+    if (!pulling) return;
+    const t = e.touches[0], dy = t.clientY - sy, dx = t.clientX - sx;
+    if (dy <= 0 || Math.abs(dx) > dy || (window.scrollY || 0) > 0) { if (dist > 0) reset(); else pulling = false; return; }
+    if (e.cancelable) e.preventDefault();
+    dist = Math.min(MAXPULL, dy * 0.6);
+    const el = indicator();
+    el.classList.remove("snap", "spin");
+    el.style.opacity = String(Math.min(1, dist / 40));
+    el.style.transform = "translateY(" + (-60 + dist * 1.3) + "px)";
+    el.firstChild.style.transform = "rotate(" + Math.min(180, dist / TRIGGER * 180) + "deg)";
+  }, { passive: false });
+  function end(){
+    if (!pulling) return;
+    const fire = dist >= TRIGGER;
+    pulling = false;
+    if (!fire) { reset(); return; }
+    busy = true;
+    const el = indicator();
+    el.classList.add("snap", "spin"); el.style.transform = "translateY(18px)"; el.style.opacity = "1";
+    try{ if (navigator.vibrate) navigator.vibrate(12); }catch(e){}
+    setTimeout(function(){
+      try{ qxRefreshNow(); }catch(e){}
+      setTimeout(function(){ el.classList.remove("spin"); el.firstChild.style.transform = ""; reset(); busy = false; }, 500);
+    }, 150);
+  }
+  document.addEventListener("touchend", end, { passive: true });
+  document.addEventListener("touchcancel", function(){ if (pulling) reset(); }, { passive: true });
+})();
+
+/* ডাবল ট্যাপ (আয়াত সংরক্ষণ), লং প্রেস (আয়াতের ⋯ মেনু) এবং হোম/আরও পেজে লং প্রেস (ড্যাশবোর্ড সাজান) */
+(function(){
+  const LONG_MS = 550, EDIT_MS = 650, TOL = 10, DBL_MS = 320;
+  let timer = null, px = 0, py = 0, fired = 0;
+  let lastClick = { t: 0, x: 0, y: 0, card: null };
+  const SKIP = "button, a, input, textarea, select, audio, label, .ww-word, .ayah-menu, [data-no-gesture]";
+  function cancel(){ if (timer) { clearTimeout(timer); timer = null; } }
+  function clearSel(){ try{ const sel = window.getSelection && window.getSelection(); if (sel && sel.removeAllRanges) sel.removeAllRanges(); }catch(e){} }
+  function buzz(){ try{ if (navigator.vibrate) navigator.vibrate(15); }catch(e){} }
+
+  document.addEventListener("pointerdown", function(e){
+    cancel();
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const t = e.target; if (!t || !t.closest) return;
+    px = e.clientX; py = e.clientY;
+    const card = t.closest(".ayah");
+    if (card) {
+      if (!qxGestureOn("long") || t.closest(SKIP)) return;
+      timer = setTimeout(function(){
+        timer = null;
+        const more = card.querySelector(".ayah-actions > .more-btn");
+        if (!more) return;
+        fired = Date.now(); buzz(); clearSel(); more.click();
+      }, LONG_MS);
+      return;
+    }
+    const appEl = document.getElementById("app");
+    if (!appEl || !appEl.contains(t) || !qxGestureOn("homeEdit")) return;
+    if (t.closest("input, textarea, select, audio, [data-no-gesture]")) return;
+    const ctx = window.qxPageEditCtx;
+    if (!ctx || !appEl.querySelector(".qx-page-tools")) return;
+    if (qxNav.ovPushed > 0 || document.querySelector(qxNav.overlaySelector)) return;
+    timer = setTimeout(function(){
+      timer = null; fired = Date.now(); buzz(); clearSel();
+      qxOpenCardSheet(ctx.page, ctx.groups, ctx.onChange);
+    }, EDIT_MS);
+  }, true);
+  document.addEventListener("pointermove", function(e){
+    if (timer && (Math.abs(e.clientX - px) > TOL || Math.abs(e.clientY - py) > TOL)) cancel();
+  }, true);
+  ["pointerup", "pointercancel", "scroll"].forEach(function(ev){ document.addEventListener(ev, cancel, true); });
+
+  /* লং প্রেসের পরের ক্লিক আর কনটেক্সট মেনু আটকানো */
+  document.addEventListener("click", function(e){
+    if (fired && Date.now() - fired < 500) { e.preventDefault(); e.stopPropagation(); fired = 0; lastClick.t = 0; }
+  }, true);
+  document.addEventListener("contextmenu", function(e){
+    if (fired && Date.now() - fired < 1200) e.preventDefault();
+  }, true);
+
+  /* ডাবল ট্যাপ: মাউসের ডাবল ক্লিক আর টাচের দুবার ট্যাপ দুটোই এখানে ধরা পড়ে */
+  document.addEventListener("click", function(e){
+    if (!qxGestureOn("dbl")) return;
+    const t = e.target; if (!t || !t.closest || t.closest(SKIP)) return;
+    const card = t.closest(".ayah"); if (!card) { lastClick.t = 0; return; }
+    const now = Date.now();
+    const same = lastClick.card === card && now - lastClick.t < DBL_MS && Math.abs(e.clientX - lastClick.x) < 30 && Math.abs(e.clientY - lastClick.y) < 30;
+    if (!same) { lastClick = { t: now, x: e.clientX, y: e.clientY, card: card }; return; }
+    lastClick.t = 0;
+    const star = card.querySelector(".ayah-actions > .star");
+    if (!star) return;
+    clearSel(); star.click();
+    card.classList.remove("qx-dbl-pulse"); void card.offsetWidth; card.classList.add("qx-dbl-pulse");
+  });
 })();
 
 // Capacitor (Android) হার্ডওয়্যার back বাটন
@@ -2287,6 +2642,22 @@ function openSettingsModal() {
     }));
   body.appendChild(recSec);
 
+  // 5. জেসচার (QX_GESTURES তালিকা থেকে নিজে নিজে সুইচ তৈরি হয়)
+  const gesSec = mk("div", "set-sec");
+  gesSec.appendChild(mk("div", "set-title", "{{front_hand}} জেসচার"));
+  QX_GESTURES.forEach(g => {
+    const row = mk("label", "set-row");
+    const lab = mk("span", "set-label", g.label);
+    lab.appendChild(mk("small", "qx-g-hint", g.hint));
+    const sw = document.createElement("input");
+    sw.type = "checkbox"; sw.className = "set-switch"; sw.checked = qxGestureOn(g.id);
+    sw.setAttribute("aria-label", g.label);
+    sw.onchange = () => qxGestureSet(g.id, sw.checked);
+    row.appendChild(lab); row.appendChild(sw);
+    gesSec.appendChild(row);
+  });
+  body.appendChild(gesSec);
+
   content.appendChild(body);
   dd.classList.add("g-settings-view");
   dd.appendChild(content);
@@ -2739,8 +3110,8 @@ setInterval(checkPrayerAlerts, 5000);
       t.onclick=d[3]; row.appendChild(t);
     });
     var tools=qxPageTools('home',[
-      {title:'Quick Actions',items:defs.map(function(d){return {id:d[0],title:d[1]};})},
-      {title:'বিষয়ভিত্তিক বিভাগ',items:cats.map(function(d){return {id:d[0],title:d[1]};})}
+      {title:'Quick Actions',items:defs.map(function(d){return {id:d[0],title:d[1],icon:icons[d[0]]};})},
+      {title:'বিষয়ভিত্তিক বিভাগ',items:cats.map(function(d){return {id:d[0],title:d[1],icon:d[0]};})}
     ],function(){ buildHero(); });
     var nodes=[tools];
     if(qVis.length){ nodes.push(qTitle,quick); }
