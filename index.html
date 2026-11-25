@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-QURANIX VERSION: v2.0.63 - final fix blank screen + 28px + iOS toggle + divider
+QURANIX VERSION: v2.0.66 - fixed blank screen 2.5s + 28px no-important + small toggle 44x26 teal + divider very light + quran nav text visible
 QX FILE EDIT RULES
 1. NO OVERRIDE RULE - Do not add duplicate rules that override previous ones. Edit existing rule directly.
 2. NO !important - Never use !important in any CSS.
@@ -26,7 +26,7 @@ ABOUT THIS FILE
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Quranix">
-<script>document.documentElement.classList.add('icons-pending');setTimeout(function(){document.documentElement.classList.remove('icons-pending');},6000);</script>
+<script>document.documentElement.classList.add('icons-pending');setTimeout(function(){document.documentElement.classList.remove('icons-pending');},2500);</script>
 <script>
 /* isInApp(): অ্যাপের ভিতরে (ইনস্টল করা PWA / Capacitor / TWA) চললে true; সাধারণ ব্রাউজার ট্যাবে false */
 (function(){
@@ -696,8 +696,8 @@ nav button.on {
 
 nav button[data-m="quran"] b {
   position: relative;
-  transform: translateY(-12px);
-  margin-bottom: -8px;
+  transform: translateY(-10px);
+  margin-bottom: -4px;
 }
 
 nav button[data-m="quran"] b::before {
@@ -721,7 +721,9 @@ nav button[data-m="quran"].on b::before {
 }
 
 nav button[data-m="quran"] span {
-  margin-top: -4px;
+  margin-top: 0;
+  display: block;
+  line-height: 1.2;
 }
 
 body .audio-bar.with-nav {
@@ -2283,7 +2285,11 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 }
 
 .g-quick-btn .ms {
-  font-size: 22px;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  font-size: 28px;
+  line-height: 28px;
   color: var(--qx-main-color);
 }
 
@@ -6861,9 +6867,9 @@ html.qx-final-test .qx-debug {
 }
 
 .hero-date.qx-cal-transparent{
-  background:transparent !important;
-  border:none !important;
-  box-shadow:none !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   width:44px;
   height:44px;
   display:grid;
@@ -7264,11 +7270,12 @@ html[data-reduced-motion] .qx-fd.flip b {
   color:#8e8e93;
 }
 .qx-ios-card{
-  margin:0 16px;
-  border-radius:14px;
-  background:var(--qx-card-bg);
-  box-shadow:0 1px 3px rgba(0,0,0,.08);
-  overflow:hidden;
+  margin: 0 16px;
+  border-radius: 14px;
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  overflow: hidden;
 }
 .qx-ios-row{
   display:flex;
@@ -7330,11 +7337,9 @@ html[data-reduced-motion] .qx-fd.flip b {
   color:var(--qx-text-color);
 }
 .qx-ios-chev{
-  color:#0F766E;
-  opacity:.6;
-  font-size:22px;
-}
-
+  color: #0F766E;
+  opacity: .6;
+  font-size: 22px;
 }
 
 /* ===== জেসচার: টেনে রিফ্রেশ, ডাবল ট্যাপ ইফেক্ট, সেটিংসের হিন্ট ===== */
@@ -7445,10 +7450,11 @@ html[data-reduced-motion] .ayah.qx-dbl-pulse {
   width: 44px;
   height: 26px;
   border-radius: 999px;
-  border: 1px solid var(--qx-border);
-  background: var(--qx-border);
+  border: 1px solid transparent;
+  background: #E5E7EB;
   cursor: pointer;
   padding: 0;
+  transition: background-color .2s ease;
 }
 
 .qx-sheet-switch::after {
@@ -7459,17 +7465,27 @@ html[data-reduced-motion] .ayah.qx-dbl-pulse {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--qx-card-bg);
-  transition: transform .18s ease;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  transition: transform .2s ease, background-color .2s ease;
 }
 
 .qx-sheet-switch.on {
-  background: var(--qx-main-color);
-  border-color: var(--qx-main-color);
+  background: #0F766E;
+  border-color: #0F766E;
 }
 
 .qx-sheet-switch.on::after {
+  background: #CCFBF1;
   transform: translateX(18px);
+}
+
+[data-theme="dark"] .qx-sheet-switch {
+  background: #3a4556;
+}
+
+[data-theme="dark"] .qx-sheet-switch.on {
+  background: #0F766E;
 }
 
 body.qx-home-edit-mode .home-quick-btn {
@@ -7711,15 +7727,68 @@ html[data-theme="dark"] .trk-cat {
   color: var(--qx-main-color);
 }
 
-/* P final fixes: divider very light, gesture icon 28px fixed, small iOS toggle 50x31 teal */
-.g-menu-item + .g-menu-item{border-top:1px solid var(--qx-border);}
-.qx-gesture-icon, .g-quick-btn .ms{width:28px !important;height:28px !important;flex:0 0 28px !important;font-size:28px !important;line-height:28px !important;}
-.qx-ios-card{background:var(--qx-card-bg);border-radius:14px;border:1px solid var(--qx-border);padding:12px;}
-.qx-ios-toggle{width:42px;height:26px;background:#CCFBF1;border-radius:999px;position:relative;transition:.2s;}
-.qx-ios-toggle.on{background:#0F766E;}
-.qx-ios-toggle i{width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-.qx-ios-toggle.on i{transform:translateX(16px);}
-.qx-g-card{padding-left:16px;padding-right:16px;}
+/* P final fixes: divider very light, gesture icon 28px fixed, small toggle 44x26 teal like screenshot - cleaned */
+.g-menu-item + .g-menu-item{
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+[data-theme="dark"] .g-menu-item + .g-menu-item{
+  border-top-color: rgba(255,255,255,.08);
+}
+
+.qx-gesture-icon{
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  font-size: 28px;
+  line-height: 28px;
+  display: grid;
+  place-items: center;
+}
+
+.qx-g-card{
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.qx-ios-toggle{
+  width: 44px;
+  height: 26px;
+  background: #E5E7EB;
+  border-radius: 999px;
+  position: relative;
+  transition: background-color .2s ease;
+  border: 1px solid transparent;
+}
+
+.qx-ios-toggle.on{
+  background: #0F766E;
+}
+
+.qx-ios-toggle i{
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform .2s ease, background-color .2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+.qx-ios-toggle.on i{
+  background: #CCFBF1;
+  transform: translateX(18px);
+}
+
+[data-theme="dark"] .qx-ios-toggle{
+  background: #3a4556;
+}
+
+[data-theme="dark"] .qx-ios-toggle.on{
+  background: #0F766E;
+}
 
 </style>
 </head>
