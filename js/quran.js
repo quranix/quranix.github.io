@@ -240,6 +240,8 @@ window.loadSurah = loadSurah;
   function currentReciter(){ return (typeof currentReciter!=='undefined'?currentReciter:localStorage.getItem('reciter')) || 'Saood_ash-Shuraym_128kbps'; }
   // NOTE: currentReciter is a let in main script; accessing it here via window may fail - read from ls instead
   function reciterNow(){ try{ var v=localStorage.getItem('reciter'); return v?JSON.parse(v):'Saood_ash-Shuraym_128kbps'; }catch(e){ return 'Saood_ash-Shuraym_128kbps'; } }
+  // IIFE-র বাইরের প্লেয়ার কোড (playAyahAtIndex, qxPreloadNextAyah) এগুলো এখান দিয়ে ব্যবহার করে
+  window.qxAudioDb = { get: get, keyFor: keyFor, urlFor: urlFor, reciterNow: reciterNow };
   function reciterName(id){ var f=(typeof RECITERS!=='undefined'?RECITERS:[]).find(function(r){return r[0]===id}); return f?f[1]:id; }
 
   var downloading=false;
@@ -1499,15 +1501,14 @@ function qxPreloadNextAyah(){
     if(_nextPreloadedIdx === nextIdx && _nextAudioObj.src) return;
     const nextItem = currentPlaylist[nextIdx];
     if(!nextItem) return;
-    const rec = reciterNow();
-    get(keyFor(rec, nextItem.s.number, nextItem.no)).then(blob => {
+    const rec = qxAudioDb.reciterNow();
+    qxAudioDb.get(qxAudioDb.keyFor(rec, nextItem.s.number, nextItem.no)).then(blob => {
       if(blob){
         qxSafeRevokeAudioSrc(_nextAudioObj);
         _nextAudioObj.src = URL.createObjectURL(blob);
       } else {
         if(qxIsBlobUrl(_nextAudioObj.src)) qxSafeRevokeAudioSrc(_nextAudioObj);
-        const url = `https://cdn.islamic.network/quran/audio-surah/128/${rec}/${nextItem.s.number}.mp3`;
-        try{ _nextAudioObj.src = (typeof audioUrl === 'function' ? audioUrl(nextItem, rec) : url); }catch(e){ _nextAudioObj.src = url; }
+        _nextAudioObj.src = qxAudioDb.urlFor(rec, nextItem.s.number, nextItem.no);
       }
       _nextAudioObj.preload = 'auto';
       _nextAudioObj.volume = 1;
@@ -1636,12 +1637,12 @@ function playAyahAtIndex(idx){
   }
   currentPlayIdx = idx;
   const item = currentPlaylist[idx];
-  const rec = reciterNow();
+  const rec = qxAudioDb.reciterNow();
   // P11: try offline blob first, revoke old blob url
   qxSafeRevokeAudioSrc(audioObj);
   const remoteUrl = `https://everyayah.com/data/${currentReciter}/${pad3(item.s.number)}${pad3(item.no)}.mp3`;
   // Async offline check
-  get(keyFor(rec, item.s.number, item.no)).then(blob => {
+  qxAudioDb.get(qxAudioDb.keyFor(rec, item.s.number, item.no)).then(blob => {
     if(blob){
       audioObj.src = URL.createObjectURL(blob);
     } else {
