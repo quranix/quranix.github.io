@@ -1,4 +1,4 @@
-const CACHE = 'quranix-v2.0.58';
+const CACHE = 'quranix-v2.0.62';
 const ASSETS = [
   '/',
   '/index.html',
