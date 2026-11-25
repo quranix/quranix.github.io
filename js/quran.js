@@ -325,8 +325,7 @@ window.loadSurah = loadSurah;
           audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
           audioTitle.textContent = item.s.englishName + ' · আয়াত ' + toBn(item.no);
           audioReciterLabel.textContent = reciterName(rec) + ' · অফলাইন';
-          audioBar.style.display = 'block';
-          updateAudioBarPos();
+          qxAudioBarShow();
           audioAuto.classList.toggle('on', autoPlayNext);
           highlightPlayingCard(item.s.number, item.no);
           await audioObj.play();
@@ -1521,10 +1520,23 @@ function qxPreloadNextAyah(){
 function qxDoRealCrossfade(oldAud, newAud, duration){
   return new Promise((resolve)=>{
     try{
+      let done = false;
+      const finish = ()=>{
+        if(done) return;
+        done = true;
+        oldAud.volume = 0;
+        newAud.volume = 1;
+        resolve();
+      };
+      // ব্যাকগ্রাউন্ডে/স্ক্রিন বন্ধে requestAnimationFrame চলে না: তখন ফেড ছাড়াই সরাসরি পরের আয়াত পূর্ণ ভলিউমে
+      if(document.hidden){ finish(); return; }
+      // ফেডের মাঝে অ্যাপ ব্যাকগ্রাউন্ডে গেলেও যেন আটকে না থাকে
+      setTimeout(finish, duration + 400);
       const start = performance.now();
       const fromVol = oldAud.volume;
       newAud.volume = 0;
       const tick = (now)=>{
+        if(done) return;
         const elapsed = now - start;
         const t = Math.min(1, elapsed / duration);
         const ease = t < 0.5 ? 2*t*t : -1 + (4-2*t)*t;
@@ -1533,9 +1545,7 @@ function qxDoRealCrossfade(oldAud, newAud, duration){
         if(t < 1){
           _crossfadeRaf = requestAnimationFrame(tick);
         } else {
-          oldAud.volume = 0;
-          newAud.volume = 1;
-          resolve();
+          finish();
         }
       };
       _crossfadeRaf = requestAnimationFrame(tick);
@@ -1596,13 +1606,12 @@ function qxInitAudioHide(){
     hideBtn.onclick = () => {
       audioBar.style.display = 'none';
       floatWrap.style.display = 'block';
+      updateAudioBarPos();
     };
   }
   if(floatBtn && floatWrap){
     floatBtn.onclick = () => {
-      floatWrap.style.display = 'none';
-      audioBar.style.display = 'block';
-      updateAudioBarPos();
+      qxAudioBarShow();
     };
   }
 }
@@ -1619,6 +1628,16 @@ function getReciterName(id){ const f = RECITERS.find(r => r[0] === id); return f
 function updateAudioBarPos(){
   const navVisible = navEl && navEl.style.display !== "none";
   audioBar.classList.toggle("with-nav", navVisible);
+  const floatEl = document.getElementById("audioFloat");
+  if (floatEl) floatEl.classList.toggle("with-nav", navVisible);
+}
+
+/* প্লেয়ার বার দেখানো: ভাসমান বৃত্ত থাকলে সেটা লুকায়, দুটো একসাথে দেখা যায় না */
+function qxAudioBarShow(){
+  const floatEl = document.getElementById("audioFloat");
+  if (floatEl) floatEl.style.display = "none";
+  audioBar.style.display = "block";
+  updateAudioBarPos();
 }
 
 function highlightPlayingCard(surahNo, ayahNo){
@@ -1652,8 +1671,7 @@ function playAyahAtIndex(idx){
     audioObj.volume = 1;
     audioTitle.textContent = `${item.s.englishName} · আয়াত ${toBn(item.no)}`;
     audioReciterLabel.textContent = getReciterName(currentReciter);
-    audioBar.style.display = "block";
-    updateAudioBarPos();
+    qxAudioBarShow();
     audioAuto.classList.toggle("on", autoPlayNext);
     highlightPlayingCard(item.s.number, item.no);
     // Ensure room tone ctx resumed on user gesture
@@ -1674,8 +1692,7 @@ function playAyahAtIndex(idx){
     audioObj.volume = 1;
     audioTitle.textContent = `${item.s.englishName} · আয়াত ${toBn(item.no)}`;
     audioReciterLabel.textContent = getReciterName(currentReciter);
-    audioBar.style.display = "block";
-    updateAudioBarPos();
+    qxAudioBarShow();
     audioAuto.classList.toggle("on", autoPlayNext);
     highlightPlayingCard(item.s.number, item.no);
     qxEnsureRoomTone();
@@ -1707,6 +1724,8 @@ function stopAudio(){
   try{ _nextAudioObj.src = ""; }catch(e){}
   _nextPreloadedIdx = -1;
   audioBar.style.display = "none";
+  const floatAfterStop = document.getElementById("audioFloat");
+  if (floatAfterStop) floatAfterStop.style.display = "none";
   currentPlayIdx = -1;
   qxRoomToneFade(0, 150);
   const statusEl = document.getElementById('audioStatus');
@@ -1737,7 +1756,8 @@ audioAuto.onclick = () => {
 };
 document.getElementById("audioClose").onclick = stopAudio;
 try{ qxInitAudioHide(); }catch(e){}
-audioObj.onended = () => {
+/* দুটো অডিও এলিমেন্টেই (আসল ও প্রিলোড/ক্রসফেড) "ended" শোনা হয়: swap-এর পর নতুন মূল এলিমেন্টেও অটো-প্লে চলে */
+function qxHandleAudioEnded(){
   if (autoPlayNext && currentPlayIdx + 1 < currentPlaylist.length) {
     // Phase 2: try preloaded crossfade first, else normal
     if(!qxPlayWithCrossfade(currentPlayIdx + 1)){
@@ -1752,7 +1772,8 @@ audioObj.onended = () => {
   } else {
     audioPlayPause.textContent = "{{play_arrow}}";
   }
-};
+}
+[audioObj, _nextAudioObj].forEach(aud => aud.addEventListener("ended", () => { if (aud === audioObj) qxHandleAudioEnded(); }));
 
 /* Keep every ayah card's play/pause quick button in step with the audio element */
 function qxSyncPlayButtons(){
@@ -1770,7 +1791,7 @@ function qxSyncPlayButtons(){
     b.classList.toggle("on", mine);
   });
 }
-["play", "playing", "pause", "ended", "emptied", "error"].forEach(ev => audioObj.addEventListener(ev, qxSyncPlayButtons));
+[audioObj, _nextAudioObj].forEach(aud => ["play", "playing", "pause", "ended", "emptied", "error"].forEach(ev => aud.addEventListener(ev, qxSyncPlayButtons)));
 
 /* Phase 4 + P11: progress, network, lock-screen, background check, blob revoke, বিরতি যাচাই */
 (function(){
@@ -1778,6 +1799,7 @@ function qxSyncPlayButtons(){
   const curEl=document.getElementById('audioCurrentTime');
   const durEl=document.getElementById('audioDuration');
   const status=document.getElementById('audioStatus');
+  const fillEl=document.getElementById('audioProgressFill');
   if(!seek||!curEl||!durEl||!status) return;
   const getMain = ()=> audioObj;
   const bnTime=function(s){
@@ -1794,6 +1816,7 @@ function qxSyncPlayButtons(){
       if(document.activeElement!==seek) seek.value=String(Math.round(t/d*1000));
       seek.disabled=false;
     }else{durEl.textContent='০:০০';seek.value='0';seek.disabled=true;}
+    if(fillEl) fillEl.style.width=(Number(seek.value)/10)+'%';
   };
   seek.addEventListener('input',function(){
     const aud = getMain();
@@ -1829,9 +1852,9 @@ function qxSyncPlayButtons(){
     });
     aud.addEventListener('pause',function(){
       if(aud!==getMain()) return;
-      // P11: বিরতি মোছা যাচাই - only show বিরতি if src exists and not ended, and will be cleared on play/emptied
+      // বিরতির সময় নিচের স্ট্যাটাস লাইন খালি থাকে (আগে এখানে "বিরতি" লেখা দেখাত); play হলে আবার "অডিও চলছে"
       if(aud.src && !aud.ended){
-        status.textContent='বিরতি';
+        status.textContent='';
       }
     });
     aud.addEventListener('error',function(){
@@ -1842,6 +1865,7 @@ function qxSyncPlayButtons(){
     aud.addEventListener('emptied',function(){
       if(aud!==getMain()) return;
       seek.value='0';seek.disabled=true;curEl.textContent='০:০০';durEl.textContent='০:০০';status.textContent='বন্ধ';
+      if(fillEl) fillEl.style.width='0%';
       // P11: revoke blob on emptied to prevent leak
       qxSafeRevokeAudioSrc(aud);
     });
