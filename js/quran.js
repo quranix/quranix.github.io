@@ -2620,6 +2620,8 @@ function renderDict(){
   app.appendChild(filters);
   const wrap = document.createElement("div"); wrap.id = "qx-dict150-list"; app.appendChild(wrap);
   renderDict150List();
+  const pnote = document.createElement("div"); pnote.className = "bn qx-dict-note"; pnote.textContent = QX_DICT150_PRON_NOTE;
+  app.appendChild(pnote);
   const foot = document.createElement("div");
   foot.className = "bn";
   foot.style.cssText = "opacity:.7;font-size:11px;font-style:italic;margin:12px 0 0;text-align:center;";
@@ -2627,11 +2629,19 @@ function renderDict(){
   app.appendChild(foot);
 }
 
+function qxDict150Plain(s){
+  return String(s || "").replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[آأإٱ]/g, "ا");
+}
+function qxDict150PronNorm(s){
+  return String(s || "").replace(/[\s\-\u2010-\u2015]/g, "").toLowerCase();
+}
+
 function renderDict150List(){
   const wrap = document.getElementById("qx-dict150-list"); if (!wrap) return;
   const qRaw = qxDict150Q.trim();
   const qBn = qRaw.replace(/[০-৯]/g, ch => "০১২৩৪৫৬৭৮৯".indexOf(ch));
   const qAr = qxDict150Norm(qRaw);
+  const qPron = qxDict150PronNorm(qRaw);
   let list = QX_DICT150.map((d, i) => ({ d, rank: i + 1 }));
   if (qxDict150Cat) list = list.filter(x => x.d[0] === qxDict150Cat);
   if (qRaw) {
@@ -2640,13 +2650,17 @@ function renderDict150List(){
       list = list.filter(x => x.rank === n);
     } else {
       const ql = qRaw.toLowerCase();
-      list = list.filter(x => x.d[2].toLowerCase().includes(ql) || qxDict150Norm(x.d[1]).includes(qAr) || (x.d[3] && qxDict150Norm(x.d[3]).includes(qAr)));
+      list = list.filter(x => x.d[2].toLowerCase().includes(ql)
+        || qxDict150Norm(x.d[1]).includes(qAr)
+        || (x.d[3] && qxDict150Norm(x.d[3]).includes(qAr))
+        || (qPron && x.d[6] && qxDict150PronNorm(x.d[6]).includes(qPron)));
     }
   }
   wrap.innerHTML = "";
   const grid = qxListGrid();
   list.forEach(({ d, rank }) => {
-    const it = item(toBn(rank), d[2], QX_DICT150_CATS[d[0]] + " · " + qxDict150CountText(d), d[1], () => renderDict150Detail(d, rank));
+    const sub = (d[6] ? "উচ্চারণ : " + d[6] + " · " : "") + QX_DICT150_CATS[d[0]] + " · " + qxDict150CountText(d);
+    const it = item(toBn(rank), "শব্দার্থ : " + d[2], sub, d[1], () => renderDict150Detail(d, rank));
     it.classList.add("surah-item");
     const arabic = it.querySelector(".ar-name");
     if (arabic) { arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); }
@@ -2654,6 +2668,51 @@ function renderDict150List(){
   });
   wrap.appendChild(grid);
   if (!list.length) wrap.appendChild(msg("কিছু পাওয়া যায়নি"));
+}
+
+/* উদাহরণ: আয়াতের আরবি ও অনুবাদ অ্যাপের নিজের ডেটা (window.QURAN) থেকে আসে; ডেটা ফাইলে শুধু রেফারেন্স, শব্দের ক্রম ও শব্দটা থাকে */
+function qxDict150AyahData(ref){
+  const p = String(ref).split(":"), s = +p[0], a = +p[1];
+  const ok = s > 0 && a > 0 && LOCAL && LOCAL.ar && LOCAL.ar[s - 1] && LOCAL.ar[s - 1][a - 1];
+  if (!ok) return { s, a, ar: "", bn: "" };
+  return { s, a, ar: LOCAL.ar[s - 1][a - 1], bn: (LOCAL.bn && LOCAL.bn[s - 1] && LOCAL.bn[s - 1][a - 1]) || "" };
+}
+function qxDict150AyahNode(ex){
+  const ref = ex[0], pos = ex[1], word = ex[2];
+  const x = qxDict150AyahData(ref);
+  const card = document.createElement("div"); card.className = "ayah qx-sec-card";
+  const nm = (window.QX_BN_SURAH && window.QX_BN_SURAH[x.s - 1]) || ("সূরা " + toBn(x.s));
+  const link = document.createElement("button"); link.type = "button"; link.className = "qx-dict-ref";
+  link.textContent = nm + " · আয়াত " + toBn(x.a) + " {{chevron_right}}";
+  link.onclick = () => openSurah(x.s, 0, x.a);
+  card.appendChild(link);
+  if (x.ar) {
+    const ar = document.createElement("div"); ar.className = "ar";
+    ar.setAttribute("lang", "ar"); ar.setAttribute("dir", "rtl");
+    const tokens = x.ar.split(/\s+/).filter(Boolean);
+    /* কিছু সূরার ১ম আয়াতের আগে বিসমিল্লাহ থাকলে সেটা শব্দ গণনায় ধরা হয় না */
+    let skip = 0;
+    if (x.a === 1 && x.s !== 1 && x.s !== 9 && tokens.slice(0, 4).map(qxDict150Plain).join(" ") === "بسم الله الرحمن الرحيم") skip = 4;
+    const target = qxDict150Plain(word);
+    let n = 0;
+    tokens.forEach((t, i) => {
+      const plain = qxDict150Plain(t);
+      if (i >= skip && plain !== "") n++;
+      if (i >= skip && plain !== "" && n === pos && plain === target) {
+        const hl = document.createElement("span"); hl.className = "qx-dict-hl"; hl.textContent = t;
+        ar.appendChild(hl);
+      } else {
+        ar.appendChild(document.createTextNode(t));
+      }
+      ar.appendChild(document.createTextNode(" "));
+    });
+    card.appendChild(ar);
+  }
+  if (x.bn) {
+    const bn = document.createElement("div"); bn.className = "bn"; bn.textContent = x.bn;
+    card.appendChild(bn);
+  }
+  return card;
 }
 
 function renderDict150Detail(d, rank){
@@ -2666,14 +2725,26 @@ function renderDict150Detail(d, rank){
   const arabic = document.createElement("div"); arabic.className = "ar";
   arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); arabic.textContent = d[1];
   const info = document.createElement("div"); info.className = "bn";
-  const b = document.createElement("b"); b.textContent = d[2];
+  const b = document.createElement("b"); b.textContent = "শব্দার্থ : " + d[2];
   info.appendChild(b);
-  info.appendChild(document.createElement("br"));
-  info.appendChild(document.createTextNode("শব্দ #" + toBn(rank) + " · " + QX_DICT150_CATS[d[0]] + " · কুরআনে " + qxDict150CountText(d) + " এসেছে"));
-  const root = document.createElement("div"); root.className = "bn";
-  root.style.cssText = "opacity:.85;margin-top:8px;";
+  if (d[6]) {
+    const pr = document.createElement("div"); pr.className = "qx-dict-line"; pr.textContent = "উচ্চারণ : " + d[6];
+    info.appendChild(pr);
+  }
+  const meta = document.createElement("div"); meta.className = "qx-dict-line";
+  meta.textContent = "শব্দ #" + toBn(rank) + " · " + QX_DICT150_CATS[d[0]] + " · কুরআনে " + qxDict150CountText(d) + " এসেছে";
+  info.appendChild(meta);
+  const root = document.createElement("div"); root.className = "bn qx-dict-line";
   root.textContent = d[3] ? "ধাতু: " + d[3].split("").join(" ") : "ধাতু: নেই (মূল শব্দ)";
   card.append(arabic, info, root); app.appendChild(card);
+  const note = document.createElement("div"); note.className = "bn qx-dict-note"; note.textContent = QX_DICT150_PRON_NOTE;
+  app.appendChild(note);
+  if (d[7] && d[7].length) {
+    const title = document.createElement("div"); title.className = "bn qx-dict-ex-title";
+    title.textContent = "উদাহরণ (" + toBn(d[7].length) + "টি আয়াত)";
+    app.appendChild(title);
+    d[7].forEach(ex => app.appendChild(qxDict150AyahNode(ex)));
+  }
 }
 
 
