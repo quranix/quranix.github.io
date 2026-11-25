@@ -82,18 +82,129 @@ function qxRow(icon, title, sub, onclick){
   b.onclick = onclick;
   return b;
 }
+/* ===== পেজ টুলবার (হোম ও "আরও" পেজ): গ্রিড/লিস্ট + কার্ড দেখানো/লুকানো + কার্ড সাজানো =====
+   পছন্দ localStorage-এ সেভ থাকে, রিফ্রেশ দিলেও থাকে। প্রতিটা পেজের নিজস্ব সেভ:
+     ভিউ:   quranix_view_home / quranix_view_more   ("grid" = ডিফল্ট, "list")
+     কার্ড: quranix_cards_home / quranix_cards_more  ({ order: [id...], hidden: [id...] })
+   qxPageTools(page, groups, onChange) টুলবার বানায়; groups = [{ title, items: [{ id, title }] }] (ডিফল্ট ক্রমে) */
+const QX_VIEW_KEY = { home: "quranix_view_home", more: "quranix_view_more" };
+const QX_CARDS_KEY = { home: "quranix_cards_home", more: "quranix_cards_more" };
+const QX_DASH_EDIT_PATH = "M11,11V4H22v7H11ZM2,20V13H12v7H2Zm0-9V4H9v7H2ZM13,9h7V6H13V9ZM4,18h6V15H4v3ZM4,9H7V6H4V9Zm9,0Zm-3,6ZM7,9Zm7,13V18.93l5.53-5.5q0.22-0.22 0.5-0.32T20.58,13q0.3,0 0.57,0.11q0.27,0.11 0.5,0.34l0.93,0.93q0.22,0.22 0.32,0.5T23,15.43t-0.1,0.56T22.58,16.5L17.08,22H14Zm7.5-6.58L20.58,14.5l0.92,0.92Zm-6,5.08h0.95l3.03-3.05l-0.45-0.47l-0.48-0.45L15.5,19.55V20.5Zm3.53-3.52l-0.48-0.45l0.93,0.93l-0.45-0.47Z";
+function qxPageView(page){
+  try{ return localStorage.getItem(QX_VIEW_KEY[page]) === "list" ? "list" : "grid"; }catch(e){ return "grid"; }
+}
+function qxPageCfg(page){
+  try{
+    const c = JSON.parse(localStorage.getItem(QX_CARDS_KEY[page]) || "{}") || {};
+    return { order: Array.isArray(c.order) ? c.order : [], hidden: Array.isArray(c.hidden) ? c.hidden : [] };
+  }catch(e){ return { order: [], hidden: [] }; }
+}
+function qxPageCfgSave(page, cfg){
+  try{ localStorage.setItem(QX_CARDS_KEY[page], JSON.stringify(cfg)); }catch(e){}
+}
+/* items = [{id,...}] ডিফল্ট ক্রমে → { all: সাজানো (লুকানোসহ), visible: সাজানো (লুকানো বাদে) } */
+function qxPageArrange(page, items){
+  const c = qxPageCfg(page);
+  const pos = (id) => { const i = c.order.indexOf(id); return i < 0 ? 1e6 + items.findIndex(x => x.id === id) : i; };
+  const all = items.slice().sort((a, b) => pos(a.id) - pos(b.id));
+  return { all: all, visible: all.filter(x => c.hidden.indexOf(x.id) < 0) };
+}
+function qxOpenCardSheet(page, mode, groups, onChange){
+  const ov = document.createElement("div"); ov.className = "ac-ov"; ov.style.zIndex = "130";
+  const box = document.createElement("div"); box.className = "ac-box";
+  ov.appendChild(box); document.body.appendChild(ov);
+  const close = () => ov.remove();
+  ov.onclick = (e) => { if(e.target === ov) close(); };
+  const smallBtn = (icon, label, disabled, fn) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "qx-sheet-btn";
+    b.setAttribute("aria-label", label); b.disabled = !!disabled; b.innerHTML = qxIco(icon); b.onclick = fn;
+    return b;
+  };
+  const changed = () => { try{ onChange(); }catch(e){} draw(); };
+  function draw(){
+    box.innerHTML = "";
+    const head = document.createElement("div"); head.className = "ac-head";
+    const ttl = document.createElement("span"); ttl.textContent = mode === "order" ? "কার্ড সাজান" : "কার্ড দেখান / লুকান";
+    const x = document.createElement("button"); x.type = "button"; x.setAttribute("aria-label", "বন্ধ করুন"); x.innerHTML = qxIco("close"); x.onclick = close;
+    head.append(ttl, x); box.appendChild(head);
+    const cfg = qxPageCfg(page);
+    groups.forEach((g) => {
+      const gt = document.createElement("div"); gt.className = "qx-sheet-group"; gt.textContent = g.title; box.appendChild(gt);
+      const arr = qxPageArrange(page, g.items).all;
+      arr.forEach((it, i) => {
+        const off = cfg.hidden.indexOf(it.id) >= 0;
+        const row = document.createElement("div"); row.className = "qx-sheet-row" + (off ? " is-off" : "");
+        const name = document.createElement("span"); name.textContent = it.title; row.appendChild(name);
+        if(mode === "order"){
+          const move = (d) => () => {
+            const ids = arr.map(z => z.id); const j = i + d; if(j < 0 || j >= ids.length) return;
+            const t = ids[i]; ids[i] = ids[j]; ids[j] = t;
+            const c = qxPageCfg(page);
+            c.order = c.order.filter(id => ids.indexOf(id) < 0).concat(ids);
+            qxPageCfgSave(page, c); changed();
+          };
+          row.append(smallBtn("arrow_upward", "ওপরে নিন", i === 0, move(-1)), smallBtn("arrow_downward", "নিচে নিন", i === arr.length - 1, move(1)));
+        } else {
+          const sw = document.createElement("button"); sw.type = "button"; sw.className = "qx-sheet-switch" + (off ? "" : " on");
+          sw.setAttribute("role", "switch"); sw.setAttribute("aria-checked", off ? "false" : "true"); sw.setAttribute("aria-label", it.title);
+          sw.onclick = () => {
+            const c = qxPageCfg(page); const k = c.hidden.indexOf(it.id);
+            if(k >= 0) c.hidden.splice(k, 1); else c.hidden.push(it.id);
+            qxPageCfgSave(page, c); changed();
+          };
+          row.appendChild(sw);
+        }
+        box.appendChild(row);
+      });
+    });
+    const foot = document.createElement("div"); foot.className = "ac-row";
+    const reset = document.createElement("button"); reset.type = "button"; reset.className = "ac-btn ghost"; reset.textContent = "ডিফল্টে ফেরান";
+    reset.onclick = () => { qxPageCfgSave(page, { order: [], hidden: [] }); changed(); };
+    const done = document.createElement("button"); done.type = "button"; done.className = "ac-btn"; done.textContent = "সম্পন্ন"; done.onclick = close;
+    foot.append(reset, done); box.appendChild(foot);
+  }
+  draw();
+}
+function qxPageTools(page, groups, onChange){
+  const bar = document.createElement("div"); bar.className = "qx-page-tools"; bar.setAttribute("role", "toolbar"); bar.setAttribute("aria-label", "কার্ড ভিউ ও কাস্টমাইজ");
+  const mkBtn = (html, label, fn) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "qx-tool-btn";
+    b.setAttribute("aria-label", label); b.title = label; b.innerHTML = html; b.onclick = fn;
+    return b;
+  };
+  const view = qxPageView(page);
+  const next = view === "grid" ? "list" : "grid";
+  /* গ্রিড দেখালে লিস্ট আইকন, লিস্ট দেখালে গ্রিড আইকন (পরের ভিউয়ের আইকন) */
+  bar.appendChild(mkBtn(qxIco(next === "grid" ? "grid_view" : "view_list"), next === "grid" ? "গ্রিড ভিউ" : "লিস্ট ভিউ", () => {
+    try{ localStorage.setItem(QX_VIEW_KEY[page], next); }catch(e){}
+    onChange();
+  }));
+  bar.appendChild(mkBtn(qxIco("edit"), "হোম কাস্টমাইজ — কার্ড দেখান/লুকান", () => qxOpenCardSheet(page, "show", groups, onChange)));
+  bar.appendChild(mkBtn('<svg class="ms-svg-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="' + QX_DASH_EDIT_PATH + '"/></svg>', "ড্যাশবোর্ড এডিট — কার্ড সাজান", () => qxOpenCardSheet(page, "order", groups, onChange)));
+  return bar;
+}
 function renderMore(){
   showOther("{{more_horiz}} আরও");
-  const box = mk("div", "qx-list qx-list-spaced");
-  box.appendChild(qxRow("i_hajj", "হজ্জ", "হজ্জের পরিচিতি", function(){ setMode("hajj"); }));
-  box.appendChild(qxRow("i_zakat", "যাকাত", "যাকাতের পরিচিতি", function(){ setMode("zakat"); }));
-  box.appendChild(qxRow("menu_book", "বই ও অনুচ্ছেদ", "বই ও লেখা", function(){ setMode("books"); }));
-  box.appendChild(qxRow("star", "সংরক্ষিত", "বুকমার্ক ও ফেভারিট", function(){ setMode("saved"); }));
-  box.appendChild(qxRow("bar_chart", "ট্র্যাকার", "প্রতিদিনের হিসাব", function(){ setMode("tracker"); }));
-  box.appendChild(qxRow("abc", "শব্দার্থ", "কুরআনের ১৫০টি জরুরি শব্দ", function(){ setMode("dict"); }));
-  box.appendChild(qxRow("calendar_month", "খতম প্ল্যান", "পড়ার পরিকল্পনা", function(){ if(typeof window.renderKhatamPopup === "function") window.renderKhatamPopup(); }));
-  box.appendChild(qxRow("auto_awesome", "৯৯ নাম", "আসমাউল হুসনা", function(){ setMode("asma"); }));
-  app.appendChild(box);
+  const defs = [
+    ["hajj", "i_hajj", "হজ্জ", "হজ্জের পরিচিতি", function(){ setMode("hajj"); }],
+    ["zakat", "i_zakat", "যাকাত", "যাকাতের পরিচিতি", function(){ setMode("zakat"); }],
+    ["books", "menu_book", "বই ও অনুচ্ছেদ", "বই ও লেখা", function(){ setMode("books"); }],
+    ["saved", "star", "সংরক্ষিত", "বুকমার্ক ও ফেভারিট", function(){ setMode("saved"); }],
+    ["tracker", "bar_chart", "ট্র্যাকার", "প্রতিদিনের হিসাব", function(){ setMode("tracker"); }],
+    ["dict", "abc", "শব্দার্থ", "কুরআনের ১৫০টি জরুরি শব্দ", function(){ setMode("dict"); }],
+    ["khatam", "calendar_month", "খতম প্ল্যান", "পড়ার পরিকল্পনা", function(){ if(typeof window.renderKhatamPopup === "function") window.renderKhatamPopup(); }],
+    ["asma", "auto_awesome", "৯৯ নাম", "আসমাউল হুসনা", function(){ setMode("asma"); }]
+  ];
+  const draw = () => {
+    app.innerHTML = "";
+    app.appendChild(qxPageTools("more", [{ title: "আরও", items: defs.map(d => ({ id: d[0], title: d[2] })) }], draw));
+    const box = mk("div", "qx-list qx-list-spaced qx-vw-" + qxPageView("more"));
+    qxPageArrange("more", defs.map(d => ({ id: d[0], d: d }))).visible.forEach(o => {
+      const d = o.d; box.appendChild(qxRow(d[1], d[2], d[3], d[4]));
+    });
+    app.appendChild(box);
+  };
+  draw();
 }
 function qxSecSource(card, ref){
   if(!ref) return;
@@ -2566,7 +2677,7 @@ setInterval(checkPrayerAlerts, 5000);
     if(tab==='bm') return;
     var qv=qEl?qEl.value.trim():''; if(qv) return;
     const appEl = document.getElementById('app'); if(!appEl) return;
-    appEl.querySelectorAll('.home-tiles,.home-browse-nav,.home-browse-heading,.home-section-title').forEach(function(el){el.remove();});
+    appEl.querySelectorAll('.home-tiles,.home-browse-nav,.home-browse-heading,.home-section-title,.home-quick-actions,.qx-page-tools').forEach(function(el){el.remove();});
     var browse=document.createElement('section'); browse.className='home-browse-nav'+(tab==='home'?'':' is-sticky'); browse.setAttribute('role','group'); browse.setAttribute('aria-label','কুরআন ব্রাউজ করুন');
     var browseItems=[['all','সব সূরা'],['topic','বিষয়ভিত্তিক আয়াত'],['dict','শব্দার্থ'],['juz','পারা'],['Meccan','মাক্কী'],['Medinan','মাদানী']];
     browseItems.forEach(function(pair){
@@ -2599,7 +2710,10 @@ setInterval(checkPrayerAlerts, 5000);
       ['tracker','ট্র্যাকার','দৈনিক অগ্রগতি',function(){ setMode('tracker'); }]
     ];
     var icons={history:'history',today:'event',bookmark:'bookmark',tracker:'bar_chart'};
-    defs.forEach(function(d){
+    var homeView=qxPageView('home');
+    quick.className+=' qx-vw-'+homeView;
+    var qVis=qxPageArrange('home',defs.map(function(d){return {id:d[0],d:d};})).visible;
+    qVis.forEach(function(o){ var d=o.d;
       var b=document.createElement('button'); b.type='button'; b.className='home-quick-btn';
       b.innerHTML=''+qxIco(icons[d[0]])+'<span class="home-quick-copy"><b>'+d[1]+'</b><small>'+d[2]+'</small></span><span class="ms home-quick-go" aria-hidden="true">chevron_right</span>';
       b.setAttribute('aria-label',d[1]+': '+d[2]); b.onclick=d[3]; quick.appendChild(b);
@@ -2616,13 +2730,22 @@ setInterval(checkPrayerAlerts, 5000);
       ['i_kalima','কালিমা','ঈমানের ঘোষণা',function(){ setMode('kalima'); }],
       ['i_dua','দোয়া ও তাসবিহ','দোয়া ও যিকির',navGo('dua')]
     ];
-    cats.forEach(function(d){
+    row.className+=' qx-vw-'+homeView;
+    var cVis=qxPageArrange('home',cats.map(function(d){return {id:d[0],d:d};})).visible;
+    cVis.forEach(function(o){ var d=o.d;
       var t=document.createElement('button'); t.type='button'; t.className='home-tile';
       t.setAttribute('aria-label',d[1]+': '+d[2]);
       t.innerHTML='<span class="t-ic">'+qxIco(d[0])+'</span><span class="tile-copy"><strong>'+d[1]+'</strong><small>'+d[2]+'</small></span>';
       t.onclick=d[3]; row.appendChild(t);
     });
-    appEl.prepend(row); appEl.prepend(cTitle); appEl.prepend(quick); appEl.prepend(qTitle);
+    var tools=qxPageTools('home',[
+      {title:'Quick Actions',items:defs.map(function(d){return {id:d[0],title:d[1]};})},
+      {title:'বিষয়ভিত্তিক বিভাগ',items:cats.map(function(d){return {id:d[0],title:d[1]};})}
+    ],function(){ buildHero(); });
+    var nodes=[tools];
+    if(qVis.length){ nodes.push(qTitle,quick); }
+    if(cVis.length){ nodes.push(cTitle,row); }
+    for(var ni=nodes.length-1;ni>=0;ni--) appEl.prepend(nodes[ni]);
   }
   if(origRenderQuranHome){ window.renderQuranHome=function(){ origRenderQuranHome(); buildHero(); }; setTimeout(function(){ if(typeof renderHome==='function') renderHome(); }, 100); }
 })();
