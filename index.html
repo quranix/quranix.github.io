@@ -6711,6 +6711,170 @@ html.qx-final-test .qx-debug {
   display: none;
 }
 
+/* ===== ৯৯ নামের পপআপ: বাঁয়ে বাংলা, মাঝে খাড়া ডিভাইডার, ডানে আরবি ===== */
+.qx-asma-hero {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 1px minmax(0,1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0 14px;
+}
+
+.qx-asma-div {
+  align-self: stretch;
+  width: 1px;
+  background: var(--qx-border);
+}
+
+.qx-asma-bn {
+  text-align: left;
+}
+
+.qx-asma-bn b {
+  display: block;
+  font-size: var(--qx-fs-xl);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.qx-asma-bn span {
+  display: block;
+  margin-top: 4px;
+  color: var(--qx-meta-color);
+  overflow-wrap: anywhere;
+}
+
+.qx-asma-ar {
+  font-family: var(--qx-font-arabic), "Noto Naskh Arabic", serif;
+  font-size: 40px;
+  line-height: 1.7;
+  color: var(--qx-main-color);
+  direction: rtl;
+  text-align: right;
+}
+
+/* ===== নামাজের সময়: ফ্লিপ ক্লক কাউন্টডাউন, ক্যালেন্ডার আইকন, শব্দ বাটন ===== */
+.hero-date.hero-date-ic {
+  display: grid;
+  place-items: center;
+  width: calc(40px * var(--qx-scale));
+  height: calc(40px * var(--qx-scale));
+}
+
+.hero-date.hero-date-ic .ms {
+  font-size: calc(22px * var(--qx-scale));
+}
+
+.hero-snd {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: calc(40px * var(--qx-scale));
+  height: calc(40px * var(--qx-scale));
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--qx-radius-lg);
+  background: rgba(255,255,255,.18);
+  color: inherit;
+  cursor: pointer;
+}
+
+.hero-snd .ms {
+  font-size: calc(22px * var(--qx-scale));
+}
+
+.qx-flip {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 12px 0 2px;
+}
+
+.qx-flip-grp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.qx-flip-digs {
+  display: flex;
+  gap: 4px;
+}
+
+.qx-fd {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: calc(34px * var(--qx-scale));
+  height: calc(48px * var(--qx-scale));
+  background-image: linear-gradient(#fff 50%, #ececec 50%);
+  color: #1f2a29;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.28);
+  overflow: hidden;
+}
+
+.qx-fd b {
+  font-size: calc(30px * var(--qx-scale));
+  line-height: 1;
+  font-weight: 700;
+}
+
+.qx-fd::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(0,0,0,.3);
+  box-shadow: 0 1px 0 rgba(255,255,255,.7);
+}
+
+.qx-flip-colon {
+  display: grid;
+  place-items: center;
+  height: calc(48px * var(--qx-scale));
+  font-size: calc(28px * var(--qx-scale));
+  font-weight: 700;
+  line-height: 1;
+}
+
+.qx-flip-grp small {
+  font-size: var(--qx-fs-xs);
+  opacity: .9;
+}
+
+@keyframes qxFlipDigit {
+  from { transform: perspective(160px) rotateX(-75deg); opacity: .35; }
+  to { transform: perspective(160px) rotateX(0); opacity: 1; }
+}
+
+.qx-fd.flip b {
+  animation: qxFlipDigit .28s ease-out;
+}
+
+html[data-reduced-motion] .qx-fd.flip b {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qx-fd.flip b {
+    animation: none;
+  }
+}
+
+/* নামাজ শিক্ষা ইত্যাদি .qx-sec-page-এ কাউন্ট বাঁয়ে, গ্রিড/লিস্ট বাটন ডানে */
+.qx-sec-page .surah-list-heading {
+  width: 100%;
+  max-width: none;
+  margin: 6px 0 0;
+}
+
 .qx-sheet-group {
   margin: 12px 0 4px;
   font-weight: 700;

@@ -549,14 +549,31 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
           }
           if(!validTafsirRows(tafData)){
             job.controller=new AbortController();
-            var url=TAFSIR_CDN+tafsirSlug+'/'+ts+'.json';
-            var response=await fetch(url,{signal:job.controller.signal});
-            if(!response.ok) response=await fetch(TAFSIR_CDN_MAIN+tafsirSlug+'/'+ts+'.json',{signal:job.controller.signal});
-            if(!response.ok) throw new Error('তাফসির API HTTP '+response.status+' (সূরা '+ts+')');
-            var payload=await response.json();
-            if(!payload || !Array.isArray(payload.ayahs)) throw new Error('তাফসিরের ডেটা কাঠামো সঠিক নয়: সূরা '+ts);
-            tafData=payload.ayahs.map(function(row){var n=Number(row.ayah||row.verse_number||0);return {verse_number:n,verse_key:ts+':'+n,text:String(row.text||'').trim()};}).filter(function(row){return row.verse_number>0 && row.text;});
-            if(!validTafsirRows(tafData)) throw new Error('তাফসিরের সূরা '+ts+'-এর ডেটা খালি, অসম্পূর্ণ বা পুনরাবৃত্ত আয়াতযুক্ত');
+            /* একই আয়াত নম্বরে একাধিক সারি থাকলে জোড়া লাগানো হয়, সূরার আয়াতসংখ্যার বাইরের নম্বর বাদ যায়।
+               প্রথম উৎসে ব্যবহারযোগ্য ডেটা না পেলে দ্বিতীয় উৎস (main) চেষ্টা করা হয়। */
+            var tafsirFromUrl=async function(base){
+              var response=await fetch(base+tafsirSlug+'/'+ts+'.json',{signal:job.controller.signal});
+              if(!response.ok) return {status:response.status,rows:[]};
+              var payload=await response.json();
+              if(!payload || !Array.isArray(payload.ayahs)) return {status:200,rows:[],badShape:true};
+              var byNo={};
+              payload.ayahs.forEach(function(row){
+                var n=Number(row&&(row.ayah||row.verse_number)||0), t=String(row&&row.text||'').trim();
+                if(!Number.isInteger(n) || n<1 || n>tafExpected || !t) return;
+                if(!byNo[n]) byNo[n]=[];
+                if(byNo[n].indexOf(t)<0) byNo[n].push(t);
+              });
+              var rows=Object.keys(byNo).map(Number).sort(function(x,y){return x-y;}).map(function(n){return {verse_number:n,verse_key:ts+':'+n,text:byNo[n].join('\n\n')};});
+              return {status:200,rows:rows};
+            };
+            var tafResult=await tafsirFromUrl(TAFSIR_CDN);
+            if(!tafResult.rows.length) tafResult=await tafsirFromUrl(TAFSIR_CDN_MAIN);
+            if(!tafResult.rows.length){
+              if(tafResult.status!==200) throw new Error('তাফসির API HTTP '+toBn(tafResult.status)+' (সূরা '+toBn(ts)+')');
+              if(tafResult.badShape) throw new Error('তাফসিরের ডেটা কাঠামো সঠিক নয়: সূরা '+toBn(ts));
+              throw new Error('সূরা '+toBn(ts)+'-এর তাফসির ডেটা উৎসে পাওয়া যায়নি');
+            }
+            tafData=tafResult.rows;
             await contentPut(tafKey,tafData);
           }
           job.done=ts; job.bytes+=new Blob([JSON.stringify(tafData)]).size; job.message='তাফসির ডাউনলোড হচ্ছে'; updatePackageProgress(job);
@@ -880,12 +897,24 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
 
       var consent = localStorage.getItem('quranix_auto_dl_consent');
       if(consent === 'no') return;
+      var startDefault=function(){ if(!packageJob) runPackage('tafsir',defId,'তাফসির · '+tafsirLabel(defId)); };
       if(consent !== 'yes'){
-        var ok = confirm('তাফসির অফলাইনে রাখতে ডাউনলোড করবো?\nআনুমানিক সাইজ: 2-5 MB\nমোবাইল ডাটা ব্যবহার হতে পারে।\n\nOK দিলে ডাউনলোড হবে, Cancel দিলে হবে না।');
-        try{ localStorage.setItem('quranix_auto_dl_consent', ok ? 'yes' : 'no'); }catch(storageError){}
-        if(!ok) return;
+        /* ব্রাউজারের confirm() এর বদলে অ্যাপের নিজস্ব ডায়ালগ */
+        var ov=document.createElement('div'); ov.className='ac-ov'; ov.style.zIndex='140';
+        var box=document.createElement('div'); box.className='ac-box';
+        box.innerHTML='<div class="ac-head"><span>{{download}} তাফসির অফলাইনে রাখবেন?</span></div>'
+          +'<div style="line-height:1.7;margin:8px 0">তাফসির ডাউনলোড করে রাখলে ইন্টারনেট ছাড়াই পড়া যাবে।<br>আনুমানিক সাইজ: ২–৫ এমবি। মোবাইল ডাটা ব্যবহার হতে পারে।</div>'
+          +'<div class="ac-row"><button type="button" class="ac-btn ghost" id="qxAutoDlNo">এখন না</button><button type="button" class="ac-btn" id="qxAutoDlYes">ডাউনলোড করুন</button></div>';
+        ov.appendChild(box); document.body.appendChild(ov);
+        var answer=function(yes){
+          try{ localStorage.setItem('quranix_auto_dl_consent', yes ? 'yes' : 'no'); }catch(storageError){}
+          ov.remove(); if(yes) startDefault();
+        };
+        box.querySelector('#qxAutoDlNo').onclick=function(){ answer(false); };
+        box.querySelector('#qxAutoDlYes').onclick=function(){ answer(true); };
+        return;
       }
-      runPackage('tafsir',defId,'তাফসির · '+tafsirLabel(defId));
+      startDefault();
     }catch(e){}
   }
   window.addEventListener('load',function(){ setTimeout(autoInstallDefaults,5000); });
@@ -898,7 +927,7 @@ var ASMA_DATA=[["الله", "আল্লাহ", "একমাত্র উপ�
 function asmaToday(){var d=new Date();return ASMA_DATA[(d.getDate()-1)%99];}
 function buildAsmaCard(){var t=asmaToday();var idx=ASMA_DATA.indexOf(t);var box=document.createElement('div');box.className='khatam-card';box.innerHTML='<div class="khatam-row"><b>{{i_asma}} আজকের নাম</b><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯</span></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:30px;color:var(--qx-main-color)">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div class="trk-mini">'+t[4]+'</div></div><div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">৯৯ নাম দেখো →</span><span>সূরা '+t[3]+'</span></div>';box.onclick=function(){if(typeof setMode==='function')setMode('asma');};return box;}
 function renderAsma(){if(typeof showOther==='function')showOther('{{i_asma}} আসমাউল হুসনা');const appEl = document.getElementById('app');var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var t=asmaToday();var top=document.createElement('div');top.className='asma-top';top.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><small>{{i_asma}} আজকের নাম · '+(ASMA_DATA.indexOf(t)+1)+' / ৯৯</small><span class="asma-arrow ms">chevron_right</span></div><div class="ar">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div><small>রেফারেন্স: সূরা '+t[3]+' · '+t[4]+'</small></div>';top.onclick=function(){openAsmaDetail(ASMA_DATA.indexOf(t));};appEl.appendChild(top);var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='৯৯টি নাম মুখস্থ করো, প্রতিটা নামে ট্যাপ করে অর্থ + কুরআনের রেফারেন্স দেখো। {{star:f}} প্রিয় করো, {{i_tasbih}} জিকির করো।';appEl.appendChild(info);var search=document.createElement('input');search.className='asma-search';search.placeholder='নাম খুঁজুন... যেমন: রহমান, গাফুর, রজ্জাক';appEl.appendChild(search);var grid=document.createElement('div');grid.className='asma-grid';appEl.appendChild(grid);function draw(filter){grid.innerHTML='';ASMA_DATA.forEach(function(item,i){var txt=(item[1]+' '+item[2]+' '+item[0]).toLowerCase();if(filter&&txt.indexOf(filter.toLowerCase())<0)return;var c=document.createElement('div');c.className='asma-card'+(favs[i]?' fav':'');c.innerHTML='<div class="ar">'+item[0]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+item[1]+'</b><small>'+item[2]+'</small><div class="trk-mini">সূরা '+item[3]+(counts[i]?' · {{i_tasbih}} '+counts[i]+' বার':'')+'</div>';c.onclick=function(){openAsmaDetail(i);};grid.appendChild(c);});}search.oninput=function(){draw(search.value);};draw('');}
-function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:48px;color:var(--qx-main-color);direction:rtl;line-height:1.6">'+item[0]+'</div><b style="font-size:var(--qx-fs-xl)">'+item[1]+'</b><div style="color:var(--qx-meta-color)">'+item[2]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{i_tasbih}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">← আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম →</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';await shareTextOrCopy(text,item[1],'শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!');};}
+function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div class="qx-asma-hero"><div class="qx-asma-bn"><b>'+item[1]+'</b><span>'+item[2]+'</span></div><div class="qx-asma-div" aria-hidden="true"></div><div class="qx-asma-ar" lang="ar" dir="rtl">'+item[0]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{i_tasbih}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">{{arrow_back}} আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম {{arrow_forward}}</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';await shareTextOrCopy(text,item[1],'শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!');};}
 window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaDetail=openAsmaDetail;
 
 
@@ -2472,6 +2501,56 @@ function qxSortTopics(list){
   }
   return withSerial;
 }
+/* ===== সবার জন্য এক সর্ট ড্রপডাউন ও এক সার্চ বক্স (বিষয়ভিত্তিক ট্যাব + শব্দার্থ ট্যাব) =====
+   qxSortDropdown(opts, current, onPick, ariaLabel): opts = [[মান, লেবেল], ...]; বাটন + মেনু। নেটিভ <select> মোবাইলে ক্লিক না খাওয়ার কারণে বাদ।
+   qxSearchBox(value, placeholder, ariaLabel, onInput): .qx-search বক্স; ইনপুট নতুন করে বানানো হয় না, শুধু onInput-এ তালিকা ছেঁকে দেখানো হয়। */
+function qxSortDropdown(opts, current, onPick, ariaLabel){
+  const sortWrap = document.createElement("div");
+  sortWrap.className = "qx-topic-sort";
+  sortWrap.style.cssText = "flex:1 1 auto;min-width:0;position:relative;";
+  const sortBtn = document.createElement("button");
+  sortBtn.type = "button";
+  sortBtn.setAttribute("aria-label", ariaLabel);
+  sortBtn.setAttribute("aria-haspopup", "true");
+  sortBtn.setAttribute("aria-expanded", "false");
+  sortBtn.style.cssText = "width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:var(--qx-fs-sm);padding:6px 8px;border:1.5px solid var(--qx-main-color);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);cursor:pointer;";
+  const sortBtnLabel = document.createElement("span");
+  sortBtnLabel.textContent = (opts.find(([v]) => v === current) || opts[0])[1];
+  const sortBtnArrow = document.createElement("span");
+  sortBtnArrow.textContent = "{{expand_more}}";
+  sortBtnArrow.style.cssText = "opacity:.7;flex:0 0 auto;";
+  sortBtn.append(sortBtnLabel, sortBtnArrow);
+  const sortMenu = document.createElement("div");
+  sortMenu.style.cssText = "display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;border:1px solid var(--qx-border);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);box-shadow:0 8px 24px rgba(0,0,0,.18);overflow:hidden;";
+  opts.forEach(([v, label]) => {
+    const o = document.createElement("button");
+    o.type = "button";
+    o.style.cssText = "width:100%;display:block;text-align:left;padding:9px 10px;border:0;border-bottom:1px solid var(--qx-border);background:" + (v === current ? "var(--qx-main-color)" : "var(--qx-card-bg)") + ";color:" + (v === current ? "var(--qx-on-main)" : "var(--qx-text-color)") + ";font-size:var(--qx-fs-sm);cursor:pointer;";
+    o.textContent = label + (v === current ? " ✓" : "");
+    o.onclick = (ev) => { ev.stopPropagation(); onPick(v); };
+    sortMenu.appendChild(o);
+  });
+  const closeSortMenu = (ev) => { if (!sortWrap.contains(ev.target)) { sortMenu.style.display = "none"; sortBtn.setAttribute("aria-expanded", "false"); document.removeEventListener("click", closeSortMenu); } };
+  sortBtn.onclick = (ev) => { ev.stopPropagation(); const open = sortMenu.style.display === "block"; sortMenu.style.display = open ? "none" : "block"; sortBtn.setAttribute("aria-expanded", open ? "false" : "true"); if (!open) document.addEventListener("click", closeSortMenu); };
+  sortWrap.append(sortBtn, sortMenu);
+  return sortWrap;
+}
+function qxSearchBox(value, placeholder, ariaLabel, onInput){
+  const box = document.createElement("div");
+  box.className = "qx-search";
+  const ic = document.createElement("span");
+  ic.className = "qx-search-ic";
+  ic.textContent = "{{search}}";
+  const input = document.createElement("input");
+  input.type = "search";
+  input.autocomplete = "off";
+  input.value = value;
+  input.placeholder = placeholder;
+  input.setAttribute("aria-label", ariaLabel);
+  input.oninput = () => onInput(input.value);
+  box.append(ic, input);
+  return box;
+}
 function renderTopics(){
   app.innerHTML = "";
   const sorted = qxSortTopics(QX_TOPICS.slice());
@@ -2482,51 +2561,13 @@ function renderTopics(){
   app.appendChild(topicHead);
   // Sort — Grid/List-এর একই লাইনে, কাস্টম ড্রপডাউন (বাটন + মেনু)। নেটিভ <select> মোবাইলে ক্লিক না খাওয়ার কারণে বাদ দেওয়া।
   const topicHeading = qxListHeading(toBn(QX_TOPICS.length) + "টি বিষয়");
-  const sortWrap = document.createElement("div");
-  sortWrap.className = "qx-topic-sort";
-  sortWrap.style.cssText = "flex:1 1 auto;min-width:0;position:relative;";
   const sortOpts = [["count","শব্দের সংখ্যা"],["pair","জোড়া"],["bn","বাংলা অভিধান ক্রম"],["imp","কুরআনে গুরুত্ব"]];
-  const sortBtn = document.createElement("button");
-  sortBtn.type = "button";
-  sortBtn.setAttribute("aria-label", "বিষয় সাজানো");
-  sortBtn.setAttribute("aria-haspopup", "true");
-  sortBtn.setAttribute("aria-expanded", "false");
-  sortBtn.style.cssText = "width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:var(--qx-fs-sm);padding:6px 8px;border:1.5px solid var(--qx-main-color);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);cursor:pointer;";
-  const sortBtnLabel = document.createElement("span");
-  sortBtnLabel.textContent = (sortOpts.find(([v]) => v === qxTopicSort) || sortOpts[0])[1];
-  const sortBtnArrow = document.createElement("span");
-  sortBtnArrow.textContent = "{{expand_more}}";
-  sortBtnArrow.style.cssText = "opacity:.7;flex:0 0 auto;";
-  sortBtn.append(sortBtnLabel, sortBtnArrow);
-  const sortMenu = document.createElement("div");
-  sortMenu.style.cssText = "display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;border:1px solid var(--qx-border);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);box-shadow:0 8px 24px rgba(0,0,0,.18);overflow:hidden;";
-  sortOpts.forEach(([v, label]) => {
-    const o = document.createElement("button");
-    o.type = "button";
-    o.style.cssText = "width:100%;display:block;text-align:left;padding:9px 10px;border:0;border-bottom:1px solid var(--qx-border);background:" + (v === qxTopicSort ? "var(--qx-main-color)" : "var(--qx-card-bg)") + ";color:" + (v === qxTopicSort ? "var(--qx-on-main)" : "var(--qx-text-color)") + ";font-size:var(--qx-fs-sm);cursor:pointer;";
-    o.textContent = label + (v === qxTopicSort ? " ✓" : "");
-    o.onclick = (ev) => { ev.stopPropagation(); qxTopicSort = v; renderTopics(); };
-    sortMenu.appendChild(o);
-  });
-  const closeSortMenu = (ev) => { if (!sortWrap.contains(ev.target)) { sortMenu.style.display = "none"; sortBtn.setAttribute("aria-expanded", "false"); document.removeEventListener("click", closeSortMenu); } };
-  sortBtn.onclick = (ev) => { ev.stopPropagation(); const open = sortMenu.style.display === "block"; sortMenu.style.display = open ? "none" : "block"; sortBtn.setAttribute("aria-expanded", open ? "false" : "true"); if (!open) document.addEventListener("click", closeSortMenu); };
-  sortWrap.append(sortBtn, sortMenu);
+  const sortWrap = qxSortDropdown(sortOpts, qxTopicSort, v => { qxTopicSort = v; renderTopics(); }, "বিষয় সাজানো");
   // heading: [count] [sort] [single view toggle] — sort মাঝখানে, toggle ডানে
   const toggleEl = topicHeading.querySelector(".qx-view-toggle");
   topicHeading.insertBefore(sortWrap, toggleEl);
   app.appendChild(topicHeading);
   // সার্চ বার: ইনপুট নতুন করে বানানো হয় না (বাংলা কিবোর্ডে টাইপ নষ্ট হয় না), শুধু তালিকা ছেঁকে দেখায়
-  const topicSearch = document.createElement("div");
-  topicSearch.className = "qx-search";
-  const topicSearchIc = document.createElement("span");
-  topicSearchIc.className = "qx-search-ic";
-  topicSearchIc.textContent = "{{search}}";
-  const topicInput = document.createElement("input");
-  topicInput.type = "search";
-  topicInput.autocomplete = "off";
-  topicInput.value = qxTopicQ;
-  topicInput.placeholder = "বিষয়ের নাম, আরবি ধাতু বা নম্বর লিখুন…";
-  topicInput.setAttribute("aria-label", "বিষয়ভিত্তিক আয়াতে খুঁজুন");
   const qxTopicFilterApply = () => {
     const norm = (x) => String(x || "").replace(/[০-৯]/g, c => "০১২৩৪৫৬৭৮৯".indexOf(c)).replace(/[\u064B-\u065F\u0670\u0640]/g, "").replace(/\s+/g, "").toLowerCase();
     const q = norm(qxTopicQ);
@@ -2539,8 +2580,7 @@ function renderTopics(){
     });
     topicEmpty.style.display = shown ? "none" : "";
   };
-  topicInput.oninput = () => { qxTopicQ = topicInput.value; qxTopicFilterApply(); };
-  topicSearch.append(topicSearchIc, topicInput);
+  const topicSearch = qxSearchBox(qxTopicQ, "বিষয়ের নাম, আরবি ধাতু বা নম্বর লিখুন…", "বিষয়ভিত্তিক আয়াতে খুঁজুন", v => { qxTopicQ = v; qxTopicFilterApply(); });
   app.appendChild(topicSearch);
   if (!QX_TOPICS.length) return msg("এখনো কোনো বিষয় যোগ হয়নি");
   const grid = qxListGrid();
@@ -2592,32 +2632,13 @@ function renderDict(){
   head.style.cssText = "opacity:.7;font-size:11px;font-style:italic;margin:2px 0 8px;text-align:center;";
   head.textContent = "*প্রতিটা শব্দের সংখ্যা চূড়ান্ত হিসাব নয়।";
   app.appendChild(head);
-  app.appendChild(qxListHeading(toBn(QX_DICT150.length) + "টি শব্দ"));
-  const search = document.createElement("input");
-  search.type = "search"; search.value = qxDict150Q;
-  search.placeholder = "বাংলা অর্থ, আরবি শব্দ বা নম্বর (১–" + toBn(QX_DICT150.length) + ") লেখো…";
-  search.setAttribute("aria-label", "শব্দার্থে খোঁজো");
-  search.style.cssText = "width:100%;padding:10px;border:1px solid var(--qx-border);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);font:inherit;margin-bottom:8px;";
-  search.oninput = () => { qxDict150Q = search.value; renderDict150List(); };
-  app.appendChild(search);
-  const filters = document.createElement("div");
-  filters.style.cssText = "display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;";
-  const chips = [];
-  const paintChips = () => chips.forEach(([v, b]) => {
-    const on = qxDict150Cat === v;
-    b.style.background = on ? "var(--qx-main-color)" : "var(--qx-card-bg)";
-    b.style.color = on ? "var(--qx-on-main)" : "var(--qx-text-color)";
-    b.setAttribute("aria-pressed", on ? "true" : "false");
-  });
-  [[0, "সব"]].concat(QX_DICT150_CATS.slice(1).map((n, i) => [i + 1, n])).forEach(([v, label]) => {
-    const b = document.createElement("button"); b.type = "button";
-    b.textContent = label;
-    b.style.cssText = "padding:6px 12px;border:1px solid var(--qx-border);border-radius:999px;cursor:pointer;font:inherit;";
-    b.onclick = () => { qxDict150Cat = v; paintChips(); renderDict150List(); };
-    chips.push([v, b]); filters.appendChild(b);
-  });
-  paintChips();
-  app.appendChild(filters);
+  // ক্যাটাগরি চিপ এখন সর্ট ড্রপডাউনে — বিষয়ভিত্তিক ট্যাবের মতোই [সংখ্যা] [ড্রপডাউন] [গ্রিড/লিস্ট]
+  const dictHeading = qxListHeading(toBn(QX_DICT150.length) + "টি শব্দ");
+  const catOpts = [[0, "সব"]].concat(QX_DICT150_CATS.slice(1).map((n, i) => [i + 1, n]));
+  const dictSort = qxSortDropdown(catOpts, qxDict150Cat, v => { qxDict150Cat = v; renderDict(); }, "শব্দের ধরন");
+  dictHeading.insertBefore(dictSort, dictHeading.querySelector(".qx-view-toggle"));
+  app.appendChild(dictHeading);
+  app.appendChild(qxSearchBox(qxDict150Q, "বাংলা অর্থ, আরবি শব্দ বা নম্বর (১–" + toBn(QX_DICT150.length) + ") লেখো…", "শব্দার্থে খোঁজো", v => { qxDict150Q = v; renderDict150List(); }));
   const wrap = document.createElement("div"); wrap.id = "qx-dict150-list"; app.appendChild(wrap);
   renderDict150List();
   const pnote = document.createElement("div"); pnote.className = "bn qx-dict-note"; pnote.textContent = QX_DICT150_PRON_NOTE;
