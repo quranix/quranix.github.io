@@ -2680,7 +2680,7 @@ function qxDict150AyahData(ref){
 function qxDict150AyahNode(ex){
   const ref = ex[0], pos = ex[1], word = ex[2];
   const x = qxDict150AyahData(ref);
-  const card = document.createElement("div"); card.className = "ayah qx-sec-card";
+  const card = document.createElement("div"); card.className = "ayah qx-sec-card qx-dict-ex-card";
   const nm = (window.QX_BN_SURAH && window.QX_BN_SURAH[x.s - 1]) || ("সূরা " + toBn(x.s));
   const link = document.createElement("button"); link.type = "button"; link.className = "qx-dict-ref";
   link.textContent = nm + " · আয়াত " + toBn(x.a) + " {{chevron_right}}";
@@ -2731,12 +2731,12 @@ function renderDict150Detail(d, rank){
     const pr = document.createElement("div"); pr.className = "qx-dict-line"; pr.textContent = "উচ্চারণ : " + d[6];
     info.appendChild(pr);
   }
-  const meta = document.createElement("div"); meta.className = "qx-dict-line";
-  meta.textContent = "শব্দ #" + toBn(rank) + " · " + QX_DICT150_CATS[d[0]] + " · কুরআনে " + qxDict150CountText(d) + " এসেছে";
-  info.appendChild(meta);
+  /* ধাতু না থাকলে কিছু লেখা হয় না, কিন্তু লাইনের জায়গা ফাঁকা থাকে (\u00A0) */
   const root = document.createElement("div"); root.className = "bn qx-dict-line";
-  root.textContent = d[3] ? "ধাতু: " + d[3].split("").join(" ") : "ধাতু: নেই (মূল শব্দ)";
-  card.append(arabic, info, root); app.appendChild(card);
+  root.textContent = d[3] ? "ধাতু: " + d[3].split("").join(" ") : "\u00A0";
+  const meta = document.createElement("div"); meta.className = "bn qx-dict-line";
+  meta.textContent = "শব্দ #" + toBn(rank) + " · " + QX_DICT150_CATS[d[0]] + " · কুরআনে " + qxDict150CountText(d) + " এসেছে";
+  card.append(arabic, info, root, meta); app.appendChild(card);
   const note = document.createElement("div"); note.className = "bn qx-dict-note"; note.textContent = QX_DICT150_PRON_NOTE;
   app.appendChild(note);
   if (d[7] && d[7].length) {
