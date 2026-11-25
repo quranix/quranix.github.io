@@ -2548,9 +2548,15 @@ function openSettingsModal() {
     return field;
   }
 
-  // 1. Font & accessibility
-  const accSec = mk("div", "set-sec");
-  accSec.appendChild(mk("div", "set-title", "{{text_fields}} ফন্ট কাস্টমাইজেশন"));
+  // Collapsible section: <details> + <summary>, three parts (font, translation/tafsir/audio, gesture/animation)
+  function accSection(title) {
+    const sec = document.createElement("details"); sec.className = "set-sec";
+    sec.appendChild(mk("summary", "set-title", title));
+    return sec;
+  }
+
+  // 1. Font: app size, text size, font change
+  const accSec = accSection("{{text_fields}} ফন্ট কাস্টমাইজেশন");
 
   accSec.appendChild(fontField("অ্যাপের সাইজ", [
     ["lite", "Lite (সবচেয়ে বড়)"],
@@ -2583,21 +2589,11 @@ function openSettingsModal() {
     appPrefs.bnFont = val; lsSet("appPrefs", appPrefs); applyAppPrefs();
   }));
 
-  const motionRow = mk("label", "set-row");
-  motionRow.appendChild(mk("span", "set-label", "অ্যানিমেশন কম"));
-  const motionToggle = document.createElement("input");
-  motionToggle.type = "checkbox"; motionToggle.className = "set-switch"; motionToggle.checked = !!appPrefs.reducedMotion;
-  motionToggle.setAttribute("aria-label", "অ্যানিমেশন কম");
-  motionToggle.onchange = () => { appPrefs.reducedMotion = motionToggle.checked; lsSet("appPrefs", appPrefs); applyAppPrefs(); };
-  motionRow.appendChild(motionToggle);
-  accSec.appendChild(motionRow);
-
   body.appendChild(accSec);
 
-  // 2. Translation
-  const transSec = mk("div", "set-sec");
-  transSec.appendChild(mk("div", "set-title", "{{translate}} অনুবাদ"));
-  transSec.appendChild(selectEl("অনুবাদ", [
+  // 2. Translation, tafsir, audio
+  const transSec = accSection("{{translate}} অনুবাদ, তাফসির ও অডিও");
+  transSec.appendChild(fontField("অনুবাদ", [
     ["bn.bengali", "মাওলানা মুহিউদ্দীন খান"],
     ["bn.zakaria", "ড. আবু বকর মুহাম্মাদ যাকারিয়া"]
   ], (val) => val === currentEdition, (val) => {
@@ -2608,12 +2604,7 @@ function openSettingsModal() {
     if (typeof refreshMinis === 'function') refreshMinis();
     showToast("অনুবাদ পরিবর্তন করা হয়েছে");
   }));
-  body.appendChild(transSec);
-
-  // 3. Tafsir
-  const tafsirSec = mk("div", "set-sec");
-  tafsirSec.appendChild(mk("div", "set-title", "{{auto_stories}} তাফসির"));
-  tafsirSec.appendChild(selectEl("তাফসির", (typeof TAFSIRS !== 'undefined' ? TAFSIRS : []),
+  transSec.appendChild(fontField("তাফসির", (typeof TAFSIRS !== 'undefined' ? TAFSIRS : []),
     (id) => id === (typeof tafsirId !== 'undefined' ? tafsirId : 381),
     (val) => {
       if (typeof tafsirId !== 'undefined') {
@@ -2623,12 +2614,7 @@ function openSettingsModal() {
         showToast("তাফসির পরিবর্তন করা হয়েছে");
       }
     }));
-  body.appendChild(tafsirSec);
-
-  // 4. Reciter / audio
-  const recSec = mk("div", "set-sec");
-  recSec.appendChild(mk("div", "set-title", "{{headphones}} তেলাওয়াতকারী"));
-  recSec.appendChild(selectEl("তেলাওয়াতকারী", (typeof RECITERS !== 'undefined' ? RECITERS : []),
+  transSec.appendChild(fontField("তেলাওয়াতকারী (অডিও)", (typeof RECITERS !== 'undefined' ? RECITERS : []),
     (id) => id === currentReciter,
     (val) => {
       currentReciter = val;
@@ -2640,11 +2626,10 @@ function openSettingsModal() {
       if (typeof refreshMinis === 'function') refreshMinis();
       showToast("ক্বারী পরিবর্তন করা হয়েছে");
     }));
-  body.appendChild(recSec);
+  body.appendChild(transSec);
 
-  // 5. জেসচার (QX_GESTURES তালিকা থেকে নিজে নিজে সুইচ তৈরি হয়)
-  const gesSec = mk("div", "set-sec");
-  gesSec.appendChild(mk("div", "set-title", "{{front_hand}} জেসচার"));
+  // 3. Gesture and animation (small switches at the right; gesture rows come from the QX_GESTURES list)
+  const gesSec = accSection("{{front_hand}} জেসচার ও অ্যানিমেশন");
   QX_GESTURES.forEach(g => {
     const row = mk("label", "set-row");
     const lab = mk("span", "set-label", g.label);
@@ -2656,6 +2641,16 @@ function openSettingsModal() {
     row.appendChild(lab); row.appendChild(sw);
     gesSec.appendChild(row);
   });
+  const motionRow = mk("label", "set-row");
+  const motionLab = mk("span", "set-label", "অ্যানিমেশন কম");
+  motionLab.appendChild(mk("small", "qx-g-hint", "পেজ ও কার্ডের নড়াচড়া কমিয়ে দেবে"));
+  motionRow.appendChild(motionLab);
+  const motionToggle = document.createElement("input");
+  motionToggle.type = "checkbox"; motionToggle.className = "set-switch"; motionToggle.checked = !!appPrefs.reducedMotion;
+  motionToggle.setAttribute("aria-label", "অ্যানিমেশন কম");
+  motionToggle.onchange = () => { appPrefs.reducedMotion = motionToggle.checked; lsSet("appPrefs", appPrefs); applyAppPrefs(); };
+  motionRow.appendChild(motionToggle);
+  gesSec.appendChild(motionRow);
   body.appendChild(gesSec);
 
   content.appendChild(body);
