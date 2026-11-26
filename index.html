@@ -8272,6 +8272,47 @@ html[data-theme="dark"] .trk-cat {
 }
 /* [THEME-VARIABLES] end */
 
+
+/* [FULL-SURAH-AUDIO-PAGE] start */
+.qx-full-audio-page{width:100%;max-width:760px;margin:0 auto;padding:12px 12px calc(28px + env(safe-area-inset-bottom));box-sizing:border-box;color:var(--qx-text-color)}
+.qx-fa-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 14px}
+.qx-fa-heading h2{font-size:20px;line-height:1.25;margin:0;font-weight:750}
+.qx-fa-heading p{font-size:13px;color:var(--qx-meta-color);margin:5px 0 0}
+.qx-fa-back{width:38px;height:38px;flex:0 0 38px;border:1px solid var(--qx-border);border-radius:50%;background:var(--qx-card-bg);color:var(--qx-text-color);display:grid;place-items:center}
+.qx-fa-player{background:var(--qx-card-bg);border:1px solid var(--qx-border);border-radius:18px;padding:18px 16px 14px;text-align:center;box-shadow:0 5px 18px rgba(0,0,0,.05)}
+.qx-fa-now-label{font-size:11px;letter-spacing:.04em;color:var(--qx-meta-color)}
+.qx-fa-now-title{font-size:22px;font-weight:750;margin-top:5px}
+.qx-fa-now-sub{font-size:13px;color:var(--qx-meta-color);margin-top:4px}
+.qx-fa-progress{height:5px;background:var(--qx-border);border-radius:10px;position:relative;margin:22px 2px 7px;overflow:visible}
+.qx-fa-progress span{display:block;height:100%;width:0;background:var(--qx-main-color);border-radius:10px;pointer-events:none}
+.qx-fa-progress input{position:absolute;inset:-7px 0;width:100%;height:19px;margin:0;opacity:0;cursor:pointer;z-index:2}
+.qx-fa-time{display:flex;justify-content:space-between;font-size:11px;color:var(--qx-meta-color);font-variant-numeric:tabular-nums}
+.qx-fa-controls{display:flex;align-items:center;justify-content:center;gap:14px;margin:15px 0 1px}
+.qx-fa-controls button{width:42px;height:42px;border:1px solid var(--qx-border);border-radius:50%;background:var(--qx-tile-bg);color:var(--qx-text-color);display:grid;place-items:center;padding:0}
+.qx-fa-controls button .ms{font-size:23px}
+.qx-fa-controls .qx-fa-main-play{width:54px;height:54px;background:var(--qx-main-color);color:#fff;border-color:var(--qx-main-color)}
+.qx-fa-controls .qx-fa-main-play .ms{font-size:29px}
+.qx-fa-controls #qxFaRead{width:42px;height:42px;color:var(--qx-main-color);border-color:var(--qx-main-color)}
+.qx-fa-controls button:disabled{opacity:.4}
+.qx-fa-list-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 2px 10px}
+.qx-fa-list-head h3{font-size:16px;margin:0;white-space:nowrap}
+.qx-fa-list-head h3 span{font-size:12px;color:var(--qx-meta-color);font-weight:500;margin-left:4px}
+.qx-fa-search{display:flex;align-items:center;gap:6px;min-width:0;width:min(48%,210px);height:36px;padding:0 10px;border:1px solid var(--qx-border);border-radius:20px;background:var(--qx-card-bg);color:var(--qx-meta-color);box-sizing:border-box}
+.qx-fa-search .ms{font-size:18px;flex:0 0 auto}
+.qx-fa-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--qx-text-color);font:inherit;font-size:13px}
+.qx-fa-list{display:flex;flex-direction:column;gap:5px}
+.qx-fa-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:58px;padding:8px 10px;border:1px solid var(--qx-border);border-radius:13px;background:var(--qx-card-bg);box-sizing:border-box}
+.qx-fa-row.current{border-color:var(--qx-main-color);background:var(--qx-hover)}
+.qx-fa-row-info{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+.qx-fa-num{width:31px;height:31px;flex:0 0 31px;display:grid;place-items:center;border-radius:9px;background:var(--qx-tile-bg);color:var(--qx-meta-color);font-size:12px}
+.qx-fa-names{display:flex;flex-direction:column;min-width:0;gap:2px}
+.qx-fa-names strong{font-size:14px;line-height:1.35;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qx-fa-names small{font-size:11px;color:var(--qx-meta-color);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qx-fa-row-play{width:38px;height:38px;flex:0 0 38px;border:1px solid var(--qx-border);border-radius:50%;background:var(--qx-tile-bg);color:var(--qx-main-color);display:grid;place-items:center;padding:0;font-size:21px}
+.qx-fa-empty{text-align:center;color:var(--qx-meta-color);padding:20px}
+@media(max-width:420px){.qx-full-audio-page{padding-left:9px;padding-right:9px}.qx-fa-player{padding:16px 12px 12px}.qx-fa-controls{gap:10px}.qx-fa-list-head{gap:7px}.qx-fa-list-head h3{font-size:15px}.qx-fa-search{width:46%}}
+/* [FULL-SURAH-AUDIO-PAGE] end */
+
 </style>
 </head>
 <body>
@@ -8312,6 +8353,8 @@ html[data-theme="dark"] .trk-cat {
         <div class="g-quick" id="gQuick"></div>
         <!-- [MORE-MENU > Hijri calendar item] -->
         <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <!-- [MORE-MENU > Full Audio Quran item] -->
+        <button class="g-menu-item" data-popup="fullaudio"><span><span class="ms" aria-hidden="true">headphones</span>Full Audio Quran</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Downloads item] -->
         <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Source and references item] -->

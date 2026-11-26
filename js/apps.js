@@ -1930,6 +1930,11 @@ window.addEventListener("online", () => showToast("ইন্টারনেট �
 // Android WebView / Browser Back Button Navigation Handling
 // [BACK-NAVIGATION: back button, popstate, qxNav, openSurah/openJuz wrappers] start
 function handleBackNavigation(){
+  if (window.qxFullAudioPageOpen) {
+    window.qxFullAudioPageOpen = false;
+    renderHome();
+    return true;
+  }
   if (qxNav.closeTopOverlay()) return true;
   if (document.querySelector(".qx-dict-detail")) {
     renderHome();
@@ -2893,6 +2898,7 @@ setInterval(checkPrayerAlerts, 5000);
     else if(type==='source') renderSourcePopup();
     else if(type==='khatam') renderKhatamPopup();
     else if(type==='downloads') renderDownloadsPopup('open');
+    else if(type==='fullaudio'){ closePopup(); if(typeof window.qxOpenFullSurahAudioPage==='function') window.qxOpenFullSurahAudioPage(); }
     else if(type==='hadith'){ closePopup(); if(typeof setMode==='function') setMode('hadith'); }
     else if(type==='pwa'){ renderPwaPopup(); }
     else if(type==='hijri'){ closePopup(); if(typeof setMode==='function') setMode('hijri'); }
@@ -4933,6 +4939,120 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
 // [QUICK-ACTIONS-BN: Bengali names + DOMContentLoaded apply] end
 
+// [FULL-SURAH-AUDIO-PAGE] start
+(function(){
+  "use strict";
+  let activeFilter = "";
+
+  function bnNumber(value){
+    return String(value).replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[Number(d)]);
+  }
+  function getSurahList(){
+    if (typeof surahs !== "undefined" && Array.isArray(surahs)) return surahs;
+    return Array.isArray(window.surahs) ? window.surahs : [];
+  }
+  function getSurah(number){
+    return getSurahList().find(item => Number(item.number) === Number(number));
+  }
+  function formatTime(seconds){
+    if (!Number.isFinite(seconds) || seconds < 0) return "০:০০";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+    return bnNumber(mins + ":" + secs);
+  }
+  function renderPage(){
+    window.qxFullAudioPageOpen = true;
+    if (typeof qxNav !== "undefined" && qxNav.pushMode) qxNav.pushMode();
+    showOther("Full Audio Quran");
+
+    const page = document.createElement("section");
+    page.className = "qx-full-audio-page";
+    page.innerHTML = `
+      <div class="qx-fa-heading">
+        <div><h2>Full Audio Quran</h2><p>সূরার বাংলা নাম ও আয়াতের তথ্যসহ</p></div>
+        <button type="button" class="qx-fa-back" aria-label="ফিরে যান" title="ফিরে যান"><span class="ms">arrow_back</span></button>
+      </div>
+      <section class="qx-fa-player" aria-label="অডিও প্লেয়ার">
+        <div class="qx-fa-now-label">এখন চলছে</div>
+        <div class="qx-fa-now-title" id="qxFaNowTitle">কোনো সূরা নির্বাচন করা হয়নি</div>
+        <div class="qx-fa-now-sub" id="qxFaNowSub">শুনতে সূরার তালিকা থেকে Play চাপুন</div>
+        <div class="qx-fa-progress"><input id="qxFaSeek" type="range" min="0" max="1000" value="0" aria-label="অডিওর অবস্থান"><span id="qxFaProgressFill"></span></div>
+        <div class="qx-fa-time"><span id="qxFaCurrentTime">০:০০</span><span id="qxFaDuration">০:০০</span></div>
+        <div class="qx-fa-controls">
+          <button type="button" id="qxFaPrev" aria-label="আগের সূরা" title="আগের সূরা"><span class="ms">skip_previous</span></button>
+          <button type="button" id="qxFaPlay" class="qx-fa-main-play" aria-label="Play/Pause" title="Play/Pause"><span class="ms">play_arrow</span></button>
+          <button type="button" id="qxFaRead" aria-label="কুরআন পড়ুন" title="এই সূরাটি পড়ুন"><span class="ms">menu_book</span></button>
+          <button type="button" id="qxFaNext" aria-label="পরের সূরা" title="পরের সূরা"><span class="ms">skip_next</span></button>
+        </div>
+      </section>
+      <div class="qx-fa-list-head"><h3>সূরার তালিকা <span id="qxFaCount">১১৪টি</span></h3><label class="qx-fa-search"><span class="ms">search</span><input id="qxFaSearch" type="search" placeholder="সূরা খুঁজুন…" autocomplete="off"></label></div>
+      <div class="qx-fa-list" id="qxFaList"></div>`;
+    app.appendChild(page);
+
+    const list = page.querySelector("#qxFaList");
+    const search = page.querySelector("#qxFaSearch");
+    const renderList = () => {
+      const query = search.value.trim().toLowerCase();
+      list.innerHTML = "";
+      const rows = getSurahList().filter(s => !query || String(s.number) === query || (s.englishName || "").toLowerCase().includes(query) || (s.englishNameTranslation || "").toLowerCase().includes(query) || (s.name || "").includes(query));
+      page.querySelector("#qxFaCount").textContent = bnNumber(rows.length) + "টি";
+      rows.forEach(s => {
+        const row = document.createElement("div");
+        row.className = "qx-fa-row";
+        row.dataset.surah = String(s.number);
+        const info = document.createElement("div"); info.className = "qx-fa-row-info";
+        const num = document.createElement("span"); num.className = "qx-fa-num"; num.textContent = bnNumber(s.number);
+        const names = document.createElement("span"); names.className = "qx-fa-names";
+        const primary = document.createElement("strong"); primary.textContent = s.name || ("সূরা " + bnNumber(s.number));
+        const secondary = document.createElement("small"); secondary.textContent = (s.englishNameTranslation || s.englishName || "") + " · " + bnNumber(s.numberOfAyahs || 0) + " আয়াত";
+        names.append(primary, secondary); info.append(num, names);
+        const play = document.createElement("button"); play.type = "button"; play.className = "qx-surah-audio-btn qx-fa-row-play"; play.dataset.surah = String(s.number); play.textContent = "{{play_arrow}}"; play.title = "সম্পূর্ণ সূরা শুনুন"; play.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " চালান");
+        play.addEventListener("click", () => window.qxToggleFullSurahAudio && window.qxToggleFullSurahAudio(s.number));
+        row.append(info, play); list.appendChild(row);
+      });
+      if (!rows.length) { const empty = document.createElement("p"); empty.className = "qx-fa-empty"; empty.textContent = "কোনো সূরা পাওয়া যায়নি।"; list.appendChild(empty); }
+      if (window.qxSyncFullSurahAudioButtons) window.qxSyncFullSurahAudioButtons();
+    };
+    search.addEventListener("input", renderList);
+    page.querySelector(".qx-fa-back").addEventListener("click", () => {
+      if (window.qxFullAudioPageOpen && history.state && history.state.qx === "mode") history.back();
+      else handleBackNavigation();
+    });
+    page.querySelector("#qxFaPrev").addEventListener("click", () => { const n = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState().number : 0; if (n > 1) window.qxToggleFullSurahAudio(n - 1); });
+    page.querySelector("#qxFaNext").addEventListener("click", () => { const n = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState().number : 0; if (n > 0 && n < 114) window.qxToggleFullSurahAudio(n + 1); });
+    page.querySelector("#qxFaPlay").addEventListener("click", () => { const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null; if (state && state.number) window.qxToggleFullSurahAudio(state.number); else window.qxToggleFullSurahAudio(1); });
+    page.querySelector("#qxFaRead").addEventListener("click", () => {
+      const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null;
+      const number = state && state.number ? state.number : 0;
+      if (!number) { if (typeof showToast === "function") showToast("আগে একটি সূরা চালু করুন।"); return; }
+      window.qxFullAudioPageOpen = false;
+      if (typeof openSurah === "function") openSurah(number);
+    });
+    const seek = page.querySelector("#qxFaSeek");
+    seek.addEventListener("input", () => { if (window.qxSeekFullSurahAudio) window.qxSeekFullSurahAudio(Number(seek.value) / 1000); });
+    renderList();
+    updatePlayer();
+  }
+  function updatePlayer(){
+    const page = document.querySelector(".qx-full-audio-page");
+    if (!page || !window.qxGetFullSurahAudioState) return;
+    const state = window.qxGetFullSurahAudioState();
+    const s = state.number ? getSurah(state.number) : null;
+    page.querySelector("#qxFaNowTitle").textContent = s ? (s.name || "সূরা " + bnNumber(s.number)) : "কোনো সূরা নির্বাচন করা হয়নি";
+    page.querySelector("#qxFaNowSub").textContent = s ? ((s.englishNameTranslation || s.englishName || "") + " · " + bnNumber(s.numberOfAyahs || 0) + " আয়াত") : "শুনতে সূরার তালিকা থেকে Play চাপুন";
+    page.querySelector("#qxFaPlay .ms").textContent = state.playing ? "pause" : "play_arrow";
+    page.querySelector("#qxFaSeek").value = state.duration ? Math.round(state.currentTime / state.duration * 1000) : 0;
+    page.querySelector("#qxFaProgressFill").style.width = (state.duration ? state.currentTime / state.duration * 100 : 0) + "%";
+    page.querySelector("#qxFaCurrentTime").textContent = formatTime(state.currentTime);
+    page.querySelector("#qxFaDuration").textContent = formatTime(state.duration);
+    page.querySelector("#qxFaRead").disabled = !state.number;
+    page.querySelectorAll(".qx-fa-row").forEach(row => row.classList.toggle("current", Number(row.dataset.surah) === state.number));
+  }
+  window.qxUpdateFullSurahAudioPage = updatePlayer;
+  window.qxOpenFullSurahAudioPage = renderPage;
+})();
+// [FULL-SURAH-AUDIO-PAGE] end
+
 // [FULL-SURAH-AUDIO-PLAYER] start
 (function(){
   "use strict";
@@ -4969,6 +5089,7 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
       button.title = showPause ? "পূর্ণ সূরা বিরতি দিন" : "সম্পূর্ণ সূরা শুনুন";
       button.setAttribute("aria-label", button.title);
     });
+    if (typeof window.qxUpdateFullSurahAudioPage === "function") window.qxUpdateFullSurahAudioPage();
   }
 
   function loadManifest(){
@@ -5121,7 +5242,11 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
   };
 
   window.qxSyncFullSurahAudioButtons = syncButtons;
+  window.qxGetFullSurahAudioState = function(){ return { number: currentSurah, playing: !audio.paused && !audio.ended, currentTime: Number(audio.currentTime) || 0, duration: Number(audio.duration) || 0 }; };
+  window.qxSeekFullSurahAudio = function(ratio){ if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = Math.max(0, Math.min(1, Number(ratio) || 0)) * audio.duration; };
 
+  audio.addEventListener("timeupdate", syncButtons);
+  audio.addEventListener("durationchange", syncButtons);
   audio.addEventListener("play", syncButtons);
   audio.addEventListener("pause", syncButtons);
   audio.addEventListener("ended", function(){
