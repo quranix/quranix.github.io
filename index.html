@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-QURANIX VERSION: v2.0.72
+QURANIX VERSION: v2.0.73
 QX FILE EDIT RULES
 1. NO OVERRIDE RULE - Do not add duplicate rules that override previous ones. Edit existing rule directly.
 2. NO !important - Never use !important in any CSS.
@@ -102,9 +102,6 @@ ABOUT THIS FILE
    [FOOTER-MENU] x3 blocks
    [SURAH-LIST] x2 blocks
    [HOME-PAGE] x3 blocks
-   [HOME-THEMES]
-   [FULL-SURAH-AUDIO-PAGE]
-   [GRID-POPUP]
    [HOME-THEMES]
    [SUPPORTS (height:100dvh)]
    [ANIMATION fadeInOut]
@@ -329,8 +326,10 @@ ABOUT THIS FILE
   --qx-fs: calc(14px * var(--qx-scale));
   --qx-fs-lg: calc(16px * var(--qx-scale));
   --qx-fs-xl: calc(18px * var(--qx-scale));
-  --qx-fs-ar: 30px;
-  --qx-fs-bn: 16px;
+  --qx-fs-ar-base: 30px;
+  --qx-fs-bn-base: 18px;
+  --qx-fs-ar: var(--qx-fs-ar-base);
+  --qx-fs-bn: var(--qx-fs-bn-base);
   --qx-font-arabic: "Amiri Quran","Noto Naskh Arabic","Traditional Arabic",serif;
   --qx-font: "Hind Siliguri","Noto Serif Bengali","Kalpurush","Noto Sans Bengali",sans-serif;
   --qx-content-max: 720px;
@@ -401,11 +400,6 @@ ABOUT THIS FILE
   background: var(--qx-main-soft);
 }
 /* [THEME-VARIABLES] end */
-
-/* [THEME-VARIABLES] start */
-:root{--qx-fs-ar-base:30px;--qx-fs-bn-base:18px}
-/* [THEME-VARIABLES] end */
-
 
 
 /* [HEADER] start */
@@ -1381,24 +1375,24 @@ body.inside-page h1 {
 
 /* [AUDIO-BAR] start */
 .audio-progress-top {
-  position: relative;
-  height: 4px;
+  position: absolute;
+  height: 5px;
   background: var(--qx-border);
   border-radius: 10px;
   margin: 0;
 }
 .audio-progress-top,
 .qx-fa-progress {
-  height: 4px;
+  height: 5px;
   border-radius: 10px;
   background: var(--qx-border);
 }
 .audio-progress-top input[type=range],
 .qx-fa-progress input {
   position: absolute;
-  inset: -8px 0;
+  inset: -7px 0;
   width: 100%;
-  height: 20px;
+  height: 19px;
   margin: 0;
   opacity: 0;
   cursor: pointer;
@@ -1432,14 +1426,14 @@ body.inside-page h1 {
 .audio-top-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  padding: 12px 14px 8px;
+  padding: 10px 12px 6px;
   background: color-mix(in srgb, var(--qx-card-bg) 88%, var(--qx-main-color) 12%);
 }
 .audio-top-actions {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 .audio-top-actions button {
   width: 32px;
@@ -1508,7 +1502,7 @@ body.inside-page h1 {
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   color: var(--qx-meta-color);
-  padding: 0 16px 10px;
+  padding: 0 14px 10px;
 }
 .audio-float {
   position: fixed;
@@ -2338,307 +2332,6 @@ button:focus-visible,select:focus-visible,input:focus-visible {
 
 
 
-
-/* [GRID-POPUP] start */
-#gridPopupOverlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(0,0,0,.55);
-  align-items: center;
-  justify-content: center;
-  padding: calc(12px * var(--qx-scale));
-  box-sizing: border-box;
-  touch-action: manipulation;
-}
-
-#gridPopupOverlay.open {
-  display: flex;
-}
-
-#gridPopupBox {
-  position: relative;
-  box-sizing: border-box;
-  width: min(540px, calc(100vw - 24px));
-  max-width: 540px;
-  max-height: min(88vh, 760px);
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  background: var(--qx-tile-bg);
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius-lg);
-  padding: calc(18px * var(--qx-scale));
-  box-shadow: 0 20px 40px rgba(0,0,0,.3);
-}
-.pp-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  width: calc(40px * var(--qx-scale));
-  height: calc(40px * var(--qx-scale));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius-lg);
-  background: var(--qx-card-bg);
-  font-size: calc(22px * var(--qx-scale));
-  line-height: 1;
-  cursor: pointer;
-  color: var(--qx-text-color);
-  padding: 0;
-}
-.pp-tabs {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.pp-tabs button {
-  flex: 1;
-  padding: calc(12px * var(--qx-scale)) calc(10px * var(--qx-scale));
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius-lg);
-  background: var(--qx-card-bg);
-  color: var(--qx-text-color);
-  font: inherit;
-  font-size: var(--qx-fs-lg);
-  cursor: pointer;
-}
-
-.pp-tabs button.on {
-  background: var(--qx-main-color);
-  color: var(--qx-on-main);
-  border-color: var(--qx-main-color);
-}
-
-.pp-input {
-  width: 100%;
-  padding: calc(11px * var(--qx-scale));
-  border-radius: var(--qx-radius-lg);
-  border: 1px solid var(--qx-border);
-  background: var(--qx-card-bg);
-  color: var(--qx-text-color);
-  font: inherit;
-  margin-bottom: 10px;
-}
-
-.pp-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.pp-row input {
-  flex: 1;
-  padding: calc(11px * var(--qx-scale));
-  border-radius: var(--qx-radius-lg);
-  border: 1px solid var(--qx-border);
-  background: var(--qx-card-bg);
-  color: var(--qx-text-color);
-  font: inherit;
-}
-
-.pp-btn {
-  width: 100%;
-  min-height: calc(44px * var(--qx-scale));
-  padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
-  border: 1px solid var(--qx-main-color);
-  border-radius: var(--qx-radius-lg);
-  background: var(--qx-main-color);
-  color: var(--qx-on-main);
-  font: inherit;
-  font-size: var(--qx-fs-md);
-  font-weight: 600;
-  line-height: 1.35;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  white-space: normal;
-  word-break: break-word;
-  box-sizing: border-box;
-}
-.dl-grid .pp-btn,
-.dl-grid .dl-btn {
-  width: 100%;
-  height: 100%;
-  min-height: calc(44px * var(--qx-scale));
-}
-
-.pp-opt {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: calc(12px * var(--qx-scale)) calc(10px * var(--qx-scale));
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius-lg);
-  margin-bottom: 8px;
-  cursor: pointer;
-  color: var(--qx-text-color);
-  font: inherit;
-  font-size: var(--qx-fs);
-  text-align: left;
-  background: var(--qx-tile-bg);
-}
-.pp-opt.on {
-  border-color: var(--qx-main-color);
-  color: var(--qx-main-color);
-  font-weight: 600;
-}
-
-.pp-result {
-  padding: calc(10px * var(--qx-scale));
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius-lg);
-  margin-bottom: 8px;
-  cursor: pointer;
-  background: var(--qx-tile-bg);
-}
-
-.pp-result:focus-visible,.pp-opt:focus-visible,.pp-tabs button:focus-visible,.pp-btn:focus-visible {
-  outline: 3px solid var(--qx-main-color);
-  outline-offset: 2px;
-}
-
-.pp-result[role="button"] {
-  display: block;
-  width: 100%;
-  text-align: left;
-  color: inherit;
-  font: inherit;
-}
-
-.pp-result b {
-  font-size: var(--qx-fs-lg);
-}
-
-.pp-result small {
-  color: var(--qx-meta-color);
-  font-size: var(--qx-fs-md);
-  line-height: 1.5;
-  display: block;
-}
-
-.pp-hl {
-  background: var(--qx-highlight);
-  color: inherit;
-  border-radius: 3px;
-  padding: 0 2px;
-}
-
-.pp-font-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: calc(10px * var(--qx-scale)) 0;
-  font-size: var(--qx-fs-lg);
-}
-
-.pp-font-row button {
-  padding: calc(8px * var(--qx-scale)) calc(16px * var(--qx-scale));
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius);
-  background: var(--qx-card-bg);
-  color: var(--qx-text-color);
-  font: inherit;
-  cursor: pointer;
-}
-
-.pp-mini {
-  font-size: var(--qx-fs-md);
-  color: var(--qx-meta-color);
-  line-height: 1.7;
-}
-#gridPopupBox.wide {
-  width: min(600px, calc(100vw - 24px));
-  max-width: 600px;
-  padding: calc(20px * var(--qx-scale));
-}
-
-#gridPopupBox.wide-fixed {
-  display: flex;
-  flex-direction: column;
-  height: min(600px, 80vh);
-  overflow: hidden;
-}
-
-#gridPopupBox.wide-fixed #ppSearchBody {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-}
-
-#gridPopupBox.wide-fixed #ppWordResults {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.pp-empty {
-  padding: calc(32px * var(--qx-scale)) calc(12px * var(--qx-scale));
-  text-align: center;
-  font-size: var(--qx-fs-md);
-  line-height: 1.6;
-  color: var(--qx-meta-color);
-}
-
-#gridPopupBox.wide .pp-input {
-  font-size: var(--qx-fs-lg);
-  margin-bottom: 8px;
-}
-#gridPopupBox * {
-  box-sizing: border-box;
-}
-
-#gridPopupBox .pp-opt {
-  width: 100%;
-  min-height: calc(54px * var(--qx-scale));
-  padding: calc(12px * var(--qx-scale)) calc(14px * var(--qx-scale));
-  gap: 12px;
-  line-height: 1.4;
-  font-size: var(--qx-fs-lg);
-}
-
-#gridPopupBox .pp-result {
-  width: 100%;
-  padding: calc(14px * var(--qx-scale));
-  margin-bottom: 8px;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
-
-#gridPopupBox .pp-input,#gridPopupBox .pp-row input {
-  min-width: 0;
-  max-width: 100%;
-}
-#gridPopupBox .pp-input {
-  width: 100%;
-  margin: 0 0 10px;
-  padding: calc(13px * var(--qx-scale)) calc(14px * var(--qx-scale));
-  font-size: var(--qx-fs-lg);
-  border-radius: var(--qx-radius-lg);
-}
-
-#gridPopupBox .pp-row {
-  margin-bottom: 10px;
-}
-.pp-tabs.wrap {
-  flex-wrap: wrap;
-}
-
-.pp-tabs.wrap button {
-  flex: 1 1 28%;
-}
-/* [GRID-POPUP] end */
 
 /* [GRID-POPUP] start */
 #gridPopupOverlay {
@@ -5941,7 +5634,7 @@ html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count {
 }
 
 .g-menu-item + .g-menu-item {
-  border-top: 1px solid color-mix(in srgb, var(--qx-border) 55%, transparent);
+  border-top: 1px solid rgba(0,0,0,.06);
 }
 
 .g-menu-item + .g-menu-item:hover {
@@ -8501,8 +8194,8 @@ html[data-size="lite"] {
   --qx-scale: 1.25;
   --qx-btn-h: calc(44px * var(--qx-scale));
   --qx-btn-h-sm: calc(36px * var(--qx-scale));
-  --qx-fs-ar: calc(30px * var(--qx-scale));
-  --qx-fs-bn: calc(16px * var(--qx-scale));
+  --qx-fs-ar: calc(var(--qx-fs-ar-base) * var(--qx-scale));
+  --qx-fs-bn: calc(var(--qx-fs-bn-base) * var(--qx-scale));
 }
 
 html[data-size="lite"] .ayah .ar {
@@ -9025,6 +8718,12 @@ html[data-theme="dark"] .trk-cat {
         <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Full Audio Quran item] -->
         <button class="g-menu-item" data-popup="fullaudio"><span><span class="ms" aria-hidden="true">headphones</span>Full Audio Quran</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        
+        <!-- [MORE-MENU > About item] -->
+        <button class="g-menu-item" data-popup="about"><span><span class="ms" aria-hidden="true">info</span>About Quranix</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="share"><span><span class="ms" aria-hidden="true">share</span>Share App</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="help"><span><span class="ms" aria-hidden="true">help</span>Help and Support</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        
         <!-- [MORE-MENU > Downloads item] -->
         <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Source and references item] -->

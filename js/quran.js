@@ -11,7 +11,7 @@
    4. Put big new data lists in the data/ folder, not here.
    5. After any change, raise the CACHE number in sw.js (example: quranix-v2.0.32 to quranix-v2.0.33).
 
-   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, data/hadith.js, js/quran.js, js/apps.js
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
 */
 
 // SECTION INDEX (search: "[NAME] start")

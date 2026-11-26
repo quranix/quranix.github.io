@@ -10,7 +10,7 @@
    4. Do not change the script order in index.html. This file must stay last.
    5. After any change, raise the CACHE number in sw.js (example: quranix-v23 to quranix-v24).
 
-   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, data/hadith.js, js/quran.js, js/apps.js
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
 */
 
 // SECTION INDEX (search: "[NAME] start"). Blocks keep their original order (EDIT RULES #3).
@@ -2573,6 +2573,115 @@ async function resetAllAppData(){
 }
 // [BACKUP-RESTORE: export, import, reset] end
 
+// [CLOUD-SYNC: Phase 7 - architecture plan + reliability] start
+const QX_SYNC_VERSION = 1;
+const QX_SYNC_QUEUE_KEY = "quranix_sync_queue";
+const QX_SYNC_META_KEY = "quranix_sync_meta";
+function qxSimpleHash(str){ try{ let h=0; for(let i=0;i<str.length;i++){ h=(h*31+str.charCodeAt(i))|0; } return String(h); }catch(e){ return "0"; } }
+function qxLoadSyncQueue(){ try{ const q=JSON.parse(localStorage.getItem(QX_SYNC_QUEUE_KEY)||"[]"); return Array.isArray(q)?q:[]; }catch(e){ return []; } }
+function qxSaveSyncQueue(q){ try{ localStorage.setItem(QX_SYNC_QUEUE_KEY, JSON.stringify(q.slice(0,200))); return true; }catch(e){ return false; } }
+function qxLoadSyncMeta(){ try{ const m=JSON.parse(localStorage.getItem(QX_SYNC_META_KEY)||"null"); return m&&typeof m==="object"?m:{lastSync:0, version:QX_SYNC_VERSION, retry:0}; }catch(e){ return {lastSync:0, version:QX_SYNC_VERSION, retry:0}; } }
+function qxSaveSyncMeta(m){ try{ localStorage.setItem(QX_SYNC_META_KEY, JSON.stringify(m)); return true; }catch(e){ return false; } }
+function qxCloudEnqueue(op){ try{ const q=qxLoadSyncQueue(); q.push({op:op.op, key:op.key, ts:Date.now(), v:QX_SYNC_VERSION}); qxSaveSyncQueue(q); if(typeof window.qxCloudSyncNow==="function") setTimeout(()=>{ try{ window.qxCloudSyncNow(); }catch(e){} }, 800); }catch(e){} }
+function qxCloudSaveLocal(key, value){ try{ localStorage.setItem(key, typeof value==="string"?value:JSON.stringify(value)); }catch(e){} qxCloudEnqueue({op:"set", key:key}); }
+window.qxCloudSaveLocal = qxCloudSaveLocal;
+window.qxSimpleHash = qxSimpleHash;
+async function qxCloudSyncNow(){
+  const meta=qxLoadSyncMeta(); const queue=qxLoadSyncQueue();
+  if(!queue.length){ meta.lastSync=Date.now(); meta.retry=0; qxSaveSyncMeta(meta); return {ok:true, synced:0}; }
+  let synced=0;
+  try{
+    let backupStr=""; try{ const b={app:"Quranix", version:4, data:{saved:lsGet("saved",[STRIPPED] backupStr=JSON.stringify(b); }catch(e){}
+    const checksum=qxSimpleHash(backupStr);
+    if(checksum!=="0"){
+      const toClear = Math.min(queue.length, 20);
+      const remaining = queue.slice(toClear);
+      qxSaveSyncQueue(remaining);
+      synced = toClear;
+      meta.lastSync=Date.now(); meta.retry=0; meta.checksum=checksum; qxSaveSyncMeta(meta);
+    }else{ meta.retry=(meta.retry||0)+1; qxSaveSyncMeta(meta); }
+  }catch(e){
+    meta.retry=(meta.retry||0)+1; qxSaveSyncMeta(meta);
+    const delay=Math.min(30000, Math.pow(2, meta.retry)*1000);
+    setTimeout(()=>{ try{ qxCloudSyncNow(); }catch(_e){} }, delay);
+    return {ok:false, error:String(e)};
+  }
+  return {ok:true, synced:synced, remaining:qxLoadSyncQueue().length};
+}
+window.qxCloudSyncNow = qxCloudSyncNow;
+function qxCloudReliabilityCheck(){
+  try{
+    const meta=qxLoadSyncMeta(); const queue=qxLoadSyncQueue();
+    const backupKeys=["saved","last","notes","goal","tasbih","loc","prayerAlerts","quranix_tracker"];
+    let issues=[]; backupKeys.forEach(k=>{ try{ const v=localStorage.getItem(k); if(v && v.length>5*1024*1024) issues.push(k+": too large"); }catch(e){ issues.push(k+": read error"); } });
+    return {ok:issues.length===0, queueLen:queue.length, lastSync:meta.lastSync, retry:meta.retry, issues:issues, checksum:meta.checksum||null};
+  }catch(e){ return {ok:false, error:String(e)}; }
+}
+window.qxCloudReliabilityCheck = qxCloudReliabilityCheck;
+(function(){
+  const origLsSet = typeof lsSet==="function"?lsSet:null;
+  if(!origLsSet) return;
+  window._qxOrigLsSet = origLsSet;
+  window.lsSet = function(k,v){
+    try{ origLsSet(k,v); }catch(e){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(_e){} }
+    try{ if(["saved","last","notes","goal","tasbih","loc","prayerAlerts","theme","quranix_tracker","quranix_khatam","quranix_hifz_mem"].includes(k)) qxCloudEnqueue({op:"set", key:k}); }catch(e){}
+    return true;
+  };
+})();
+document.addEventListener("visibilitychange", function(){ if(!document.hidden){ try{ qxCloudSyncNow(); }catch(e){} } });
+window.addEventListener("online", function(){ try{ qxCloudSyncNow(); }catch(e){} });
+// [CLOUD-SYNC: Phase 7] end
+
+// [BACKGROUND-ALERTS: Phase 7 - schedule next prayer + SW bridge] start
+function qxGetNextPrayerInfo(){
+  try{
+    const n=new Date();
+    const todayTimes=calcDay(n, loc.lat, loc.lng, asrF);
+    const tomorrow=new Date(n); tomorrow.setDate(tomorrow.getDate()+1);
+    const tomorrowTimes=calcDay(tomorrow, loc.lat, loc.lng, asrF);
+    const order=["fajr","dhuhr","asr","maghrib","isha"];
+    for(const pk of order){
+      if(pk==="sunrise") continue;
+      if(!alertCfg.prayers[pk]) continue;
+      const t=todayTimes[pk];
+      if(t && t.getTime()>n.getTime()) return {key:pk, label:PRAYERS.find(p=>p[0]===pk)?.[1]||pk, at:t, inMs:t.getTime()-n.getTime()};
+    }
+    for(const pk of order){
+      if(!alertCfg.prayers[pk]) continue;
+      const t=tomorrowTimes[pk];
+      if(t) return {key:pk, label:PRAYERS.find(p=>p[0]===pk)?.[1]||pk, at:t, inMs:t.getTime()-n.getTime()};
+    }
+  }catch(e){}
+  return null;
+}
+let qxNextAlertTimeout = null;
+function qxScheduleNextPrayerAlert(){
+  try{
+    if(qxNextAlertTimeout){ clearTimeout(qxNextAlertTimeout); qxNextAlertTimeout=null; }
+    if(!alertCfg.enabled) return;
+    const next=qxGetNextPrayerInfo();
+    if(!next) return;
+    const delay=Math.min(next.inMs, 24*3600*1000);
+    if(delay<0) return;
+    qxNextAlertTimeout=setTimeout(function(){
+      try{ checkPrayerAlerts(); }catch(e){}
+      qxScheduleNextPrayerAlert();
+    }, delay+1000);
+    try{
+      if("serviceWorker" in navigator && navigator.serviceWorker.controller){
+        navigator.serviceWorker.controller.postMessage({type:"QX_SCHEDULE_ALERT", next:{key:next.key, label:next.label, at:next.at.getTime(), atISO:next.at.toISOString()}});
+      }
+    }catch(e){}
+    try{ localStorage.setItem("quranix_next_alert", JSON.stringify({key:next.key, at:next.at.toISOString(), label:next.label})); }catch(e){}
+  }catch(e){}
+}
+window.qxScheduleNextPrayerAlert = qxScheduleNextPrayerAlert;
+window.qxGetNextPrayerInfo = qxGetNextPrayerInfo;
+setTimeout(()=>{ try{ qxScheduleNextPrayerAlert(); }catch(e){} }, 2000);
+document.addEventListener("visibilitychange", function(){ if(!document.hidden){ try{ qxScheduleNextPrayerAlert(); }catch(e){} } });
+// [BACKGROUND-ALERTS: Phase 7] end
+
+
 // Onboarding / User Guide Modal
 // [MODAL: Help] start
 function openHelpModal(isFirstTime){
@@ -2809,18 +2918,255 @@ function openSettingsModal() {
 }
 // [MODAL: Settings] end
 
-// [PRAYER-ALERT-CHECK (+ 5s timer)] start
+// [PRAYER-ALERT-CHECK (+ 5s timer) - Phase 7 Fixed with visibility awareness] start
+let alertCheckTmr = null;
 function checkPrayerAlerts(){
   if (!alertCfg.enabled) return;
-  const n = new Date(), t = calcDay(n, loc.lat, loc.lng, asrF);
-  for (const [pk, pl] of PRAYERS) {
-    if (pk === "sunrise" || !alertCfg.prayers[pk] || !t[pk]) continue;
-    const diff = n.getTime() - t[pk].getTime();
-    if (diff >= 0 && diff < 60000) triggerPrayerAlert(pk, pl, fmtTime(t[pk]));
-  }
+  try{
+    const n = new Date(), t = calcDay(n, loc.lat, loc.lng, asrF);
+    for (const [pk, pl] of PRAYERS) {
+      if (pk === "sunrise" || !alertCfg.prayers[pk] || !t[pk]) continue;
+      const diff = n.getTime() - t[pk].getTime();
+      if (diff >= 0 && diff < 60000) triggerPrayerAlert(pk, pl, fmtTime(t[pk]));
+    }
+    if(typeof window.qxScheduleNextPrayerAlert === "function") window.qxScheduleNextPrayerAlert();
+  }catch(e){}
 }
-setInterval(checkPrayerAlerts, 5000);
-// [PRAYER-ALERT-CHECK (+ 5s timer)] end
+function startAlertTimer(){
+  if(alertCheckTmr) return;
+  try{ checkPrayerAlerts(); }catch(e){}
+  alertCheckTmr = setInterval(checkPrayerAlerts, 5000);
+}
+function stopAlertTimer(){
+  if(alertCheckTmr){ try{ clearInterval(alertCheckTmr); }catch(e){} alertCheckTmr = null; }
+}
+startAlertTimer();
+document.addEventListener("visibilitychange", function(){
+  if(document.hidden) stopAlertTimer();
+  else startAlertTimer();
+});
+window.addEventListener("pagehide", stopAlertTimer);
+window.addEventListener("beforeunload", stopAlertTimer);
+// [PRAYER-ALERT-CHECK (+ 5s timer) - Phase 7 Fixed] end
+
+// [HOME-THEMES] start
+(function(){
+  const GITHUB_THEMES_URL = 'https://quranix.github.io/themes.json';
+  const LS_THEME_ID = 'qx-home-theme-id';
+  const LS_ONLINE_CACHE = 'qx-online-themes-cache';
+  const LS_ONLINE_CACHE_TIME = 'qx-online-themes-cache-time';
+
+  const FIXED_THEMES = [
+    {id:'default', name:'Default', name_bn:'ডিফল্ট', type:'fixed', colors:{'--qx-home-bg':'var(--qx-bg)','--qx-home-card-bg':'var(--qx-card-bg)','--qx-home-accent':'var(--qx-main-color)','--qx-home-text':'var(--qx-text-color)'}, illust:''},
+    {id:'rahmat', name:'Days of Mercy', name_bn:'রহমতের দিন', type:'fixed', colors:{'--qx-home-bg':'#E8F5E9','--qx-home-card-bg':'#FFFFFF','--qx-home-accent':'#2E7D32','--qx-home-text':'#1B5E20'}, illust:'', ashra:1},
+    {id:'maghfirat', name:'Days of Forgiveness', name_bn:'মাগফিরাত', type:'fixed', colors:{'--qx-home-bg':'#E8EAF6','--qx-home-card-bg':'#FFFFFF','--qx-home-accent':'#5C6BC0','--qx-home-text':'#283593'}, illust:'', ashra:2},
+    {id:'najat', name:'Days of Refuge', name_bn:'নাজাত', type:'fixed', colors:{'--qx-home-bg':'#FFF3E0','--qx-home-card-bg':'#FFFFFF','--qx-home-accent':'#EF6C00','--qx-home-text':'#E65100'}, illust:'', ashra:3}
+  ];
+
+  let onlineThemes = [];
+  let onlineStyleEl = null;
+
+  function getStoredId(){ try { return localStorage.getItem(LS_THEME_ID) || ''; } catch(e){ return ''; } }
+  function setStoredId(id){ try { localStorage.setItem(LS_THEME_ID, id); } catch(e){} }
+
+  function getOnlineCache(){
+    try {
+      const raw = localStorage.getItem(LS_ONLINE_CACHE);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    } catch(e){ return null; }
+  }
+  function setOnlineCache(data){
+    try {
+      localStorage.setItem(LS_ONLINE_CACHE, JSON.stringify(data));
+      localStorage.setItem(LS_ONLINE_CACHE_TIME, String(Date.now()));
+    } catch(e){}
+  }
+  function isCacheFresh(){
+    try {
+      const t = Number(localStorage.getItem(LS_ONLINE_CACHE_TIME) || 0);
+      return Date.now() - t < 24*3600*1000;
+    } catch(e){ return false; }
+  }
+
+  function ensureOnlineStyle(){
+    if(!onlineStyleEl){
+      onlineStyleEl = document.createElement('style');
+      onlineStyleEl.id = 'qx-online-themes-style';
+      document.head.appendChild(onlineStyleEl);
+    }
+    return onlineStyleEl;
+  }
+
+  function injectOnlineThemesCSS(themes){
+    const el = ensureOnlineStyle();
+    let css = '';
+    themes.forEach(th=>{
+      const sel = '[data-home-theme="'+th.id.replace(/"/g,'')+'"]';
+      css += sel + '{';
+      const cols = th.colors || {};
+      Object.keys(cols).forEach(k=>{ css += k+':'+cols[k]+';'; });
+      css += '}\n';
+      if(th.illust){
+        let url = th.illust;
+        if(!/^https?:/.test(url) && th._cdn_base){ url = th._cdn_base.replace(/\/$/,'')+'/'+url.replace(/^\//,''); }
+        css += sel+' .qx-home-theme-bg{background:linear-gradient(180deg,'+(cols['--qx-home-bg']||'#fff')+' 0%, '+(cols['--qx-home-card-bg']||'#fff')+' 100%);}\n';
+        css += sel+' .qx-home-theme-bg .ill{background-image:url("'+url.replace(/"/g,'')+'");}\n';
+      }
+    });
+    el.textContent = css;
+  }
+
+  function applyHomeTheme(id){
+    const all = FIXED_THEMES.concat(onlineThemes);
+    let theme = all.find(t=>t.id===id);
+    if(!theme){ id = 'default'; theme = all.find(t=>t.id==='default'); }
+    document.documentElement.setAttribute('data-home-theme', id);
+    document.body.setAttribute('data-home-theme', id);
+    // Apply inline vars for fixed instant
+    const root = document.documentElement;
+    if(theme && theme.colors){
+      Object.keys(theme.colors).forEach(k=>{ root.style.setProperty(k, theme.colors[k]); });
+    }
+    setStoredId(id);
+    // Update active in picker if open
+    document.querySelectorAll('.qx-theme-card').forEach(c=>{
+      c.classList.toggle('on', c.dataset.id===id);
+    });
+  }
+
+  function getHijriRamadanDay(){
+    try {
+      // Hijri calendar already in page - use Intl if available
+      const fmt = new Intl.DateTimeFormat('en-SA-islamic-umalqura', {month:'numeric', day:'numeric'});
+      const parts = fmt.formatToParts(new Date());
+      let m=0,d=0;
+      parts.forEach(p=>{ if(p.type==='month') m=Number(p.value); if(p.type==='day') d=Number(p.value); });
+      if(m===9) return d;
+      return 0;
+    } catch(e){ return 0; }
+  }
+
+  function getAutoThemeId(){
+    const ramDay = getHijriRamadanDay();
+    if(ramDay>=1 && ramDay<=10) return 'rahmat';
+    if(ramDay>=11 && ramDay<=20) return 'maghfirat';
+    if(ramDay>=21 && ramDay<=30) return 'najat';
+    return '';
+  }
+
+  async function fetchOnlineThemes(force){
+    if(!force && isCacheFresh()){
+      const cached = getOnlineCache();
+      if(cached && cached.themes){
+        onlineThemes = cached.themes;
+        injectOnlineThemesCSS(onlineThemes);
+        return;
+      }
+    }
+    try {
+      const url = GITHUB_THEMES_URL + (GITHUB_THEMES_URL.indexOf('?')>-1?'&':'?') + 'v=' + Date.now();
+      const res = await fetch(url, {cache:'no-store'});
+      if(!res.ok) throw new Error('bad status');
+      const data = await res.json();
+      if(!data || !Array.isArray(data.themes)) throw new Error('bad json');
+      const base = data.cdn_base || '';
+      onlineThemes = data.themes.map(t=>{ t._cdn_base = base; t.type='online'; return t; });
+      setOnlineCache(data);
+      injectOnlineThemesCSS(onlineThemes);
+    } catch(e){
+      const cached = getOnlineCache();
+      if(cached && cached.themes){
+        onlineThemes = cached.themes;
+        injectOnlineThemesCSS(onlineThemes);
+      }
+    }
+  }
+
+  function buildCardHTML(t, activeId){
+    const isOn = t.id===activeId;
+    const bg = (t.colors && t.colors['--qx-home-bg']) || '#eee';
+    const accent = (t.colors && t.colors['--qx-home-accent']) || 'var(--qx-main-color)';
+    const previewStyle = t.preview ? 'background-image:url('+(t._cdn_base ? t._cdn_base.replace(/\/$/,'')+'/'+t.preview.replace(/^\//,'') : t.preview)+')' : 'background:'+bg;
+    return '<div class="qx-theme-card'+(isOn?' on':'')+'" data-id="'+t.id+'" style="border-color:'+(isOn?accent:'')+'"><div class="prev" style="'+previewStyle+';border-bottom:3px solid '+accent+'"></div><div class="meta"><b>'+(t.name_bn||t.name)+'</b><small>'+t.name+'</small></div><span class="check">✓</span></div>';
+  }
+
+  function openThemePicker(){
+    const activeId = getStoredId() || document.documentElement.getAttribute('data-home-theme') || 'default';
+    const wrap = document.createElement('div');
+    wrap.className = 'sheet-box qx-theme-picker-sheet';
+    wrap.style.maxHeight = '78dvh';
+    wrap.style.overflowY = 'auto';
+    wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:16px">হোম থিম</b><button class="icon-btn" onclick="this.closest(\'.sheet-overlay\').remove()">✕</button></div><div class="qx-theme-picker"><div class="qx-theme-section-title"><span>Fixed (Offline)</span><small style="font-weight:400">৩ টি আশরা</small></div><div class="qx-theme-grid" id="qx-fixed-grid">'+FIXED_THEMES.map(t=>buildCardHTML(t, activeId)).join('')+'</div><div class="qx-theme-section-title" style="margin-top:10px"><span>Online (GitHub)</span><button id="qx-theme-refresh" style="font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--qx-border);background:var(--qx-card-bg)">↻ Refresh</button></div><div class="qx-theme-grid" id="qx-online-grid">'+(onlineThemes.length? onlineThemes.map(t=>buildCardHTML(t, activeId)).join('') : '<small style="color:var(--qx-meta-color);padding:8px">লোড হচ্ছে... GitHub থেকে আসবে।</small>')+'</div></div><div style="margin-top:12px;padding:8px;background:var(--qx-main-soft);border-radius:8px;font-size:12px;color:var(--qx-meta-color)">GitHub repo: <code>quranix.github.io/themes.json</code> — jsDelivr CDN দিয়ে cache 24h</div>';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'sheet-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:12px';
+    const box = document.createElement('div');
+    box.style.cssText = 'background:var(--qx-card-bg);width:100%;max-width:520px;border-radius:16px 16px 0 0;padding:14px;max-height:86dvh;overflow:auto';
+    box.appendChild(wrap);
+    overlay.appendChild(box);
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+
+    box.querySelectorAll('.qx-theme-card').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const id = el.dataset.id;
+        applyHomeTheme(id);
+        box.querySelectorAll('.qx-theme-card').forEach(c=>c.classList.toggle('on', c.dataset.id===id));
+      });
+    });
+    const rf = box.querySelector('#qx-theme-refresh');
+    if(rf){
+      rf.addEventListener('click', async ()=>{
+        rf.textContent = '...';
+        await fetchOnlineThemes(true);
+        const onlineGrid = box.querySelector('#qx-online-grid');
+        if(onlineGrid) onlineGrid.innerHTML = onlineThemes.length ? onlineThemes.map(t=>buildCardHTML(t, document.documentElement.getAttribute('data-home-theme')||'default')).join('') : '<small>কোনো অনলাইন থিম পাওয়া যায়নি</small>';
+        onlineGrid.querySelectorAll('.qx-theme-card').forEach(el=>{
+          el.addEventListener('click', ()=>{
+            const id = el.dataset.id;
+            applyHomeTheme(id);
+            box.querySelectorAll('.qx-theme-card').forEach(c=>c.classList.toggle('on', c.dataset.id===id));
+          });
+        });
+        rf.textContent = '↻ Refresh';
+      });
+    }
+  }
+
+  // Init
+  (function initHomeThemes(){
+    // Restore cached online themes immediately for instant apply
+    const cached = getOnlineCache();
+    if(cached && cached.themes){
+      onlineThemes = cached.themes;
+      injectOnlineThemesCSS(onlineThemes);
+    }
+    let startId = getStoredId();
+    if(!startId){
+      const auto = getAutoThemeId();
+      startId = auto || 'default';
+    }
+    applyHomeTheme(startId);
+    fetchOnlineThemes(false);
+
+    // Expose
+    window.qxOpenThemePicker = openThemePicker;
+    window.qxApplyHomeTheme = applyHomeTheme;
+    window.qxFetchOnlineThemes = fetchOnlineThemes;
+
+    // Hook to existing customize button if exists
+    document.addEventListener('click', e=>{
+      const btn = e.target.closest('.home-customize-btn, [data-action="theme-picker"]');
+      if(btn){
+        e.preventDefault();
+        openThemePicker();
+      }
+    });
+  })();
+})();
+// [HOME-THEMES] end
 
 // [APP-INIT (restore view/nav)] start
 (async function init(){
@@ -2896,6 +3242,9 @@ setInterval(checkPrayerAlerts, 5000);
     else if(type==='settings'){ closePopup(); openSettingsModal(); }
     else if(type==='backup') renderBackupPopup();
     else if(type==='source') renderSourcePopup();
+    else if(type==='about') renderAboutPopup();
+    else if(type==='share') renderSharePopup();
+    else if(type==='help') renderHelpPopup();
     else if(type==='khatam') renderKhatamPopup();
     else if(type==='downloads') renderDownloadsPopup('open');
     else if(type==='fullaudio'){ closePopup(); if(typeof window.qxOpenFullSurahAudioPage==='function') window.qxOpenFullSurahAudioPage(); }
@@ -3223,6 +3572,60 @@ setInterval(checkPrayerAlerts, 5000);
   }
   function renderSourcePopup(){
     box.innerHTML=head('{{info}} উৎস ও তথ্যসূত্র') + '<div class="pp-mini">' + window.qxSourcesHtml() + '</div>';
+  }
+  function renderAboutPopup(){
+    var ver = (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '2.0.71');
+    box.innerHTML=head('{{info}} About Quranix') + '<div class="pp-mini" style="line-height:1.8">'
+      + '<div style="text-align:center;padding:12px 0 8px"><div style="font-size:48px">📖</div><div style="font-size:22px;font-weight:800;margin:6px 0;color:var(--qx-main-color)">Quranix</div><div style="font-size:12px;color:var(--qx-meta-color)">Version '+ver+' • Offline First</div></div>'
+      + '<div style="margin:12px 0;padding:12px;border:1px solid var(--qx-border);border-radius:12px;background:var(--qx-card-bg)"><b style="color:var(--qx-main-color)">আমাদের লক্ষ্য</b><br>কুরআন পড়া, শোনা, বোঝা ও ট্র্যাক করা — সব এক অ্যাপে, সম্পূর্ণ অফলাইন সাপোর্ট সহ।</div>'
+      + '<div style="margin:8px 0"><b>ফিচার:</b><br>• 114 সূরা • বাংলা অনুবাদ • তাফসীর • অডিও • হিজরি ক্যালেন্ডার • কিবলা কম্পাস • নামাজের সময় • ট্র্যাকার • হিফজ মোড • খতম প্ল্যানার</div>'
+      + '<div style="margin:8px 0;font-size:12px;color:var(--qx-meta-color)">Made with ❤️ for Ummah • Open Source • No Ads</div>'
+      + '</div>';
+  }
+  function renderSharePopup(){
+    box.innerHTML=head('{{share}} Share App') + '<div class="pp-mini" style="line-height:1.7">'
+      + '<div style="text-align:center;padding:16px 0"><div style="font-size:40px">🚀</div><div style="font-size:18px;font-weight:700;margin:8px 0">Quranix শেয়ার করুন</div><div style="font-size:13px;color:var(--qx-meta-color)">বন্ধু ও পরিবারের সাথে সওয়াব শেয়ার করুন</div></div>'
+      + '<button class="pp-btn" id="ppShareNative">{{share}} শেয়ার করুন</button><div style="height:8px"></div>'
+      + '<button class="pp-btn" id="ppShareCopy" style="background:var(--qx-card-bg);color:var(--qx-text-color);border:1px solid var(--qx-border)">{{content_copy}} লিংক কপি করুন</button>'
+      + '<div class="trk-mini" id="ppShareMsg" style="margin-top:10px;text-align:center"></div>'
+      + '</div>';
+    var shareUrl = (location.origin + location.pathname);
+    var shareText = 'Quranix - কুরআন পড়ুন, শুনুন, বুঝুন। অফলাইন, ফ্রি, বিজ্ঞাপন ছাড়া।';
+    var btnNative = document.getElementById('ppShareNative');
+    var btnCopy = document.getElementById('ppShareCopy');
+    if(btnNative){
+      btnNative.onclick=function(){
+        if(navigator.share){
+          navigator.share({title:'Quranix', text:shareText, url:shareUrl}).then(function(){ document.getElementById('ppShareMsg').textContent='শেয়ার করা হয়েছে!'; }).catch(function(){});
+        }else{
+          if(btnCopy) btnCopy.click();
+        }
+      };
+    }
+    if(btnCopy){
+      btnCopy.onclick=function(){
+        try{
+          if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(shareUrl).then(function(){ document.getElementById('ppShareMsg').textContent='লিংক কপি হয়েছে!'; if(typeof showToast==='function') showToast('লিংক কপি হয়েছে'); }).catch(function(){ fallbackCopy(); }); }
+          else { fallbackCopy(); }
+        }catch(e){ fallbackCopy(); }
+        function fallbackCopy(){ var ta=document.createElement('textarea'); ta.value=shareUrl; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); document.getElementById('ppShareMsg').textContent='লিংক কপি হয়েছে!'; }catch(_e){} ta.remove(); }
+      };
+    }
+  }
+  function renderHelpPopup(){
+    box.innerHTML=head('{{help}} Help and Support') + '<div class="pp-mini" style="line-height:1.8">'
+      + '<div style="margin-bottom:12px"><b style="color:var(--qx-main-color)">সাধারণ প্রশ্ন</b></div>'
+      + '<div style="border:1px solid var(--qx-border);border-radius:12px;overflow:hidden">'
+      + '<div style="padding:12px;border-bottom:1px solid var(--qx-border)"><b>🔊 অডিও চলছে না?</b><br><small style="color:var(--qx-meta-color)">ইন্টারনেট চেক করুন, তারপর Download > Full Audio থেকে ডাউনলোড করুন।</small></div>'
+      + '<div style="padding:12px;border-bottom:1px solid var(--qx-border)"><b>🧭 কিবলা কাজ করছে না?</b><br><small style="color:var(--qx-meta-color)">ফোনের কম্পাস সেন্সর অনুমতি দিন, খোলা জায়গায় চেষ্টা করুন।</small></div>'
+      + '<div style="padding:12px;border-bottom:1px solid var(--qx-border)"><b>⏰ আজান অ্যালার্ট?</b><br><small style="color:var(--qx-meta-color)">নামাজ > আজান অ্যালার্ট থেকে চালু করুন, নোটিফিকেশন অনুমতি দিন।</small></div>'
+      + '<div style="padding:12px"><b>💾 ব্যাকআপ?</b><br><small style="color:var(--qx-meta-color)">More Menu > ব্যাকআপ ও রিস্টোর থেকে ডাউনলোড/রিস্টোর করুন।</small></div>'
+      + '</div>'
+      + '<div style="margin:14px 0 6px"><button class="pp-btn" id="ppHelpFeedback">{{feedback}} ফিডব্যাক পাঠান</button></div>'
+      + '<div style="font-size:12px;color:var(--qx-meta-color);text-align:center;margin-top:8px">Quranix • v2.0.71 • support@quranix.app (demo)</div>'
+      + '</div>';
+    var fb = document.getElementById('ppHelpFeedback');
+    if(fb){ fb.onclick=function(){ if(typeof showToast==='function') showToast('ফিডব্যাক: support@quranix.app এ ইমেইল করুন'); closePopup(); }; }
   }
   refreshMinis();
   // ---- Home Hero ----
@@ -3894,7 +4297,7 @@ window.openAyahCard = function(label, ar, bn){
 
 
 // [TRACKER] start
-/* ===== STEP 5: TRACKER WINDOW - MULTI CATEGORY ===== */
+/* ===== STEP 5: TRACKER WINDOW - MULTI CATEGORY - Phase 6 Redesign ===== */
 function trkToday(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function trkLoad(){
   var empty={namaz:{},roza:{},dhikr:{},habits:[]};
@@ -3921,13 +4324,15 @@ function trkDots(getDone){
   var labels=['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'];
   for (let i=-6;i<=0;i++){ var ds=trkDateOffset(i); var d=new Date(ds+'T00:00:00');
     var s=document.createElement('span'); s.className='trk-dot'+(getDone(ds)?' done':'')+(i===0?' today':''); s.title=ds;
-    s.textContent = i===0?'আজ':labels[d.getDay()]; w.appendChild(s); }
+    var dayLabel = i===0?'আজ':labels[d.getDay()];
+    s.innerHTML = '<b>'+trkEscapeHtml(dayLabel)+'</b><span style="font-size:9px">'+trkBn(d.getDate())+'</span>';
+    w.appendChild(s); }
   return w;
 }
 function trkRow(label, sub, done, onToggle){
   var row=document.createElement('div'); row.className='trk-row';
   var l=document.createElement('div'); l.innerHTML='<b>'+label+'</b>'+(sub?'<div class="trk-mini">'+sub+'</div>':'');
-  var b=document.createElement('button'); b.className='trk-tick'+(done?' on':''); b.textContent=done?'{{check}}':'';
+  var b=document.createElement('button'); b.className='trk-tick'+(done?' on':''); b.innerHTML=done?'<span class="ms">check</span>':''; b.setAttribute('aria-label', done?'সম্পন্ন':'অসম্পন্ন');
   b.onclick=function(){ onToggle(!done); };
   row.appendChild(l); row.appendChild(b); return row;
 }
@@ -3937,8 +4342,8 @@ function buildTrackerCard(){
   var dh=d.dhikr[td]||{}; var dhDone=Object.keys(dh).filter(function(k){return dh[k]}).length;
   var box=document.createElement('div'); box.className='khatam-card';
   var score=Math.round(((nDone/5)*0.6+(dhDone/4)*0.2+((d.roza[td]?1:0)*0.2))*100);
-  box.innerHTML='<div class="khatam-row"><b>{{bar_chart}} আজকের ট্র্যাকার</b><span>'+trkBn(score)+'%</span></div>'
-    +'<div class="khatam-row"><span>{{i_mosque}} নামাজ '+trkBn(nDone)+'/৫</span><span>{{i_ramadan}} রমজান '+(d.roza[td]?'{{check_circle:f}}':'{{hourglass_top}}')+'</span><span>{{i_tasbih}} জিকির '+trkBn(dhDone)+'/৪</span></div>'
+  box.innerHTML='<div class="khatam-row"><b><span class="ms">bar_chart</span> আজকের ট্র্যাকার</b><span>'+trkBn(score)+'%</span></div>'
+    +'<div class="khatam-row"><span><span class="ms">mosque</span> নামাজ '+trkBn(nDone)+'/৫</span><span><span class="ms">ramadan</span> রমজান '+(d.roza[td]?'<span class="ms">check_circle</span>':'<span class="ms">hourglass_top</span>')+'</span><span><span class="ms">self_improvement</span> জিকির '+trkBn(dhDone)+'/৪</span></div>'
     +'<div class="goal-track" style="margin:8px 0"><div class="goal-fill" style="width:'+score+'%"></div></div>'
     +'<div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">ট্র্যাকার খোলো →</span><span>সব ক্যাটাগরি এক জায়গায়</span></div>';
   box.onclick=function(){ if(typeof setMode==='function') setMode('tracker'); };
@@ -3946,30 +4351,30 @@ function buildTrackerCard(){
 }
 function renderTracker(){
   var _prevScroll = window.scrollY;
-  if(typeof showOther==='function') showOther('{{bar_chart}} ট্র্যাকার');
+  if(typeof showOther==='function') showOther('<span class="ms">bar_chart</span> ট্র্যাকার');
   var d=trkLoad(); var td=trkToday();
   const appEl = document.getElementById('app');
-  // overall
   var nm=d.namaz[td]||{}, nDone=Object.keys(nm).filter(function(k){return nm[k]}).length;
   var dh=d.dhikr[td]||{}, dhDone=Object.keys(dh).filter(function(k){return dh[k]}).length;
   var habitDone=d.habits.filter(function(h){ return h.days && h.days[td]; }).length;
+  var score=Math.round(((nDone/5)*0.6+(dhDone/4)*0.2+((d.roza[td]?1:0)*0.2))*100);
   var head=document.createElement('div'); head.className='trk-head';
   var dateStr=new Date().toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  head.innerHTML='<small>'+dateStr+'</small><div class="big">আজকের আমল</div><div>{{i_mosque}} '+trkBn(nDone)+'/৫ নামাজ &nbsp;·&nbsp; {{i_ramadan}} '+(d.roza[td]?'রমজান {{check_circle:f}}':'রমজান {{hourglass_top}}')+' &nbsp;·&nbsp; {{i_tasbih}} '+trkBn(dhDone)+'/৪ জিকির</div>';
+  head.innerHTML='<small>'+dateStr+'</small><div class="big">আজকের আমল</div><div class="trk-score-circle">'+trkBn(score)+'%</div><div><span class="ms">mosque</span> '+trkBn(nDone)+'/৫ নামাজ &nbsp;·&nbsp; <span class="ms">ramadan</span> '+(d.roza[td]?'<span class="ms">check_circle</span>':'<span class="ms">hourglass_top</span>')+' &nbsp;·&nbsp; <span class="ms">self_improvement</span> '+trkBn(dhDone)+'/৪ জিকির &nbsp;·&nbsp; <span class="ms">star</span> '+trkBn(habitDone)+' হ্যাবিট</div>';
   appEl.appendChild(head);
 
   // 1. NAMAZ
   var c1=document.createElement('div'); c1.className='trk-cat';
-  c1.innerHTML='<h3>{{i_mosque}} নামাজ ট্র্যাকার</h3><div class="sub">আজ কোন ওয়াক্ত পড়লা, টিক দাও</div>';
+  c1.innerHTML='<h3><span class="trk-ic"><span class="ms">mosque</span></span> নামাজ ট্র্যাকার</h3><div class="sub">আজ কোন ওয়াক্ত পড়লা, টিক দাও — ৫ ওয়াক্তের প্রগ্রেস</div>';
   c1.appendChild(trkDots(function(ds){ var x=d.namaz[ds]||{}; return Object.keys(x).filter(function(k){return x[k]}).length>=5; }));
-  var prayers=[['fajr','ফজর'],['dhuhr','যোহর'],['asr','আসর'],['maghrib','মাগরিব'],['isha','এশা']];
+  var prayers=[['fajr','ফজর','wb_twilight'],['dhuhr','যোহর','wb_sunny'],['asr','আসর','wb_sunny'],['maghrib','মাগরিব','nights_stay'],['isha','এশা','dark_mode']];
   prayers.forEach(function(p){
-    c1.appendChild(trkRow('{{i_mosque}} '+p[1], '', !!(d.namaz[td]||{})[p[0]], function(v){
+    c1.appendChild(trkRow('<span class="ms">'+p[2]+'</span> '+p[1], '', !!(d.namaz[td]||{})[p[0]], function(v){
       d.namaz[td]=d.namaz[td]||{}; if(v) d.namaz[td][p[0]]=1; else delete d.namaz[td][p[0]]; trkSave(d); renderTracker();
       if(v && typeof showToast==='function') showToast(p[1]+' নামাজ');
     }));
   });
-  var wk=document.createElement('div'); wk.className='trk-mini'; wk.style.marginTop='6px';
+  var wk=document.createElement('div'); wk.className='trk-mini'; wk.style.marginTop='8px';
   var last7=0; for (let i=-6;i<=0;i++){ var x=d.namaz[trkDateOffset(i)]||{}; last7+=Object.keys(x).filter(function(k){return x[k]}).length; }
   wk.textContent='গত ৭ দিনে মোট '+trkBn(last7)+' ওয়াক্ত পড়া হয়েছে';
   c1.appendChild(wk); appEl.appendChild(c1);
@@ -3978,10 +4383,10 @@ function renderTracker(){
   var c2=document.createElement('div'); c2.className='trk-cat';
   var todayRead=0; try{ todayRead=(typeof goalData!=='undefined' && goalData.date===td)?goalData.readKeys.length:0; }catch(e){}
   var kh=null; try{ kh=JSON.parse(localStorage.getItem('quranix_khatam')||'null'); }catch(e){}
-  c2.innerHTML='<h3>{{i_quran}} কুরআন ট্র্যাকার</h3><div class="sub">আজ '+trkBn(todayRead)+' আয়াত পড়া হয়েছে'+(kh?' · খতম প্ল্যান চলছে ('+trkBn(kh.days)+' দিনের)':'')+'</div>';
-  var goBtn=document.createElement('button'); goBtn.className='dl-btn'; goBtn.style.marginTop='6px'; goBtn.textContent='{{i_quran}} কুরআন পড়তে যাও';
+  c2.innerHTML='<h3><span class="trk-ic"><span class="ms">menu_book</span></span> কুরআন ট্র্যাকার</h3><div class="sub">আজ '+trkBn(todayRead)+' আয়াত পড়া হয়েছে'+(kh?' · খতম প্ল্যান চলছে ('+trkBn(kh.days)+' দিনের)':'')+'</div>';
+  var goBtn=document.createElement('button'); goBtn.className='dl-btn'; goBtn.style.marginTop='6px'; goBtn.innerHTML='<span class="ms">auto_stories</span> কুরআন পড়তে যাও';
   goBtn.onclick=function(){ if(typeof setMode==='function') setMode('quran'); };
-  var khBtn=document.createElement('button'); khBtn.className='dl-btn ghost'; khBtn.style.marginTop='6px'; khBtn.style.marginLeft='6px'; khBtn.textContent='{{calendar_month}} খতম প্ল্যান দেখো';
+  var khBtn=document.createElement('button'); khBtn.className='dl-btn ghost'; khBtn.style.marginTop='6px'; khBtn.style.marginLeft='6px'; khBtn.innerHTML='<span class="ms">calendar_month</span> খতম প্ল্যান দেখো';
   khBtn.onclick=function(){ if(typeof renderKhatamPopup==='function') renderKhatamPopup(); };
   c2.appendChild(goBtn); c2.appendChild(khBtn); appEl.appendChild(c2);
 
@@ -3989,22 +4394,22 @@ function renderTracker(){
   var c3=document.createElement('div'); c3.className='trk-cat';
   var mem={}; try{ mem=JSON.parse(localStorage.getItem('quranix_hifz_mem')||'{}'); }catch(e){}
   var memCount=Object.keys(mem).length;
-  c3.innerHTML='<h3>{{psychology}} হিফজ ট্র্যাকার</h3><div class="sub">মোট মুখস্থ মার্ক করা আয়াত: <b>'+trkBn(memCount)+'টি</b></div><div class="trk-mini">নতুন আয়াত মুখস্থ করতে সূরা খুলে {{psychology}} হিফজ মোড চালু করো, মুখস্থ হলে {{check_circle:f}} মার্ক করো</div>';
+  c3.innerHTML='<h3><span class="trk-ic"><span class="ms">psychology</span></span> হিফজ ট্র্যাকার</h3><div class="sub">মোট মুখস্থ মার্ক করা আয়াত: <b>'+trkBn(memCount)+'টি</b></div><div class="trk-mini">নতুন আয়াত মুখস্থ করতে সূরা খুলে হিফজ মোড চালু করো, মুখস্থ হলে চেক মার্ক করো</div>';
   appEl.appendChild(c3);
 
   // 4. ROZA
   var c4=document.createElement('div'); c4.className='trk-cat';
-  c4.innerHTML='<h3>{{i_ramadan}} রমজান ট্র্যাকার</h3><div class="sub">নফল রমজান / কাজা রমজান — আজ রাখলে টিক দাও</div>';
+  c4.innerHTML='<h3><span class="trk-ic"><span class="ms">ramadan</span></span> রমজান ট্র্যাকার</h3><div class="sub">নফল রমজান / কাজা রমজান — আজ রাখলে টিক দাও</div>';
   c4.appendChild(trkDots(function(ds){ return !!d.roza[ds]; }));
   var thisMonth=0; Object.keys(d.roza).forEach(function(ds){ if(ds.slice(0,7)===td.slice(0,7)) thisMonth++; });
-  c4.appendChild(trkRow('{{i_ramadan}} আজ রমজান রেখেছি', 'এই মাসে '+trkBn(thisMonth)+'টি রমজান', !!d.roza[td], function(v){ if(v) d.roza[td]=1; else delete d.roza[td]; trkSave(d); renderTracker(); }));
+  c4.appendChild(trkRow('<span class="ms">ramadan</span> আজ রমজান রেখেছি', 'এই মাসে '+trkBn(thisMonth)+'টি রমজান', !!d.roza[td], function(v){ if(v) d.roza[td]=1; else delete d.roza[td]; trkSave(d); renderTracker(); }));
   appEl.appendChild(c4);
 
   // 5. DHIKR / AZKAR
   var c5=document.createElement('div'); c5.className='trk-cat';
-  c5.innerHTML='<h3>{{i_tasbih}} জিকির ট্র্যাকার</h3><div class="sub">দৈনিক জিকির — সকাল / সন্ধ্যা / ঘুমের আগে</div>';
+  c5.innerHTML='<h3><span class="trk-ic"><span class="ms">self_improvement</span></span> জিকির ট্র্যাকার</h3><div class="sub">দৈনিক জিকির — সকাল / সন্ধ্যা / ঘুমের আগে</div>';
   c5.appendChild(trkDots(function(ds){ var x=d.dhikr[ds]||{}; return Object.keys(x).filter(function(k){return x[k]}).length>=4; }));
-  var dz=[['morning','{{wb_sunny}} সকালের জিকির'],['evening','{{wb_twilight}} সন্ধ্যার জিকির'],['sleep','{{bedtime}} ঘুমের আগের দোয়া'],['durud','{{i_hadith}} দুরুদ ১০০ বার']];
+  var dz=[['morning','<span class="ms">wb_sunny</span> সকালের জিকির'],['evening','<span class="ms">nights_stay</span> সন্ধ্যার জিকির'],['sleep','<span class="ms">bedtime</span> ঘুমের আগের দোয়া'],['durud','<span class="ms">favorite</span> দুরুদ ১০০ বার']];
   dz.forEach(function(z){
     c5.appendChild(trkRow(z[1], '', !!(d.dhikr[td]||{})[z[0]], function(v){ d.dhikr[td]=d.dhikr[td]||{}; if(v) d.dhikr[td][z[0]]=1; else delete d.dhikr[td][z[0]]; trkSave(d); renderTracker(); }));
   });
@@ -4012,37 +4417,29 @@ function renderTracker(){
 
   // 6. CUSTOM HABITS
   var c6=document.createElement('div'); c6.className='trk-cat';
-  c6.innerHTML='<h3>{{star:f}} নিজের হ্যাবিট ট্র্যাকার</h3><div class="sub">নিজের মতো হ্যাবিট যোগ করো — যেমন পানি খাওয়া, ব্যায়াম, মিথ্যা না বলা, রাগ কন্ট্রোল ইত্যাদি</div>';
+  c6.innerHTML='<h3><span class="trk-ic"><span class="ms">star</span></span> নিজের হ্যাবিট ট্র্যাকার</h3><div class="sub">নিজের মতো হ্যাবিট যোগ করো — যেমন পানি খাওয়া, ব্যায়াম, মিথ্যা না বলা, রাগ কন্ট্রোল ইত্যাদি</div>';
   c6.appendChild(trkDots(function(ds){ return d.habits.some(function(h){ return h.days && h.days[ds]; }); }));
   if(!d.habits.length){ var e=document.createElement('div'); e.className='trk-mini'; e.textContent='এখনো কোনো হ্যাবিট নেই — নিচে + দিয়ে যোগ করো'; c6.appendChild(e); }
   d.habits.forEach(function(h){
     var streak=0; for (let i=0;i<30;i++){ if(h.days && h.days[trkDateOffset(-i)]) streak++; else if(i>0) break; }
-    var row=trkRow((h.icon ? trkEscapeHtml(h.icon) : '{{star:f}}')+' '+trkEscapeHtml(h.name), 'স্ট্রিক: '+trkBn(streak)+' দিন', !!(h.days&&h.days[td]), function(v){ h.days=h.days||{}; if(v) h.days[td]=1; else delete h.days[td]; trkSave(d); renderTracker(); });
-    // delete button
-    var del=document.createElement('button'); del.textContent='{{delete}}'; del.style.cssText='border:0;background:none;font-size:var(--qx-fs-lg);cursor:pointer'; del.onclick=function(){ if(confirm('“'+h.name+'” হ্যাবিটটা মুছে ফেলবা?')){ d.habits=d.habits.filter(function(x){return x.id!==h.id}); trkSave(d); renderTracker(); } };
+    var row=trkRow((h.icon ? trkEscapeHtml(h.icon) : '<span class="ms">star</span>')+' '+trkEscapeHtml(h.name), 'স্ট্রিক: '+trkBn(streak)+' দিন', !!(h.days&&h.days[td]), function(v){ h.days=h.days||{}; if(v) h.days[td]=1; else delete h.days[td]; trkSave(d); renderTracker(); });
+    var del=document.createElement('button'); del.innerHTML='<span class="ms">delete</span>'; del.style.cssText='border:0;background:none;color:var(--qx-meta-color);cursor:pointer;width:36px;height:36px;display:grid;place-items:center;border-radius:50%'; del.onclick=function(){ if(confirm('“'+h.name+'” হ্যাবিটটা মুছে ফেলবা?')){ d.habits=d.habits.filter(function(x){return x.id!==h.id}); trkSave(d); renderTracker(); } };
     row.appendChild(del); c6.appendChild(row);
   });
-  var add=document.createElement('button'); add.className='dl-btn ghost'; add.style.marginTop='8px'; add.textContent='+ নিজের হ্যাবিট যোগ করো';
+  var add=document.createElement('button'); add.className='dl-btn'; add.style.marginTop='10px'; add.innerHTML='<span class="ms">add</span> নতুন হ্যাবিট যোগ করো';
   add.onclick=function(){
-    var name=prompt('হ্যাবিটের নাম কী? (যেমন: ব্যায়াম, ৮ গ্লাস পানি, রাগ কন্ট্রোল)');
+    var name=prompt('হ্যাবিটের নাম লিখো (যেমন: পানি খাওয়া)');
     if(!name) return;
-    name=name.trim();
-    if(!name) return;
-    if(name.length>40){ showToast('হ্যাবিটের নাম সর্বোচ্চ ৪০ অক্ষরের হতে পারবে'); return; }
-    if(d.habits.length>=100){ showToast('সর্বোচ্চ ১০০টি হ্যাবিট যোগ করা যাবে'); return; }
-    var icon=prompt('একটা ইমোজি দাও (ঐচ্ছিক)', '')||'{{star:f}}';
-    icon=icon.trim().slice(0,8);
-    d.habits.push({id:Date.now(), name:name, icon:icon, days:{}}); trkSave(d); renderTracker();
-    if(typeof showToast==='function') showToast('হ্যাবিট যোগ হয়েছে');
+    var icon=prompt('আইকন ইমোজি (ঐচ্ছিক, যেমন: 💧)','');
+    d.habits.push({id:Date.now().toString(), name:name.trim(), icon:icon||'', days:{}});
+    trkSave(d); renderTracker();
   };
-  c6.appendChild(add); appEl.appendChild(c6);
+  c6.appendChild(add);
+  appEl.appendChild(c6);
 
-  var note=document.createElement('div'); note.className='note'; note.style.textAlign='center';
-  note.textContent='ট্র্যাকার ডিভাইসে স্বয়ংক্রিয়ভাবে সেভ হয় এবং Quranix JSON ব্যাকআপের সাথেও সংরক্ষিত থাকে।';
-  appEl.appendChild(note);
-  if(_prevScroll>0){ setTimeout(function(){ window.scrollTo(0,_prevScroll); }, 0); }
+  if(_prevScroll) window.scrollTo(0, _prevScroll);
 }
-window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
+
 // [TRACKER] end
 
 
@@ -4984,6 +5381,11 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
           <button type="button" id="qxFaRead" aria-label="কুরআন পড়ুন" title="এই সূরাটি পড়ুন"><span class="ms">menu_book</span></button>
           <button type="button" id="qxFaNext" aria-label="পরের সূরা" title="পরের সূরা"><span class="ms">skip_next</span></button>
         </div>
+        <button type="button" class="qx-fa-single-link" id="qxFaListLink" aria-label="সূরার তালিকা দেখুন">
+          <span class="qx-fa-single-ic"><span class="ms">list</span></span>
+          <span class="qx-fa-single-main"><strong>সূরা তালিকা</strong><small>সব সূরা দেখুন • ১১৪টি • ক্লিক করলে তালিকা দেখাবে</small></span>
+          <span class="ms qx-fa-single-arrow">chevron_right</span>
+        </button>
       </section>
       <div class="qx-fa-list-head"><h3>সূরার তালিকা <span id="qxFaCount">১১৪টি</span></h3><label class="qx-fa-search"><span class="ms">search</span><input id="qxFaSearch" type="search" placeholder="সূরা খুঁজুন…" autocomplete="off"></label></div>
       <div class="qx-fa-list" id="qxFaList"></div>`;
@@ -5027,6 +5429,11 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
       if (!number) { if (typeof showToast === "function") showToast("আগে একটি সূরা চালু করুন।"); return; }
       window.qxFullAudioPageOpen = false;
       if (typeof openSurah === "function") openSurah(number);
+    });
+    page.querySelector("#qxFaListLink").addEventListener("click", () => {
+      const head = page.querySelector(".qx-fa-list-head");
+      if (head) head.scrollIntoView({behavior:"smooth", block:"start"});
+      if (typeof showToast === "function") showToast("সূরার তালিকা দেখানো হচ্ছে");
     });
     const seek = page.querySelector("#qxFaSeek");
     seek.addEventListener("input", () => { if (window.qxSeekFullSurahAudio) window.qxSeekFullSurahAudio(Number(seek.value) / 1000); });
