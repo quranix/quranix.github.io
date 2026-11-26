@@ -4897,3 +4897,286 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
 // [QUICK-ACTIONS-BN: Bengali names + DOMContentLoaded apply] end
 
+// [FULL-SURAH-AUDIO-PLAYER] start
+(function(){
+  "use strict";
+
+  const QX_FULL_AUDIO_CACHE = "quranix-full-surah-audio-v1";
+  const QX_FULL_AUDIO_MANIFEST = "audio/surah-audio-manifest.json";
+  let qxFullAudioManifestPromise = null;
+  let qxFullAudioObjectUrl = null;
+
+  function qxFullAudioStyles(){
+    if (document.getElementById("qxFullAudioStyles")) return;
+    const style = document.createElement("style");
+    style.id = "qxFullAudioStyles";
+    style.textContent = `
+      .qx-fsa-page{max-width:760px;margin:0 auto;padding:14px 0 34px}
+      .qx-fsa-back{margin:0 0 14px}
+      .qx-fsa-card{background:var(--qx-card-bg);border:1px solid var(--qx-border);border-radius:18px;padding:18px;box-shadow:0 5px 22px rgba(0,0,0,.045)}
+      .qx-fsa-title{font-size:1.15rem;font-weight:750;margin:0 0 5px}
+      .qx-fsa-sub{color:var(--qx-meta-color);font-size:.88rem;margin:0 0 18px}
+      .qx-fsa-select{display:block;width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--qx-border);border-radius:12px;background:var(--qx-card-bg);color:inherit;font:inherit;margin:0 0 16px}
+      .qx-fsa-now{text-align:center;margin:8px 0 14px}
+      .qx-fsa-now b{display:block;font-size:1.12rem}
+      .qx-fsa-now small{color:var(--qx-meta-color)}
+      .qx-fsa-seek{width:100%;accent-color:var(--qx-main-color);margin:4px 0}
+      .qx-fsa-times{display:flex;justify-content:space-between;color:var(--qx-meta-color);font-size:.78rem;font-variant-numeric:tabular-nums}
+      .qx-fsa-controls{display:flex;justify-content:center;align-items:center;gap:12px;margin:16px 0}
+      .qx-fsa-controls button{width:46px;height:46px;border-radius:50%;border:1px solid var(--qx-border);background:var(--qx-card-bg);color:var(--qx-text);font-size:1.05rem;cursor:pointer}
+      .qx-fsa-controls button.primary{width:58px;height:58px;background:var(--qx-main-color);color:#fff;border-color:var(--qx-main-color);font-size:1.25rem}
+      .qx-fsa-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+      .qx-fsa-actions button{flex:1 1 180px;min-height:44px}
+      .qx-fsa-status{font-size:.84rem;color:var(--qx-meta-color);min-height:22px;margin-top:12px;text-align:center}
+      .qx-fsa-status:empty{display:none}
+      .qx-fsa-note{font-size:.78rem;color:var(--qx-meta-color);line-height:1.6;margin:12px 2px 0}
+    `;
+    document.head.appendChild(style);
+  }
+
+  async function qxFullAudioManifest(){
+    if (qxFullAudioManifestPromise) return qxFullAudioManifestPromise;
+    qxFullAudioManifestPromise = (async function(){
+      try{
+        const response = await fetch(QX_FULL_AUDIO_MANIFEST, { cache: "no-store" });
+        if (!response.ok) throw new Error("Manifest HTTP " + response.status);
+        const rows = await response.json();
+        if (!Array.isArray(rows) || rows.length !== 114) throw new Error("Manifest format invalid");
+        try{ localStorage.setItem("qx_full_surah_audio_manifest", JSON.stringify(rows)); }catch(_){ }
+        return rows;
+      }catch(error){
+        try{
+          const saved = JSON.parse(localStorage.getItem("qx_full_surah_audio_manifest") || "null");
+          if (Array.isArray(saved) && saved.length === 114) return saved;
+        }catch(_){ }
+        throw error;
+      }
+    })();
+    return qxFullAudioManifestPromise;
+  }
+
+  function qxFullAudioUrl(file){
+    return "audio/" + encodeURIComponent(file);
+  }
+
+  function qxFullAudioTime(seconds){
+    if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+    const m = Math.floor(seconds / 60), s = Math.floor(seconds % 60);
+    return m + ":" + String(s).padStart(2, "0");
+  }
+
+  async function qxOpenFullSurahAudio(){
+    showOther("{{headphones}} পূর্ণ সূরা অডিও");
+    qxFullAudioStyles();
+
+    const page = mk("div", "qx-fsa-page");
+    const back = mk("button", "qx-btn ghost qx-fsa-back", "← আরও পেজে ফিরুন");
+    back.type = "button";
+    back.onclick = function(){ renderMore(); };
+    page.appendChild(back);
+
+    const card = mk("section", "qx-fsa-card");
+    card.setAttribute("aria-label", "পূর্ণ সূরা অডিও প্লেয়ার");
+    card.appendChild(mk("h2", "qx-fsa-title", "পূর্ণ সূরা অডিও"));
+    card.appendChild(mk("p", "qx-fsa-sub", "একবারে একটি সূরা চালান অথবা অফলাইনের জন্য শুধু নির্বাচিত সূরাটি সংরক্ষণ করুন।"));
+
+    const select = mk("select", "qx-fsa-select");
+    select.setAttribute("aria-label", "সূরা নির্বাচন করুন");
+    const now = mk("div", "qx-fsa-now");
+    const nowName = mk("b", "", "সূরা লোড হচ্ছে…");
+    const nowMeta = mk("small", "", "");
+    now.append(nowName, nowMeta);
+
+    const audio = document.createElement("audio");
+    audio.preload = "metadata";
+    audio.setAttribute("aria-label", "পূর্ণ সূরা অডিও");
+
+    const seek = document.createElement("input");
+    seek.type = "range"; seek.min = "0"; seek.max = "1000"; seek.value = "0";
+    seek.className = "qx-fsa-seek"; seek.setAttribute("aria-label", "অডিওর অবস্থান");
+    const times = mk("div", "qx-fsa-times");
+    const elapsed = mk("span", "", "0:00"), duration = mk("span", "", "0:00");
+    times.append(elapsed, duration);
+
+    const controlsRow = mk("div", "qx-fsa-controls");
+    const prev = mk("button", "", "⏮"); prev.type = "button"; prev.title = "আগের সূরা"; prev.setAttribute("aria-label", "আগের সূরা");
+    const play = mk("button", "primary", "▶"); play.type = "button"; play.title = "চালান"; play.setAttribute("aria-label", "চালান");
+    const next = mk("button", "", "⏭"); next.type = "button"; next.title = "পরের সূরা"; next.setAttribute("aria-label", "পরের সূরা");
+    controlsRow.append(prev, play, next);
+
+    const actions = mk("div", "qx-fsa-actions");
+    const download = mk("button", "qx-btn", "↓ অফলাইনের জন্য ডাউনলোড"); download.type = "button";
+    const status = mk("div", "qx-fsa-status", ""); status.setAttribute("role", "status"); status.setAttribute("aria-live", "polite");
+    const note = mk("p", "qx-fsa-note", "ডাউনলোড করলে শুধু নির্বাচিত সূরাটিই এই ডিভাইসে সংরক্ষিত হবে। ব্রাউজারের স্টোরেজ সীমা বা সেটিংসের কারণে সংরক্ষণ ব্যর্থ হতে পারে।");
+    actions.appendChild(download);
+    card.append(select, now, audio, seek, times, controlsRow, actions, status, note);
+    page.appendChild(card);
+    app.appendChild(page);
+
+    let rows = [];
+    let currentIndex = 0;
+    let activeUrl = "";
+    let busy = false;
+    const setStatus = (message) => { status.textContent = message || ""; };
+    const selectedRow = () => rows[currentIndex];
+    const releaseObjectUrl = () => {
+      if (qxFullAudioObjectUrl) URL.revokeObjectURL(qxFullAudioObjectUrl);
+      qxFullAudioObjectUrl = null;
+    };
+    const cacheForAudio = async () => {
+      if (!("caches" in window)) throw new Error("এই ব্রাউজারে অফলাইন স্টোরেজ সমর্থিত নয়");
+      return caches.open(QX_FULL_AUDIO_CACHE);
+    };
+    const cachedResponse = async (url) => {
+      if (!("caches" in window)) return null;
+      const cache = await caches.open(QX_FULL_AUDIO_CACHE);
+      return cache.match(new URL(url, document.baseURI).href);
+    };
+    const refreshLabels = async () => {
+      const item = selectedRow();
+      if (!item) return;
+      const meta = (window.SURAH_META || []).find(x => Number(x.n) === Number(item.number));
+      nowName.textContent = meta ? meta.bn : ("সূরা " + item.number);
+      nowMeta.textContent = (meta ? meta.name + " · " + meta.ayahs + " আয়াত" : "") + " · " + item.file;
+      prev.disabled = currentIndex <= 0;
+      next.disabled = currentIndex >= rows.length - 1;
+      try{
+        const found = await cachedResponse(qxFullAudioUrl(item.file));
+        download.textContent = found ? "✓ অফলাইনে সংরক্ষিত" : "↓ অফলাইনের জন্য ডাউনলোড";
+      }catch(_){ download.textContent = "↓ অফলাইনের জন্য ডাউনলোড"; }
+    };
+    const loadCurrent = async (autoplay) => {
+      const item = selectedRow();
+      if (!item) return;
+      audio.pause();
+      releaseObjectUrl();
+      audio.removeAttribute("src"); audio.load();
+      activeUrl = qxFullAudioUrl(item.file);
+      seek.value = "0"; elapsed.textContent = "0:00"; duration.textContent = "0:00";
+      await refreshLabels();
+      setStatus("অডিও প্রস্তুত হচ্ছে…");
+      try{
+        const cached = await cachedResponse(activeUrl);
+        if (cached){
+          qxFullAudioObjectUrl = URL.createObjectURL(await cached.blob());
+          audio.src = qxFullAudioObjectUrl;
+          setStatus("অফলাইনে সংরক্ষিত অডিও প্রস্তুত");
+        }else{
+          audio.src = activeUrl;
+          setStatus(navigator.onLine ? "অনলাইন থেকে অডিও চালানো যাবে" : "অফলাইনে চালাতে আগে সূরাটি ডাউনলোড করতে হবে");
+        }
+        audio.load();
+        if (autoplay) await audio.play();
+      }catch(error){
+        setStatus("অডিও লোড হয়নি: " + (error && error.message ? error.message : "সমস্যা হয়েছে"));
+      }
+    };
+    const chooseIndex = async (index, autoplay) => {
+      if (!rows.length) return;
+      currentIndex = Math.max(0, Math.min(rows.length - 1, index));
+      select.value = String(rows[currentIndex].number);
+      await loadCurrent(!!autoplay);
+    };
+
+    select.onchange = function(){
+      const index = rows.findIndex(x => String(x.number) === select.value);
+      if (index >= 0) chooseIndex(index, false);
+    };
+    prev.onclick = function(){ if (currentIndex > 0) chooseIndex(currentIndex - 1, true); };
+    next.onclick = function(){ if (currentIndex < rows.length - 1) chooseIndex(currentIndex + 1, true); };
+    play.onclick = async function(){
+      try{
+        if (audio.paused){ if (!audio.src) await loadCurrent(false); await audio.play(); }
+        else audio.pause();
+      }catch(error){ setStatus("প্লে করা যায়নি। ইন্টারনেট বা অডিও ফাইল পরীক্ষা করুন।"); }
+    };
+    audio.onplay = function(){ play.textContent = "Ⅱ"; play.title = "বিরতি"; play.setAttribute("aria-label", "বিরতি"); };
+    audio.onpause = function(){ play.textContent = "▶"; play.title = "চালান"; play.setAttribute("aria-label", "চালান"); };
+    audio.onended = function(){ if (currentIndex < rows.length - 1) chooseIndex(currentIndex + 1, true); };
+    audio.ontimeupdate = function(){
+      if (!Number.isFinite(audio.duration) || !audio.duration) return;
+      seek.value = String(Math.round(audio.currentTime / audio.duration * 1000));
+      elapsed.textContent = qxFullAudioTime(audio.currentTime);
+    };
+    audio.onloadedmetadata = function(){ duration.textContent = qxFullAudioTime(audio.duration); };
+    audio.onerror = function(){ setStatus("অডিও ফাইল পাওয়া যায়নি। ফাইলের নাম ও GitHub আপলোড পরীক্ষা করুন।"); };
+    seek.oninput = function(){
+      if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = Number(seek.value) / 1000 * audio.duration;
+    };
+    download.onclick = async function(){
+      if (busy) return;
+      const item = selectedRow(); if (!item) return;
+      busy = true; download.disabled = true; setStatus("ডাউনলোড হচ্ছে…");
+      try{
+        const cache = await cacheForAudio();
+        const url = qxFullAudioUrl(item.file);
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        await cache.put(new URL(url, document.baseURI).href, response.clone());
+        setStatus("এই সূরাটি অফলাইনের জন্য সংরক্ষিত হয়েছে");
+        await refreshLabels();
+        await loadCurrent(false);
+      }catch(error){
+        setStatus("ডাউনলোড/সংরক্ষণ ব্যর্থ। ইন্টারনেট ও ডিভাইসের স্টোরেজ পরীক্ষা করুন।");
+      }finally{
+        busy = false; download.disabled = false;
+      }
+    };
+
+    try{
+      setStatus("সূরার তালিকা লোড হচ্ছে…");
+      const manifest = await qxFullAudioManifest();
+      rows = manifest.map(x => ({ number: Number(x.number), file: String(x.file || "") }))
+        .filter(x => x.number >= 1 && x.number <= 114 && x.file);
+      if (rows.length !== 114) throw new Error("১১৪টি অডিও ফাইলের তালিকা সম্পূর্ণ নয়");
+      rows.sort((a,b) => a.number - b.number);
+      rows.forEach(item => {
+        const meta = (window.SURAH_META || []).find(x => Number(x.n) === item.number);
+        const option = document.createElement("option");
+        option.value = String(item.number);
+        option.textContent = (meta ? meta.bn : "সূরা") + " — " + String(item.number).padStart(3, "0");
+        select.appendChild(option);
+      });
+      await chooseIndex(0, false);
+    }catch(error){
+      setStatus("সূরার তালিকা লোড হয়নি। ইন্টারনেট সংযোগ ও audio/surah-audio-manifest.json পরীক্ষা করুন।");
+    }
+  }
+
+  // More পেজে নতুন এন্ট্রি যোগ; বিদ্যমান More আইটেম ও আয়াতভিত্তিক প্লেয়ার অপরিবর্তিত।
+  const qxOriginalRenderMore = renderMore;
+  renderMore = function(){
+    qxOriginalRenderMore();
+    const list = app.querySelector(".qx-list-spaced");
+    if (list && !list.querySelector('[data-qx-full-surah-audio="1"]')){
+      const row = qxRow("headphones", "পূর্ণ সূরা অডিও", "১১৪টি সূরা চালান ও অফলাইনে সংরক্ষণ করুন", qxOpenFullSurahAudio);
+      row.dataset.qxFullSurahAudio = "1";
+      list.appendChild(row);
+    }
+  };
+})();
+// [FULL-SURAH-AUDIO-PLAYER] end
+
+
+// [QURANIX: ONLINE BACKGROUND SYNC]
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+
+  window.addEventListener('online', function () {
+    navigator.serviceWorker.ready
+      .then(function (registration) {
+
+        if (registration.active) {
+          registration.active.postMessage({
+            type: 'QX_SYNC_ASSETS'
+          });
+        }
+
+        if (typeof registration.update === 'function') {
+          registration.update().catch(function () {});
+        }
+
+      })
+      .catch(function () {});
+  });
+})();
