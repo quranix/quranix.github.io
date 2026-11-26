@@ -11,7 +11,7 @@
    4. Put big new data lists in the data/ folder, not here.
    5. After any change, raise the CACHE number in sw.js (example: quranix-v2.0.32 to quranix-v2.0.33).
 
-   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, data/hadith.js, js/quran.js, js/apps.js
 */
 
 // SECTION INDEX (search: "[NAME] start")
@@ -267,8 +267,7 @@ window.loadSurah = loadSurah;
     if(typeof reading!=='undefined' && reading && reading.t==='s'){ var s=(window.surahs||[]).find(function(x){return x.number===reading.n}); if(s) return {n:s.number,name:s.englishName,count:s.numberOfAyahs,list:null}; }
     return null;
   }
-  function currentReciter(){ return (typeof currentReciter!=='undefined'?currentReciter:localStorage.getItem('reciter')) || 'Saood_ash-Shuraym_128kbps'; }
-  // NOTE: currentReciter is a let in main script; accessing it here via window may fail - read from ls instead
+  // The player's current reciter is a let in the main script, so this part reads it from localStorage.
   function reciterNow(){ try{ var v=localStorage.getItem('reciter'); return v?JSON.parse(v):'Saood_ash-Shuraym_128kbps'; }catch(e){ return 'Saood_ash-Shuraym_128kbps'; } }
   // IIFE-র বাইরের প্লেয়ার কোড (playAyahAtIndex, qxPreloadNextAyah) এগুলো এখান দিয়ে ব্যবহার করে
   window.qxAudioDb = { get: get, keyFor: keyFor, urlFor: urlFor, reciterNow: reciterNow };
@@ -331,8 +330,14 @@ window.loadSurah = loadSurah;
   }
   document.getElementById('dlBtn').onclick=downloadCurrent;
   document.getElementById('dlManageBtn').onclick=function(){ if(window.openGridPopup) window.openGridPopup('downloads'); };
-  setInterval(refreshDlBar, 800);
+  var dlBarTmr = null;
+  function startDlBarTimer(){ if(dlBarTmr) return; dlBarTmr = setInterval(refreshDlBar, 800); }
+  function stopDlBarTimer(){ if(dlBarTmr){ clearInterval(dlBarTmr); dlBarTmr=null; } }
+  startDlBarTimer();
   document.addEventListener('click', function(){ setTimeout(refreshDlBar, 400); });
+  document.addEventListener('visibilitychange', function(){ if(document.hidden){ stopDlBarTimer(); }else{ refreshDlBar(); startDlBarTimer(); } });
+  window.addEventListener('pagehide', function(){ stopDlBarTimer(); });
+  window.qxDlBarTimer = { start: startDlBarTimer, stop: stopDlBarTimer };
 
   // --- Playback: use the IndexedDB Blob directly when it is available offline ---
   var origPlay = window.playAyahAtIndex;
@@ -917,6 +922,8 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     getTafsir:async function(id,surah,ayah){var rows=await contentGet('tafsir|'+id+'|'+surah);if(!Array.isArray(rows))return null;var row=rows.find(function(x){return Number(x.verse_number)===Number(ayah)||x.verse_key===surah+':'+ayah;});return row?(row.text||'এই আয়াতের জন্য এই তাফসিরে আলাদা ব্যাখ্যা পাওয়া যায়নি।'):'এই আয়াতের জন্য এই তাফসিরে আলাদা ব্যাখ্যা পাওয়া যায়নি।';}
   };
   window.renderDownloadsPopup=renderDownloadsPopup;
+  window.packageMeta=packageMeta;
+  window.runPackage=runPackage;
   window.quranixOffline={ refresh:refreshDlBar, download:downloadCurrent };
   /* default package: the default tafsir (first in TAFSIRS) is installed automatically when online.
      A package the person cancelled (status 'paused') is not restarted by itself. */
@@ -2807,42 +2814,69 @@ function qxSortTopics(list){
   return withSerial;
 }
 /* ===== সবার জন্য এক সর্ট ড্রপডাউন ও এক সার্চ বক্স (বিষয়ভিত্তিক ট্যাব + শব্দার্থ ট্যাব) =====
-   qxSortDropdown(opts, current, onPick, ariaLabel): opts = [[মান, লেবেল], ...]; বাটন + মেনু। নেটিভ <select> মোবাইলে ক্লিক না খাওয়ার কারণে বাদ।
+   qxSortDropdown(opts, current, onPick, ariaLabel): opts = [[মান, লেবেল], ...]; ছোট আইকন বাটন + মেনু। নেটিভ <select> মোবাইলে ক্লিক না খাওয়ার কারণে বাদ।
    qxSearchBox(value, placeholder, ariaLabel, onInput): .qx-search বক্স; ইনপুট নতুন করে বানানো হয় না, শুধু onInput-এ তালিকা ছেঁকে দেখানো হয়। */
+const QX_SORT_ICON = "sort"; // Material icon name of the sort button. If this icon is missing from the icon font, change only this name.
 function qxSortDropdown(opts, current, onPick, ariaLabel){
+  const currentLabel = (opts.find(([v]) => v === current) || opts[0])[1];
+  // Wrapper + button look comes from .qx-topic-sort in index.html (icon button, .on = menu open).
+  // margin-left:auto pushes [sort][grid/list] to the right end of the heading row.
   const sortWrap = document.createElement("div");
   sortWrap.className = "qx-topic-sort";
-  sortWrap.style.cssText = "flex:1 1 auto;min-width:0;position:relative;";
+  sortWrap.style.cssText = "position:relative;margin-left:auto;";
   const sortBtn = document.createElement("button");
   sortBtn.type = "button";
-  sortBtn.setAttribute("aria-label", ariaLabel);
-  sortBtn.setAttribute("aria-haspopup", "true");
+  sortBtn.setAttribute("aria-label", ariaLabel + ": " + currentLabel);
+  sortBtn.setAttribute("aria-haspopup", "menu");
   sortBtn.setAttribute("aria-expanded", "false");
-  sortBtn.style.cssText = "width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:var(--qx-fs-sm);padding:6px 8px;border:1.5px solid var(--qx-main-color);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);cursor:pointer;";
-  const sortBtnLabel = document.createElement("span");
-  sortBtnLabel.textContent = (opts.find(([v]) => v === current) || opts[0])[1];
-  const sortBtnArrow = document.createElement("span");
-  sortBtnArrow.textContent = "{{expand_more}}";
-  sortBtnArrow.style.cssText = "opacity:.7;flex:0 0 auto;";
-  sortBtn.append(sortBtnLabel, sortBtnArrow);
+  sortBtn.textContent = "{{" + QX_SORT_ICON + "}}";
   const sortMenu = document.createElement("div");
-  sortMenu.style.cssText = "display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;border:1px solid var(--qx-border);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);box-shadow:0 8px 24px rgba(0,0,0,.18);overflow:hidden;";
-  opts.forEach(([v, label]) => {
-    const o = document.createElement("button");
-    o.type = "button";
-    o.style.cssText = "width:100%;display:block;text-align:left;padding:9px 10px;border:0;border-bottom:1px solid var(--qx-border);background:" + (v === current ? "var(--qx-main-color)" : "var(--qx-card-bg)") + ";color:" + (v === current ? "var(--qx-on-main)" : "var(--qx-text-color)") + ";font-size:var(--qx-fs-sm);cursor:pointer;";
-    o.textContent = label + (v === current ? " ✓" : "");
-    o.onclick = (ev) => { ev.stopPropagation(); onPick(v); };
+  sortMenu.setAttribute("role", "menu");
+  sortMenu.setAttribute("aria-label", ariaLabel);
+  sortMenu.style.cssText = "display:none;position:absolute;top:calc(100% + 4px);z-index:var(--qx-z-dropdown);min-width:190px;max-width:calc(100vw - 28px);max-height:min(60vh,320px);overflow-y:auto;border:1px solid var(--qx-border);border-radius:var(--qx-radius);background:var(--qx-card-bg);color:var(--qx-text-color);box-shadow:0 8px 24px rgba(0,0,0,.18);";
+  // Menu rows are divs (not buttons) so the icon-button rules of .qx-topic-sort do not apply to them.
+  opts.forEach(([v, label], i) => {
+    const isOn = v === current;
+    const o = document.createElement("div");
+    o.setAttribute("role", "menuitemradio");
+    o.setAttribute("aria-checked", isOn ? "true" : "false");
+    o.tabIndex = 0;
+    o.style.cssText = "display:flex;align-items:center;min-height:40px;box-sizing:border-box;padding:8px 12px;font-size:var(--qx-fs-sm);cursor:pointer;" + (i < opts.length - 1 ? "border-bottom:1px solid var(--qx-border);" : "") + "background:" + (isOn ? "var(--qx-main-color)" : "var(--qx-card-bg)") + ";color:" + (isOn ? "var(--qx-on-main)" : "var(--qx-text-color)") + ";";
+    o.textContent = label + (isOn ? " ✓" : "");
+    const pick = (ev) => { ev.stopPropagation(); closeSortMenu(); onPick(v); };
+    o.onclick = pick;
+    o.onkeydown = (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); pick(ev); } };
     sortMenu.appendChild(o);
   });
-  const closeSortMenu = (ev) => { if (!sortWrap.contains(ev.target)) { sortMenu.style.display = "none"; sortBtn.setAttribute("aria-expanded", "false"); document.removeEventListener("click", closeSortMenu); } };
-  sortBtn.onclick = (ev) => { ev.stopPropagation(); const open = sortMenu.style.display === "block"; sortMenu.style.display = open ? "none" : "block"; sortBtn.setAttribute("aria-expanded", open ? "false" : "true"); if (!open) document.addEventListener("click", closeSortMenu); };
+  const onDocClick = (ev) => { if (!sortWrap.contains(ev.target)) closeSortMenu(); };
+  const onDocKey = (ev) => { if (ev.key === "Escape") { closeSortMenu(); sortBtn.focus(); } };
+  function closeSortMenu(){
+    sortMenu.style.display = "none";
+    sortBtn.classList.remove("on");
+    sortBtn.setAttribute("aria-expanded", "false");
+    document.removeEventListener("click", onDocClick);
+    document.removeEventListener("keydown", onDocKey);
+  }
+  function openSortMenu(){
+    sortMenu.style.display = "block";
+    // keep the menu fully inside the screen: right edge on the button, clamped to 8px from both screen sides
+    const wr = sortWrap.getBoundingClientRect();
+    const mw = sortMenu.offsetWidth;
+    const left = Math.min(Math.max(wr.right - mw, 8), window.innerWidth - 8 - mw);
+    sortMenu.style.left = (left - wr.left) + "px";
+    sortBtn.classList.add("on");
+    sortBtn.setAttribute("aria-expanded", "true");
+    document.addEventListener("click", onDocClick);
+    document.addEventListener("keydown", onDocKey);
+  }
+  sortBtn.onclick = (ev) => { ev.stopPropagation(); if (sortMenu.style.display === "block") closeSortMenu(); else openSortMenu(); };
   sortWrap.append(sortBtn, sortMenu);
   return sortWrap;
 }
 function qxSearchBox(value, placeholder, ariaLabel, onInput){
   const box = document.createElement("div");
   box.className = "qx-search";
+  box.style.cssText = "width:100%;margin:0 0 10px 0;";
   const ic = document.createElement("span");
   ic.className = "qx-search-ic";
   ic.textContent = "{{search}}";
@@ -2869,7 +2903,7 @@ function renderTopics(){
   const topicHeading = qxListHeading(toBn(QX_TOPICS.length) + "টি বিষয়");
   const sortOpts = [["count","সংখ্যা অনুযায়ী"],["pair","জোড়া অনুযায়ী"],["bn","বাংলা বর্ণক্রম"],["imp","গুরুত্ব অনুযায়ী"]];
   const sortWrap = qxSortDropdown(sortOpts, qxTopicSort, v => { qxTopicSort = v; renderTopics(); }, "বিষয় সাজানো");
-  // heading: [count] [sort] [single view toggle] — sort মাঝখানে, toggle ডানে
+  // heading: [count] ........ [sort আইকন] [single view toggle] — sort ও toggle ডানে
   const toggleEl = topicHeading.querySelector(".qx-view-toggle");
   topicHeading.insertBefore(sortWrap, toggleEl);
   app.appendChild(topicHeading);
@@ -3249,6 +3283,8 @@ function ayahCard(label, ar, bn, a, removable){
   const menuItems = [];
   // Dropdown order = how often people need it (lower rank first). Items added elsewhere (hifz) default to rank 50.
   const addMenu = (rank, lbl, fn, cond) => { const it = [lbl, fn, cond]; it.rank = rank; menuItems.push(it); };
+  // Saved (star) button: created below inside `if (a)`; the menu item uses it, so it lives here.
+  let st = null;
 
   const copyBtn = document.createElement("button");
   copyBtn.className = "icon-btn";
@@ -3270,7 +3306,7 @@ function ayahCard(label, ar, bn, a, removable){
   };
   addMenu(10, () => "{{share}} শেয়ার করুন", () => shareBtn.onclick());
   addMenu(20, () => "{{image}} ছবি বানাও", () => { if(window.openAyahCard) window.openAyahCard(label, ar, bn); });
-  addMenu(30, () => "{{bookmark}} বুকমার্ক করুন", () => st.onclick());
+  addMenu(30, () => "{{bookmark}} বুকমার্ক করুন", () => st.onclick(), () => !!st);
   addMenu(40, () => "{{content_copy}} কপি করুন", () => copyBtn.onclick());
 
   if (a) {
@@ -3328,7 +3364,7 @@ function ayahCard(label, ar, bn, a, removable){
     noteBtn.className = "icon-btn";
     noteBtn.title = "ব্যক্তিগত নোট লিখুন";
     noteBtn.textContent = ayahNotes[k] ? "{{edit_note}}" : "{{edit}}";
-            const st = document.createElement("button"); st.type = "button"; st.setAttribute("aria-label", "সংরক্ষিত আয়াত"); st.className = "star";
+            st = document.createElement("button"); st.type = "button"; st.setAttribute("aria-label", "সংরক্ষিত আয়াত"); st.className = "star";
     st.textContent = savedHas("quran", k) ? "{{star:f}}" : "{{star}}";
     st.onclick = () => { const on = savedToggle("quran", k); st.textContent = on ? "{{star:f}}" : "{{star}}"; showToast(on ? "সংরক্ষিত হয়েছে" : "সংরক্ষণ সরানো হয়েছে"); if (removable && !on) d.remove(); };
   const hifzOn = () => document.body.classList.contains("hifz-on") && !!d._hifz;

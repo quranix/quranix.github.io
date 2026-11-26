@@ -1,0 +1,37 @@
+{
+  "v": 1,
+  "updated": "2026-05-13",
+  "cdn_base": "https://quranix.github.io",
+  "themes": [
+    {
+      "id": "eid-bliss-2026",
+      "name": "Eid Bliss",
+      "name_bn": "ঈদের আনন্দ",
+      "type": "online",
+      "colors": {
+        "--qx-home-bg": "#FFF8E1",
+        "--qx-home-card-bg": "#FFECB3",
+        "--qx-home-accent": "#F9A825",
+        "--qx-home-text": "#5D4037"
+      },
+      "illust": "images/eid-bliss.webp",
+      "preview": "previews/eid-bliss.jpg",
+      "author": "Quranix"
+    },
+    {
+      "id": "ramadan-night",
+      "name": "Laylatul Qadr",
+      "name_bn": "লাইলাতুল কদর",
+      "type": "online",
+      "colors": {
+        "--qx-home-bg": "#1A237E",
+        "--qx-home-card-bg": "#283593",
+        "--qx-home-accent": "#FFCA28",
+        "--qx-home-text": "#E8EAF6"
+      },
+      "illust": "images/ramadan-night.webp",
+      "preview": "previews/ramadan-night.jpg",
+      "author": "Quranix"
+    }
+  ]
+}

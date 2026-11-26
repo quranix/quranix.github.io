@@ -10,7 +10,7 @@
    4. Do not change the script order in index.html. This file must stay last.
    5. After any change, raise the CACHE number in sw.js (example: quranix-v23 to quranix-v24).
 
-   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+   LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, data/hadith.js, js/quran.js, js/apps.js
 */
 
 // SECTION INDEX (search: "[NAME] start"). Blocks keep their original order (EDIT RULES #3).
@@ -1847,7 +1847,7 @@ backBtn.onclick = () => { if (readerPushed) { history.back(); } else { saveScrol
 qEl.oninput = renderHome;
 function setFs(d){
   fs = Math.min(52, Math.max(20, fs + d));
-  document.documentElement.style.setProperty("--qx-fs-ar", fs + "px");
+  document.documentElement.style.setProperty("--qx-fs-ar-base", fs + "px");
   try { localStorage.setItem("fs", fs); } catch(e){}
 }
 
@@ -1910,7 +1910,7 @@ function qxFontStack(v){
 function applyAppPrefs(){
   document.documentElement.style.setProperty("--qx-font-arabic", AR_FONTS.some(function(f){ return f[0] === appPrefs.arFont; }) ? appPrefs.arFont : AR_FONTS[0][0]);
   document.documentElement.style.setProperty("--qx-font", qxFontStack(appPrefs.bnFont || BN_FONTS[0][0]));
-  document.documentElement.style.setProperty("--qx-fs-bn", (appPrefs.bnFs || 16) + "px");
+  document.documentElement.style.setProperty("--qx-fs-bn-base", (appPrefs.bnFs || 16) + "px");
   document.documentElement.toggleAttribute("data-hc", !!appPrefs.highContrast);
   var uiSizeNow = (appPrefs.uiSize === "medium" || appPrefs.uiSize === "lite") ? appPrefs.uiSize : "small";
   if (document.documentElement.getAttribute("data-size") !== uiSizeNow) {
@@ -2537,7 +2537,7 @@ function importUserBackup(file, onDone){
     if(d.reciter && RECITERS.some(r => r[0] === d.reciter)) currentReciter = d.reciter;
     if(Number.isFinite(d.fs) && d.fs >= 20 && d.fs <= 48){
       fs = d.fs;
-      document.documentElement.style.setProperty("--qx-fs-ar", fs + "px");
+      document.documentElement.style.setProperty("--qx-fs-ar-base", fs + "px");
     }
     if(d.theme === "dark" || d.theme === "light"){
       document.documentElement.setAttribute("data-theme", d.theme);
@@ -3186,8 +3186,8 @@ setInterval(checkPrayerAlerts, 5000);
     document.getElementById('ppAppPlus').onclick=function(){
       var order=['small','medium','lite']; var idx=order.indexOf(appPrefs.uiSize||'small'); if(idx<order.length-1){ appPrefs.uiSize=order[idx+1]; lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); }
     };
-    document.getElementById('ppArMinus').onclick=function(){ var v=Math.max(20,getFs()-2); localStorage.setItem('fs', String(v)); document.documentElement.style.setProperty('--qx-fs-ar', v+'px'); renderFontPopup(); };
-    document.getElementById('ppArPlus').onclick=function(){ var v=Math.min(48,getFs()+2); localStorage.setItem('fs', String(v)); document.documentElement.style.setProperty('--qx-fs-ar', v+'px'); renderFontPopup(); };
+    document.getElementById('ppArMinus').onclick=function(){ var v=Math.max(20,getFs()-2); localStorage.setItem('fs', String(v)); document.documentElement.style.setProperty('--qx-fs-ar-base', v+'px'); renderFontPopup(); };
+    document.getElementById('ppArPlus').onclick=function(){ var v=Math.min(48,getFs()+2); localStorage.setItem('fs', String(v)); document.documentElement.style.setProperty('--qx-fs-ar-base', v+'px'); renderFontPopup(); };
     document.getElementById('ppBnMinus').onclick=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFs=Math.max(13,(appPrefs.bnFs||16)-1); lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); };
     document.getElementById('ppBnPlus').onclick=function(){ if(typeof appPrefs==='undefined') return; appPrefs.bnFs=Math.min(24,(appPrefs.bnFs||16)+1); lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); };
     document.getElementById('ppArFontRow').onclick=function(){ renderFontListPopup('ar'); };
