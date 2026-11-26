@@ -692,11 +692,40 @@ function nextPrayer(now){
   return { k:"fajr", l:"ফজর", at:t2.fajr, today:false };
 }
 function addOpt(sel, v, text){ const o = document.createElement("option"); o.value = String(v); o.textContent = text; sel.appendChild(o); }
+/* GPS অবস্থান থেকে সবচেয়ে কাছের বিভাগীয় শহর / জেলা সদর / থানা-উপজেলা খুঁজে বের করে।
+   ১৫০ কিমির মধ্যে কিছু না পেলে (বাংলাদেশের বাইরে) null ফেরত দেয়। */
+function gpsNearestPlace(lat, lng){
+  const R = 6371, rad = Math.PI / 180;
+  const km = (la, ln) => {
+    const a = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((ln - lng) * rad / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  };
+  let best = null;
+  const take = (d, o) => { if (!best || d < best.km) best = Object.assign({ km: d }, o); };
+  for (const dn in BD_DISTRICTS) {
+    const dc = CITIES.find(c => c[0] === dn);
+    if (dc) take(km(dc[1], dc[2]), { div: dn });
+    BD_DISTRICTS[dn].forEach(d => {
+      take(km(d[1], d[2]), { div: dn, dist: d[0] });
+      (BD_THANAS[d[0]] || []).forEach(t => take(km(t[1], t[2]), { div: dn, dist: d[0], thana: t[0] }));
+    });
+  }
+  return (best && best.km <= 150) ? best : null;
+}
 function useGps(status){
   if (!navigator.geolocation) { if (status) status.textContent = "এই ডিভাইসে লোকেশন সাপোর্ট নেই। তালিকা থেকে শহর বেছে নিন।"; return; }
   if (status) status.textContent = "লোকেশন খোঁজা হচ্ছে…";
   navigator.geolocation.getCurrentPosition(p => {
-    loc = { n:"আপনার অবস্থান (GPS)", lat:Number(p.coords.latitude.toFixed(4)), lng:Number(p.coords.longitude.toFixed(4)), gps:true };
+    const lat = Number(p.coords.latitude.toFixed(4)), lng = Number(p.coords.longitude.toFixed(4));
+    loc = { n:"আপনার অবস্থান (GPS)", lat:lat, lng:lng, gps:true };
+    // বাংলাদেশে হলে বিভাগ, জেলা ও থানা/উপজেলা ফর্মে নিজে থেকে বসে যাবে; সময়ের হিসাব আসল GPS অবস্থান দিয়েই হয়
+    const place = gpsNearestPlace(lat, lng);
+    if (place) {
+      loc.div = place.div;
+      if (place.dist) loc.dist = place.dist;
+      if (place.thana) loc.thana = place.thana;
+      loc.n = (place.thana || place.dist || place.div) + " (GPS)";
+    }
     lsSet("loc", loc); renderPrayer();
   }, () => { if (status) status.textContent = "লোকেশন পাওয়া যায়নি। অনুমতি দিন বা ম্যানুয়াল লোকেশন ব্যবহার করুন।"; renderPrayerSelectReset(); }, { timeout:12000 });
 }
@@ -1366,7 +1395,7 @@ function renderPrayer(){
   if (nx.at) qxFlipSet(cd, (Math.floor(nx.at.getTime() / 1000) - Math.floor(now.getTime() / 1000)) * 1000, true); else cd.style.display = "none";
   hero.appendChild(cd);
   const chip = mk("div", "hero-date hero-date-ic qx-cal-transparent"); chip.title = ds; chip.setAttribute("aria-label", ds);
-  const _todayNum = (function(){ try{ return new Date().getDate(); }catch(e){ return ""; } })();
+  const _todayNum = (function(){ try{ return toBn(String(new Date().getDate())); }catch(e){ return ""; } })();
   chip.innerHTML = '<span class="qx-cal-wrap"><span class="ms" aria-hidden="true">calendar_month</span><small class="qx-cal-date">' + _todayNum + '</small></span>';
   hero.appendChild(chip);
   const snd = mk("button", "hero-snd" + (qxTickOn ? "" : " off")); snd.type = "button";
@@ -1470,6 +1499,13 @@ function renderPrayer(){
     row3.appendChild(dSel); row3.appendChild(tSel);
     app.appendChild(row3);
   }
+  // আলাদা GPS অপশন: ওপরের ড্রপডাউন থেকে স্বাধীন; চাপলে লোকেশন নিয়ে বিভাগ, জেলা ও থানা/উপজেলা নিজে ভরে দেয়
+  const gpsBtn = mk("button", "dl-btn ghost", "{{location_on}} GPS দিয়ে লোকেশন সেট করুন");
+  gpsBtn.type = "button";
+  gpsBtn.style.cssText = "width:100%;margin:0 0 10px;";
+  const gpsNote = mk("div", "note");
+  gpsBtn.onclick = () => { if (!gpsNote.parentNode) gpsBtn.insertAdjacentElement("afterend", gpsNote); useGps(gpsNote); };
+  app.appendChild(gpsBtn);
   renderPrayerSelectReset();
 
   // Manual Location input box (hidden by default unless selected)
@@ -4901,259 +4937,208 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
 (function(){
   "use strict";
 
-  const QX_FULL_AUDIO_CACHE = "quranix-full-surah-audio-v1";
-  const QX_FULL_AUDIO_MANIFEST = "audio/surah-audio-manifest.json";
-  let qxFullAudioManifestPromise = null;
-  let qxFullAudioObjectUrl = null;
+  const CACHE_NAME = "quranix-full-surah-audio-v1";
+  const MANIFEST_URL = "audio/surah-audio-manifest.json";
+  const audio = new Audio();
+  audio.preload = "none";
+  let manifestPromise = null;
+  let manifestRows = [];
+  let currentSurah = 0;
+  let objectUrl = null;
+  let requestToken = 0;
+  let cacheFallbackTried = false;
 
-  function qxFullAudioStyles(){
-    if (document.getElementById("qxFullAudioStyles")) return;
-    const style = document.createElement("style");
-    style.id = "qxFullAudioStyles";
-    style.textContent = `
-      .qx-fsa-page{max-width:760px;margin:0 auto;padding:14px 0 34px}
-      .qx-fsa-back{margin:0 0 14px}
-      .qx-fsa-card{background:var(--qx-card-bg);border:1px solid var(--qx-border);border-radius:18px;padding:18px;box-shadow:0 5px 22px rgba(0,0,0,.045)}
-      .qx-fsa-title{font-size:1.15rem;font-weight:750;margin:0 0 5px}
-      .qx-fsa-sub{color:var(--qx-meta-color);font-size:.88rem;margin:0 0 18px}
-      .qx-fsa-select{display:block;width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--qx-border);border-radius:12px;background:var(--qx-card-bg);color:inherit;font:inherit;margin:0 0 16px}
-      .qx-fsa-now{text-align:center;margin:8px 0 14px}
-      .qx-fsa-now b{display:block;font-size:1.12rem}
-      .qx-fsa-now small{color:var(--qx-meta-color)}
-      .qx-fsa-seek{width:100%;accent-color:var(--qx-main-color);margin:4px 0}
-      .qx-fsa-times{display:flex;justify-content:space-between;color:var(--qx-meta-color);font-size:.78rem;font-variant-numeric:tabular-nums}
-      .qx-fsa-controls{display:flex;justify-content:center;align-items:center;gap:12px;margin:16px 0}
-      .qx-fsa-controls button{width:46px;height:46px;border-radius:50%;border:1px solid var(--qx-border);background:var(--qx-card-bg);color:var(--qx-text);font-size:1.05rem;cursor:pointer}
-      .qx-fsa-controls button.primary{width:58px;height:58px;background:var(--qx-main-color);color:#fff;border-color:var(--qx-main-color);font-size:1.25rem}
-      .qx-fsa-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-      .qx-fsa-actions button{flex:1 1 180px;min-height:44px}
-      .qx-fsa-status{font-size:.84rem;color:var(--qx-meta-color);min-height:22px;margin-top:12px;text-align:center}
-      .qx-fsa-status:empty{display:none}
-      .qx-fsa-note{font-size:.78rem;color:var(--qx-meta-color);line-height:1.6;margin:12px 2px 0}
-    `;
-    document.head.appendChild(style);
+  function audioUrl(file){
+    return new URL("audio/" + encodeURIComponent(file), document.baseURI).href;
   }
 
-  async function qxFullAudioManifest(){
-    if (qxFullAudioManifestPromise) return qxFullAudioManifestPromise;
-    qxFullAudioManifestPromise = (async function(){
-      try{
-        const response = await fetch(QX_FULL_AUDIO_MANIFEST, { cache: "no-store" });
+  function releaseObjectUrl(){
+    if (objectUrl) {
+      try { URL.revokeObjectURL(objectUrl); } catch(e) {}
+      objectUrl = null;
+    }
+  }
+
+  function syncButtons(){
+    const isPlaying = !audio.paused && !audio.ended;
+    document.querySelectorAll(".qx-surah-audio-btn").forEach(button => {
+      const isCurrent = Number(button.dataset.surah) === currentSurah;
+      const showPause = isCurrent && isPlaying;
+      button.textContent = showPause ? "{{pause}}" : "{{play_arrow}}";
+      button.classList.toggle("on", isCurrent && (isPlaying || !!audio.src));
+      button.title = showPause ? "পূর্ণ সূরা বিরতি দিন" : "সম্পূর্ণ সূরা শুনুন";
+      button.setAttribute("aria-label", button.title);
+    });
+  }
+
+  function loadManifest(){
+    if (manifestPromise) return manifestPromise;
+    manifestPromise = fetch(MANIFEST_URL, { cache: "no-store" })
+      .then(response => {
         if (!response.ok) throw new Error("Manifest HTTP " + response.status);
-        const rows = await response.json();
-        if (!Array.isArray(rows) || rows.length !== 114) throw new Error("Manifest format invalid");
-        try{ localStorage.setItem("qx_full_surah_audio_manifest", JSON.stringify(rows)); }catch(_){ }
-        return rows;
-      }catch(error){
-        try{
+        return response.json();
+      })
+      .then(rows => {
+        if (!Array.isArray(rows) || rows.length !== 114) {
+          throw new Error("Manifest must contain 114 surahs");
+        }
+        manifestRows = rows
+          .map(item => ({ number: Number(item.number), file: String(item.file || "") }))
+          .filter(item => item.number >= 1 && item.number <= 114 && item.file)
+          .sort((a,b) => a.number - b.number);
+        if (manifestRows.length !== 114) throw new Error("Manifest entries are incomplete");
+        try { localStorage.setItem("qx_full_surah_audio_manifest", JSON.stringify(manifestRows)); } catch(e) {}
+        return manifestRows;
+      })
+      .catch(error => {
+        try {
           const saved = JSON.parse(localStorage.getItem("qx_full_surah_audio_manifest") || "null");
-          if (Array.isArray(saved) && saved.length === 114) return saved;
-        }catch(_){ }
+          if (Array.isArray(saved) && saved.length === 114) {
+            manifestRows = saved;
+            return manifestRows;
+          }
+        } catch(e) {}
+        manifestPromise = null;
         throw error;
+      });
+    return manifestPromise;
+  }
+
+  async function playFromCache(url, token){
+    if (!window.caches || token !== requestToken) return false;
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      const response = await cache.match(url);
+      if (!response || token !== requestToken) return false;
+      const blob = await response.blob();
+      if (token !== requestToken) return false;
+      releaseObjectUrl();
+      objectUrl = URL.createObjectURL(blob);
+      audio.src = objectUrl;
+      audio.load();
+      await audio.play();
+      return true;
+    } catch(e) {
+      return false;
+    }
+  }
+
+  async function fallbackToCachedAudio(number, token){
+    if (cacheFallbackTried || token !== requestToken) return false;
+    cacheFallbackTried = true;
+    try {
+      const rows = await loadManifest();
+      if (token !== requestToken) return false;
+      const item = rows.find(row => row.number === number);
+      if (item && await playFromCache(audioUrl(item.file), token)) return true;
+    } catch(e) {}
+    if (token === requestToken) {
+      currentSurah = 0;
+      syncButtons();
+      if (typeof showToast === "function") {
+        showToast("অডিও ফাইল লোড হয়নি। ইন্টারনেট সংযোগ ও ফাইলের নাম পরীক্ষা করুন।");
       }
-    })();
-    return qxFullAudioManifestPromise;
+    }
+    return false;
   }
 
-  function qxFullAudioUrl(file){
-    return "audio/" + encodeURIComponent(file);
-  }
+  async function startSurah(number){
+    const token = ++requestToken;
+    currentSurah = number;
+    cacheFallbackTried = false;
+    syncButtons();
 
-  function qxFullAudioTime(seconds){
-    if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-    const m = Math.floor(seconds / 60), s = Math.floor(seconds % 60);
-    return m + ":" + String(s).padStart(2, "0");
-  }
+    try {
+      const rows = await loadManifest();
+      if (token !== requestToken) return;
+      const item = rows.find(row => row.number === number);
+      if (!item) throw new Error("Surah audio not found in manifest");
 
-  async function qxOpenFullSurahAudio(){
-    showOther("{{headphones}} পূর্ণ সূরা অডিও");
-    qxFullAudioStyles();
-
-    const page = mk("div", "qx-fsa-page");
-    const back = mk("button", "qx-btn ghost qx-fsa-back", "← আরও পেজে ফিরুন");
-    back.type = "button";
-    back.onclick = function(){ renderMore(); };
-    page.appendChild(back);
-
-    const card = mk("section", "qx-fsa-card");
-    card.setAttribute("aria-label", "পূর্ণ সূরা অডিও প্লেয়ার");
-    card.appendChild(mk("h2", "qx-fsa-title", "পূর্ণ সূরা অডিও"));
-    card.appendChild(mk("p", "qx-fsa-sub", "একবারে একটি সূরা চালান অথবা অফলাইনের জন্য শুধু নির্বাচিত সূরাটি সংরক্ষণ করুন।"));
-
-    const select = mk("select", "qx-fsa-select");
-    select.setAttribute("aria-label", "সূরা নির্বাচন করুন");
-    const now = mk("div", "qx-fsa-now");
-    const nowName = mk("b", "", "সূরা লোড হচ্ছে…");
-    const nowMeta = mk("small", "", "");
-    now.append(nowName, nowMeta);
-
-    const audio = document.createElement("audio");
-    audio.preload = "metadata";
-    audio.setAttribute("aria-label", "পূর্ণ সূরা অডিও");
-
-    const seek = document.createElement("input");
-    seek.type = "range"; seek.min = "0"; seek.max = "1000"; seek.value = "0";
-    seek.className = "qx-fsa-seek"; seek.setAttribute("aria-label", "অডিওর অবস্থান");
-    const times = mk("div", "qx-fsa-times");
-    const elapsed = mk("span", "", "0:00"), duration = mk("span", "", "0:00");
-    times.append(elapsed, duration);
-
-    const controlsRow = mk("div", "qx-fsa-controls");
-    const prev = mk("button", "", "⏮"); prev.type = "button"; prev.title = "আগের সূরা"; prev.setAttribute("aria-label", "আগের সূরা");
-    const play = mk("button", "primary", "▶"); play.type = "button"; play.title = "চালান"; play.setAttribute("aria-label", "চালান");
-    const next = mk("button", "", "⏭"); next.type = "button"; next.title = "পরের সূরা"; next.setAttribute("aria-label", "পরের সূরা");
-    controlsRow.append(prev, play, next);
-
-    const actions = mk("div", "qx-fsa-actions");
-    const download = mk("button", "qx-btn", "↓ অফলাইনের জন্য ডাউনলোড"); download.type = "button";
-    const status = mk("div", "qx-fsa-status", ""); status.setAttribute("role", "status"); status.setAttribute("aria-live", "polite");
-    const note = mk("p", "qx-fsa-note", "ডাউনলোড করলে শুধু নির্বাচিত সূরাটিই এই ডিভাইসে সংরক্ষিত হবে। ব্রাউজারের স্টোরেজ সীমা বা সেটিংসের কারণে সংরক্ষণ ব্যর্থ হতে পারে।");
-    actions.appendChild(download);
-    card.append(select, now, audio, seek, times, controlsRow, actions, status, note);
-    page.appendChild(card);
-    app.appendChild(page);
-
-    let rows = [];
-    let currentIndex = 0;
-    let activeUrl = "";
-    let busy = false;
-    const setStatus = (message) => { status.textContent = message || ""; };
-    const selectedRow = () => rows[currentIndex];
-    const releaseObjectUrl = () => {
-      if (qxFullAudioObjectUrl) URL.revokeObjectURL(qxFullAudioObjectUrl);
-      qxFullAudioObjectUrl = null;
-    };
-    const cacheForAudio = async () => {
-      if (!("caches" in window)) throw new Error("এই ব্রাউজারে অফলাইন স্টোরেজ সমর্থিত নয়");
-      return caches.open(QX_FULL_AUDIO_CACHE);
-    };
-    const cachedResponse = async (url) => {
-      if (!("caches" in window)) return null;
-      const cache = await caches.open(QX_FULL_AUDIO_CACHE);
-      return cache.match(new URL(url, document.baseURI).href);
-    };
-    const refreshLabels = async () => {
-      const item = selectedRow();
-      if (!item) return;
-      const meta = (window.SURAH_META || []).find(x => Number(x.n) === Number(item.number));
-      nowName.textContent = meta ? meta.bn : ("সূরা " + item.number);
-      nowMeta.textContent = (meta ? meta.name + " · " + meta.ayahs + " আয়াত" : "") + " · " + item.file;
-      prev.disabled = currentIndex <= 0;
-      next.disabled = currentIndex >= rows.length - 1;
-      try{
-        const found = await cachedResponse(qxFullAudioUrl(item.file));
-        download.textContent = found ? "✓ অফলাইনে সংরক্ষিত" : "↓ অফলাইনের জন্য ডাউনলোড";
-      }catch(_){ download.textContent = "↓ অফলাইনের জন্য ডাউনলোড"; }
-    };
-    const loadCurrent = async (autoplay) => {
-      const item = selectedRow();
-      if (!item) return;
       audio.pause();
       releaseObjectUrl();
-      audio.removeAttribute("src"); audio.load();
-      activeUrl = qxFullAudioUrl(item.file);
-      seek.value = "0"; elapsed.textContent = "0:00"; duration.textContent = "0:00";
-      await refreshLabels();
-      setStatus("অডিও প্রস্তুত হচ্ছে…");
-      try{
-        const cached = await cachedResponse(activeUrl);
-        if (cached){
-          qxFullAudioObjectUrl = URL.createObjectURL(await cached.blob());
-          audio.src = qxFullAudioObjectUrl;
-          setStatus("অফলাইনে সংরক্ষিত অডিও প্রস্তুত");
-        }else{
-          audio.src = activeUrl;
-          setStatus(navigator.onLine ? "অনলাইন থেকে অডিও চালানো যাবে" : "অফলাইনে চালাতে আগে সূরাটি ডাউনলোড করতে হবে");
-        }
-        audio.load();
-        if (autoplay) await audio.play();
-      }catch(error){
-        setStatus("অডিও লোড হয়নি: " + (error && error.message ? error.message : "সমস্যা হয়েছে"));
-      }
-    };
-    const chooseIndex = async (index, autoplay) => {
-      if (!rows.length) return;
-      currentIndex = Math.max(0, Math.min(rows.length - 1, index));
-      select.value = String(rows[currentIndex].number);
-      await loadCurrent(!!autoplay);
-    };
+      audio.removeAttribute("src");
+      audio.load();
+      const url = audioUrl(item.file);
+      audio.src = url;
+      audio.load();
 
-    select.onchange = function(){
-      const index = rows.findIndex(x => String(x.number) === select.value);
-      if (index >= 0) chooseIndex(index, false);
-    };
-    prev.onclick = function(){ if (currentIndex > 0) chooseIndex(currentIndex - 1, true); };
-    next.onclick = function(){ if (currentIndex < rows.length - 1) chooseIndex(currentIndex + 1, true); };
-    play.onclick = async function(){
-      try{
-        if (audio.paused){ if (!audio.src) await loadCurrent(false); await audio.play(); }
-        else audio.pause();
-      }catch(error){ setStatus("প্লে করা যায়নি। ইন্টারনেট বা অডিও ফাইল পরীক্ষা করুন।"); }
-    };
-    audio.onplay = function(){ play.textContent = "Ⅱ"; play.title = "বিরতি"; play.setAttribute("aria-label", "বিরতি"); };
-    audio.onpause = function(){ play.textContent = "▶"; play.title = "চালান"; play.setAttribute("aria-label", "চালান"); };
-    audio.onended = function(){ if (currentIndex < rows.length - 1) chooseIndex(currentIndex + 1, true); };
-    audio.ontimeupdate = function(){
-      if (!Number.isFinite(audio.duration) || !audio.duration) return;
-      seek.value = String(Math.round(audio.currentTime / audio.duration * 1000));
-      elapsed.textContent = qxFullAudioTime(audio.currentTime);
-    };
-    audio.onloadedmetadata = function(){ duration.textContent = qxFullAudioTime(audio.duration); };
-    audio.onerror = function(){ setStatus("অডিও ফাইল পাওয়া যায়নি। ফাইলের নাম ও GitHub আপলোড পরীক্ষা করুন।"); };
-    seek.oninput = function(){
-      if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = Number(seek.value) / 1000 * audio.duration;
-    };
-    download.onclick = async function(){
-      if (busy) return;
-      const item = selectedRow(); if (!item) return;
-      busy = true; download.disabled = true; setStatus("ডাউনলোড হচ্ছে…");
-      try{
-        const cache = await cacheForAudio();
-        const url = qxFullAudioUrl(item.file);
-        const response = await fetch(url, { cache: "no-store" });
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        await cache.put(new URL(url, document.baseURI).href, response.clone());
-        setStatus("এই সূরাটি অফলাইনের জন্য সংরক্ষিত হয়েছে");
-        await refreshLabels();
-        await loadCurrent(false);
-      }catch(error){
-        setStatus("ডাউনলোড/সংরক্ষণ ব্যর্থ। ইন্টারনেট ও ডিভাইসের স্টোরেজ পরীক্ষা করুন।");
-      }finally{
-        busy = false; download.disabled = false;
+      const playRequest = audio.play();
+      if (playRequest && typeof playRequest.catch === "function") {
+        playRequest.catch(error => {
+          if (token !== requestToken) return;
+          if (error && error.name === "NotAllowedError") {
+            if (typeof showToast === "function") showToast("অডিও চালাতে আবার সূরার Play বাটনে চাপুন।");
+            syncButtons();
+            return;
+          }
+          fallbackToCachedAudio(number, token);
+        });
       }
-    };
-
-    try{
-      setStatus("সূরার তালিকা লোড হচ্ছে…");
-      const manifest = await qxFullAudioManifest();
-      rows = manifest.map(x => ({ number: Number(x.number), file: String(x.file || "") }))
-        .filter(x => x.number >= 1 && x.number <= 114 && x.file);
-      if (rows.length !== 114) throw new Error("১১৪টি অডিও ফাইলের তালিকা সম্পূর্ণ নয়");
-      rows.sort((a,b) => a.number - b.number);
-      rows.forEach(item => {
-        const meta = (window.SURAH_META || []).find(x => Number(x.n) === item.number);
-        const option = document.createElement("option");
-        option.value = String(item.number);
-        option.textContent = (meta ? meta.bn : "সূরা") + " — " + String(item.number).padStart(3, "0");
-        select.appendChild(option);
-      });
-      await chooseIndex(0, false);
-    }catch(error){
-      setStatus("সূরার তালিকা লোড হয়নি। ইন্টারনেট সংযোগ ও audio/surah-audio-manifest.json পরীক্ষা করুন।");
+      syncButtons();
+    } catch(error) {
+      if (token !== requestToken) return;
+      currentSurah = 0;
+      syncButtons();
+      if (typeof showToast === "function") {
+        showToast(navigator.onLine
+          ? "সূরার অডিও চালু করা যায়নি। ফাইলের নাম ও নেটওয়ার্ক পরীক্ষা করুন।"
+          : "অফলাইনে চালাতে আগে সূরাটি ডাউনলোড করে রাখতে হবে।");
+      }
     }
   }
 
-  // More পেজে নতুন এন্ট্রি যোগ; বিদ্যমান More আইটেম ও আয়াতভিত্তিক প্লেয়ার অপরিবর্তিত।
-  const qxOriginalRenderMore = renderMore;
-  renderMore = function(){
-    qxOriginalRenderMore();
-    const list = app.querySelector(".qx-list-spaced");
-    if (list && !list.querySelector('[data-qx-full-surah-audio="1"]')){
-      const row = qxRow("headphones", "পূর্ণ সূরা অডিও", "১১৪টি সূরা চালান ও অফলাইনে সংরক্ষণ করুন", qxOpenFullSurahAudio);
-      row.dataset.qxFullSurahAudio = "1";
-      list.appendChild(row);
+  window.qxToggleFullSurahAudio = async function(number){
+    number = Number(number);
+    if (!Number.isInteger(number) || number < 1 || number > 114) return;
+
+    if (currentSurah === number && audio.src) {
+      if (audio.paused) {
+        try { await audio.play(); } catch(e) {
+          const rows = await loadManifest().catch(() => []);
+          const item = rows.find(row => row.number === number);
+          if (item) await playFromCache(audioUrl(item.file), requestToken);
+        }
+      } else {
+        audio.pause();
+      }
+      syncButtons();
+      return;
     }
+
+    // একই সময়ে আয়াতের অডিও ও পূর্ণ সূরার অডিও যেন একসঙ্গে না বাজে।
+    if (typeof window.stopAudio === "function") window.stopAudio();
+    await startSurah(number);
   };
+
+  window.qxStopFullSurahAudio = function(){
+    ++requestToken;
+    currentSurah = 0;
+    try { audio.pause(); } catch(e) {}
+    audio.removeAttribute("src");
+    audio.load();
+    releaseObjectUrl();
+    syncButtons();
+  };
+
+  window.qxSyncFullSurahAudioButtons = syncButtons;
+
+  audio.addEventListener("play", syncButtons);
+  audio.addEventListener("pause", syncButtons);
+  audio.addEventListener("ended", function(){
+    if (currentSurah >= 1 && currentSurah < 114) {
+      startSurah(currentSurah + 1);
+    } else {
+      currentSurah = 0;
+      syncButtons();
+    }
+  });
+  audio.addEventListener("error", function(){
+    if (!currentSurah || cacheFallbackTried) return;
+    fallbackToCachedAudio(currentSurah, requestToken);
+  });
+
+  // পেজ খোলার আগেই manifest প্রস্তুত রাখি, যাতে বাটনে চাপলে দ্রুত প্লে শুরু হয়।
+  loadManifest().catch(() => {});
 })();
 // [FULL-SURAH-AUDIO-PLAYER] end
 

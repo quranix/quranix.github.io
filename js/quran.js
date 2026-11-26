@@ -1921,6 +1921,9 @@ function highlightPlayingCard(surahNo, ayahNo){
 }
 
 function playAyahAtIndex(idx){
+  if (typeof window.qxStopFullSurahAudio === "function") {
+    window.qxStopFullSurahAudio();
+  }
   if (idx < 0 || idx >= currentPlaylist.length) {
     stopAudio();
     return;
@@ -3421,6 +3424,33 @@ async function openSurah(n, y, targetAyah){
     const bism = await loadBismillah();
     if (renderToken !== readerRenderToken) return;
     app.innerHTML = "";
+
+    // পূর্ণ সূরার MP3 বাটন শুধু সূরার হেডারে থাকবে; আয়াতের প্লেয়ার আলাদা থাকবে।
+    const surahHeader = document.createElement("div");
+    surahHeader.className = "sh qx-surah-header";
+    const surahHeaderName = document.createElement("span");
+    surahHeaderName.className = "qx-surah-header-name";
+    surahHeaderName.textContent = (s ? s.name : "সূরা " + n) + (s && s.englishName ? " · " + s.englishName : "");
+    const surahAudioButton = document.createElement("button");
+    surahAudioButton.type = "button";
+    surahAudioButton.className = "qx-surah-audio-btn";
+    surahAudioButton.dataset.surah = String(n);
+    surahAudioButton.textContent = "{{play_arrow}}";
+    surahAudioButton.title = "সম্পূর্ণ সূরা শুনুন";
+    surahAudioButton.setAttribute("aria-label", "সম্পূর্ণ সূরা শুনুন");
+    surahAudioButton.onclick = function(){
+      if (typeof window.qxToggleFullSurahAudio === "function") {
+        window.qxToggleFullSurahAudio(n);
+      } else {
+        showToast("পূর্ণ সূরার অডিও প্রস্তুত হচ্ছে। একটু পরে চেষ্টা করুন।");
+      }
+    };
+    surahHeader.append(surahHeaderName, surahAudioButton);
+    app.appendChild(surahHeader);
+    if (typeof window.qxSyncFullSurahAudioButtons === "function") {
+      window.qxSyncFullSurahAudioButtons();
+    }
+
     if (n !== 1 && n !== 9) {
       const b = document.createElement("div"); b.className = "bism"; b.textContent = bism;
       app.appendChild(b);

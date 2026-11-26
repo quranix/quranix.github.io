@@ -10,8 +10,9 @@ QX FILE EDIT RULES
 ABOUT THIS FILE
 - This file has the page markup and all the CSS (inside the style tag).
 - The JavaScript is in separate files. Do not change the script order at the bottom of this file:
-  quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
+  quran-data.js, data/topics.js, data/dictionary.js, data/district.js, data/hadith.js, js/quran.js, js/apps.js
 - After you change any file in the app, raise the CACHE number in sw.js so offline users get the new files.
+- Every block has [NAME] start and [NAME] end markers (see SECTION INDEX below). Keep them. When you add a new function or block, add its markers and its line in the index.
 -->
 <html lang="bn" translate="no" class="notranslate">
 <head>
@@ -283,6 +284,9 @@ ABOUT THIS FILE
   --qx-main-soft: color-mix(in srgb, var(--qx-main-color) 12%, transparent);
   --qx-icon-color: var(--qx-text-color);
   --qx-icon-bg: var(--qx-tile-bg);
+  --qx-hero-chip: rgba(255,255,255,.18);
+  --qx-colon-a: #ffffff;
+  --qx-colon-b: #99f6e4;
   --qx-on-main: var(--qx-c-white);
   --qx-on-teal: #fff;
   --qx-knob: #fff;
@@ -346,6 +350,9 @@ ABOUT THIS FILE
   --qx-main-soft: rgba(76,199,155,.16);
   --qx-icon-color: var(--qx-main-color);
   --qx-icon-bg: var(--qx-main-soft);
+  --qx-hero-chip: color-mix(in srgb, var(--qx-on-main) 14%, transparent);
+  --qx-colon-a: #0a1625;
+  --qx-colon-b: #0f766e;
   --qx-on-main: var(--qx-c-night-ink);
   --qx-border: var(--qx-c-night-border);
   --qx-tile-bg: var(--qx-c-night-chip);
@@ -760,6 +767,38 @@ body.bars-hidden header {
   background: var(--qx-main-color);
   color: var(--qx-on-main);
   text-align: center;
+}
+
+.qx-surah-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: start;
+}
+
+.qx-surah-header-name {
+  min-width: 0;
+  font-weight: 700;
+}
+
+.qx-surah-audio-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--qx-on-main) 40%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--qx-on-main) 12%, transparent);
+  color: var(--qx-on-main);
+  font: inherit;
+  cursor: pointer;
+}
+
+.qx-surah-audio-btn.on {
+  background: color-mix(in srgb, var(--qx-on-main) 24%, transparent);
 }
 
 .msg {
@@ -7332,8 +7371,8 @@ body.qx-home-edit-mode .home-quick-btn::after {
   padding: 0;
   border: 0;
   border-radius: var(--qx-radius-lg);
-  background: rgba(255,255,255,.18);
-  color: inherit;
+  background: var(--qx-hero-chip);
+  color: var(--qx-on-main);
   cursor: pointer;
 }
 
@@ -7360,7 +7399,7 @@ body.qx-home-edit-mode .home-quick-btn::after {
 
 .hero > small {
   display: block;
-  margin: 0 calc(52px * var(--qx-scale));
+  margin: 0 calc(70px * var(--qx-scale));
 }
 /* [HERO] end */
 
@@ -7378,18 +7417,33 @@ body.qx-home-edit-mode .home-quick-btn::after {
   background: transparent;
   border: none;
   box-shadow: none;
-  width:44px;
-  height:44px;
+  width: calc(56px * var(--qx-scale));
+  height: calc(60px * var(--qx-scale));
   display:grid;
   place-items:center;
   padding:0;
+  overflow: visible;
 }
-.qx-cal-wrap{position:relative; display:grid; place-items:center; width:44px; height:44px;}
-.qx-cal-wrap > .ms{font-size:40px; color:#fff; opacity:.95; line-height:1;}
+.qx-cal-wrap{position:relative; display:grid; place-items:center; width:calc(56px * var(--qx-scale)); height:calc(60px * var(--qx-scale)); color: var(--qx-on-main);}
+.qx-cal-wrap > .ms{font-size:calc(52px * var(--qx-scale)); color:currentColor; opacity:.95; line-height:1;}
 .qx-cal-date{
-  position:absolute; top:58%; left:50%; transform:translate(-50%,-30%);
-  font-size:13px; font-weight:700; color:#fff; line-height:1;
+  position:absolute; top:64%; left:50%; transform:translate(-50%,-50%);
+  font-size:calc(22px * var(--qx-scale)); font-weight:800; color:currentColor; line-height:1;
   font-variant-numeric:tabular-nums;
+}
+/* তারিখ থাকলে আইকন নিজে আঁকা ক্যালেন্ডার: মোটা মাথা, দুই রিং, ভেতরে তারিখ */
+.qx-cal-wrap:has(> .qx-cal-date) > .ms{visibility:hidden;}
+.qx-cal-wrap:has(> .qx-cal-date)::before{
+  content:""; position:absolute;
+  inset: calc(6px * var(--qx-scale)) calc(2px * var(--qx-scale)) 0;
+  border: 2.5px solid currentColor; border-radius: calc(11px * var(--qx-scale));
+  background: linear-gradient(currentColor, currentColor) top / 100% 30% no-repeat;
+}
+.qx-cal-wrap:has(> .qx-cal-date)::after{
+  content:""; position:absolute; top:0; left:calc(14px * var(--qx-scale));
+  width: calc(5px * var(--qx-scale)); height: calc(13px * var(--qx-scale));
+  border-radius: 3px; background: currentColor;
+  box-shadow: calc(22px * var(--qx-scale)) 0 0 currentColor;
 }
 
 
@@ -7450,6 +7504,11 @@ body.qx-home-edit-mode .home-quick-btn::after {
   font-size: calc(28px * var(--qx-scale));
   font-weight: 700;
   line-height: 1;
+  background: linear-gradient(180deg, var(--qx-colon-a) 25%, var(--qx-colon-b) 75%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .qx-flip-grp small {

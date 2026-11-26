@@ -1,5 +1,5 @@
 
-const CACHE = 'quranix-v2.0.68';
+const CACHE = 'quranix-v2.0.70';
 const FULL_SURAH_AUDIO_CACHE = 'quranix-full-surah-audio-v1';
 
 const CORE_ASSETS = [
@@ -199,6 +199,10 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
 
   if (url.origin !== self.location.origin) return;
+
+  // MP3 media requests (especially Range requests) must reach the server directly.
+  // Cache-first handling can turn a valid 206 partial response into a broken audio stream.
+  if (/\.(mp3|m4a|ogg|wav|aac)$/i.test(url.pathname)) return;
 
   const ignoreSearch =
     url.pathname.includes('/api/') ||
