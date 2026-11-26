@@ -2884,6 +2884,8 @@ setInterval(checkPrayerAlerts, 5000);
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && overlay.classList.contains('open')) closePopup(); });
   function openPopup(type){
     if(type==='settings'){ openSettingsModal(); return; }
+        if(type==='share'){ closeDropdown(); shareApp(); return; }
+    if(type==='fullaudio'){ closeDropdown(); if(typeof window.qxOpenFullSurahAudioPage==='function') window.qxOpenFullSurahAudioPage(); else toast('ফুল অডিও পেজ এখন খোলা যাচ্ছে না'); return; }
     closeDropdown();
     box.classList.remove('wide','wide-fixed');
     overlay.classList.add('open');
@@ -2898,7 +2900,8 @@ setInterval(checkPrayerAlerts, 5000);
     else if(type==='source') renderSourcePopup();
     else if(type==='khatam') renderKhatamPopup();
     else if(type==='downloads') renderDownloadsPopup('open');
-    else if(type==='fullaudio'){ closePopup(); if(typeof window.qxOpenFullSurahAudioPage==='function') window.qxOpenFullSurahAudioPage(); }
+    else if(type==='about') renderAboutPopup();
+    else if(type==='help') renderHelpPopup();
     else if(type==='hadith'){ closePopup(); if(typeof setMode==='function') setMode('hadith'); }
     else if(type==='pwa'){ renderPwaPopup(); }
     else if(type==='hijri'){ closePopup(); if(typeof setMode==='function') setMode('hijri'); }
@@ -3224,6 +3227,53 @@ setInterval(checkPrayerAlerts, 5000);
   function renderSourcePopup(){
     box.innerHTML=head('{{info}} উৎস ও তথ্যসূত্র') + '<div class="pp-mini">' + window.qxSourcesHtml() + '</div>';
   }
+
+    // ---- NEW MENU ITEMS: toast / share / about / help ----
+  function toast(m){ if(typeof showToast==='function') showToast(m); }
+  function shareUrl(){
+    var u=location.href.split('#')[0];
+    var local=/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    return (/^https?:\/\//.test(u) && !local) ? u : 'https://quranix.github.io/';
+  }
+  function fallbackCopy(text,done){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+    ta.remove();
+    if(ok) done(); else toast('লিংক কপি করা যায়নি: '+text);
+  }
+  function shareApp(){
+    var data={ title:'Quranix | বাংলা কুরআন', text:'Quranix: বাংলা অনুবাদসহ কুরআন পড়ার অ্যাপ।', url:shareUrl() };
+    if(navigator.share){ navigator.share(data).catch(function(){}); return; }
+    var done=function(){ toast('লিংক কপি হয়েছে'); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(data.url).then(done,function(){ fallbackCopy(data.url,done); });
+    } else fallbackCopy(data.url,done);
+  }
+  function renderAboutPopup(){
+    box.innerHTML=head('{{info}} Quranix সম্পর্কে')
+      +'<div style="text-align:center;padding:8px 0 4px">'
+      +'<div style="width:54px;height:54px;margin:0 auto 9px;border-radius:var(--qx-radius-lg);background:var(--qx-main-color);color:var(--qx-on-main);display:grid;place-items:center;font-size:26px">{{info}}</div>'
+      +'<b>Quranix | বাংলা কুরআন</b>'
+      +'<p class="pp-mini">বাংলা অনুবাদসহ কুরআন পড়ার একটি অ্যাপ।</p></div>'
+      +'<div class="pp-mini" style="margin-bottom:8px"><b>কী কী আছে:</b> কুরআন (সূরা, পারা, বিষয়ভিত্তিক আয়াত, শব্দার্থ), হাদিস, নামাজ, রমজান, কালিমা, দোয়া ও তাসবিহ, হিজরি ক্যালেন্ডার, ট্র্যাকার।</div>'
+      +'<div class="pp-mini" style="margin-bottom:12px"><b>অনুবাদ:</b> মাওলানা মুহিউদ্দীন খান এবং ড. আবু বকর মুহাম্মাদ যাকারিয়া।</div>'
+      +'<button class="pp-btn" id="ppAboutSource" type="button">{{info}} উৎস ও তথ্যসূত্র দেখুন</button>';
+    var sb=box.querySelector('#ppAboutSource');
+    if(sb) sb.onclick=function(){ renderSourcePopup(); };
+  }
+  function renderHelpPopup(){
+    function item(t,d){ return '<div class="pp-mini" style="margin:0 0 10px"><b style="display:block;margin-bottom:2px">'+t+'</b>'+d+'</div>'; }
+    box.innerHTML=head('{{info}} সহায়তা')
+      +item('সার্চ','হেডারের সার্চ বাটনে শব্দ লিখুন। সরাসরি আয়াতে যেতে "২:২৫৫" বা "বাকারা ২৫৫" লিখুন।')
+      +item('পড়ার প্রস্থ ও থিম','হেডারের প্রস্থ বাটনে সংকীর্ণ/পূর্ণ প্রস্থ বদলান। চাঁদ আইকনে ডার্ক/লাইট থিম বদলান।')
+      +item('তাফসির','আয়াতে ট্যাপ করলে তাফসির খোলে। তাফসির লোড করতে ইন্টারনেট লাগে।')
+      +item('ব্যাকআপ ও রিস্টোর','মেনুর "ব্যাকআপ ও রিস্টোর" থেকে আপনার সংরক্ষিত তথ্য ফাইলে নিন এবং পরে ফিরিয়ে আনুন।')
+      +item('অ্যাপ ইনস্টল','মেনুর "Quranix অ্যাপ" থেকে ফোন বা কম্পিউটারে ইনস্টল করুন।');
+  }
+
   refreshMinis();
   // ---- Home Hero ----
   var origRenderQuranHome = window.renderQuranHome;

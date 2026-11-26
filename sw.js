@@ -1,4 +1,4 @@
-const CACHE = 'quranix-v2.0.74';
+const CACHE = 'quranix-v2.0.75';
 const FULL_SURAH_AUDIO_CACHE = 'quranix-full-surah-audio-v4';
 
 const CORE_ASSETS = [
