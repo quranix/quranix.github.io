@@ -14,6 +14,36 @@
    LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
 */
 
+// SECTION INDEX (search: "[NAME] start")
+//   [CARD: Asma of the Day]
+//   [PAGE: Asma ul Husna]
+//   [PAGE: Asma Detail]
+//   [CARD: Hadith of the Day]
+//   [CARD: Hadith/Ayah card]
+//   [PAGE: Hadith Offline Collections list]
+//   [PAGE: Hadith Offline Collection Detail]
+//   [PAGE: Hadith]
+//   [PAGE: Hadith List]
+//   [PAGE: Hadith Detail]
+//   [SHEET: Ayah Note Editor]
+//   [CARD: Reading Goal]
+//   [MENU: Quick Jump (surah/ayah)]
+//   [CARD: Ayah of the Day]
+//   [SHEET: Tafseer]
+//   [TABS: Quran tab bar]
+//   [ROUTER: renderHome (mode -> page)]
+//   [PAGE: Topics]
+//   [PAGE: Dictionary (More page wrapper)]
+//   [PAGE: Dictionary (tab)]
+//   [PAGE: Dictionary List]
+//   [PAGE: Dictionary Detail]
+//   [PAGE: Topic Detail]
+//   [PAGE: Quran Home]
+//   [SHEET: Today]
+//   [PAGE: Reader shell]
+//   [PAGE: Surah Reader]
+//   [PAGE: Juz Reader]
+
 /* ===== সূরা ===== */
 // সব সূরা + বাংলা অনুবাদ
 // API: https://api.alquran.cloud/v1 - LOCAL = window.QURAN thakle offline use kore
@@ -926,9 +956,15 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
 
 var ASMA_DATA=[["الله", "আল্লাহ", "একমাত্র উপাস্য", "১:১", "সব নামের মূল। সূরা ফাতিহায় আল্লাহ নাম দিয়েই শুরু।"], ["الرَّحْمَنُ", "আর-রহমান", "পরম করুণাময়", "৫৫:১", "যাঁর দয়া সব সৃষ্টিকে ঘিরে আছে। সূরা আর-রহমানের শুরু।"], ["الرَّحِيمُ", "আর-রহিম", "অতি দয়ালু", "১:১", "মুমিনদের প্রতি বিশেষ দয়ালু। ফাতিহার প্রতিটি রাকাতে পড়ি।"], ["الْمَلِكُ", "আল-মালিক", "সার্বভৌম অধিপতি", "৫৯:২৩", "সব রাজত্বের মালিক একমাত্র তিনি।"], ["الْقُدُّوسُ", "আল-কুদ্দুস", "পরম পবিত্র", "৫৯:২৩", "সব দোষ-ত্রুটি থেকে পবিত্র।"], ["السَّلَامُ", "আস-সালাম", "শান্তির উৎস", "৫৯:২৩", "যাঁর থেকে সব শান্তি ও নিরাপত্তা আসে।"], ["الْمُؤْمِنُ", "আল-মুমিন", "নিরাপত্তাদানকারী", "৫৯:২৩", "বান্দাকে ভয় থেকে নিরাপত্তা দেন।"], ["الْمُهَيْمِنُ", "আল-মুহাইমিন", "সবকিছুর তত্ত্বাবধায়ক", "৫৯:২৩", "সবকিছু দেখেন, রক্ষা করেন, নিয়ন্ত্রণ করেন।"], ["الْعَزِيزُ", "আল-আজিজ", "পরাক্রমশালী", "৫৯:২৩", "যাঁকে কেউ পরাজিত করতে পারে না।"], ["الْجَبَّارُ", "আল-জাব্বার", "প্রতাপশালী", "৫৯:২৩", "অহংকারীদের দমনকারী, ভাঙা হৃদয় জোড়া লাগান।"], ["الْمُتَكَبِّرُ", "আল-মুতাকাব্বির", "মহিমান্বিত", "৫৯:২৩", "বড়ত্ব শুধু তাঁরই শোভা পায়।"], ["الْخَالِقُ", "আল-খালিক", "সৃষ্টিকর্তা", "৫৯:২৪", "সবকিছু শূন্য থেকে সৃষ্টি করেছেন।"], ["الْبَارِئُ", "আল-বারি", "নিখুঁত সৃষ্টিকারী", "৫৯:২৪", "কোনো নমুনা ছাড়াই সৃষ্টি করেন।"], ["الْمُصَوِّرُ", "আল-মুসাওয়ির", "আকৃতিদানকারী", "৫৯:২৪", "প্রত্যেককে আলাদা আকৃতি দিয়েছেন।"], ["الْغَفَّارُ", "আল-গাফফার", "বারবার ক্ষমাকারী", "৩৮:৬৬", "যতবারই ফিরে আসো, ক্ষমা করেন।"], ["الْقَهَّارُ", "আল-কাহহার", "সবার উপর বিজয়ী", "৩৮:৬৫", "সবকিছু তাঁর ক্ষমতার অধীন।"], ["الْوَهَّابُ", "আল-ওয়াহহাব", "অফুরন্ত দানকারী", "৩:৮", "চাওয়া ছাড়াও দান করেন, বিনিময় চান না।"], ["الرَّزَّاقُ", "আর-রজ্জাক", "রিজিকদাতা", "৫১:৫৮", "সবার রিজিক তাঁর হাতে।"], ["الْفَتَّاحُ", "আল-ফাত্তাহ", "বিজয় ও সমাধানদানকারী", "৩৪:২৬", "বন্ধ দরজা খুলে দেন, ফয়সালা করেন।"], ["الْعَلِيمُ", "আল-আলিম", "সর্বজ্ঞ", "২:২৯", "প্রকাশ্য-গোপন সব জানেন।"], ["الْقَابِضُ", "আল-কাবিদ", "সংকোচনকারী", "২:২৪৫", "রিজিক ও জীবন সংকুচিত করেন হিকমত অনুযায়ী।"], ["الْبَاسِطُ", "আল-বাসিত", "প্রসারিতকারী", "২:২৪৫", "রিজিক ও বরকত প্রশস্ত করেন।"], ["الْخَافِضُ", "আল-খাফিদ", "নতকারী", "৫৬:৩", "অহংকারীকে নত করেন।"], ["الرَّافِعُ", "আর-রাফি", "উন্নতকারী", "৫৮:১১", "বিনয়ীদের মর্যাদা বাড়িয়ে দেন।"], ["الْمُعِزُّ", "আল-মুইজ্জ", "সম্মানদানকারী", "৩:২৬", "যাকে চান সম্মান দেন।"], ["الْمُذِلُّ", "আল-মুযিল্ল", "অপমানকারী", "৩:২৬", "যাকে চান অপমান করেন — সবই ন্যায়।"], ["السَّمِيعُ", "আস-সামি", "সর্বশ্রোতা", "২:১২৭", "ফিসফিস দোয়াও শোনেন।"], ["الْبَصِيرُ", "আল-বাসির", "সর্বদ্রষ্টা", "২:১১০", "চোখের পলকও তাঁর অগোচর নয়।"], ["الْحَكَمُ", "আল-হাকাম", "ন্যায়বিচারক", "২২:৬৯", "কিয়ামতে চূড়ান্ত ফয়সালা করবেন।"], ["الْعَدْلُ", "আল-আদল", "পরম ন্যায়পরায়ণ", "৬:১১৫", "তাঁর বিচারে বিন্দুমাত্র জুলুম নেই।"], ["اللَّطِيفُ", "আল-লতিফ", "সূক্ষ্মদর্শী, কোমল", "২২:৬৩", "সূক্ষ্ম উপায়ে বান্দার উপকার করেন।"], ["الْخَبِيرُ", "আল-খাবির", "সব খবর রাখেন", "৬:১৮", "ভেতরের খবরও জানেন।"], ["الْحَلِيمُ", "আল-হালিম", "পরম সহনশীল", "২:২২৫", "পাপের পরও সাথে সাথে শাস্তি দেন না।"], ["الْعَظِيمُ", "আল-আজিম", "মহান", "২:২৫৫", "আয়াতুল কুরসিতে এই নাম এসেছে।"], ["الْغَفُورُ", "আল-গাফুর", "ক্ষমাশীল", "২:১৭৩", "তওবা করলেই ক্ষমা করেন।"], ["الشَّكُورُ", "আশ-শাকুর", "কৃতজ্ঞতা গ্রহণকারী", "৩৫:৩০", "ছোট আমলকেও বড় প্রতিদান দেন।"], ["الْعَلِيُّ", "আল-আলিয়্য", "সুমহান", "৪:৩৪", "সবার ঊর্ধ্বে, সবচেয়ে উঁচু।"], ["الْكَبِيرُ", "আল-কাবির", "সুমহান, বড়", "২২:৬২", "তাঁর চেয়ে বড় কেউ নেই।"], ["الْحَفِيظُ", "আল-হাফিজ", "রক্ষাকারী", "১১:৫৭", "বান্দাকে সব বিপদ থেকে রক্ষা করেন।"], ["الْمُقِيتُ", "আল-মুকিত", "সবার খাদ্য ও শক্তিদাতা", "৪:৮৫", "সবার প্রয়োজন মেটান।"], ["الْحَسِيبُ", "আল-হাসিব", "হিসাব গ্রহণকারী", "৪:৬", "প্রতিটি কাজের হিসাব নেবেন।"], ["الْجَلِيلُ", "আল-জালিল", "মহিমান্বিত", "৫৫:২৭", "মর্যাদা ও মহিমার অধিকারী।"], ["الْكَرِيمُ", "আল-কারিম", "পরম দয়ালু, সম্মানিত", "২৭:৪০", "দানেও সম্মানিত, ক্ষমায়ও।"], ["الرَّقِيبُ", "আর-রকিব", "পর্যবেক্ষণকারী", "৪:১", "সবসময় তোমাকে দেখছেন।"], ["الْمُجِيبُ", "আল-মুজিব", "দোয়া কবুলকারী", "১১:৬১", "ডাকলেই সাড়া দেন।"], ["الْوَاسِعُ", "আল-ওয়াসি", "সবকিছু পরিবেষ্টনকারী", "২:১১৫", "তাঁর দয়া ও জ্ঞান সীমাহীন।"], ["الْحَكِيمُ", "আল-হাকিম", "প্রজ্ঞাময়", "৩১:২৭", "প্রতিটি সিদ্ধান্তে হিকমত আছে।"], ["الْوَدُودُ", "আল-ওয়াদুদ", "অতি স্নেহময়", "১১:৯০", "বান্দাকে গভীরভাবে ভালোবাসেন।"], ["الْمَجِيدُ", "আল-মাজিদ", "মহা সম্মানিত", "১১:৭৩", "সম্মান ও মর্যাদায় পরিপূর্ণ।"], ["الْبَاعِثُ", "আল-বায়িস", "পুনরুত্থানকারী", "২২:৭", "মৃতদের আবার জীবিত করবেন।"], ["الشَّهِيدُ", "আশ-শাহিদ", "সাক্ষী", "৪:৭৯", "সবকিছুর সাক্ষী তিনি।"], ["الْحَقُّ", "আল-হাক্ক", "চিরন্তন সত্য", "২২:৬", "তিনিই একমাত্র সত্য।"], ["الْوَكِيلُ", "আল-ওয়াকিল", "কর্মবিধায়ক", "৩:১৭৩", "তাঁর উপর ভরসা করাই যথেষ্ট।"], ["الْقَوِيُّ", "আল-কাওয়িয়্য", "মহাশক্তিশালী", "১১:৬৬", "তাঁর শক্তির কোনো সীমা নেই।"], ["الْمَتِينُ", "আল-মাতিন", "সুদৃঢ়", "৫১:৫৮", "তাঁর শক্তি কখনো কমে না।"], ["الْوَلِيُّ", "আল-ওয়ালিয়্য", "অভিভাবক, বন্ধু", "২:২৫৭", "মুমিনদের অভিভাবক তিনি।"], ["الْحَمِيدُ", "আল-হামিদ", "প্রশংসিত", "১১:৭৩", "সব প্রশংসা তাঁরই।"], ["الْمُحْصِي", "আল-মুহসি", "সবকিছু গণনাকারী", "৭৮:২৯", "কিছুই তাঁর গণনার বাইরে নয়।"], ["الْمُبْدِئُ", "আল-মুবদি", "প্রথম সৃষ্টিকারী", "৩০:২৭", "সৃষ্টির শুরু তাঁর হাতে।"], ["الْمُعِيدُ", "আল-মুয়িদ", "পুনরায় সৃষ্টিকারী", "৩০:২৭", "আবার ফিরিয়ে আনবেন।"], ["الْمُحْيِي", "আল-মুহয়ি", "জীবনদানকারী", "৩০:৫০", "মৃত জমিনকেও জীবিত করেন।"], ["الْمُمِيتُ", "আল-মুমিত", "মৃত্যুদানকারী", "৩:১৫৬", "জীবন-মৃত্যু তাঁর হাতে।"], ["الْحَيُّ", "আল-হায়্য", "চিরঞ্জীব", "২:২৫৫", "আয়াতুল কুরসির নাম — কখনো মরেন না।"], ["الْقَيُّومُ", "আল-কাইয়্যুম", "সবকিছুর ধারক", "২:২৫৫", "সবকিছু তাঁর উপর নির্ভরশীল।"], ["الْوَاجِدُ", "আল-ওয়াজিদ", "সবকিছু পাওয়া যায় যাঁর কাছে", "৩৮:৩৭", "কোনো কিছুর অভাব নেই তাঁর।"], ["الْمَاجِدُ", "আল-মাজিদ", "মহা মর্যাদাবান", "৮৫:১৫", "আরশের মালিক, মর্যাদাবান।"], ["الْوَاحِدُ", "আল-ওয়াহিদ", "একক", "১৩:১৬", "তিনি এক, তাঁর কোনো শরিক নেই।"], ["الصَّمَدُ", "আস-সামাদ", "অমুখাপেক্ষী", "১১২:২", "সবাই তাঁর মুখাপেক্ষী, তিনি কারো নন।"], ["الْقَادِرُ", "আল-কাদির", "সর্বশক্তিমান", "৬:৬৫", "সবকিছু করতে সক্ষম।"], ["الْمُقْتَدِرُ", "আল-মুকতাদির", "পূর্ণ ক্ষমতাবান", "৫৪:৫৫", "তাঁর ক্ষমতা পরিপূর্ণ।"], ["الْمُقَدِّمُ", "আল-মুকাদ্দিম", "অগ্রবর্তীকারী", "১৬:৬১", "যাকে চান আগে আনেন।"], ["الْمُؤَخِّرُ", "আল-মুআখখির", "পশ্চাৎবর্তীকারী", "৭১:৪", "যাকে চান পিছিয়ে দেন।"], ["الْأَوَّلُ", "আল-আউয়াল", "প্রথম", "৫৭:৩", "সবকিছুর আগে ছিলেন।"], ["الْآخِرُ", "আল-আখির", "শেষ", "৫৭:৩", "সবকিছুর পরেও থাকবেন।"], ["الظَّاهِرُ", "আজ-জাহির", "প্রকাশ্য", "৫৭:৩", "নিদর্শনে প্রকাশ্য।"], ["الْبَاطِنُ", "আল-বাতিন", "গোপন", "৫৭:৩", "গোপন রহস্য জানেন।"], ["الْوَالِي", "আল-ওয়ালি", "পরিচালক", "১৩:১১", "সবকিছুর পরিচালনা করেন।"], ["الْمُتَعَالِي", "আল-মুতাআলি", "সবার ঊর্ধ্বে", "১৩:৯", "সব ত্রুটির ঊর্ধ্বে।"], ["الْبَرُّ", "আল-বার্র", "পরম কল্যাণকারী", "৫২:২৮", "বান্দার প্রতি দয়ায় ভরা।"], ["التَّوَّابُ", "আত-তাওয়াব", "তওবা কবুলকারী", "২:৩৭", "বারবার তওবা কবুল করেন।"], ["الْمُنْتَقِمُ", "আল-মুনতাকিম", "প্রতিশোধ গ্রহণকারী", "৩২:২২", "জালিমদের শাস্তি দেন।"], ["الْعَفُوُّ", "আল-আফুও", "ক্ষমাকারী, মুছে দেন", "৪:৯৯", "পাপ পুরো মুছে দেন।"], ["الرَّؤُوفُ", "আর-রাউফ", "পরম স্নেহশীল", "৯:১১৭", "বান্দার প্রতি দয়ায় ভরা।"], ["مَالِكُ الْمُلْكِ", "মালিকুল মুলক", "রাজত্বের মালিক", "৩:২৬", "রাজত্ব দেন, কেড়ে নেন।"], ["ذُو الْجَلَالِ وَالْإِكْرَامِ", "যুল-জালালি ওয়াল-ইকরাম", "মহিমা ও সম্মানের অধিকারী", "৫৫:২৭", "সূরা আর-রহমানে বারবার এসেছে।"], ["الْمُقْسِطُ", "আল-মুকসিত", "ন্যায় প্রতিষ্ঠাকারী", "৭:২৯", "সবাইকে ন্যায় দেন।"], ["الْجَامِعُ", "আল-জামি", "একত্রকারী", "৩:৯", "কিয়ামতে সবাইকে জমা করবেন।"], ["الْغَنِيُّ", "আল-গানিয়্য", "অমুখাপেক্ষী", "৩৫:১৫", "তাঁর কিছুই লাগে না।"], ["الْمُغْنِي", "আল-মুগনি", "অভাব দূরকারী", "৯৩:৮", "অভাবীকে ধনী করেন।"], ["الْمَانِعُ", "আল-মানি", "বাধাদানকারী", "৬৭:২১", "যা দিতে চান না, কেউ দিতে পারে না।"], ["الضَّارُّ", "আদ-দার্র", "ক্ষতির মালিক", "৬:১৭", "ক্ষতিও তাঁর হুকুমে হয়।"], ["النَّافِعُ", "আন-নাফি", "উপকারকারী", "৬:১৭", "উপকারও তাঁর হাতেই।"], ["النُّورُ", "আন-নূর", "আলো", "২৪:৩৫", "আসমান-জমিনের আলো। সূরা নূর।"], ["الْهَادِي", "আল-হাদি", "পথপ্রদর্শক", "২৫:৩১", "সঠিক পথ দেখান।"], ["الْبَدِيعُ", "আল-বাদি", "অতুলনীয় স্রষ্টা", "২:১১৭", "যেমন আগে কেউ বানায়নি।"], ["الْبَاقِي", "আল-বাকি", "চিরস্থায়ী", "৫৫:২৭", "সব ধ্বংস হবে, তিনি থাকবেন।"], ["الْوَارِثُ", "আল-ওয়ারিস", "উত্তরাধিকারী", "১৫:২৩", "সবকিছুর শেষ মালিক।"], ["الرَّشِيدُ", "আর-রশিদ", "সঠিক পথ দেখানেওয়ালা", "১১:৮৭", "ভুল পথে যেতে দেন না।"], ["الصَّبُورُ", "আস-সাবুর", "পরম ধৈর্যশীল", "২:১৫৩", "বান্দার ভুলেও সাথে সাথে ধরেন না।"]];
 function asmaToday(){var d=new Date();return ASMA_DATA[(d.getDate()-1)%99];}
+// [CARD: Asma of the Day] start
 function buildAsmaCard(){var t=asmaToday();var idx=ASMA_DATA.indexOf(t);var box=document.createElement('div');box.className='khatam-card';box.innerHTML='<div class="khatam-row"><b>{{i_asma}} আজকের নাম</b><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯</span></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:30px;color:var(--qx-main-color)">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div class="trk-mini">'+t[4]+'</div></div><div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">৯৯ নাম দেখো →</span><span>সূরা '+t[3]+'</span></div>';box.onclick=function(){if(typeof setMode==='function')setMode('asma');};return box;}
+// [CARD: Asma of the Day] end
+// [PAGE: Asma ul Husna] start
 function renderAsma(){if(typeof showOther==='function')showOther('{{i_asma}} আসমাউল হুসনা');const appEl = document.getElementById('app');var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var t=asmaToday();var top=document.createElement('div');top.className='asma-top';top.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><small>{{i_asma}} আজকের নাম · '+(ASMA_DATA.indexOf(t)+1)+' / ৯৯</small><span class="asma-arrow ms">chevron_right</span></div><div class="ar">'+t[0]+'</div><b>'+t[1]+' — '+t[2]+'</b><div><small>রেফারেন্স: সূরা '+t[3]+' · '+t[4]+'</small></div>';top.onclick=function(){openAsmaDetail(ASMA_DATA.indexOf(t));};appEl.appendChild(top);var info=document.createElement('div');info.className='trk-mini';info.style.textAlign='center';info.textContent='৯৯টি নাম মুখস্থ করো, প্রতিটা নামে ট্যাপ করে অর্থ + কুরআনের রেফারেন্স দেখো। {{star:f}} প্রিয় করো, {{i_tasbih}} জিকির করো।';appEl.appendChild(info);var search=document.createElement('input');search.className='asma-search';search.placeholder='নাম খুঁজুন... যেমন: রহমান, গাফুর, রজ্জাক';appEl.appendChild(search);var grid=document.createElement('div');grid.className='asma-grid';appEl.appendChild(grid);function draw(filter){grid.innerHTML='';ASMA_DATA.forEach(function(item,i){var txt=(item[1]+' '+item[2]+' '+item[0]).toLowerCase();if(filter&&txt.indexOf(filter.toLowerCase())<0)return;var c=document.createElement('div');c.className='asma-card'+(favs[i]?' fav':'');c.innerHTML='<div class="ar">'+item[0]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+item[1]+'</b><small>'+item[2]+'</small><div class="trk-mini">সূরা '+item[3]+(counts[i]?' · {{i_tasbih}} '+counts[i]+' বার':'')+'</div>';c.onclick=function(){openAsmaDetail(i);};grid.appendChild(c);});}search.oninput=function(){draw(search.value);};draw('');}
+// [PAGE: Asma ul Husna] end
+// [PAGE: Asma Detail] start
 function openAsmaDetail(idx){var item=ASMA_DATA[idx];var favs={};try{favs=JSON.parse(localStorage.getItem('quranix_asma_fav')||'{}');}catch(e){}var counts={};try{counts=JSON.parse(localStorage.getItem('quranix_asma_count')||'{}');}catch(e){}var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>'+(typeof toBn==='function'?toBn(idx+1):idx+1)+' / ৯৯ — '+item[1]+'</span><button id="asmaX">{{close}}</button></div><div class="qx-asma-hero"><div class="qx-asma-bn"><b>'+item[1]+'</b><span>'+item[2]+'</span></div><div class="qx-asma-div" aria-hidden="true"></div><div class="qx-asma-ar" lang="ar" dir="rtl">'+item[0]+'</div></div><div class="trk-cat" style="margin:12px 0 0"><b>{{menu_book}} সংক্ষিপ্ত পরিচয়</b><div style="margin-top:6px;line-height:1.7">'+item[4]+'</div><div class="trk-mini" style="margin-top:8px">{{auto_stories}} কুরআন রেফারেন্স: <b>সূরা '+item[3]+'</b> — এই নামটি এই সূরায় এসেছে।</div></div><div class="ac-row"><button class="ac-btn ghost" id="asmaFav">'+(favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো')+'</button><button class="ac-btn" id="asmaTasbih">{{i_tasbih}} জিকির +১ (<span id="asmaCnt">'+(counts[idx]||0)+'</span>)</button></div><div class="ac-row"><button class="ac-btn ghost" id="asmaPrev">{{arrow_back}} আগের নাম</button><button class="ac-btn ghost" id="asmaNext">পরের নাম {{arrow_forward}}</button></div><div class="ac-row"><button class="ac-btn" id="asmaShare">{{share}} এই নাম শেয়ার করো</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='asma')renderAsma();};box.querySelector('#asmaX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#asmaFav').onclick=function(){if(favs[idx])delete favs[idx];else favs[idx]=1;localStorage.setItem('quranix_asma_fav',JSON.stringify(favs));this.textContent=favs[idx]?'{{star:f}} প্রিয় থেকে সরাও':'{{star}} প্রিয় করো';};box.querySelector('#asmaTasbih').onclick=function(){counts[idx]=(counts[idx]||0)+1;localStorage.setItem('quranix_asma_count',JSON.stringify(counts));box.querySelector('#asmaCnt').textContent=counts[idx];if(typeof showToast==='function')showToast(item[1]+' — '+counts[idx]+' বার');};box.querySelector('#asmaPrev').onclick=function(){ov.remove();openAsmaDetail((idx+98)%99);};box.querySelector('#asmaNext').onclick=function(){ov.remove();openAsmaDetail((idx+1)%99);};box.querySelector('#asmaShare').onclick=async function(){var text=''+item[1]+' — '+item[2]+'\n'+item[4]+'\nরেফারেন্স: সূরা '+item[3]+'\n— Quranix · আসমাউল হুসনা';await shareTextOrCopy(text,item[1],'শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!');};}
+// [PAGE: Asma Detail] end
 window.renderAsma=renderAsma;window.buildAsmaCard=buildAsmaCard;window.openAsmaDetail=openAsmaDetail;
 
 
@@ -939,7 +975,51 @@ var HADITH_DATA={"nawawi": [["নিয়ত", "إِنَّمَا الأَعْم
 (function(){try{if(localStorage.getItem('quranix_hadith_mem_v3'))return;var map={1:1,2:2,3:3,4:1,5:4,6:5,7:2,8:1,9:6,10:7,13:8,14:2,15:9,16:10,18:2,19:4,20:11};var mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');var out={};Object.keys(mem).forEach(function(k){var m=k.match(/^qudsi:(\d+)$/);if(!m){out[k]=mem[k];return;}var n=map[parseInt(m[1],10)+1];if(n)out['qudsi:'+(n-1)]=1;});localStorage.setItem('quranix_hadith_mem',JSON.stringify(out));localStorage.setItem('quranix_hadith_mem_v3','1');}catch(e){}})();
 function hadithAll(){var out=[];['nawawi','qudsi','short'].forEach(function(k){HADITH_DATA[k].forEach(function(h,i){out.push({pkg:k,idx:i,title:h[0],ar:h[1],bn:h[2],ref:h[3]});});});return out;}
 function hadithToday(){var all=hadithAll();var d=new Date();return all[(d.getDate()-1)%all.length];}
+// [CARD: Hadith of the Day] start
 function buildHadithCard(){var h=hadithToday();var box=document.createElement('div');box.className='khatam-card';box.innerHTML='<div class="khatam-row"><b>{{i_hadith}} আজকের হাদিস</b><span>'+(h.pkg==='nawawi'?'৪০ হাদিস':h.pkg==='qudsi'?'হাদিসে কুদসি':'ছোট হাদিস')+'</span></div><div style="text-align:center"><div style="font-family:var(--qx-font-arabic);font-size:22px;color:var(--qx-main-color)">'+h.ar+'</div><b>'+h.title+'</b><div class="trk-mini">'+h.bn+'</div><div class="trk-mini">{{auto_stories}} '+h.ref+'</div></div><div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">হাদিস প্যাকেজ দেখো →</span><span>৩টি প্যাকেজ · '+(hadithAll().length)+'টি হাদিস</span></div>';box.onclick=function(){if(typeof setMode==='function')setMode('hadith');};return box;}
+// [CARD: Hadith of the Day] end
+/* ===== হাদিস বুকমার্ক (⭐ সংরক্ষণ থেকে আলাদা) =====
+   বুকমার্ক = "এখানে থেমেছি, পরে ফিরব"। ⭐ সংরক্ষণ = প্রিয় হাদিসের সংগ্রহ। দুটো আলাদা স্টোরে থাকে।
+   ৩ ধরনের বুকমার্ক: book (হাদিসের বই) · chapter (অধ্যায়) · hadith (একটা হাদিস)
+   স্টোর: localStorage "quranix_hadith_bookmarks" = [ item, ... ] (নতুন আগে)
+   item: {id, type, col, colName, chapter, chapterTitle, hid, title, ts}
+   id:   book → "book|Bukhari" · chapter → "chapter|Bukhari|1" · hadith → "hadith|Bukhari|1" */
+var HADITH_BM_KEY='quranix_hadith_bookmarks';
+var HADITH_BM_TYPES={book:'হাদিসের বই',chapter:'অধ্যায়',hadith:'হাদিস'};
+// শুধু উদাহরণ (সেভ হয় না): একই বইয়ের ৩ স্তর — বই → অধ্যায় → হাদিস
+var HADITH_BM_EXAMPLE=[
+  {type:'book',col:'Bukhari',colName:'সহিহ আল-বুখারি',title:'সহিহ আল-বুখারি'},
+  {type:'chapter',col:'Bukhari',colName:'সহিহ আল-বুখারি',chapter:1,chapterTitle:'ওহীর সূচনা',title:'ওহীর সূচনা'},
+  {type:'hadith',col:'Bukhari',colName:'সহিহ আল-বুখারি',chapter:1,chapterTitle:'ওহীর সূচনা',hid:1,title:'নিয়ত'}
+];
+function hadithBmId(type,col,chapter,hid){
+  if(type==='book') return 'book|'+col;
+  if(type==='chapter') return 'chapter|'+col+'|'+chapter;
+  return 'hadith|'+col+'|'+hid;
+}
+function hadithBmLoad(){ try{ var a=JSON.parse(localStorage.getItem(HADITH_BM_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+function hadithBmSave(a){ try{ localStorage.setItem(HADITH_BM_KEY,JSON.stringify(a)); }catch(e){} }
+function hadithBmHas(id){ return hadithBmLoad().some(function(x){return x.id===id;}); }
+// info = {type,col,colName,chapter,chapterTitle,hid,title} → true হলে বুকমার্ক যোগ হলো, false হলে সরলো
+function hadithBmToggle(info){
+  var id=hadithBmId(info.type,info.col,info.chapter,info.hid);
+  var a=hadithBmLoad(), i=a.findIndex(function(x){return x.id===id;});
+  if(i>=0) a.splice(i,1); else a.unshift(Object.assign({id:id,ts:Date.now()},info));
+  hadithBmSave(a);
+  return i<0;
+}
+function hadithBmList(type){ var a=hadithBmLoad(); return type?a.filter(function(x){return x.type===type;}):a; }
+
+/* ===== হাদিস কার্ড: "পড়া হয়েছে" ট্র্যাকার (কী = কার্ডের key, যেমন hadith|কিতাব|নম্বর|অধ্যায়) ===== */
+function hadithReadMap(){ try{ return JSON.parse(localStorage.getItem('quranix_hadith_read')||'{}')||{}; }catch(e){ return {}; } }
+function hadithReadHas(key){ return !!hadithReadMap()[key]; }
+function hadithReadToggle(key){
+  var m=hadithReadMap();
+  if(m[key]) delete m[key]; else m[key]=Date.now();
+  try{ localStorage.setItem('quranix_hadith_read',JSON.stringify(m)); }catch(e){}
+  return !!m[key];
+}
+// [CARD: Hadith/Ayah card] start
 function buildHadithAyahCard(h){
   var ar=h.ar||h.arabic||'';
   var bn=h.bn||h.text||h.translation||'';
@@ -950,7 +1030,8 @@ function buildHadithAyahCard(h){
   var colName=h._colName||'';
   var label='হাদিস '+(hid?toBn(hid):'');
   if(colName) label=colName+' • '+label;
-  var key='hadith|'+(h._colId||'')+'|'+hid+'|'+chapterTitle;
+  var key='hadith|'+(h._colId||'')+'|'+hid;
+  var ex=(typeof QX_HADITH!=='undefined' && QX_HADITH[(h._colId||'')+'|'+hid]) || {};
   var d=document.createElement('div');
   d.className='ayah hadith-card';
   d.dataset.key=key;
@@ -985,19 +1066,18 @@ function buildHadithAyahCard(h){
     else if(navigator.clipboard){ try{ await navigator.clipboard.writeText(txt); if(typeof showToast==='function') showToast('কপি করা হয়েছে'); }catch(e){} }
   };
   var copyFn=async function(){
-    var txt=ar+'\n\n'+bn;
+    var refLine=[narrator,grade].filter(Boolean).join(' • ');
+    var txt=ar+'\n\n'+bn+(refLine?'\n'+refLine:'');
+    if(typeof copyText==='function'){ await copyText(txt,'কপি করা হয়েছে'); return; }
     try{ await navigator.clipboard.writeText(txt); if(typeof showToast==='function') showToast('কপি করা হয়েছে'); }catch(e){}
   };
   var imageFn=function(){
     if(window.openAyahCard){ window.openAyahCard(label,ar,bn); }
     else { shareFn(); }
   };
-  var bookmarkFn=function(){ st.click(); };
 
   addMenu(10,function(){return '{{share}} শেয়ার করুন';},shareFn);
   addMenu(20,function(){return '{{image}} ছবি বানাও';},imageFn);
-  addMenu(30,function(){return '{{bookmark}} বুকমার্ক করুন';},bookmarkFn);
-  addMenu(40,function(){return '{{content_copy}} কপি করুন';},copyFn);
 
   menuItems.sort(function(a,b){return (a[3]||50)-(b[3]||50);});
 
@@ -1030,7 +1110,23 @@ function buildHadithAyahCard(h){
   });
 
   // NO play button here
+  // কার্ডের অ্যাকশন: পড়া হয়েছে · সংরক্ষণ (⭐) · কপি · শেয়ার · আরও
+  var rd=document.createElement('button'); rd.type='button'; rd.className='more-btn hadith-read'; rd.setAttribute('aria-label','পড়া হয়েছে'); rd.title='পড়া হয়েছে';
+  var paintRead=function(){ var on=hadithReadHas(key); rd.textContent=on?'{{check_circle:f}}':'{{check_circle}}'; rd.setAttribute('aria-pressed',on?'true':'false'); d.classList.toggle('read',on); };
+  rd.onclick=function(e){ e.stopPropagation(); var on=hadithReadToggle(key); paintRead(); if(typeof showToast==='function') showToast(on?'পড়া হয়েছে হিসেবে মার্ক করা হয়েছে':'মার্ক সরানো হয়েছে'); };
+  paintRead();
+  var cp=document.createElement('button'); cp.type='button'; cp.className='more-btn'; cp.setAttribute('aria-label','কপি'); cp.title='কপি'; cp.textContent='{{content_copy}}';
+  cp.onclick=function(e){ e.stopPropagation(); copyFn(); };
+  var bmInfo={type:'hadith',col:h._colId||'',colName:colName,chapter:h._qxChapterNo||'',chapterTitle:chapterTitle,hid:hid,title:label};
+  var bmId=hadithBmId('hadith',bmInfo.col,bmInfo.chapter,hid);
+  var bm=document.createElement('button'); bm.type='button'; bm.className='more-btn hadith-bm'; bm.setAttribute('aria-label','বুকমার্ক'); bm.title='বুকমার্ক';
+  var paintBm=function(){ var on=hadithBmHas(bmId); bm.textContent=on?'{{bookmark:f}}':'{{bookmark}}'; bm.setAttribute('aria-pressed',on?'true':'false'); };
+  bm.onclick=function(e){ e.stopPropagation(); var on=hadithBmToggle(bmInfo); paintBm(); if(typeof showToast==='function') showToast(on?'বুকমার্ক করা হয়েছে':'বুকমার্ক সরানো হয়েছে'); };
+  paintBm();
+  actions.appendChild(rd);
   actions.appendChild(st);
+  actions.appendChild(bm);
+  actions.appendChild(cp);
   actions.appendChild(more);
   actions.appendChild(menu);
   no.appendChild(actions);
@@ -1041,13 +1137,17 @@ function buildHadithAyahCard(h){
   ref.textContent=[narrator,grade,chapterTitle].filter(Boolean).join(' • ');
 
   d.appendChild(no);
+  if(ex.title){ var ttl=document.createElement('div'); ttl.className='hadith-title'; ttl.style.cssText='font-weight:700;color:var(--qx-main-color);margin:6px 0'; ttl.textContent=ex.title; d.appendChild(ttl); }
   if(ar) d.appendChild(arEl);
   d.appendChild(bnEl);
   if(ref.textContent) d.appendChild(ref);
+  if(ex.topics && ex.topics.length){ var tp=document.createElement('div'); tp.className='ref hadith-topics'; tp.style.cssText=ref.style.cssText; tp.textContent='বিষয়: '+ex.topics.join(', '); d.appendChild(tp); }
 
   return d;
 }
+// [CARD: Hadith/Ayah card] end
 
+// [PAGE: Hadith Offline Collections list] start
 function renderOfflineHadithCollections(appEl){
   var m={};try{m=JSON.parse(localStorage.getItem('quranix_content_packages')||'{}');}catch(e){}
   var keys=Object.keys(m).filter(function(k){return k.indexOf('hadith|')===0 && (m[k].status==='complete'||m[k].status==='incomplete'||m[k].status==='paused');});
@@ -1057,6 +1157,8 @@ function renderOfflineHadithCollections(appEl){
   keys.forEach(function(k){var item=m[k],id=k.split('|').slice(1).join('|'),c=(window.quranixHadithCollections||[]).find(function(x){return x.id===id;});if(!c)return;var b=document.createElement('button');b.className='dl-btn';b.style.margin='6px 6px 0 0';b.textContent=c.name+' · '+(item.status==='complete'?'সম্পূর্ণ':item.status==='paused'?'থামানো':'অসম্পূর্ণ');b.onclick=function(){openOfflineHadithCollection(c);};wrap.appendChild(b);});
   appEl.appendChild(wrap);
 }
+// [PAGE: Hadith Offline Collections list] end
+// [PAGE: Hadith Offline Collection Detail] start
 async function openOfflineHadithCollection(collection){
   if(typeof showOther==='function') showOther(collection.name);
   var appEl=document.getElementById('app'); appEl.innerHTML='';
@@ -1074,6 +1176,7 @@ async function openOfflineHadithCollection(collection){
         copy._qxChapterTitle=chapterInfo.title||'';
         copy._colId=collection.id;
         copy._colName=collection.name;
+        copy._qxChapterNo=i;
         rows.push(copy);
       });
     }
@@ -1093,6 +1196,8 @@ async function openOfflineHadithCollection(collection){
   search.oninput=function(){ draw(search.value); };
   draw('');
 }
+// [PAGE: Hadith Offline Collection Detail] end
+// [PAGE: Hadith] start
 function renderHadith(){if(typeof showOther==='function')showOther('{{i_hadith}} হাদিস প্যাকেজ');const appEl = document.getElementById('app');var info=document.createElement('div');info.className='note';info.style.textAlign='center';info.textContent='একে একে পড়ো, মুখস্থ হলে চিহ্নিত করো — ৬টি সহিহ গ্রন্থসহ';appEl.appendChild(info);
 var pkgs=[{k:'nawawi',icon:'{{menu_book}}',name:'৪০ হাদিস (ইমাম নববী)',desc:'ইমাম নববীর সংকলন থেকে সোর্স-যাচাইকৃত নির্বাচিত হাদিস',count:HADITH_DATA.nawawi.length},{k:'qudsi',icon:'{{auto_awesome}}',name:'হাদিসে কুদসি',desc:'আল্লাহর কথা, রাসূল ﷺ-এর ভাষায় — হাদিস কুদসি থেকে সোর্স-যাচাইকৃত',count:HADITH_DATA.qudsi.length},{k:'short',icon:'{{lightbulb}}',name:'ছোট হাদিস — দৈনন্দিন জীবন',desc:'ছোট ছোট হাদিস, মুখস্থ করা সহজ — প্রতিদিন ১টা',count:HADITH_DATA.short.length}];pkgs.forEach(function(pk){var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var done=0;for (let i=0;i<pk.count;i++){if(mem[pk.k+':'+i])done++;}var card=document.createElement('div');card.className='hadith-pkg';card.innerHTML='<h3>'+pk.icon+' '+pk.name+'</h3><div class="sub">'+pk.desc+'</div><div class="khatam-row" style="margin-top:8px"><span>'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'টি হাদিস</span><span>মুখস্থ: '+(typeof toBn==='function'?toBn(done):done)+'/'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'</span><span style="color:var(--qx-main-color);font-weight:700">খোলো →</span></div><div class="goal-track"><div class="goal-fill" style="width:'+Math.round(done/pk.count*100)+'%" ></div></div>';card.onclick=function(){renderHadithList(pk.k,pk.name);};appEl.appendChild(card);});
 // --- 6 Sahih Books ---
@@ -1111,11 +1216,16 @@ var pkgMeta=packageMeta();
 });
 appEl.appendChild(corpusGrid);
 var today=hadithToday();var tc=document.createElement('div');tc.className='hadith-pkg';tc.innerHTML='<h3>{{i_hadith}} আজকের হাদিস</h3><div class="ar" style="font-family:var(--qx-font-arabic);font-size:22px;direction:rtl;text-align:right;color:var(--qx-main-color)">'+today.ar+'</div><b>'+today.title+'</b><div class="note">'+today.bn+'</div><div class="ref" style="font-size:var(--qx-fs-xs);color:var(--qx-meta-color)">{{auto_stories}} '+today.ref+'</div>';tc.onclick=function(){openHadithDetail(today.pkg,today.idx);};appEl.appendChild(tc);renderOfflineHadithCollections(appEl);}
+// [PAGE: Hadith] end
+// [PAGE: Hadith List] start
 function renderHadithList(pkgKey,pkgName){if(typeof showOther==='function')showOther('{{i_hadith}} '+pkgName);const appEl = document.getElementById('app');var back=document.createElement('button');back.className='dl-btn ghost';back.textContent='← সব প্যাকেজ';back.onclick=function(){renderHadith();};appEl.appendChild(back);var search=document.createElement('input');search.className='asma-search';search.placeholder='হাদিস খুঁজুন... যেমন: নিয়ত, রাগ, ধৈর্য';appEl.appendChild(search);var list=document.createElement('div');appEl.appendChild(list);function draw(f){list.innerHTML='';var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}HADITH_DATA[pkgKey].forEach(function(h,i){if(f&&(h[0]+h[2]+h[3]).toLowerCase().indexOf(f.toLowerCase())<0)return;var item=document.createElement('div');item.className='hadith-item'+(mem[pkgKey+':'+i]?' done':'');item.innerHTML='<div class="ar">'+h[1]+'</div><b>'+(typeof toBn==='function'?toBn(i+1):i+1)+'. '+h[0]+'</b><div style="font-size:var(--qx-fs-md);margin:4px 0">'+h[2]+'</div><div class="ref">{{auto_stories}} '+h[3]+(mem[pkgKey+':'+i]?' · {{check_circle:f}} মুখস্থ':'')+'</div>';var hkey=pkgKey+':'+i;var sv=document.createElement('button');sv.type='button';sv.className='star qx-star';sv.setAttribute('aria-label','সংরক্ষণ করুন');sv.textContent=savedHas('hadith',hkey)?'{{star:f}}':'{{star}}';sv.onclick=function(e){e.stopPropagation();var on=savedToggle('hadith',hkey,{title:h[0],ar:h[1],bn:h[2],ref:h[3]});sv.textContent=on?'{{star:f}}':'{{star}}';showToast(on?'সংরক্ষিত হয়েছে':'সংরক্ষণ সরানো হয়েছে');};item.appendChild(sv);item.onclick=function(){openHadithDetail(pkgKey,i);};list.appendChild(item);});}search.oninput=function(){draw(search.value);};draw('');}
+// [PAGE: Hadith List] end
+// [PAGE: Hadith Detail] start
 function openHadithDetail(pkgKey,idx){var h=HADITH_DATA[pkgKey][idx];var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var key=pkgKey+':'+idx;var ov=document.createElement('div');ov.className='ac-ov';ov.style.zIndex='130';var box=document.createElement('div');box.className='ac-box';box.innerHTML='<div class="ac-head"><span>{{i_hadith}} '+(pkgKey==='nawawi'?'৪০ হাদিস':pkgKey==='qudsi'?'হাদিসে কুদসি':'ছোট হাদিস')+' · '+(typeof toBn==='function'?toBn(idx+1):idx+1)+'</span><button id="hX">{{close}}</button></div><div class="ar" style="font-family:var(--qx-font-arabic);font-size:26px;direction:rtl;text-align:center;color:var(--qx-main-color);line-height:1.8">'+h[1]+'</div><b style="font-size:var(--qx-fs-xl)">'+h[0]+'</b><div style="line-height:1.7;margin:10px 0">'+h[2]+'</div><div class="trk-mini">{{auto_stories}} রেফারেন্স: '+h[3]+'</div><div class="trk-mini" style="margin-top:6px">{{lightbulb}} এই হাদিসটা আজকের দিনে কীভাবে আমল করবা, একটু ভেবে নাও। মুখস্থ হলে {{check_circle:f}} চাপ দাও।</div><div class="ac-row"><button class="ac-btn ghost" id="hSave">'+(savedHas('hadith',key)?'{{star:f}} সংরক্ষিত':'{{star}} সংরক্ষণ')+'</button><button class="ac-btn ghost" id="hMem">'+(mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো')+'</button><button class="ac-btn" id="hShare">{{share}} শেয়ার করো</button></div><div class="ac-row"><button class="ac-btn ghost" id="hPrev">← আগের হাদিস</button><button class="ac-btn ghost" id="hNext">পরের হাদিস →</button></div>';ov.appendChild(box);document.body.appendChild(ov);var close=function(){ov.remove();if(typeof mode!=='undefined'&&mode==='hadith'){};};box.querySelector('#hX').onclick=close;ov.onclick=function(e){if(e.target===ov)close();};box.querySelector('#hSave').onclick=function(){var on=savedToggle('hadith',key,{title:h[0],ar:h[1],bn:h[2],ref:h[3]});this.textContent=on?'{{star:f}} সংরক্ষিত':'{{star}} সংরক্ষণ';if(typeof showToast==='function')showToast(on?'সংরক্ষিত হয়েছে':'সংরক্ষণ সরানো হয়েছে');};
 box.querySelector('#hMem').onclick=function(){if(mem[key])delete mem[key];else mem[key]=1;localStorage.setItem('quranix_hadith_mem',JSON.stringify(mem));this.textContent=mem[key]?'{{check_circle:f}} মুখস্থ — সরাও':'{{star}} মুখস্থ মার্ক করো';if(typeof showToast==='function')showToast(mem[key]?'মুখস্থ মার্ক হয়েছে':'মার্ক সরানো হয়েছে');};box.querySelector('#hShare').onclick=async function(){var text=''+h[0]+'\n'+h[1]+'\n'+h[2]+'\n'+h[3]+'\n— Quranix · হাদিস প্যাকেজ';await shareTextOrCopy(text,h[0],'শেয়ার করা যায়নি, টেক্সট কপি করা হয়েছে!');};box.querySelector('#hPrev').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+HADITH_DATA[pkgKey].length-1)%HADITH_DATA[pkgKey].length);};box.querySelector('#hNext').onclick=function(){ov.remove();openHadithDetail(pkgKey,(idx+1)%HADITH_DATA[pkgKey].length);};}
+// [PAGE: Hadith Detail] end
 window.renderHadith=renderHadith;
-window.buildHadithAyahCard=buildHadithAyahCard;window.openOfflineHadithCollection=openOfflineHadithCollection;window.buildHadithCard=buildHadithCard;window.openHadithDetail=openHadithDetail;window.renderHadithList=renderHadithList;
+window.hadithBm={has:hadithBmHas,toggle:hadithBmToggle,list:hadithBmList,id:hadithBmId,TYPES:HADITH_BM_TYPES,EXAMPLE:HADITH_BM_EXAMPLE};window.buildHadithAyahCard=buildHadithAyahCard;window.openOfflineHadithCollection=openOfflineHadithCollection;window.buildHadithCard=buildHadithCard;window.openHadithDetail=openHadithDetail;window.renderHadithList=renderHadithList;
 
 
 
@@ -1287,6 +1397,7 @@ function saveAyahNote(k, text){
   lsSet("notes", ayahNotes);
 }
 
+// [SHEET: Ayah Note Editor] start
 function openNoteEditor(surahNo, ayahNo, label, onSaved){
   const k = surahNo + ":" + ayahNo;
   const previousFocus = document.activeElement;
@@ -1340,6 +1451,7 @@ function openNoteEditor(surahNo, ayahNo, label, onSaved){
   document.body.appendChild(overlay); document.addEventListener("keydown", onTafsirKeydown); close.focus();
   setTimeout(() => ta.focus(), 50);
 }
+// [SHEET: Ayah Note Editor] end
 
 /* --- দৈনিক পড়ার লক্ষ্য ও অগ্রগতি (Reading Goal & Progress) --- */
 function todayStr(){
@@ -1369,6 +1481,7 @@ function toggleReadAyah(k){
   return marked;
 }
 
+// [CARD: Reading Goal] start
 function buildGoalCard(){
   if (goalData.date !== todayStr()) {
     goalData = { target: goalData.target || 10, date: todayStr(), readKeys: [] };
@@ -1413,8 +1526,10 @@ function buildGoalCard(){
   box.appendChild(track);
   return box;
 }
+// [CARD: Reading Goal] end
 
 /* --- দ্রুত সূরা ও আয়াত নেভিগেশন (Quick Jump) --- */
+// [MENU: Quick Jump (surah/ayah)] start
 function initQuickJump(){
   const sSel = document.getElementById("jumpSurah");
   const aInp = document.getElementById("jumpAyah");
@@ -1469,6 +1584,7 @@ function initQuickJump(){
   goBtn.onclick = doJump;
   aInp.onkeydown = (e) => { if (e.key === "Enter") doJump(); };
 }
+// [MENU: Quick Jump (surah/ayah)] end
 
 
 /* --- আজকের বিশেষ আয়াত (Ayah of the Day) --- */
@@ -1491,6 +1607,7 @@ function getTodayAyah(){
   return DAILY_AYAHS[idx];
 }
 
+// [CARD: Ayah of the Day] start
 function buildAotdCard(){
   const base = getTodayAyah();
   // আরবি ও অনুবাদ সরাসরি অ্যাপের লাইসেন্স-যাচাইযোগ্য লোকাল ডেটা থেকে (হাতে লেখা নয়)
@@ -1576,6 +1693,7 @@ function buildAotdCard(){
   card.appendChild(foot);
   return card;
 }
+// [CARD: Ayah of the Day] end
 
 
 /* --- অডিও তেলাওয়াত ও প্লেয়ার --- */
@@ -2213,6 +2331,7 @@ async function copyText(text, okMsg){
   }
   return legacyCopy();
 }
+// [SHEET: Tafseer] start
 async function openTafseer(surahNo, ayahNo, label){
   const tfName = (TAFSIRS.find(t => t[0] === tafsirId) || TAFSIRS[0])[1];
   const previousFocus = document.activeElement;
@@ -2271,6 +2390,7 @@ async function openTafseer(surahNo, ayahNo, label){
     body.textContent = "তাফসির লোড করা যায়নি। ইন্টারনেট সংযোগ চেক করুন।";
   }
 }
+// [SHEET: Tafseer] end
 
 let currentEdition = lsGet("edition", "bn.bengali");
 document.getElementById("transSel").value = currentEdition;
@@ -2531,6 +2651,7 @@ function stripBismillah(text, surahNo, ayahNo){
   return rest.length > 0 ? rest : text;
 }
 
+// [TABS: Quran tab bar] start
 function renderTabs(){
   const selectedTab = TABS.some(([key]) => key === tab) ? tab : "all";
   tabsEl.setAttribute("role", "tablist");
@@ -2562,6 +2683,7 @@ function renderTabs(){
     tabsEl.appendChild(b);
   });
 }
+// [TABS: Quran tab bar] end
 
 /* রিফ্রেশে বর্তমান মোড ও ট্যাব ধরে রাখা ("qxNav" কী-তে সেভ) */
 var QX_NAV_MODES = ["quran","prayer","tasbih","dua","tracker","asma","hijri","hadith","more","saved","dict"];
@@ -2593,6 +2715,7 @@ function qxRestoreView(){
     }
   } catch(e){}
 }
+// [ROUTER: renderHome (mode -> page)] start
 function renderHome(){
   qxSaveView();
   stopTimer();
@@ -2611,6 +2734,7 @@ function renderHome(){
   if (QX_SECTIONS[mode]) return renderSection(mode);
   renderQuranHome();
 }
+// [ROUTER: renderHome (mode -> page)] end
 
 /* ===== কুরআন তালিকার গ্রিড / লিস্ট ভিউ (সব ট্যাবে) =====
    পছন্দ localStorage-এ "qxListView" নামে সেভ থাকে: "grid" বা "list". */
@@ -2729,6 +2853,7 @@ function qxSearchBox(value, placeholder, ariaLabel, onInput){
   box.append(ic, input);
   return box;
 }
+// [PAGE: Topics] start
 function renderTopics(){
   app.innerHTML = "";
   const sorted = qxSortTopics(QX_TOPICS.slice());
@@ -2782,6 +2907,7 @@ function renderTopics(){
   topicFoot.textContent = "উৎস: Quranic Arabic Corpus (corpus.quran.com) v0.4 | শব্দের ধাতু/Root ধরে গণনা";
   app.appendChild(topicFoot);
 }
+// [PAGE: Topics] end
 
 let qxDictQ = "", qxDictFilter = "all";
 
@@ -2798,11 +2924,14 @@ function qxDict150CountText(d){
 }
 
 /* "আরও" পেজ থেকে খোলা অভিধান পেজ (mode = "dict") */
+// [PAGE: Dictionary (More page wrapper)] start
 function renderDictPage(){
   showOther("{{abc}} শব্দার্থ");
   renderDict();
 }
+// [PAGE: Dictionary (More page wrapper)] end
 
+// [PAGE: Dictionary (tab)] start
 function renderDict(){
   app.innerHTML = "";
   const head = document.createElement("div");
@@ -2827,6 +2956,7 @@ function renderDict(){
   foot.textContent = "উৎস: " + QX_DICT150_SOURCE + (QX_DICT150_MEANING_SRC ? " | বাংলা অর্থ: " + QX_DICT150_MEANING_SRC : "");
   app.appendChild(foot);
 }
+// [PAGE: Dictionary (tab)] end
 
 function qxDict150Plain(s){
   return String(s || "").replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[آأإٱ]/g, "ا");
@@ -2835,6 +2965,7 @@ function qxDict150PronNorm(s){
   return String(s || "").replace(/[\s\-\u2010-\u2015]/g, "").toLowerCase();
 }
 
+// [PAGE: Dictionary List] start
 function renderDict150List(){
   const wrap = document.getElementById("qx-dict150-list"); if (!wrap) return;
   const qRaw = qxDict150Q.trim();
@@ -2868,6 +2999,7 @@ function renderDict150List(){
   wrap.appendChild(grid);
   if (!list.length) wrap.appendChild(msg("কিছু পাওয়া যায়নি"));
 }
+// [PAGE: Dictionary List] end
 
 /* উদাহরণ: আয়াতের আরবি ও অনুবাদ অ্যাপের নিজের ডেটা (window.QURAN) থেকে আসে; ডেটা ফাইলে শুধু রেফারেন্স, শব্দের ক্রম ও শব্দটা থাকে */
 function qxDict150AyahData(ref){
@@ -2914,6 +3046,7 @@ function qxDict150AyahNode(ex){
   return card;
 }
 
+// [PAGE: Dictionary Detail] start
 function renderDict150Detail(d, rank){
   qxNav.pushMode(); showOther(d[2]);
   const back = document.createElement("button");
@@ -2945,8 +3078,10 @@ function renderDict150Detail(d, rank){
     d[7].forEach(ex => app.appendChild(qxDict150AyahNode(ex)));
   }
 }
+// [PAGE: Dictionary Detail] end
 
 
+// [PAGE: Topic Detail] start
 function renderTopicDetail(t){
   window.qxTopicOpen = t;
   qxNav.pushMode();
@@ -2978,7 +3113,9 @@ function renderTopicDetail(t){
   });
   app.appendChild(grid);
 }
+// [PAGE: Topic Detail] end
 
+// [PAGE: Quran Home] start
 function renderQuranHome(){
   window.qxTopicOpen = null;
   document.body.classList.remove("inside-page");
@@ -3058,6 +3195,7 @@ function renderQuranHome(){
   });
   app.appendChild(surahGrid);
 }
+// [PAGE: Quran Home] end
 
 function item(n, name, sub, arName, onClick){
   const d = document.createElement("div"); d.className = "item";
@@ -3079,6 +3217,7 @@ function showToast(msg){
 }
 
 document.addEventListener("click", () => document.querySelectorAll(".ayah-menu.open").forEach(m => { m.classList.remove("open", "open-up", "align-left"); const trigger=m.parentElement && m.parentElement.querySelector(".more-btn"); if(trigger) trigger.setAttribute("aria-expanded", "false"); }));
+// [SHEET: Today] start
 function openTodaySheet(){
   const ov = document.createElement("div"); ov.className = "sheet-ov";
   const box = document.createElement("div"); box.className = "sheet-box";
@@ -3093,6 +3232,7 @@ function openTodaySheet(){
   box.addEventListener("click", (e) => { if (e.target.closest(".aotd-link")) close(false); });
   ov.appendChild(box); document.body.appendChild(ov);
 }
+// [SHEET: Today] end
 function ayahCard(label, ar, bn, a, removable){
   const d = document.createElement("div"); d.className = "ayah";
   d.tabIndex = -1;
@@ -3256,6 +3396,7 @@ function ayahCard(label, ar, bn, a, removable){
 // Prevent slower previous reader requests from replacing the page the user opened most recently.
 let readerRenderToken = 0;
 
+// [PAGE: Reader shell] start
 function showReader(title){
   document.body.classList.add("reader-active");
   titleEl.textContent = title;
@@ -3266,7 +3407,9 @@ function showReader(title){
   qEl.style.display = "none";
   window.scrollTo(0,0);
 }
+// [PAGE: Reader shell] end
 
+// [PAGE: Surah Reader] start
 async function openSurah(n, y, targetAyah){
   const renderToken = ++readerRenderToken;
   reading = last = {t:"s", n, y:0}; lsSet("last", last);
@@ -3303,7 +3446,9 @@ async function openSurah(n, y, targetAyah){
     if (renderToken === readerRenderToken) msg("লোড করা যায়নি। ইন্টারনেট চেক করে আবার চেষ্টা করুন।");
   }
 }
+// [PAGE: Surah Reader] end
 
+// [PAGE: Juz Reader] start
 async function openJuz(n, y){
   const renderToken = ++readerRenderToken;
   reading = last = {t:"j", n, y:0}; lsSet("last", last);
@@ -3330,6 +3475,7 @@ async function openJuz(n, y){
     if (renderToken === readerRenderToken) msg("লোড করা যায়নি। ইন্টারনেট চেক করে আবার চেষ্টা করুন।");
   }
 }
+// [PAGE: Juz Reader] end
 
 // Phase 7 v2.0.31 — Download + Offline + Cache helpers
 function qxP7DownloadHelpers(){

@@ -13,6 +13,49 @@
    LOAD ORDER: quran-data.js, data/topics.js, data/dictionary.js, data/district.js, js/quran.js, js/apps.js
 */
 
+// SECTION INDEX (search: "[NAME] start"). Blocks keep their original order (EDIT RULES #3).
+//   [NAV: setMode / nav highlight / showOther]
+//   [DATA: Ramadan, Kalima, QX_SECTIONS + qxRow]
+//   [PAGE-TOOLS: grid/list + card show/hide sheet]
+//   [PAGE: More]
+//   [PAGE: Section (generic list pages)]
+//   [PAGE: Saved (+ sheet/confirm helpers)]
+//   [PRAYER-CALC: methods, cities, times, adhan, alerts]
+//   [PAGE: Qibla]
+//   [PAGE: Prayer Alerts]
+//   [DATA: Namaz-e-Nabvi chapters]
+//   [PAGE: Prayer Learn (Namaz Shikkha)]
+//   [PRAYER-FLIP-CLOCK + tick sound]
+//   [PAGE: Prayer]
+//   [PAGE: Tasbih (+ duaTabs)]
+//   [PAGE: Dua (+ DUAS data)]
+//   [APP-PREFS: header wiring, font size, theme toggle, applyAppPrefs, online/offline toasts]
+//   [BACK-NAVIGATION: back button, popstate, qxNav, openSurah/openJuz wrappers]
+//   [GESTURES: swipe, pull-to-refresh, long-press]
+//   [ANDROID-BACK (Capacitor)]
+//   [UTILS: escape, clean data, timezone, ISO date]
+//   [BACKUP-RESTORE: export, import, reset]
+//   [MODAL: Help]
+//   [MODAL: Settings]
+//   [PRAYER-ALERT-CHECK (+ 5s timer)]
+//   [APP-INIT (restore view/nav)]
+//   [MORE-MENU + POPUPS: grid menu, search, filters, settings popups, home hero]
+//   [BARS-AUTO-HIDE on scroll]
+//   [HIFZ-MODE]
+//   [KHATAM-PLANNER]
+//   [AYAH-IMAGE-CARD]
+//   [TRACKER]
+//   [TAJWEED]
+//   [WORD-BY-WORD]
+//   [HIJRI-CALENDAR]
+//   [PWA: install + service worker]
+//   [FULL-RESET (qxFullReset)]
+//   [KEYBOARD: Escape closes overlays]
+//   [READER-PROGRESS bar placement]
+//   [READ-WIDTH toggle (widthToggle)]
+//   [QUICK-ACTIONS-BN: Bengali names + DOMContentLoaded apply]
+
+// [NAV: setMode / nav highlight / showOther] start
 /* ===== নামাজের সময়, তাসবিহ, দোয়া ===== */
 function qxNavHighlight(m){
   const isHome = m === "quran" && tab === "home";
@@ -49,7 +92,9 @@ function showOther(title){
   app.innerHTML = "";
   window.scrollTo(0,0);
 }
+// [NAV: setMode / nav highlight / showOther] end
 
+// [DATA: Ramadan, Kalima, QX_SECTIONS + qxRow] start
 /* --- আরও পেইজ ও নতুন বিভাগের পেইজ (তালিকা প্যাটার্ন) --- */
 var RAMADAN_ARTICLE = {
   intro: "রমজান রহমত, মাগফিরাত ও নাজাতের মাস। এই মাসে কুরআন নাজিল হয়েছে, রোজা ফরজ করা হয়েছে এবং জান্নাতের দরজাগুলো খুলে দেওয়া হয়। রোজা শুধু না খেয়ে থাকা নয় — চোখ, কান, জিহ্বা ও মনকে গুনাহ থেকে বাঁচিয়ে রাখাই আসল রোজা।",
@@ -82,6 +127,8 @@ function qxRow(icon, title, sub, onclick){
   b.onclick = onclick;
   return b;
 }
+// [DATA: Ramadan, Kalima, QX_SECTIONS + qxRow] end
+// [PAGE-TOOLS: grid/list + card show/hide sheet] start
 /* ===== পেজ টুলবার (হোম ও "আরও" পেজ): গ্রিড/লিস্ট + কার্ড দেখানো/লুকানো + কার্ড সাজানো =====
    পছন্দ localStorage-এ সেভ থাকে, রিফ্রেশ দিলেও থাকে। প্রতিটা পেজের নিজস্ব সেভ:
      ভিউ:   quranix_view_home / quranix_view_more   ("grid" = ডিফল্ট, "list")
@@ -256,6 +303,8 @@ function qxPageTools(page, groups, onChange){
   bar.appendChild(mkBtn('<svg class="ms-svg-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="' + QX_DASH_EDIT_PATH + '"/></svg>', "ড্যাশবোর্ড সাজান — কার্ড সাজান, যোগ ও সরান", () => qxOpenCardSheet(page, groups, onChange)));
   return bar;
 }
+// [PAGE-TOOLS: grid/list + card show/hide sheet] end
+// [PAGE: More] start
 function renderMore(){
   showOther("{{more_horiz}} আরও");
   const defs = [
@@ -279,6 +328,8 @@ function renderMore(){
   };
   draw();
 }
+// [PAGE: More] end
+// [PAGE: Section (generic list pages)] start
 function qxSecSource(card, ref){
   if(!ref) return;
   card.appendChild(qxNmSource(String(ref).replace(/^সূত্র:\s*/, "")));
@@ -338,7 +389,9 @@ function renderSection(key){
   }
   app.appendChild(page);
 }
+// [PAGE: Section (generic list pages)] end
 
+// [PAGE: Saved (+ sheet/confirm helpers)] start
 /* --- সংরক্ষিত পেইজ --- */
 var savedView = "cat";
 var savedFolder = null;
@@ -470,7 +523,9 @@ function renderSavedFolders(){
   nf.onclick = function(){ qxAskName("নতুন ফোল্ডার", "", function(name){ saved.folders.push({ id: "f" + Date.now(), name: name }); qxSaveStore(); renderSaved(); }); };
   app.appendChild(nf);
 }
+// [PAGE: Saved (+ sheet/confirm helpers)] end
 
+// [PRAYER-CALC: methods, cities, times, adhan, alerts] start
 /* --- নামাজের সময় ও ইউটিলিটি (Phase 3) --- */
 const D2R = Math.PI / 180;
 const dsin = d => Math.sin(d*D2R), dcos = d => Math.cos(d*D2R), dtan = d => Math.tan(d*D2R);
@@ -652,7 +707,9 @@ function renderPrayerSelectReset(){
   else if (loc.manual) prayerSel.value = "manual";
   else prayerSel.value = String(Math.max(0, CITIES.findIndex(c => c[0] === (loc.div || loc.n))));
 }
+// [PRAYER-CALC: methods, cities, times, adhan, alerts] end
 
+// [PAGE: Qibla] start
 /* --- কিবলা দিক ও দূরত্ব গণনা (Great Circle Bearing) --- */
 function calcQiblaInfo(lat, lng){
   const kLat = 21.422487 * D2R;
@@ -769,7 +826,9 @@ function renderQiblaView(){
   card.appendChild(btnRow);
   app.appendChild(card);
 }
+// [PAGE: Qibla] end
 
+// [PAGE: Prayer Alerts] start
 function renderAlertsView(){
   // বোতাম নতুন করে আঁকলে স্ক্রল ওপরে লাফায়; তাই শুধু টিক বোতাম বদলানো হয়
   function azTick(on, label){
@@ -854,8 +913,10 @@ function renderAlertsView(){
   });
   app.appendChild(listCard);
 }
+// [PAGE: Prayer Alerts] end
 
 
+// [DATA: Namaz-e-Nabvi chapters] start
 // ===== NAMAZ-E-NABVI (S) - Sheikh Albani - Chapter Wise Data for Quranix =====
 // Namaz-e-Nabvi: full-text chapters
 // ===== NAMAZ-E-NABVI (S) - 15 + 1 Source = 16 Chapters =====
@@ -1083,7 +1144,9 @@ const NAMAZ_NABVI_DATA = [
     ]
   }
 ];
+// [DATA: Namaz-e-Nabvi chapters] end
 
+// [PAGE: Prayer Learn (Namaz Shikkha)] start
 function qxNmIcon(kind){
   const p = { left:'M15 5l-7 7 7 7', right:'M9 5l7 7-7 7', book:'M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 20.5A2.5 2.5 0 0 0 6.5 23H20', check:'M5 12.5l4.5 4.5L19 7.5' }[kind];
   const s = document.createElement('span'); s.className = 'qx-nm-ic';
@@ -1217,8 +1280,10 @@ container.appendChild(qxListHeading(toBn(NAMAZ_NABVI_DATA.length) + "টি অ�
 
   app.appendChild(container);
 }
+// [PAGE: Prayer Learn (Namaz Shikkha)] end
 
 
+// [PRAYER-FLIP-CLOCK + tick sound] start
 /* --- নামাজের সময়: ফ্লিপ ক্লক (বাংলা সংখ্যা) + সেকেন্ডের টিক শব্দ --- */
 let qxTickCtx = null, qxTickOn = true, qxTickPhase = 0, qxCdTok = 0;
 try{ qxTickOn = localStorage.getItem("qxTick") !== "0"; }catch(e){}
@@ -1271,7 +1336,9 @@ function qxFlipSet(el, ms, noAnim){
   }
   el.setAttribute("aria-label", "আর " + fmtCd(ms) + " বাকি");
 }
+// [PRAYER-FLIP-CLOCK + tick sound] end
 
+// [PAGE: Prayer] start
 function renderPrayer(){
   window.qxCdResync = null;
   stopCompass();
@@ -1520,7 +1587,9 @@ function renderPrayer(){
     arm();
   }
 }
+// [PAGE: Prayer] end
 
+// [PAGE: Tasbih (+ duaTabs)] start
 /* --- তাসবিহ --- */
 const DHIKR = [["sub","সুবহানাল্লাহ","سُبْحَانَ اللَّهِ"],["ham","আলহামদুলিল্লাহ","الْحَمْدُ لِلَّهِ"],["akb","আল্লাহু আকবার","اللَّهُ أَكْبَرُ"],["free","ফ্রি",""]];
 function duaTabs(cur){
@@ -1618,7 +1687,9 @@ function renderTasbih(){
   page.appendChild(ctl);
   app.appendChild(page);
 }
+// [PAGE: Tasbih (+ duaTabs)] end
 
+// [PAGE: Dua (+ DUAS data)] start
 /* --- দোয়া ও তাসবিহ --- */
 const DUAS = [
   ["ঘুম ও জাগরণ", [
@@ -1733,7 +1804,9 @@ function renderDua(){
   });
   app.appendChild(page);
 }
+// [PAGE: Dua (+ DUAS data)] end
 
+// [APP-PREFS: header wiring, font size, theme toggle, applyAppPrefs, online/offline toasts] start
 backBtn.onclick = () => { if (readerPushed) { history.back(); } else { saveScroll(); reading = null; renderHome(); } };
 qEl.oninput = renderHome;
 function setFs(d){
@@ -1816,8 +1889,10 @@ applyAppPrefs();
 // Friendly Global Error Handler & Offline Network Status
 window.addEventListener("offline", () => showToast("অফলাইন মোড: সংরক্ষিত কুরআন ও ফিচার চালু আছে"));
 window.addEventListener("online", () => showToast("ইন্টারনেট সংযোগ পুনরায় স্থাপিত হয়েছে"));
+// [APP-PREFS: header wiring, font size, theme toggle, applyAppPrefs, online/offline toasts] end
 
 // Android WebView / Browser Back Button Navigation Handling
+// [BACK-NAVIGATION: back button, popstate, qxNav, openSurah/openJuz wrappers] start
 function handleBackNavigation(){
   if (qxNav.closeTopOverlay()) return true;
   if (document.querySelector(".qx-dict-detail")) {
@@ -1928,7 +2003,9 @@ const _origOpenSurah = openSurah;
 openSurah = async function(n, y, targetAyah){ pushReaderState(); return _origOpenSurah(n, y, targetAyah); };
 const _origOpenJuz = openJuz;
 openJuz = async function(n, y){ pushReaderState(); return _origOpenJuz(n, y); };
+// [BACK-NAVIGATION: back button, popstate, qxNav, openSurah/openJuz wrappers] end
 
+// [GESTURES: swipe, pull-to-refresh, long-press] start
 /* ===== জেসচার সিস্টেম =====
    নতুন জেসচার যোগ করতে: ১) QX_GESTURES তালিকায় একটা এন্ট্রি দিন, ২) নিচে তার হ্যান্ডলার লিখুন, শুরুতে qxGestureOn("id") দিয়ে চেক করুন।
    কাস্টমাইজেশন মেনুর "জেসচার" অংশে অন/অফ সুইচ নিজে থেকেই চলে আসবে। */
@@ -2176,7 +2253,9 @@ function qxReaderStep(dir){
     card.classList.remove("qx-dbl-pulse"); void card.offsetWidth; card.classList.add("qx-dbl-pulse");
   });
 })();
+// [GESTURES: swipe, pull-to-refresh, long-press] end
 
+// [ANDROID-BACK (Capacitor)] start
 // Capacitor (Android) হার্ডওয়্যার back বাটন
 try {
   const CapApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
@@ -2184,8 +2263,10 @@ try {
     CapApp.addListener("backButton", () => { if (!handleBackNavigation() && CapApp.exitApp) CapApp.exitApp(); });
   }
 } catch(e){}
+// [ANDROID-BACK (Capacitor)] end
 
 // Backup & Restore Utilities
+// [UTILS: escape, clean data, timezone, ISO date] start
 function qxEscapeHtml(str){
   const d=document.createElement('div'); d.textContent=String(str??''); return d.innerHTML;
 }
@@ -2257,7 +2338,9 @@ function getLocalISO(){
   const hh = pad(tzOffset/60), mm = pad(tzOffset%60);
   return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+sign+hh+':'+mm;
 }
+// [UTILS: escape, clean data, timezone, ISO date] end
 
+// [BACKUP-RESTORE: export, import, reset] start
 async function exportUserBackup(){
   const backup = {
     app: "Quranix",
@@ -2447,8 +2530,10 @@ async function resetAllAppData(){
   showToast("Quranix-এর সব স্থানীয় ডেটা রিসেট হয়েছে");
   setTimeout(() => location.reload(), 600);
 }
+// [BACKUP-RESTORE: export, import, reset] end
 
 // Onboarding / User Guide Modal
+// [MODAL: Help] start
 function openHelpModal(isFirstTime){
   const previousFocus = document.activeElement;
   const overlay = document.createElement("div"); overlay.className = "modal-overlay";
@@ -2497,8 +2582,10 @@ function openHelpModal(isFirstTime){
   };
   document.body.appendChild(overlay);
 }
+// [MODAL: Help] end
 
 // Comprehensive Settings Modal (Phase 4)
+// [MODAL: Settings] start
 function openSettingsModal() {
   const dd = document.getElementById("gridDropdown"), gm = document.getElementById("gridMenu");
   if (!dd) return;
@@ -2679,7 +2766,9 @@ function openSettingsModal() {
   dd.scrollTop = 0;
   document.addEventListener("keydown", onSettingsKeydown);
 }
+// [MODAL: Settings] end
 
+// [PRAYER-ALERT-CHECK (+ 5s timer)] start
 function checkPrayerAlerts(){
   if (!alertCfg.enabled) return;
   const n = new Date(), t = calcDay(n, loc.lat, loc.lng, asrF);
@@ -2690,7 +2779,9 @@ function checkPrayerAlerts(){
   }
 }
 setInterval(checkPrayerAlerts, 5000);
+// [PRAYER-ALERT-CHECK (+ 5s timer)] end
 
+// [APP-INIT (restore view/nav)] start
 (async function init(){
   qxRestoreView();
   qxRestoreNav();
@@ -2706,10 +2797,12 @@ setInterval(checkPrayerAlerts, 5000);
     }
   } catch(e) { msg("সূরার তালিকা লোড করা যায়নি। ইন্টারনেট চেক করুন।"); }
 })();
+// [APP-INIT (restore view/nav)] end
 
 
 
 
+// [MORE-MENU + POPUPS: grid menu, search, filters, settings popups, home hero] start
 (function(){
   const gridBtn = document.getElementById('gridMenu');
   const dd = document.getElementById('gridDropdown');
@@ -3168,10 +3261,12 @@ setInterval(checkPrayerAlerts, 5000);
   }
   if(origRenderQuranHome){ window.renderQuranHome=function(){ origRenderQuranHome(); buildHero(); }; setTimeout(function(){ if(typeof renderHome==='function') renderHome(); }, 100); }
 })();
+// [MORE-MENU + POPUPS: grid menu, search, filters, settings popups, home hero] end
 
 
 
 
+// [BARS-AUTO-HIDE on scroll] start
 (function(){
   var lastY=window.scrollY, ticking=false;
   window.addEventListener('scroll',function(){
@@ -3187,10 +3282,12 @@ setInterval(checkPrayerAlerts, 5000);
     });
   },{passive:true});
 })();
+// [BARS-AUTO-HIDE on scroll] end
 
 
 
 
+// [HIFZ-MODE] start
 /* ===== STEP 1: HIFZ MODE ===== */
 (function(){
   var MODE = localStorage.getItem('quranix_hifz_mode') || 'off'; // off | bn | ar | both
@@ -3257,10 +3354,12 @@ setInterval(checkPrayerAlerts, 5000);
   addToggle(); setTimeout(addToggle, 500); applyMode();
   window.quranixHifz = { getMode:function(){return MODE;}, setMode:function(m){MODE=m;save();applyMode();} };
 })();
+// [HIFZ-MODE] end
 
 
 
 
+// [KHATAM-PLANNER] start
 /* ===== STEP 2: KHATAM PLANNER ===== */
 (function(){
   var KEY='quranix_khatam', TOTAL=6236;
@@ -3646,10 +3745,12 @@ setInterval(checkPrayerAlerts, 5000);
     }catch(e){}
   };
 })();
+// [KHATAM-PLANNER] end
 
 
 
 
+// [AYAH-IMAGE-CARD] start
 /* ===== STEP 4: AYAH IMAGE CARD ===== */
 window.openAyahCard = function(label, ar, bn){
   const THEMES =[
@@ -3745,10 +3846,12 @@ window.openAyahCard = function(label, ar, bn){
   if(document.fonts && document.fonts.load){ Promise.all([document.fonts.load('84px "Noto Naskh Arabic"'),document.fonts.load('28px "Hind Siliguri"'),document.fonts.load('600 34px "Hind Siliguri"')]).catch(function(){}).finally(function(){ draw(); setTimeout(draw, 300); }); }
   draw();
 };
+// [AYAH-IMAGE-CARD] end
 
 
 
 
+// [TRACKER] start
 /* ===== STEP 5: TRACKER WINDOW - MULTI CATEGORY ===== */
 function trkToday(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function trkLoad(){
@@ -3898,10 +4001,12 @@ function renderTracker(){
   if(_prevScroll>0){ setTimeout(function(){ window.scrollTo(0,_prevScroll); }, 0); }
 }
 window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
+// [TRACKER] end
 
 
 
 
+// [TAJWEED] start
 /* ===== TAJWEED COLOR CODE ===== */
 (function(){
   var ON = localStorage.getItem('quranix_tajweed')==='1';
@@ -3993,10 +4098,12 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   document.addEventListener('click', function(){ setTimeout(apply, 400); });
   setTimeout(apply, 800);
 })();
+// [TAJWEED] end
 
 
 
 
+// [WORD-BY-WORD] start
 /* ===== WORD-BY-WORD TRANSLATION ===== */
 (function(){
   var ON = localStorage.getItem('quranix_ww')==='1';
@@ -4111,11 +4218,13 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   document.addEventListener('click', function(){ setTimeout(function(){ if(ON) apply(); }, 400); });
   setTimeout(apply, 800);
 })();
+// [WORD-BY-WORD] end
 
 
 
 
 
+// [HIJRI-CALENDAR] start
 /* ===== HIJRI CALENDAR ===== */
 (function(){
   var MONTHS_BN=['মুহাররম','সফর','রবিউল আউয়াল','রবিউল আখির','জুমাদাল উলা','জুমাদাল আখিরা','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'];
@@ -4350,10 +4459,12 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   }
   window.renderHijri=renderHijri; window.buildHijriCard=buildHijriCard; window.quranixHijri={hijriStr:hijriStr, nextEvent:nextEvent};
 })();
+// [HIJRI-CALENDAR] end
 
 
 
 
+// [PWA: install + service worker] start
 /* ===== PWA: install + service worker ===== */
 (function(){
   var deferred = null;
@@ -4529,11 +4640,13 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
 
   updateMini();
 })();
+// [PWA: install + service worker] end
 
 
 
 
 // PHASE 1 - Reliability Fixes (matching only)
+// [FULL-RESET (qxFullReset)] start
 (function(){
   // 1.1 Full Reset: remove Quranix-owned data only; leave unrelated origin data intact.
   window.qxFullReset = async function(){
@@ -4680,11 +4793,13 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   }catch(e){ document.documentElement.classList.remove('icons-pending'); }
 
 })();
+// [FULL-RESET (qxFullReset)] end
 
 
 
 
 // PHASE 3 - Accessibility + Responsive
+// [KEYBOARD: Escape closes overlays] start
 (function(){
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape'){
@@ -4712,10 +4827,12 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   const logo = document.querySelector('.app-logo');
   if (logo && !logo.getAttribute('alt')) logo.setAttribute('alt','Quranix লোগো');
 })();
+// [KEYBOARD: Escape closes overlays] end
 
 
 
 
+// [READER-PROGRESS bar placement] start
 (function(){
   var rp = document.getElementById("readerProgress");
   if(rp && rp.parentNode !== document.body) document.body.appendChild(rp);
@@ -4724,10 +4841,12 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
     if(typeof window.goHome === "function") window.goHome();
   });
 })();
+// [READER-PROGRESS bar placement] end
 
 
 
 
+// [READ-WIDTH toggle (widthToggle)] start
 (function(){
   var K='quranix_readwide', b=document.body, btn=document.getElementById('widthToggle');
   if(!btn) return;
@@ -4736,7 +4855,9 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
   apply(w);
   btn.onclick=function(){ w=!w; apply(w); try{ localStorage.setItem(K, w?'1':'0'); }catch(e){} };
 })();
+// [READ-WIDTH toggle (widthToggle)] end
 
+// [QUICK-ACTIONS-BN: Bengali names + DOMContentLoaded apply] start
 // Quick Actions বাংলা নাম (গ্রিড/লিস্ট, হোম কাস্টমাইজ ও ড্যাশবোর্ড এডিট এখন হোম ও "আরও" পেজের টুলবারে: qxPageTools)
 window.QX_QUICK_ACTIONS_BN = {
   "hijri": "হিজরি ক্যালেন্ডার",
@@ -4774,4 +4895,5 @@ document.addEventListener('DOMContentLoaded', () => {
   try{ qxApplyQuickActionsBN(); }catch(e){}
 });
 setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
+// [QUICK-ACTIONS-BN: Bengali names + DOMContentLoaded apply] end
 

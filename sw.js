@@ -1,14 +1,15 @@
-const CACHE = 'quranix-v2.0.62';
+const CACHE = 'quranix-v2.0.65';
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/js/quran.js',
-  '/js/apps.js',
   '/quran-data.js',
   '/data/topics.js',
   '/data/dictionary.js',
   '/data/district.js',
+  '/data/hadith.js',
+  '/js/quran.js',
+  '/js/apps.js'
   '/fonts/material-symbols-rounded.woff2',
   '/fonts/islamic-icons.ttf',
   '/fonts/hind-siliguri-300.woff',
@@ -31,11 +32,11 @@ const ASSETS = [
   '/icons/icon-512.png'
 ];
 
-// Code and data files (html/js/css/json): network first, fallback to cache for instant updates
-// Images and fonts: cache first
+// কোড ও ডেটা ফাইল (html/js/css/json): আগে নেটওয়ার্ক, না পেলে ক্যাশ। এতে ফাইল বদলালে সাইটে সাথে সাথে apply হয়।
+// ছবি ও ফন্ট: আগে ক্যাশ।
 const NET_WAIT_MS = 4000;
 
-// clean old caches
+// P9: clean old caches
 async function clean(){
   const keys = await caches.keys();
   await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
@@ -44,7 +45,7 @@ async function clean(){
 self.addEventListener('install', e=>{
   e.waitUntil(
     caches.open(CACHE)
-      // Skip failed assets to prevent install failure
+      // একটা ফাইল না থাকলেও পুরো ইনস্টল ব্যর্থ হবে না
       .then(c=>Promise.all(ASSETS.map(u=>c.add(new Request(u, {cache: 'reload'})).catch(()=>{}))))
       .then(()=>self.skipWaiting())
   );
@@ -72,7 +73,8 @@ async function networkFirst(req, cacheReq){
   }catch(err){
     const cached = await cache.match(cacheReq);
     if(cached) return cached;
-    throw err;
+    // P9: 503 fallback
+    return new Response('Offline', {status: 503, statusText: 'Service Unavailable', headers: {'Content-Type':'text/plain'}});
   }
 }
 
@@ -85,7 +87,7 @@ async function cacheFirst(req, cacheReq){
     if(res && res.ok) cache.put(cacheReq, res.clone());
     return res;
   }catch(err){
-    throw err;
+    return new Response('Offline', {status: 503, statusText: 'Service Unavailable', headers: {'Content-Type':'text/plain'}});
   }
 }
 
@@ -93,9 +95,9 @@ self.addEventListener('fetch', e=>{
   const req = e.request;
   if(req.method !== 'GET') return;
   const url = new URL(req.url);
-  // same-origin only
+  // P9: same-origin only
   if(url.origin !== self.location.origin) return;
-  // ignore search for api / quran data
+  // P9: ignoreSearch for api / quran data
   const ignoreSearch = url.pathname.includes('/api/') || url.pathname.includes('quran-data');
   const cacheReq = ignoreSearch ? new Request(url.origin + url.pathname) : req;
   e.respondWith(isCode(req, url) ? networkFirst(req, cacheReq) : cacheFirst(req, cacheReq));
