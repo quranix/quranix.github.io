@@ -1413,6 +1413,58 @@ body.inside-page h1 {
 
 
 /* [AUDIO-BAR] start */
+/* [AUDIO-BAR > container] player bar fixed above the footer menu */
+.audio-bar {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: env(safe-area-inset-bottom);
+  z-index: 50;
+  background: var(--qx-card-bg);
+  border-top: 1px solid var(--qx-border);
+  box-shadow: 0 -4px 16px rgba(0,0,0,.10);
+}
+.audio-bar.show,
+.audio-bar.on,
+.audio-bar.open,
+.audio-bar.active,
+.audio-bar.visible {
+  display: block;
+}
+.audio-bar.with-nav {
+  bottom: calc(66px * var(--qx-scale) + env(safe-area-inset-bottom));
+}
+.audio-bar .audio-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.audio-bar .audio-progress-top {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.audio-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.audio-info b {
+  font-size: var(--qx-fs-md);
+}
+.audio-info small,
+.audio-status {
+  font-size: 11px;
+  color: var(--qx-meta-color);
+}
+.audio-status {
+  text-align: center;
+  padding: 0 14px 6px;
+}
 .audio-progress-top {
   position: absolute;
   height: 5px;
@@ -9212,6 +9264,38 @@ html[data-theme="dark"] .trk-cat {
   min-height: 44px;
 }
 
+
+/* [PHASE-2] Task 46 — Azan alert screen */
+.qx-azan-head { margin-bottom:12px; }
+.qx-azan-status { font-size:13px; opacity:.9; margin-top:5px; }
+.qx-azan-next-card {
+  margin:0 var(--qx-gutter) 14px; padding:18px 18px 20px; border-radius:20px;
+  color:#fff; background:linear-gradient(135deg,#087a43,#16a34a 68%,#22c55e);
+  box-shadow:0 8px 22px rgba(22,163,74,.16); text-align:center;
+}
+.qx-azan-next-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.qx-azan-next-label { font-size:13px; font-weight:700; opacity:.95; }
+.qx-azan-next-icon { font-size:24px; line-height:1; }
+.qx-azan-next-name { font-size:25px; font-weight:800; margin-top:5px; }
+.qx-azan-next-time { font-size:16px; opacity:.95; margin-top:2px; }
+.qx-azan-countdown { font-size:clamp(26px,7vw,34px); font-weight:800; letter-spacing:1px; font-variant-numeric:tabular-nums; margin-top:10px; }
+.qx-azan-list-card,.qx-azan-settings { margin-top:12px; }
+.qx-azan-prayer-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 13px; margin-top:8px; border:1px solid var(--qx-border); border-radius:14px; background:var(--qx-card-bg); transition:border-color .15s,background .15s; }
+.qx-azan-prayer-row.active { border:2px solid #16a34a; background:rgba(22,163,74,.08); padding:11px 12px; }
+.qx-azan-prayer-info { min-width:0; display:grid; grid-template-columns:auto auto; align-items:center; column-gap:10px; row-gap:2px; }
+.qx-azan-prayer-info b { font-size:15px; }
+.qx-azan-prayer-time { font-size:14px; font-weight:700; color:var(--qx-text-color); }
+.qx-azan-prayer-left { grid-column:1 / -1; color:var(--qx-muted); font-size:12px; }
+.qx-azan-toggle { width:42px; height:42px; flex:0 0 42px; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-muted); font-size:18px; cursor:pointer; }
+.qx-azan-toggle.on { color:#15803d; background:#dcfce7; border-color:#86efac; }
+.qx-azan-master-toggle,.qx-azan-test-btn { width:100%; min-height:44px; border-radius:12px; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; font-weight:700; margin:8px 0; cursor:pointer; }
+.qx-azan-master-toggle.on { color:#166534; background:#dcfce7; border-color:#86efac; }
+.qx-azan-sound-label { display:flex; flex-direction:column; gap:7px; margin:12px 0; font-size:14px; font-weight:700; }
+.qx-azan-sound-select { width:100%; min-height:44px; padding:0 12px; border:1px solid var(--qx-border); border-radius:12px; background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; }
+.qx-azan-test-btn { color:var(--qx-main-color); }
+.qx-azan-save-btn { display:block; width:100%; margin:14px 0 2px; min-height:50px; border:0; border-radius:999px; background:#16a34a; color:#fff; font:inherit; font-weight:800; cursor:pointer; }
+.qx-azan-save-btn:focus-visible,.qx-azan-toggle:focus-visible,.qx-azan-master-toggle:focus-visible,.qx-azan-test-btn:focus-visible { outline:3px solid rgba(22,163,74,.35); outline-offset:2px; }
+@media(max-width:380px){ .qx-azan-next-card{padding:15px}.qx-azan-prayer-row{padding:10px}.qx-azan-prayer-row.active{padding:9px 9px}.qx-azan-prayer-info{column-gap:7px} }
 </style>
 </head>
 <body>
@@ -9427,34 +9511,3 @@ html[data-theme="dark"] .trk-cat {
 
 </body>
 </html>
-/* [PHASE-2] Task 46 — Azan alert screen */
-.qx-azan-head { margin-bottom:12px; }
-.qx-azan-status { font-size:13px; opacity:.9; margin-top:5px; }
-.qx-azan-next-card {
-  margin:0 var(--qx-gutter) 14px; padding:18px 18px 20px; border-radius:20px;
-  color:#fff; background:linear-gradient(135deg,#087a43,#16a34a 68%,#22c55e);
-  box-shadow:0 8px 22px rgba(22,163,74,.16); text-align:center;
-}
-.qx-azan-next-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
-.qx-azan-next-label { font-size:13px; font-weight:700; opacity:.95; }
-.qx-azan-next-icon { font-size:24px; line-height:1; }
-.qx-azan-next-name { font-size:25px; font-weight:800; margin-top:5px; }
-.qx-azan-next-time { font-size:16px; opacity:.95; margin-top:2px; }
-.qx-azan-countdown { font-size:clamp(26px,7vw,34px); font-weight:800; letter-spacing:1px; font-variant-numeric:tabular-nums; margin-top:10px; }
-.qx-azan-list-card,.qx-azan-settings { margin-top:12px; }
-.qx-azan-prayer-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 13px; margin-top:8px; border:1px solid var(--qx-border); border-radius:14px; background:var(--qx-card-bg); transition:border-color .15s,background .15s; }
-.qx-azan-prayer-row.active { border:2px solid #16a34a; background:rgba(22,163,74,.08); padding:11px 12px; }
-.qx-azan-prayer-info { min-width:0; display:grid; grid-template-columns:auto auto; align-items:center; column-gap:10px; row-gap:2px; }
-.qx-azan-prayer-info b { font-size:15px; }
-.qx-azan-prayer-time { font-size:14px; font-weight:700; color:var(--qx-text-color); }
-.qx-azan-prayer-left { grid-column:1 / -1; color:var(--qx-muted); font-size:12px; }
-.qx-azan-toggle { width:42px; height:42px; flex:0 0 42px; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-muted); font-size:18px; cursor:pointer; }
-.qx-azan-toggle.on { color:#15803d; background:#dcfce7; border-color:#86efac; }
-.qx-azan-master-toggle,.qx-azan-test-btn { width:100%; min-height:44px; border-radius:12px; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; font-weight:700; margin:8px 0; cursor:pointer; }
-.qx-azan-master-toggle.on { color:#166534; background:#dcfce7; border-color:#86efac; }
-.qx-azan-sound-label { display:flex; flex-direction:column; gap:7px; margin:12px 0; font-size:14px; font-weight:700; }
-.qx-azan-sound-select { width:100%; min-height:44px; padding:0 12px; border:1px solid var(--qx-border); border-radius:12px; background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; }
-.qx-azan-test-btn { color:var(--qx-main-color); }
-.qx-azan-save-btn { display:block; width:100%; margin:14px 0 2px; min-height:50px; border:0; border-radius:999px; background:#16a34a; color:#fff; font:inherit; font-weight:800; cursor:pointer; }
-.qx-azan-save-btn:focus-visible,.qx-azan-toggle:focus-visible,.qx-azan-master-toggle:focus-visible,.qx-azan-test-btn:focus-visible { outline:3px solid rgba(22,163,74,.35); outline-offset:2px; }
-@media(max-width:380px){ .qx-azan-next-card{padding:15px}.qx-azan-prayer-row{padding:10px}.qx-azan-prayer-row.active{padding:9px 9px}.qx-azan-prayer-info{column-gap:7px} }
