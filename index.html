@@ -425,24 +425,57 @@ header {
   position: fixed;
   left: 0;
   right: 0;
-  top: 0;
-  z-index: 9999;
-  height: 2px;
-  background: transparent;
+  top: var(--qx-hdr-h, calc(62px + env(safe-area-inset-top)));
+  z-index: 49;
+  height: 28px;
+  background: var(--qx-card-bg);
+  border-bottom: 1px solid var(--qx-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 var(--qx-gutter);
   opacity: 0;
   pointer-events: none;
-  transition: opacity .2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: opacity .2s ease, top .25s ease;
+}
+
+.reader-progress-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--qx-border);
+  overflow: hidden;
 }
 
 .reader-progress-fill {
   height: 100%;
   width: 0;
   background: var(--qx-main-color);
+  border-radius: 999px;
   transition: width .12s linear;
+}
+
+body.bars-hidden .reader-progress {
+  top: env(safe-area-inset-top, 0px);
+}
+
+.reader-progress-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--qx-main-color);
+  min-width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 body.reader-active .reader-progress {
   opacity: 1;
+  pointer-events: auto;
+}
+
+body.reader-active #app {
+  margin-top: 28px;
 }
 
 .bar {
@@ -584,7 +617,7 @@ body.bars-hidden header {
   transform: translateX(-50%);
   background: var(--qx-text-color);
   color: var(--qx-bg);
-  padding: calc(6px * var(--qx-scale)) calc(14px * var(--qx-scale));
+  padding: calc(8px * var(--qx-scale)) calc(16px * var(--qx-scale));
   border-radius: var(--qx-radius-lg);
   font-size: var(--qx-fs-md);
   z-index: var(--qx-z-toast);
@@ -598,12 +631,12 @@ body.bars-hidden header {
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
-  padding: calc(14px * var(--qx-scale));
-  margin: 8px 0;
+  padding: calc(10px * var(--qx-scale));
+  margin: 6px 0;
   cursor: pointer;
 }
 
@@ -1660,18 +1693,20 @@ body.inside-page h1 {
 
 /* [QIBLA] start */
 .qibla-box {
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: calc(16px * var(--qx-scale)) calc(10px * var(--qx-scale));
+  padding: 12px var(--qx-gutter);
   text-align: center;
   gap: 8px;
 }
 
 .compass-dial {
   position: relative;
-  width: min(68vw,250px);
-  height: min(68vw,250px);
+  width: min(80vw, 300px);
+  height: min(80vw, 300px);
   border-radius: 50%;
   border: 4px solid var(--qx-main-color);
   background: var(--qx-card-bg);
@@ -1680,8 +1715,8 @@ body.inside-page h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 250px;
-  max-height: 250px;
+  max-width: 300px;
+  max-height: 300px;
   border-width: 3px;
 }
 
@@ -1734,15 +1769,15 @@ body.inside-page h1 {
   top: 14px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--qx-main-color);
+  background: #16a34a;
   color: var(--qx-on-main);
   padding: 0;
   border-radius: 50%;
   font-size: var(--qx-fs-lg);
   font-weight: 700;
   box-shadow: var(--qx-shadow);
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
 }
@@ -1752,17 +1787,17 @@ body.inside-page h1 {
   top: 46px;
   bottom: 50%;
   left: 50%;
-  width: 4px;
-  margin-left: -2px;
-  background: var(--qx-main-color);
+  width: 6px;
+  margin-left: -3px;
+  background: #16a34a;
   border-radius: 4px;
 }
 
 .compass-center {
-  width: calc(14px * var(--qx-scale));
-  height: calc(14px * var(--qx-scale));
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: var(--qx-main-color);
+  background: #16a34a;
   z-index: 2;
   border: 2px solid var(--qx-card-bg);
 }
@@ -2717,16 +2752,23 @@ button:focus-visible,select:focus-visible,input:focus-visible {
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: calc(20px * var(--qx-scale));
+  padding: calc(24px * var(--qx-scale));
   border: 1px solid var(--qx-border);
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 .close-btn {
-  background: none;
-  border: 0;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: calc(40px * var(--qx-scale));
+  height: calc(40px * var(--qx-scale));
+  padding: 0;
+  border: 1px solid var(--qx-border);
+  border-radius: var(--qx-radius-lg);
+  background: var(--qx-card-bg);
+  color: var(--qx-meta-color);
   font-size: calc(20px * var(--qx-scale));
   cursor: pointer;
-  color: var(--qx-meta-color);
 }
 .sheet-ov {
   position: fixed;
@@ -3857,8 +3899,8 @@ body.ww-on .ayah .ar .ww-word {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
-  padding: calc(12px * var(--qx-scale));
-  margin: 8px 0;
+  padding: calc(8px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  margin: 6px 0;
   cursor: pointer;
   position: relative;
 }
@@ -4032,7 +4074,6 @@ body.inside-page .ayah .icon-btn:focus-visible, body.inside-page .ayah .star:foc
 .aotd-card {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
-  border-left: 4px solid var(--qx-main-color);
   border-radius: var(--qx-radius-lg);
   padding: calc(14px * var(--qx-scale));
   margin: 10px 0 14px;
@@ -4326,7 +4367,7 @@ nav button b .ms {
 .surah-grid {
   display: grid;
   grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .surah-grid .surah-item {
@@ -4335,17 +4376,17 @@ nav button b .ms {
 }
 
 .surah-grid:not(.is-list) .surah-item {
-  padding: calc(10px * var(--qx-scale));
-  gap: 6px 8px;
+  padding: calc(8px * var(--qx-scale));
+  gap: 6px;
   flex-wrap: wrap;
   align-content: flex-start;
 }
 .surah-grid.is-list {
-  grid-template-columns: minmax(0,1fr);
+  grid-template-columns: minmax(0,1fr);  gap: 10px;
 }
 
 .surah-grid.is-list .surah-item {
-  padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  padding: calc(8px * var(--qx-scale)) calc(12px * var(--qx-scale));
   gap: 12px;
   flex-wrap: nowrap;
   align-items: center;
@@ -4426,7 +4467,7 @@ nav button b .ms {
 .home-tiles {
   display: grid;
   grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 10px;
+  gap: 8px;
   margin: 12px auto 18px;
   max-width: 100%;
   width: 100%;
@@ -4438,8 +4479,8 @@ nav button b .ms {
   display: grid;
   grid-template-columns: auto minmax(0,1fr);
   align-items: center;
-  gap: 10px;
-  padding: calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  gap: 6px;
+  padding: calc(8px * var(--qx-scale)) calc(12px * var(--qx-scale));
   text-align: left;
   background: var(--qx-card-bg);
   border: 1px solid color-mix(in srgb,var(--qx-main-color) 35%,var(--qx-border));
@@ -4968,7 +5009,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   display: block;
   width: 100%;
   margin: 12px 0 0;
-  padding: var(--qx-pad-item);
+  padding: calc(16px * var(--qx-scale)) calc(20px * var(--qx-scale));
   border-radius: var(--qx-radius);
   background: var(--qx-main-color);
   color: var(--qx-on-main);
@@ -5529,7 +5570,7 @@ body.read-wide #widthToggle .wt-narrow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .p3-header .grid-icon-btn, .prayer-edu-header .grid-icon-btn {
@@ -5579,6 +5620,10 @@ html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count {
   border: 1px solid var(--qx-border);
   color: var(--qx-main-color);
 }
+.qx-view-btn.on {
+  border-color: var(--qx-main-color);
+  background: var(--qx-hover);
+}
 
 .qx-view-btn .ms {
   font-size: calc(22px * var(--qx-scale));
@@ -5601,16 +5646,16 @@ html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count {
 .qx-dua-act {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 8px;
 }
 .qx-dua-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px 12px;
-  margin-top: 10px;
+  gap: 6px 8px;
+  margin-top: 8px;
 }
 
 .qx-dua-foot .qx-dua-act {
@@ -7121,7 +7166,7 @@ body.qx-home-edit-mode .home-quick-btn::after {
     font-size: var(--qx-fs-xl);
   }
   .home-tiles {
-    gap: 10px;
+    gap: 12px;
   }
   .hijri-info-overlay {
     padding: calc(10px * var(--qx-scale));
@@ -8083,11 +8128,6 @@ body.qx-g-ptr {
 }
 /* [BOTTOM-SHEET] end */
 
-
-
-
-/* P14 A - Light mode blur color fix */
-
 /* [HIJRI-CALENDAR] start */
 .hijri-info-overlay {
   position: fixed;
@@ -8102,11 +8142,6 @@ body.qx-g-ptr {
   -webkit-backdrop-filter: blur(6px);
 }
 /* [HIJRI-CALENDAR] end */
-
-
-
-
-/* P14 J-11 - Tracker design */
 
 /* [TRACKER] start */
 .trk-head {
@@ -8161,6 +8196,151 @@ body.qx-g-ptr {
   font-size: var(--qx-fs-xs);
 }
 /* [TRACKER] end */
+
+/* [TRACKER-SUMMARY] start */
+.trk-sum-wrap {
+  max-width: 520px;
+  margin: 0 auto 14px;
+}
+.trk-sum {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 0 14px;
+}
+.trk-sum-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px 12px;
+  border: 1px solid var(--qx-border);
+  border-radius: 18px;
+  background: var(--qx-card-bg);
+  box-shadow: 0 1px 6px rgba(0,0,0,.04);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.trk-sum-item:active {
+  transform: scale(.98);
+}
+.trk-sum-item:last-child {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc(50% - 7px);
+}
+.trk-ring {
+  display: block;
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+}
+.trk-ring-track {
+  fill: none;
+  stroke: var(--qx-border);
+  stroke-width: 10;
+}
+.trk-ring-arc {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .5s ease;
+}
+.trk-ring-num {
+  font-family: inherit;
+  font-weight: 800;
+  fill: var(--qx-text-color);
+  text-anchor: middle;
+}
+.trk-ring-badge {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 11px;
+  text-anchor: middle;
+}
+.trk-sum-name {
+  font-size: var(--qx-fs-md);
+  font-weight: 700;
+  color: var(--qx-text-color);
+}
+.trk-sum-meta {
+  font-size: var(--qx-fs-xs);
+  color: var(--qx-meta-color);
+  text-align: center;
+}
+.trk-overall {
+  padding: 14px;
+  border: 1px solid var(--qx-border);
+  border-radius: 16px;
+  background: var(--qx-card-bg);
+  box-shadow: 0 1px 6px rgba(0,0,0,.04);
+}
+.trk-overall-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: var(--qx-fs-md);
+}
+.trk-overall-row span {
+  color: var(--qx-main-color);
+  font-weight: 800;
+}
+.trk-overall-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--qx-border);
+  overflow: hidden;
+}
+.trk-overall-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--qx-main-color);
+  transition: width .4s ease;
+}
+.trk-cat {
+  scroll-margin-top: 84px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .trk-ring-arc,
+  .trk-overall-fill { transition: none; }
+}
+/* [TRACKER-SUMMARY] end */
+
+/* [TRACKER-REPORT] start */
+.trk-rep { text-align: center; padding: 4px 2px 6px; }
+.trk-rep-date { display: block; color: var(--qx-meta-color); font-size: var(--qx-fs-xs); }
+.trk-rep-ring { max-width: 210px; margin: 6px auto 0; }
+.trk-rep-ring .trk-ring { max-width: 210px; }
+.trk-rep-cap { color: var(--qx-meta-color); font-size: var(--qx-fs-sm); margin: 2px 0 14px; }
+.trk-prayers { display: grid; gap: 8px; margin: 0 0 14px; text-align: left; }
+.trk-prayer { display: flex; align-items: center; gap: 10px; }
+.trk-prayer span { flex: 0 0 96px; font-weight: 600; font-size: var(--qx-fs-sm); }
+.trk-prayer i { flex: 1; height: 12px; border-radius: 999px; background: var(--qx-border); }
+.trk-prayer.on i { background: var(--trk-c, var(--qx-main-color)); }
+.trk-rep-h { margin: 6px 0 8px; font-size: var(--qx-fs-sm); color: var(--qx-meta-color); font-weight: 600; text-align: left; }
+.trk-bars { display: flex; align-items: flex-end; gap: 8px; height: 96px; margin: 0 0 6px; }
+.trk-bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; min-width: 0; }
+.trk-bar-col { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.trk-bar-col i { display: block; width: 70%; max-width: 28px; border-radius: 6px 6px 3px 3px; }
+.trk-bar span { font-size: 10px; color: var(--qx-meta-color); white-space: nowrap; }
+.trk-bar.today span { color: var(--qx-text-color); font-weight: 700; }
+.trk-rep-note { margin: 10px 0 4px; padding: 10px; border-radius: 12px; background: var(--qx-hover); font-size: var(--qx-fs-sm); }
+.trk-rep-note b { color: var(--trk-c, var(--qx-main-color)); }
+.trk-stats { display: flex; gap: 8px; margin: 0 0 10px; }
+.trk-stat { flex: 1; padding: 10px 6px; border: 1px solid var(--qx-border); border-radius: 12px; background: var(--qx-card-bg); }
+.trk-stat b { display: block; font-size: var(--qx-fs-lg); font-weight: 800; color: var(--trk-c, var(--qx-main-color)); }
+.trk-stat span { font-size: var(--qx-fs-xs); color: var(--qx-meta-color); }
+.trk-mgrid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin: 0 4px 14px; }
+.trk-mdot { aspect-ratio: 1; border-radius: 50%; background: var(--qx-border); }
+.trk-mdot.on { background: var(--trk-c, #d4a017); }
+.trk-mdot.today { outline: 2px solid var(--qx-text-color); outline-offset: 1px; }
+.trk-rep-bar { height: 10px; border-radius: 999px; background: var(--qx-border); overflow: hidden; margin: 4px 0 6px; }
+.trk-rep-bar i { display: block; height: 100%; background: var(--trk-c, #d4a017); border-radius: 999px; }
+.trk-rep-btn { width: 100%; margin-top: 12px; height: 46px; border: 0; border-radius: 999px; font-weight: 700; }
+/* [TRACKER-REPORT] end */
 
 /* [THEME-OVERRIDES] start */
 html[data-reduced-motion] .qx-fd.flip b {
@@ -8275,8 +8455,6 @@ html[data-theme="dark"] .trk-cat {
   color: var(--qx-main-color);
 }
 /* [DICTIONARY] end */
-
-
 
 /* [GESTURES] start */
 .qx-gesture-icon{
@@ -8676,6 +8854,264 @@ html[data-theme="dark"] .trk-cat {
 
 /* [FULL-SURAH-AUDIO-PAGE] end */
 
+
+/* [PHASE-2] Task 36 - 6 hadith books */
+.hadith-books-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+  padding: 12px var(--qx-gutter);
+}
+.hadith-book-card {
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  border-radius: var(--qx-radius-lg);
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.hadith-book-card:hover {
+  border-color: var(--qx-main-color);
+  background: var(--qx-hover);
+}
+.hadith-book-card b {
+  display: block;
+  font-size: 16px;
+  color: var(--qx-text-color);
+}
+.hadith-book-card small {
+  display: block;
+  margin-top: 4px;
+  color: var(--qx-meta-color);
+  font-size: 12px;
+}
+.hadith-book-badge {
+  display: inline-flex;
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* [PHASE-2] Task 38 - Location select */
+.qx-loc-search {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.qx-loc-search input {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  padding: 0 14px 0 40px;
+}
+.district-item {
+  position: relative;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.district-item.selected {
+  border-color: #16a34a;
+  background: #f0fdf4;
+  color: #15803d;
+}
+.district-item.selected::after {
+  content: "✓";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.qx-gps-btn {
+  width: 100%;
+  height: 44px;
+  margin-top: 12px;
+  background: var(--qx-main-color);
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* [PHASE-2] Task 39 - 64 district art - soft abstract AI mix same family */
+.district-art-card {
+  border-radius: var(--qx-radius-lg);
+  overflow: hidden;
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+}
+.district-art-card .district-art {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  position: relative;
+  background: var(--district-art-bg, linear-gradient(135deg, #e8f5f3 0%, #d1ece7 100%));
+  overflow: hidden;
+}
+.district-art-card .district-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 40% at 80% 70%, rgba(255,255,255,0.4) 0%, transparent 50%),
+              radial-gradient(ellipse 40% 80% at 50% 50%, rgba(0,0,0,0.03) 0%, transparent 70%);
+}
+.district-art-card .district-art.art-1 { --district-art-bg: linear-gradient(135deg, #e8f5f3 0%, #d1ece7 40%, #b8e0d8 100%); }
+.district-art-card .district-art.art-2 { --district-art-bg: linear-gradient(135deg, #e6f0f5 0%, #cfe2ec 40%, #b5d3e0 100%); }
+.district-art-card .district-art.art-3 { --district-art-bg: linear-gradient(135deg, #f0f5e8 0%, #e2ecd1 40%, #d4e3b8 100%); }
+.district-art-card .district-art.art-4 { --district-art-bg: linear-gradient(135deg, #f5f0e8 0%, #ece2cf 40%, #e3d4b5 100%); }
+.district-art-card .district-art.art-5 { --district-art-bg: linear-gradient(135deg, #e8ecf5 0%, #d1d9ec 40%, #b8c6e0 100%); }
+.district-art-card .district-art.art-6 { --district-art-bg: linear-gradient(135deg, #f0e8f0 0%, #e2d1e2 40%, #d4b8d4 100%); }
+.district-art-card .district-art.art-7 { --district-art-bg: linear-gradient(135deg, #e8f5f0 0%, #d1ecdf 40%, #b8e0cc 100%); }
+.district-art-card .district-art.art-8 { --district-art-bg: linear-gradient(135deg, #f5ebe8 0%, #ecd9d1 40%, #e0c6b8 100%); }
+.district-art-card .district-name {
+  padding: 10px 12px;
+  font-weight: 600;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* [PHASE-2] Task 40 - Prayer times 2-col vivid sky */
+.prayer-times-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 12px;
+  padding: 12px var(--qx-gutter);
+}
+.prayer-time-card {
+  position: relative;
+  height: 120px;
+  border-radius: var(--qx-radius-lg);
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+.prayer-time-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 100%);
+  z-index: 0;
+}
+.prayer-time-card > * {
+  position: relative;
+  z-index: 1;
+}
+.prayer-time-card.fajr {
+  background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=400');
+}
+.prayer-time-card.dhuhr {
+  background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400');
+}
+.prayer-time-card.asr {
+  background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400');
+}
+.prayer-time-card.maghrib {
+  background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=400');
+}
+.prayer-time-card.isha {
+  background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?w=400');
+}
+
+/* [PHASE-2] Task 41 - Grid+List tag */
+.qx-grid-tag {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.surah-item, .item, .home-tile {
+  position: relative;
+}
+
+/* [PHASE-2] Task 46 - Azan alert */
+.qx-azan-save-btn {
+  width: calc(100% - 2 * var(--qx-gutter));
+  margin: 16px var(--qx-gutter);
+  height: 48px;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 16px;
+  border: 0;
+}
+.alert-row.active {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+/* [PHASE-2] Task 42-45 full-width fixes */
+.kalima-page .item,
+#kalimaPage .item,
+.dua-page .item,
+#duaPage .item,
+#doaPage .item {
+  max-width: 100%;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+.tasbih-wrap, .tasbih-circle-wrap {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px var(--qx-gutter);
+}
+.qx-tsb-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  background: var(--qx-card-bg);
+  border: 1px solid var(--qx-border);
+  border-radius: var(--qx-radius-lg);
+  margin-top: 12px;
+}
+.qx-tsb-controls button {
+  flex: 1 1 60px;
+  min-width: 56px;
+  height: 40px;
+  border-radius: 999px;
+}
+.qibla-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.qibla-actions button {
+  flex: 1 1 50%;
+  height: 44px;
+}
+
 </style>
 </head>
 <body>
@@ -8744,9 +9180,8 @@ html[data-theme="dark"] .trk-cat {
   </div> 
   <!-- [MORE-MENU] end --> 
 
-
   <!-- [HEADER > Reader progress bar item] -->
-  <div class="reader-progress" id="readerProgress"><div class="reader-progress-fill" id="readerProgressFill"></div></div>
+  <div class="reader-progress" id="readerProgress"><div class="reader-progress-track"><div class="reader-progress-fill" id="readerProgressFill"></div></div><span class="reader-progress-text" id="readerProgressText">০%</span></div>
 </header>
 <!-- [HEADER] end -->
 
@@ -8846,6 +9281,60 @@ html[data-theme="dark"] .trk-cat {
 <script src="js/quran.js"></script>
 <script src="js/apps.js"></script>
 <!-- [SCRIPTS] end -->
+
+
+<script>
+/* Phase 2 - Task 32 progress % + হেডারের নিচে স্টিকি অবস্থান */
+(function(){
+  var header = document.querySelector('header');
+  var fill = document.getElementById('readerProgressFill');
+  var text = document.getElementById('readerProgressText');
+  function setTop(){
+    if(header) document.documentElement.style.setProperty('--qx-hdr-h', header.offsetHeight + 'px');
+  }
+  function setText(){
+    if(!fill || !text) return;
+    var n = Math.round(parseFloat(fill.style.width) || 0);
+    text.textContent = String(n).replace(/\d/g, function(d){ return '০১২৩৪৫৬৭৮৯'.charAt(d); }) + '%';
+  }
+  setTop(); setText();
+  window.addEventListener('resize', setTop);
+  window.addEventListener('load', setTop);
+  if(window.ResizeObserver && header) new ResizeObserver(setTop).observe(header);
+  if(fill) new MutationObserver(setText).observe(fill, {attributes:true, attributeFilter:['style']});
+})();
+
+/* Phase 2 - Task 47 download fix */
+(function(){
+  function showDownloading(el, pct){
+    if(!el) return;
+    var status = el.querySelector('.dl-status');
+    var fill = el.querySelector('.dl-fill');
+    if(status){
+      status.textContent = 'ডাউনলোড হচ্ছে... ' + pct + '%';
+      status.className = 'dl-status downloading';
+    }
+    if(fill) fill.style.width = pct + '%';
+  }
+  function showError(el, msg){
+    var status = el ? el.querySelector('.dl-status') : null;
+    if(status){
+      status.textContent = msg || 'কানেকশন দুর্বল, আবার চেষ্টা করুন';
+      status.className = 'dl-status failed';
+    }
+  }
+  function showDone(el){
+    var status = el ? el.querySelector('.dl-status') : null;
+    var fill = el ? el.querySelector('.dl-fill') : null;
+    if(status){
+      status.textContent = 'ডাউনলোড করা ✓';
+      status.className = 'dl-status done';
+    }
+    if(fill) fill.style.width = '100%';
+  }
+  window.qxDownloadFix = { showDownloading, showError, showDone };
+})();
+</script>
 
 </body>
 </html>

@@ -184,7 +184,81 @@ async function loadSurah(n){
 window.loadSurah = loadSurah;
 
 
+
+/* ===== CUSTOM DIALOG (ac-ov) — Browser prompt/confirm/alert er bodole ===== */
+window.qxShowConfirm = window.qxShowConfirm || function(message, onConfirm, onCancel){
+  try{
+    var ov=document.createElement('div'); ov.className='ac-ov'; ov.style.zIndex='140';
+    var box=document.createElement('div'); box.className='ac-box';
+    box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b style="font-size:16px">নিশ্চিত করুন</b><button type="button" class="pp-close" id="qxConfirmClose" style="position:static">×</button></div>'
+      +'<div style="line-height:1.7;margin:8px 0">'+message+'</div>'
+      +'<div class="ac-row" style="display:flex;gap:10px;margin-top:16px"><button type="button" class="ac-btn ghost" id="qxConfirmNo" style="flex:1;height:44px;border:1px solid var(--qx-border);border-radius:999px;background:var(--qx-card-bg)">বাতিল</button><button type="button" class="ac-btn" id="qxConfirmYes" style="flex:1;height:44px;border-radius:999px;background:var(--qx-main-color);color:#fff;border:0">সংরক্ষণ</button></div>';
+    ov.appendChild(box); document.body.appendChild(ov);
+    var cleanup=function(){ try{ ov.remove(); }catch(e){} };
+    var onNo=function(){ cleanup(); if(typeof onCancel==='function') onCancel(); };
+    var onYes=function(){ cleanup(); if(typeof onConfirm==='function') onConfirm(); };
+    ov.addEventListener('click',function(e){ if(e.target===ov) onNo(); });
+    box.querySelector('#qxConfirmClose').onclick=onNo;
+    box.querySelector('#qxConfirmNo').onclick=onNo;
+    box.querySelector('#qxConfirmYes').onclick=onYes;
+  }catch(e){ if(typeof onConfirm==='function') { if(confirm(message)) onConfirm(); } }
+};
+window.qxShowAlert = window.qxShowAlert || function(message, onOk){
+  try{
+    var ov=document.createElement('div'); ov.className='ac-ov'; ov.style.zIndex='140';
+    var box=document.createElement('div'); box.className='ac-box';
+    box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b style="font-size:16px">নোটিশ</b><button type="button" class="pp-close" id="qxAlertClose" style="position:static">×</button></div>'
+      +'<div style="line-height:1.7;margin:8px 0">'+message+'</div>'
+      +'<div class="ac-row" style="display:flex;gap:10px;margin-top:16px"><button type="button" class="ac-btn" id="qxAlertOk" style="flex:1;height:44px;border-radius:999px;background:var(--qx-main-color);color:#fff;border:0">ঠিক আছে</button></div>';
+    ov.appendChild(box); document.body.appendChild(ov);
+    var cleanup=function(){ try{ ov.remove(); }catch(e){} if(typeof onOk==='function') onOk(); };
+    ov.addEventListener('click',function(e){ if(e.target===ov) cleanup(); });
+    box.querySelector('#qxAlertClose').onclick=cleanup;
+    box.querySelector('#qxAlertOk').onclick=cleanup;
+  }catch(e){ alert(message); if(typeof onOk==='function') onOk(); }
+};
+window.qxShowPrompt = window.qxShowPrompt || function(message, defaultVal, onConfirm){
+  try{
+    var ov=document.createElement('div'); ov.className='ac-ov'; ov.style.zIndex='140';
+    var box=document.createElement('div'); box.className='ac-box';
+    var def=(defaultVal||'').replace(/"/g,'&quot;');
+    box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b style="font-size:16px">ইনপুট দিন</b><button type="button" class="pp-close" id="qxPromptClose" style="position:static">×</button></div>'
+      +'<div style="line-height:1.7;margin:8px 0">'+message+'</div>'
+      +'<input type="text" id="qxPromptInput" value="'+def+'" style="width:100%;height:44px;padding:0 14px;border:1px solid var(--qx-border);border-radius:12px;background:var(--qx-card-bg);margin-top:8px" />'
+      +'<div class="ac-row" style="display:flex;gap:10px;margin-top:16px"><button type="button" class="ac-btn ghost" id="qxPromptNo" style="flex:1;height:44px;border:1px solid var(--qx-border);border-radius:999px;background:var(--qx-card-bg)">বাতিল</button><button type="button" class="ac-btn" id="qxPromptYes" style="flex:1;height:44px;border-radius:999px;background:var(--qx-main-color);color:#fff;border:0">সংরক্ষণ</button></div>';
+    ov.appendChild(box); document.body.appendChild(ov);
+    var input=box.querySelector('#qxPromptInput');
+    setTimeout(function(){ try{ input.focus(); input.select(); }catch(e){} },100);
+    var cleanup=function(val){ try{ ov.remove(); }catch(e){} if(typeof onConfirm==='function') onConfirm(val); };
+    ov.addEventListener('click',function(e){ if(e.target===ov) cleanup(null); });
+    box.querySelector('#qxPromptClose').onclick=function(){ cleanup(null); };
+    box.querySelector('#qxPromptNo').onclick=function(){ cleanup(null); };
+    box.querySelector('#qxPromptYes').onclick=function(){ cleanup(input.value); };
+    input.addEventListener('keydown',function(e){ if(e.key==='Enter'){ cleanup(input.value); } });
+  }catch(e){ if(typeof onConfirm==='function') onConfirm(null); }
+};
+
+
+window.qxConfirmAsync = window.qxConfirmAsync || function(message){
+  return new Promise(function(resolve){
+    window.qxShowConfirm(message, function(){ resolve(true); }, function(){ resolve(false); });
+  });
+};
+window.qxAlertAsync = window.qxAlertAsync || function(message){
+  return new Promise(function(resolve){
+    window.qxShowAlert(message, function(){ resolve(); });
+  });
+};
+window.qxPromptAsync = window.qxPromptAsync || function(message, def){
+  return new Promise(function(resolve){
+    window.qxShowPrompt(message, def, function(val){ resolve(val); });
+  });
+};
+
+
 /* ===== বিষয়ভিত্তিক আয়াত ===== */
+
+
 /* QX_TOPICS (বিষয়ভিত্তিক ডেটা) এখন data/topics.js-এ আছে */
 // S01-S99 বিষয়ভিত্তিক — Root based topics, source Quranic Arabic Corpus (corpus.quran.com)
 
@@ -299,14 +373,25 @@ window.loadSurah = loadSurah;
     if(downloading) return; var cur=currentSurah(); if(!cur) return;
     var rec=reciterNow(); var m=meta(); var k=cur.n+'|'+rec;
     const btn = document.getElementById('dlBtn');
-    if(m[k]){ // delete
-      if(!confirm('এই সূরার ডাউনলোড মুছে ফেলবা?')) return;
-      var count=Number(cur.count||0);
-      // Reader list may be unavailable after navigation; use canonical surah metadata as fallback.
-      if(!count && window.surahs){var sm=window.surahs.find(function(x){return Number(x.number)===Number(cur.n);});count=sm?Number(sm.numberOfAyahs||0):0;}
-      if(cur.list && cur.list.length){for (let i=0;i<cur.list.length;i++){try{await del(keyFor(rec,cur.list[i].s.number,cur.list[i].no));}catch(e){}}}
-      else {for (let ai=1;ai<=count;ai++){try{await del(keyFor(rec,cur.n,ai));}catch(e){}}}
-      delete m[k]; saveMeta(m); if(typeof showToast==='function') showToast('ডাউনলোড মুছে ফেলা হয়েছে'); refreshDlBar(); return;
+    const sub = document.getElementById('dlSub');
+    if(sub) sub.textContent = 'ডাউনলোড হচ্ছে... 0%';
+    if(btn){
+      btn.textContent = 'ডাউনলোড হচ্ছে... 0%';
+      btn.disabled = true;
+      if(typeof window.qxDownloadFix !== 'undefined'){
+        var card = document.querySelector('.dl-card, #dlBar, .download-card');
+        window.qxDownloadFix.showDownloading(card, 0);
+      }
+    }
+    if(m[k]){ // delete - custom ac-ov dialog
+      window.qxShowConfirm('এই সূরার ডাউনলোড মুছে ফেলবা?', async function(){
+        var count=Number(cur.count||0);
+        if(!count && window.surahs){var sm=window.surahs.find(function(x){return Number(x.number)===Number(cur.n);});count=sm?Number(sm.numberOfAyahs||0):0;}
+        if(cur.list && cur.list.length){for (let i=0;i<cur.list.length;i++){try{await del(keyFor(rec,cur.list[i].s.number,cur.list[i].no));}catch(e){}}}
+        else {for (let ai=1;ai<=count;ai++){try{await del(keyFor(rec,cur.n,ai));}catch(e){}}}
+        delete m[k]; saveMeta(m); if(typeof showToast==='function') showToast('ডাউনলোড মুছে ফেলা হয়েছে'); refreshDlBar();
+      });
+      return;
     }
     if(!navigator.onLine){ if(typeof showToast==='function') showToast('ডাউনলোডের জন্য ইন্টারনেট লাগবে'); return; }
     downloading=true; refreshDlBar();
@@ -325,7 +410,22 @@ window.loadSurah = loadSurah;
       if(failed===0 && done===list.length){mm[k]={count:done, at:new Date().toISOString(), reciter:rec, name:cur.name};saveMeta(mm);}
       else {delete mm[k];saveMeta(mm);}
       if(typeof showToast==='function') showToast(failed?('ডাউনলোড অসম্পূর্ণ — '+done+'টি হয়েছে, '+failed+'টি হয়নি। আবার চেষ্টা করো।'):'{{check_circle:f}} ডাউনলোড শেষ! এখন অফলাইনে চলবে');
-    }catch(e){ if(typeof showToast==='function') showToast('ডাউনলোড হয়নি, আবার চেষ্টা করো'); }
+      if(sub) sub.textContent = failed ? ('অসম্পূর্ণ — '+done+'/'+list.length) : 'ডাউনলোড করা ✓';
+      if(btn){ 
+        if(!failed){ btn.innerHTML = '<span class="ms" aria-hidden="true">check_circle</span> ডাউনলোড করা'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.classList.add('done'); }
+        else { btn.textContent = '{{download}} আবার চেষ্টা'; }
+        btn.disabled = false; 
+      }
+      if(typeof window.qxDownloadFix !== 'undefined' && !failed){
+        var card2 = document.querySelector('.dl-card, #dlBar, .download-card');
+        window.qxDownloadFix.showDone(card2);
+      }
+    }catch(e){ 
+      var isWeak = !navigator.onLine || /Network|Failed to fetch|TypeError|Abort/.test(String(e.message||e));
+      if(typeof showToast==='function') showToast(isWeak ? 'কানেকশন দুর্বল, আবার চেষ্টা করুন' : 'ডাউনলোড হয়নি, আবার চেষ্টা করো');
+      if(sub) sub.textContent = isWeak ? 'কানেকশন দুর্বল, আবার চেষ্টা করুন' : 'ডাউনলোড হয়নি';
+      if(btn){ btn.textContent = isWeak ? 'আবার চেষ্টা করুন' : '{{download}} ডাউনলোড'; btn.disabled = false; }
+    }
     downloading=false; refreshDlBar();
   }
   document.getElementById('dlBtn').onclick=downloadCurrent;
@@ -521,9 +621,25 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
   }
 
   async function runPackage(type,id,label){
+    // Immediate feedback - Task 47
+    var _immediateStatus = document.getElementById('qxPackageStatus');
+    var _immediatePct = document.getElementById('qxPackagePct');
+    if(_immediateStatus){ _immediateStatus.textContent = 'ডাউনলোড হচ্ছে... 0%'; }
+    if(_immediatePct){ _immediatePct.textContent = '0%'; }
+    var _dlBar = document.getElementById('qxPackageProgressBar');
+    if(_dlBar){ _dlBar.style.width = '0%'; }
+    if(typeof window.qxDownloadFix !== 'undefined'){
+      var card = document.querySelector('.dl-card, .download-card, #qxPackageStatus');
+      window.qxDownloadFix.showDownloading(card ? card.closest('.dl-item') : null, 0);
+    }
+
     if(packageJob && !packageJob.finished){ showToast('আগের ডাউনলোডটি আগে শেষ বা বাতিল করো'); return; }
-    if(!navigator.onLine){ showToast('ডাউনলোডের জন্য ইন্টারনেট সংযোগ প্রয়োজন'); return; }
-    if(type==='audio' && !confirm('সম্পূর্ণ কুরআনের ৬,২৩৬টি অডিও ফাইল ডাউনলোড হবে। এতে অনেক স্টোরেজ ও ডেটা লাগতে পারে। চালিয়ে যাবে?')) return;
+    if(!navigator.onLine){ 
+      showToast('কানেকশন দুর্বল, আবার চেষ্টা করুন'); 
+      if(_immediateStatus) _immediateStatus.textContent = 'কানেকশন দুর্বল, আবার চেষ্টা করুন';
+      return; 
+    }
+    if(type==='audio'){ var _ok = await window.qxConfirmAsync('সম্পূর্ণ কুরআনের ৬,২৩৬টি অডিও ফাইল ডাউনলোড হবে। এতে অনেক স্টোরেজ ও ডেটা লাগতে পারে। চালিয়ে যাবে?'); if(!_ok) return; }
     if(navigator.storage && navigator.storage.estimate){
       try{
         var estimate=await navigator.storage.estimate();
@@ -674,16 +790,27 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
         throw new Error('অজানা প্যাকেজের ধরন');
       }
       if(job.cancelled) throw new Error('cancelled');
-      job.finished=true; job.message='ডাউনলোড সম্পন্ন'; job.done=job.total; updatePackageProgress(job);
+      job.finished=true; job.message='ডাউনলোড করা ✓'; job.done=job.total; updatePackageProgress(job);
+      // Green tick UI
+      try{
+        var doneBar = document.getElementById('qxPackageProgressBar');
+        if(doneBar){ doneBar.style.background = '#16a34a'; doneBar.style.width = '100%'; }
+        var doneStatus = document.getElementById('qxPackageStatus');
+        if(doneStatus){ doneStatus.textContent = 'ডাউনলোড করা ✓'; doneStatus.style.color = '#16a34a'; }
+      }catch(e){}
       metaMap=packageMeta(); metaMap[key]={type:type,id:String(id),label:label,status:'complete',done:job.total,bytes:job.bytes,total:job.total,updated:new Date().toISOString()}; savePackageMeta(metaMap);
       showToast(label+' সম্পূর্ণ ডাউনলোড হয়েছে');
     }catch(error){
       job.finished=true;
       var cancelled=job.cancelled || error.name==='AbortError' || error.message==='cancelled';
-      job.message=cancelled?'ডাউনলোড বাতিল':'ডাউনলোডে সমস্যা: '+error.message;
+      var isWeak = !navigator.onLine || /Network|Failed to fetch|TypeError|fetch|HTTP/.test(String(error.message||error)) || error.message.indexOf('HTTP')>=0;
+      var weakMsg = 'কানেকশন দুর্বল, আবার চেষ্টা করুন';
+      job.message=cancelled?'ডাউনলোড বাতিল':(isWeak?weakMsg:'ডাউনলোডে সমস্যা: '+error.message);
       metaMap=packageMeta();
       if(metaMap[key]){metaMap[key].status=cancelled?'paused':'incomplete';metaMap[key].done=job.done;metaMap[key].bytes=job.bytes;metaMap[key].updated=new Date().toISOString();savePackageMeta(metaMap);}
-      showToast(cancelled?'ডাউনলোড থামানো হয়েছে':'ডাউনলোড সম্পূর্ণ হয়নি: '+error.message);
+      showToast(cancelled?'ডাউনলোড থামানো হয়েছে':(isWeak?weakMsg:'ডাউনলোড সম্পূর্ণ হয়নি: '+error.message));
+      // Keep resume info - don't delete, so next try resumes from where it stopped
+      console.log('[QX] Download paused at '+job.done+'/'+job.total+' for resume');
     }
     packageJob=null;
     renderDownloadsPopup();
@@ -692,7 +819,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
   async function deletePackage(type,id){
     var key=packageKey(type,id), m=packageMeta();
     if(!m[key]) return;
-    if(!confirm('“'+(m[key].label||'প্যাকেজ')+'” ডাউনলোড মুছে ফেলবে?')) return;
+    var _ok = await window.qxConfirmAsync('“'+(m[key].label||'প্যাকেজ')+'” ডাউনলোড মুছে ফেলবে?'); if(!_ok) return;
     if(type==='translation' || type==='tafsir'){
       for (let n=1;n<=114;n++) await contentDel((type==='translation'?'translation':'tafsir')+'|'+id+'|'+n);
     } else if(type==='hadith'){
@@ -897,7 +1024,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
         }
         var parts=k.split('|'),sn=parseInt(parts[0],10);
         var rec=info.reciter || (parts[1]||'');
-        if(!confirm('এই সূরার অডিও ডাউনলোড মুছে ফেলবে?')) return;
+        var _ok = await window.qxConfirmAsync('এই সূরার অডিও ডাউনলোড মুছে ফেলবে?'); if(!_ok) return;
         b.disabled=true; b.textContent='মুছছি...';
         try{
           var total=Number(info.count||0)+2;
@@ -1510,14 +1637,16 @@ function buildGoalCard(){
   editBtn.textContent = "লক্ষ্য পরিবর্তন";
   editBtn.style.cssText = "padding:3px 8px;font-size:var(--qx-fs-xs);border-radius:var(--qx-radius);cursor:pointer;";
   editBtn.onclick = () => {
-    const val = prompt("প্রতিদিন কয়টি আয়াত পড়ার লক্ষ্য রাখতে চান? (যেমন: ১০, ২০, ৫০)", String(target));
-    const num = parseInt(val, 10);
-    if (num && num > 0 && num <= 6236) {
-      goalData.target = num;
-      lsSet("goal", goalData);
-      box.replaceWith(buildGoalCard());
-      showToast("দৈনিক লক্ষ্য আপডেট হয়েছে: " + toBn(num) + " আয়াত");
-    }
+    window.qxShowPrompt("প্রতিদিন কয়টি আয়াত পড়ার লক্ষ্য রাখতে চান? (যেমন: ১০, ২০, ৫০)", String(target), function(val){
+      if(val===null) return;
+      const num = parseInt(val, 10);
+      if (num && num > 0 && num <= 6236) {
+        goalData.target = num;
+        lsSet("goal", goalData);
+        box.replaceWith(buildGoalCard());
+        showToast("দৈনিক লক্ষ্য আপডেট হয়েছে: " + toBn(num) + " আয়াত");
+      }
+    });
   };
   top.appendChild(left);
   top.appendChild(editBtn);
@@ -2303,11 +2432,10 @@ async function copyText(text, okMsg){
   const done = function(){ notify(okMsg || "কপি হয়েছে!"); return true; };
   const manualCopy = function(){
     try {
-      const copied = window.prompt("স্বয়ংক্রিয়ভাবে কপি করা যায়নি। নিচের লেখাটি ম্যানুয়ালি কপি করুন:", String(text));
-      if (copied !== null) {
+      window.qxShowAlert("স্বয়ংক্রিয়ভাবে কপি করা যায়নি। নিচের লেখাটি ম্যানুয়ালি কপি করুন:\n\n"+String(text).slice(0,500), function(){
         notify("টেক্সটটি নির্বাচন করে কপি করুন।");
-        return true;
-      }
+      });
+      return true;
     } catch(e) {}
     notify("কপি করা যায়নি।");
     return false;

@@ -55,7 +55,97 @@
 //   [READ-WIDTH toggle (widthToggle)]
 //   [QUICK-ACTIONS-BN: Bengali names + DOMContentLoaded apply]
 
+
+/* ===== CUSTOM DIALOG (ac-ov) — ব্রাউজারের prompt/confirm/alert এর বদলে সাইটের নিজের পপ আপ ===== */
+(function(){
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if(cls) n.className = cls;
+    if(text != null) n.textContent = text;
+    return n;
+  }
+  // opts: kind('confirm'|'alert'|'prompt'), title, message, okLabel, cancelLabel, danger, defaultValue, placeholder, done(result)
+  function openDialog(opts){
+    var ov = el('div', 'ac-ov'); ov.style.zIndex = '140';
+    var box = el('div', 'ac-box');
+    box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true');
+
+    var head = el('div'); head.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px';
+    var title = el('b', null, opts.title); title.style.fontSize = '16px';
+    var x = el('button', 'close-btn'); x.type = 'button'; x.setAttribute('aria-label', 'বন্ধ করুন');
+    x.appendChild(el('span', 'ms', 'close'));
+    head.appendChild(title); head.appendChild(x);
+
+    var msg = el('div', null, opts.message); msg.style.cssText = 'line-height:1.7;margin:8px 0;white-space:pre-line';
+    box.appendChild(head); box.appendChild(msg);
+
+    var input = null;
+    if(opts.kind === 'prompt'){
+      input = el('input'); input.type = 'text'; input.value = opts.defaultValue || '';
+      if(opts.placeholder) input.placeholder = opts.placeholder;
+      input.style.cssText = 'width:100%;height:44px;padding:0 14px;margin-top:8px;border:1px solid var(--qx-border);border-radius:12px;background:var(--qx-card-bg);color:var(--qx-text-color);font:inherit;box-sizing:border-box';
+      box.appendChild(input);
+    }
+
+    var row = el('div', 'ac-row'); row.style.cssText = 'display:flex;gap:10px;margin-top:16px';
+    var no = null;
+    if(opts.kind !== 'alert'){
+      no = el('button', 'ac-btn ghost', opts.cancelLabel || 'বাতিল'); no.type = 'button';
+      no.style.cssText = 'flex:1;height:44px;border:1px solid var(--qx-border);border-radius:999px;background:var(--qx-card-bg)';
+      row.appendChild(no);
+    }
+    var yes = el('button', 'ac-btn', opts.okLabel || (opts.kind === 'alert' ? 'ঠিক আছে' : 'নিশ্চিত করুন')); yes.type = 'button';
+    yes.style.cssText = 'flex:1;height:44px;border:0;border-radius:999px;color:#fff;background:' + (opts.danger ? '#dc2626' : 'var(--qx-main-color)');
+    row.appendChild(yes); box.appendChild(row);
+    ov.appendChild(box); document.body.appendChild(ov);
+
+    var finished = false;
+    function finish(ok){
+      if(finished) return; finished = true;
+      document.removeEventListener('keydown', onKey, true);
+      var value = input ? input.value : null;
+      try{ ov.remove(); }catch(e){}
+      if(typeof opts.done === 'function') opts.done(opts.kind === 'prompt' ? (ok ? value : null) : ok);
+    }
+    function onKey(e){
+      if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); finish(false); }
+      else if(e.key === 'Enter' && input && document.activeElement === input){ e.preventDefault(); finish(true); }
+    }
+    document.addEventListener('keydown', onKey, true);
+    ov.addEventListener('click', function(e){ if(e.target === ov) finish(false); });
+    x.onclick = function(){ finish(false); };
+    if(no) no.onclick = function(){ finish(false); };
+    yes.onclick = function(){ finish(true); };
+    setTimeout(function(){ try{ if(input){ input.focus(); input.select(); } else { yes.focus(); } }catch(e){} }, 60);
+  }
+  function pick(o, k, d){ return (o && o[k] != null) ? o[k] : d; }
+
+  window.qxShowConfirm = function(message, onConfirm, onCancel, opts){
+    openDialog({ kind:'confirm', message:message, title:pick(opts,'title','নিশ্চিত করুন'), okLabel:pick(opts,'okLabel',null), danger:!!pick(opts,'danger',false),
+      done:function(ok){ if(ok){ if(typeof onConfirm === 'function') onConfirm(); } else if(typeof onCancel === 'function') onCancel(); } });
+  };
+  window.qxShowAlert = function(message, onOk, opts){
+    openDialog({ kind:'alert', message:message, title:pick(opts,'title','নোটিশ'), okLabel:pick(opts,'okLabel',null),
+      done:function(){ if(typeof onOk === 'function') onOk(); } });
+  };
+  window.qxShowPrompt = function(message, defaultVal, onDone, opts){
+    openDialog({ kind:'prompt', message:message, defaultValue:defaultVal, title:pick(opts,'title','তথ্য দিন'), okLabel:pick(opts,'okLabel','সংরক্ষণ'), placeholder:pick(opts,'placeholder',''),
+      done:function(val){ if(typeof onDone === 'function') onDone(val); } });
+  };
+  window.qxConfirmAsync = function(message, opts){
+    return new Promise(function(resolve){ window.qxShowConfirm(message, function(){ resolve(true); }, function(){ resolve(false); }, opts); });
+  };
+  window.qxAlertAsync = function(message, opts){
+    return new Promise(function(resolve){ window.qxShowAlert(message, function(){ resolve(); }, opts); });
+  };
+  window.qxPromptAsync = function(message, def, opts){
+    return new Promise(function(resolve){ window.qxShowPrompt(message, def, function(v){ resolve(v); }, opts); });
+  };
+})();
+
 // [NAV: setMode / nav highlight / showOther] start
+
+
 /* ===== নামাজের সময়, তাসবিহ, দোয়া ===== */
 function qxNavHighlight(m){
   const isHome = m === "quran" && tab === "home";
@@ -1718,7 +1808,7 @@ function renderTasbih(){
   });
   const rs = mk("button", "qx-tsb-opt danger", "{{refresh}} রিসেট");
   rs.type = "button";
-  rs.onclick = () => { if (!confirm("এই জিকিরের গণনা শূন্য করবেন?")) return; ts.c[ts.k] = 0; lsSet("tasbih", ts); renderTasbih(); };
+  rs.onclick = () => { window.qxShowConfirm("এই জিকিরের গণনা শূন্য করবেন?", function(){ ts.c[ts.k] = 0; lsSet("tasbih", ts); renderTasbih(); }, null, { title:"গণনা শূন্য করুন", okLabel:"শূন্য করুন", danger:true }); };
   ctl.appendChild(rs);
   page.appendChild(ctl);
   app.appendChild(page);
@@ -2510,7 +2600,7 @@ function importUserBackup(file, onDone){
         if(value !== null){ try{ localStorage.setItem(key, value); }catch(rollbackError){} }
       });
       if(e && (e.name === "QuotaExceededError" || e.name === "NS_ERROR_DOM_QUOTA_REACHED")){
-        alert("স্টোরেজ পূর্ণ — ব্যাকআপ রিস্টোর করা যায়নি। কিছু ডাটা/অফলাইন প্যাকেজ মুছে আবার চেষ্টা করুন।");
+        window.qxShowAlert("স্টোরেজ পূর্ণ — ব্যাকআপ রিস্টোর করা যায়নি। কিছু ডাটা/অফলাইন প্যাকেজ মুছে আবার চেষ্টা করুন।");
       }else{
         showToast("ব্যাকআপ রিস্টোর করা যায়নি। স্টোরেজ অনুমতি পরীক্ষা করুন।");
       }
@@ -2558,7 +2648,7 @@ function importUserBackup(file, onDone){
 }
 
 async function resetAllAppData(){
-  if(!confirm("আপনি কি নিশ্চিত? আপনার বুকমার্ক, নোট, সেটিংস, অফলাইন অডিও ও ডাউনলোড করা কনটেন্ট মুছে যাবে।")) return;
+  var _ok = await window.qxConfirmAsync("আপনি কি নিশ্চিত? আপনার বুকমার্ক, নোট, সেটিংস, অফলাইন অডিও ও ডাউনলোড করা কনটেন্ট মুছে যাবে।", { title:"সব ডেটা মুছে ফেলুন", okLabel:"মুছে ফেলুন", danger:true }); if(!_ok) return;
   if(typeof window.qxFullReset !== "function"){
     showToast("রিসেট ফাংশন পাওয়া যায়নি। পেজ রিফ্রেশ করে আবার চেষ্টা করুন।");
     return;
@@ -3820,7 +3910,7 @@ setInterval(checkPrayerAlerts, 5000);
       rerender();
     };
     document.getElementById('khReset').onclick=function(){
-      if(confirm('খতম প্ল্যান মুছে ফেলবেন?')){ try{ localStorage.removeItem(KEY); }catch(e){} overlay.classList.remove('open'); refreshHome(); }
+      window.qxShowConfirm('এই প্ল্যানটা মুছে ফেলতে চান?', function(){ try{ localStorage.removeItem(KEY); }catch(e){} overlay.classList.remove('open'); refreshHome(); }, null, { title:'প্ল্যান মুছে ফেলুন', okLabel:'মুছে ফেলুন', danger:true });
     };
   }
 
@@ -3981,6 +4071,111 @@ function trkRow(label, sub, done, onToggle){
   b.onclick=function(){ onToggle(!done); };
   row.appendChild(l); row.appendChild(b); return row;
 }
+function trkRing(pct, color, badgeText, numText){
+  var R=44, C=2*Math.PI*R, p=Math.max(0,Math.min(1,pct/100));
+  var ang=p*2*Math.PI-Math.PI/2, bx=(60+R*Math.cos(ang)).toFixed(1), by=(60+R*Math.sin(ang)).toFixed(1);
+  var fs=numText.length<=4?24:(numText.length<=6?19:15);
+  return '<svg class="trk-ring" viewBox="-10 -10 140 140" aria-hidden="true">'
+    +'<circle class="trk-ring-track" cx="60" cy="60" r="'+R+'"/>'
+    +'<circle class="trk-ring-arc" cx="60" cy="60" r="'+R+'" stroke="'+color+'" stroke-dasharray="'+C.toFixed(2)+'" stroke-dashoffset="'+(C*(1-p)).toFixed(2)+'" transform="rotate(-90 60 60)"/>'
+    +'<text class="trk-ring-num" x="60" y="'+(60+fs*0.34).toFixed(1)+'" font-size="'+fs+'">'+numText+'</text>'
+    +'<g><rect x="'+(bx-19)+'" y="'+(by-10)+'" width="38" height="20" rx="10" fill="'+color+'" stroke="var(--qx-card-bg)" stroke-width="2"/>'
+    +'<text class="trk-ring-badge" x="'+bx+'" y="'+(Number(by)+4)+'" fill="'+badgeText+'">'+trkBn(Math.round(pct))+'%</text></g></svg>';
+}
+function trkBuildSummary(d, td, nDone, dhDone){
+  var todayRead=0, tgt=10;
+  try{ if(typeof goalData!=='undefined'){ if(goalData.date===td) todayRead=goalData.readKeys?goalData.readKeys.length:0; tgt=goalData.target||10; } }catch(e){}
+  var mem={}; try{ mem=JSON.parse(localStorage.getItem('quranix_hifz_mem')||'{}'); }catch(e){}
+  var memCount=Object.keys(mem).length;
+  var rozaMonth=0; Object.keys(d.roza).forEach(function(ds){ if(ds.slice(0,7)===td.slice(0,7)) rozaMonth++; });
+  var items=[
+    {k:'namaz', name:'নামাজ',  meta:'আজকের ওয়াক্ত',   cur:nDone,      max:5,    color:'#16a34a', bt:'#fff'},
+    {k:'quran', name:'কুরআন',  meta:'আজ পড়া আয়াত',   cur:todayRead,  max:tgt,  color:'#0d9488', bt:'#fff'},
+    {k:'roza',  name:'রমজান',  meta:'এই মাসের দিন',   cur:rozaMonth,  max:30,   color:'#d4a017', bt:'#3b2a00'},
+    {k:'hifz',  name:'হিফজ',   meta:'মুখস্থ আয়াত',   cur:memCount,   max:6236, color:'#7c3aed', bt:'#fff'},
+    {k:'dhikr', name:'জিকির',  meta:'আজকের জিকির',    cur:dhDone,     max:4,    color:'#4ade80', bt:'#14532d'}
+  ];
+  var sum=0, html='';
+  items.forEach(function(it){
+    var pct=it.max>0?Math.min(100,(it.cur/it.max)*100):0;
+    if(it.cur>0 && pct<1) pct=1;
+    sum+=pct;
+    html+='<button type="button" class="trk-sum-item" data-k="'+it.k+'" aria-label="'+it.name+' '+trkBn(it.cur)+'/'+trkBn(it.max)+'">'
+      +trkRing(pct,it.color,it.bt,trkBn(it.cur)+'/'+trkBn(it.max))
+      +'<span class="trk-sum-name">'+it.name+'</span><span class="trk-sum-meta">'+it.meta+'</span></button>';
+  });
+  var overall=Math.round(sum/items.length);
+  var wrap=document.createElement('div'); wrap.className='trk-sum-wrap';
+  wrap.innerHTML='<div class="trk-sum">'+html+'</div>'
+    +'<div class="trk-overall"><div class="trk-overall-row"><b>সামগ্রিক অগ্রগতি</b><span>'+trkBn(overall)+'%</span></div>'
+    +'<div class="trk-overall-track"><div class="trk-overall-fill" style="width:'+overall+'%"></div></div></div>';
+  // ওয়্র্যাপারকেই ফেরত দিই; ভিতরের বাটনগুলো querySelectorAll দিয়ে পাওয়া যায়
+  return wrap;
+}
+function trkBars(vals, color){
+  var labels=['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'], h='';
+  for (var i=-6;i<=0;i++){
+    var v=vals[i+6]||0, d=new Date(trkDateOffset(i)+'T00:00:00');
+    h+='<div class="trk-bar'+(i===0?' today':'')+'"><div class="trk-bar-col"><i style="height:'+Math.max(5,Math.round(v*100))+'%;background:'+(v>0?color:'var(--qx-border)')+'"></i></div><span>'+(i===0?'আজ':labels[d.getDay()])+'</span></div>';
+  }
+  return '<div class="trk-bars">'+h+'</div>';
+}
+function trkOpenReport(key){
+  var box=document.getElementById('gridPopupBox'), overlay=document.getElementById('gridPopupOverlay');
+  if(!box||!overlay) return false;
+  var d=trkLoad(), td=trkToday();
+  var dateStr=new Date().toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var count=function(o){ return Object.keys(o||{}).filter(function(k){return o[k]}).length; };
+  var stat=function(n,l){ return '<div class="trk-stat"><b>'+n+'</b><span>'+l+'</span></div>'; };
+  var rowsOf=function(list,src){ return '<div class="trk-prayers">'+list.map(function(p){ return '<div class="trk-prayer'+(src[p[0]]?' on':'')+'"><span>'+p[1]+'</span><i></i></div>'; }).join('')+'</div>'; };
+  var week=function(src,max){ var v=[]; for(var i=-6;i<=0;i++) v.push(count(src[trkDateOffset(i)])/max); return v; };
+  var title,color,bt,pct,num,cap,body='',btn=null;
+  if(key==='namaz'){
+    var nm=d.namaz[td]||{}, n=count(nm), wv=week(d.namaz,5), wsum=0; wv.forEach(function(x){ wsum+=x*5; });
+    title='নামাজ'; color='#16a34a'; bt='#fff'; pct=n/5*100; num=trkBn(n)+'/'+trkBn(5); cap='আজকের ওয়াক্ত';
+    body=rowsOf([['fajr','ফজর'],['dhuhr','যোহর'],['asr','আসর'],['maghrib','মাগরিব'],['isha','এশা']],nm)
+      +'<h4 class="trk-rep-h">গত ৭ দিন</h4>'+trkBars(wv,color)
+      +'<div class="trk-rep-note">এই সপ্তাহে মোট <b>'+trkBn(Math.round(wsum/35*100))+'%</b></div>';
+  } else if(key==='quran'){
+    var rd=0,tg=10,kh=null;
+    try{ if(typeof goalData!=='undefined'){ if(goalData.date===td) rd=goalData.readKeys?goalData.readKeys.length:0; tg=goalData.target||10; } }catch(e){}
+    try{ kh=JSON.parse(localStorage.getItem('quranix_khatam')||'null'); }catch(e){}
+    title='কুরআন'; color='#0d9488'; bt='#fff'; pct=tg>0?Math.min(100,rd/tg*100):0; num=trkBn(rd)+'/'+trkBn(tg); cap='আজ পড়া আয়াত';
+    body='<div class="trk-stats">'+stat(trkBn(rd),'আজ পড়া')+stat(trkBn(tg),'দৈনিক লক্ষ্য')+stat(trkBn(6236),'মোট আয়াত')+'</div>'
+      +(kh&&kh.days?'<div class="trk-rep-note">খতম প্ল্যান চলছে · <b>'+trkBn(kh.days)+' দিনের</b></div>':'');
+    btn={label:'পড়া চালিয়ে যান',go:function(){ setMode('quran'); }};
+  } else if(key==='roza'){
+    var now=new Date(), y=now.getFullYear(), m=now.getMonth(), dim=new Date(y,m+1,0).getDate(), done=0, dots='';
+    for(var k=1;k<=dim;k++){ var ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(k).padStart(2,'0'), on=!!d.roza[ds]; if(on) done++; dots+='<span class="trk-mdot'+(on?' on':'')+(ds===td?' today':'')+'" title="'+ds+'"></span>'; }
+    title='রমজান'; color='#d4a017'; bt='#3b2a00'; pct=Math.min(100,done/30*100); num=trkBn(done)+'/'+trkBn(30); cap='এই মাসে রাখা দিন';
+    body='<div class="trk-mgrid">'+dots+'</div>'
+      +'<div class="trk-stats">'+stat(trkBn(done),'রোজা রাখা')+stat(d.roza[td]?'হ্যাঁ':'না','আজ রাখা হয়েছে')+'</div>'
+      +'<div class="trk-rep-bar"><i style="width:'+pct+'%"></i></div>';
+  } else if(key==='hifz'){
+    var mem={}; try{ mem=JSON.parse(localStorage.getItem('quranix_hifz_mem')||'{}'); }catch(e){}
+    var mc=Object.keys(mem).length;
+    title='হিফজ'; color='#7c3aed'; bt='#fff'; pct=mc>0?Math.max(1,mc/6236*100):0; num=trkBn(mc)+'/'+trkBn(6236); cap='মুখস্থ আয়াত';
+    body='<div class="trk-stats">'+stat(trkBn(mc),'মুখস্থ মার্ক করা')+stat(trkBn(6236-mc),'বাকি আয়াত')+'</div>'
+      +'<div class="trk-rep-note">সূরা খুলে হিফজ মোড চালু করে আয়াত মুখস্থ মার্ক করুন</div>';
+    btn={label:'কুরআন খুলুন',go:function(){ setMode('quran'); }};
+  } else if(key==='dhikr'){
+    var dh=d.dhikr[td]||{}, dn=count(dh);
+    title='জিকির'; color='#4ade80'; bt='#14532d'; pct=dn/4*100; num=trkBn(dn)+'/'+trkBn(4); cap='আজকের জিকির';
+    body=rowsOf([['morning','সকালের জিকির'],['evening','সন্ধ্যার জিকির'],['sleep','ঘুমের আগের দোয়া'],['durud','দুরুদ ১০০ বার']],dh)
+      +'<h4 class="trk-rep-h">গত ৭ দিন</h4>'+trkBars(week(d.dhikr,4),color);
+    btn={label:'জিকির শুরু করুন',go:function(){ setMode('tasbih'); }};
+  } else return false;
+  box.classList.remove('wide','wide-fixed');
+  box.innerHTML='<div class="pp-header"><h3>'+title+'</h3><button type="button" class="pp-close" aria-label="বন্ধ করুন" id="trkRepClose">{{close}}</button></div>'
+    +'<div class="trk-rep" style="--trk-c:'+color+'"><small class="trk-rep-date">'+dateStr+'</small><div class="trk-rep-ring">'+trkRing(pct,color,bt,num)+'</div><div class="trk-rep-cap">'+cap+'</div>'+body
+    +(btn?'<button type="button" class="pp-btn trk-rep-btn" id="trkRepGo" style="background:'+color+';color:'+bt+'">'+btn.label+'</button>':'')+'</div>';
+  overlay.classList.add('open');
+  document.getElementById('trkRepClose').onclick=function(){ overlay.classList.remove('open'); };
+  var go=document.getElementById('trkRepGo');
+  if(go) go.onclick=function(){ overlay.classList.remove('open'); if(typeof setMode==='function') btn.go(); };
+  return true;
+}
+window.trkOpenReport=trkOpenReport;
 function buildTrackerCard(){
   var d=trkLoad(); var td=trkToday();
   var nm=d.namaz[td]||{}; var nDone=Object.keys(nm).filter(function(k){return nm[k]}).length;
@@ -4005,8 +4200,10 @@ function renderTracker(){
   var habitDone=d.habits.filter(function(h){ return h.days && h.days[td]; }).length;
   var head=document.createElement('div'); head.className='trk-head';
   var dateStr=new Date().toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  head.innerHTML='<small>'+dateStr+'</small><div class="big">আজকের আমল</div><div>{{i_mosque}} '+trkBn(nDone)+'/৫ নামাজ &nbsp;·&nbsp; {{i_ramadan}} '+(d.roza[td]?'রমজান {{check_circle:f}}':'রমজান {{hourglass_top}}')+' &nbsp;·&nbsp; {{i_tasbih}} '+trkBn(dhDone)+'/৪ জিকির</div>';
+  head.innerHTML='<small>'+dateStr+'</small><div class="big">আজকের আমল</div>';
   appEl.appendChild(head);
+  var sumEl=trkBuildSummary(d,td,nDone,dhDone);
+  appEl.appendChild(sumEl);
 
   // 1. NAMAZ
   var c1=document.createElement('div'); c1.className='trk-cat';
@@ -4069,23 +4266,31 @@ function renderTracker(){
     var streak=0; for (let i=0;i<30;i++){ if(h.days && h.days[trkDateOffset(-i)]) streak++; else if(i>0) break; }
     var row=trkRow((h.icon ? trkEscapeHtml(h.icon) : '{{star:f}}')+' '+trkEscapeHtml(h.name), 'স্ট্রিক: '+trkBn(streak)+' দিন', !!(h.days&&h.days[td]), function(v){ h.days=h.days||{}; if(v) h.days[td]=1; else delete h.days[td]; trkSave(d); renderTracker(); });
     // delete button
-    var del=document.createElement('button'); del.textContent='{{delete}}'; del.style.cssText='border:0;background:none;font-size:var(--qx-fs-lg);cursor:pointer'; del.onclick=function(){ if(confirm('“'+h.name+'” হ্যাবিটটা মুছে ফেলবা?')){ d.habits=d.habits.filter(function(x){return x.id!==h.id}); trkSave(d); renderTracker(); } };
+    var del=document.createElement('button'); del.textContent='{{delete}}'; del.style.cssText='border:0;background:none;font-size:var(--qx-fs-lg);cursor:pointer'; del.onclick=function(){ window.qxShowConfirm('“'+h.name+'” হ্যাবিটটা মুছে ফেলতে চান?', function(){ d.habits=d.habits.filter(function(x){return x.id!==h.id}); trkSave(d); renderTracker(); }, null, { title:'হ্যাবিট মুছে ফেলুন', okLabel:'মুছে ফেলুন', danger:true }); };
     row.appendChild(del); c6.appendChild(row);
   });
   var add=document.createElement('button'); add.className='dl-btn ghost'; add.style.marginTop='8px'; add.textContent='+ নিজের হ্যাবিট যোগ করো';
   add.onclick=function(){
-    var name=prompt('হ্যাবিটের নাম কী? (যেমন: ব্যায়াম, ৮ গ্লাস পানি, রাগ কন্ট্রোল)');
-    if(!name) return;
-    name=name.trim();
-    if(!name) return;
-    if(name.length>40){ showToast('হ্যাবিটের নাম সর্বোচ্চ ৪০ অক্ষরের হতে পারবে'); return; }
-    if(d.habits.length>=100){ showToast('সর্বোচ্চ ১০০টি হ্যাবিট যোগ করা যাবে'); return; }
-    var icon=prompt('একটা ইমোজি দাও (ঐচ্ছিক)', '')||'{{star:f}}';
-    icon=icon.trim().slice(0,8);
-    d.habits.push({id:Date.now(), name:name, icon:icon, days:{}}); trkSave(d); renderTracker();
-    if(typeof showToast==='function') showToast('হ্যাবিট যোগ হয়েছে');
+    window.qxShowPrompt('হ্যাবিটের নাম লিখুন (যেমন: ব্যায়াম, ৮ গ্লাস পানি, রাগ কন্ট্রোল)', '', function(name){
+      if(name===null) return;
+      name=name.trim();
+      if(!name) return;
+      if(name.length>40){ showToast('হ্যাবিটের নাম সর্বোচ্চ ৪০ অক্ষরের হতে পারবে'); return; }
+      if(d.habits.length>=100){ showToast('সর্বোচ্চ ১০০টি হ্যাবিট যোগ করা যাবে'); return; }
+      window.qxShowPrompt('একটা ইমোজি দাও (ঐচ্ছিক)', '', function(icon){
+        icon=(icon||'').trim().slice(0,8);
+        if(!icon) icon='{{star:f}}';
+        d.habits.push({id:Date.now(), name:name, icon:icon, days:{}}); trkSave(d); renderTracker();
+        if(typeof showToast==='function') showToast('হ্যাবিট যোগ হয়েছে');
+      }, { title:'ইমোজি' });
+    }, { title:'নতুন হ্যাবিট', okLabel:'পরের ধাপ' });
   };
   c6.appendChild(add); appEl.appendChild(c6);
+
+  var sumTargets={namaz:c1,quran:c2,roza:c4,hifz:c3,dhikr:c5};
+  sumEl.querySelectorAll('.trk-sum-item').forEach(function(btn){
+    btn.onclick=function(){ var k=btn.getAttribute('data-k'); if(trkOpenReport(k)) return; var el=sumTargets[k]; if(el && el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'start'}); };
+  });
 
   var note=document.createElement('div'); note.className='note'; note.style.textAlign='center';
   note.textContent='ট্র্যাকার ডিভাইসে স্বয়ংক্রিয়ভাবে সেভ হয় এবং Quranix JSON ব্যাকআপের সাথেও সংরক্ষিত থাকে।';
@@ -4679,11 +4884,11 @@ window.renderTracker=renderTracker; window.buildTrackerCard=buildTrackerCard;
     var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     var isAndroid = /Android/i.test(navigator.userAgent);
     if (isIOS) {
-      alert('iPhone বা iPad-এ Safari খুলে Share → Add to Home Screen → Add নির্বাচন করুন।');
+      window.qxShowAlert('iPhone বা iPad-এ Safari খুলে Share → Add to Home Screen → Add নির্বাচন করুন।');
     } else if (isAndroid) {
-      alert('Chrome-এর ⋮ মেনু → Install app / Add to Home screen নির্বাচন করুন।');
+      window.qxShowAlert('Chrome-এর ⋮ মেনু → Install app / Add to Home screen নির্বাচন করুন।');
     } else {
-      alert('PC-তে Chrome বা Edge-এর address bar-এর Install আইকন, অথবা মেনু → Install Quranix নির্বাচন করুন।');
+      window.qxShowAlert('PC-তে Chrome বা Edge-এর address bar-এর Install আইকন, অথবা মেনু → Install Quranix নির্বাচন করুন।');
     }
   }
 
@@ -5340,3 +5545,5 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
       .catch(function () {});
   });
 })();
+
+
