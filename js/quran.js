@@ -590,11 +590,16 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     });
   }
   function updatePackageProgress(job){
+    const pct = job.total ? Math.min(100,Math.round(job.done/job.total*100)) : 0;
     const p = document.getElementById('qxPackageProgress');
     const t = document.getElementById('qxPackageStatus');
+    const label = document.getElementById('qxPackagePct');
+    const bar = document.getElementById('qxPackageProgressBar');
     const action = document.getElementById('qxPackageAction');
-    if(p) p.value=job.total?Math.min(100,Math.round(job.done/job.total*100)):0;
-    if(t) t.textContent=job.message+' · '+job.done+'/'+job.total;
+    if(p) p.value=pct;
+    if(label) label.textContent=pct+'%';
+    if(bar) bar.style.width=pct+'%';
+    if(t) t.textContent=job.finished && pct===100 ? 'ডাউনলোড করা ✓' : (job.message+' · '+job.done+'/'+job.total);
     if(action) action.textContent=job.paused?'আবার চালু':'বিরতি';
   }
   async function loadSurahAyahsForEdition(edition, surahNo){
@@ -806,6 +811,9 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
       var isWeak = !navigator.onLine || /Network|Failed to fetch|TypeError|fetch|HTTP/.test(String(error.message||error)) || error.message.indexOf('HTTP')>=0;
       var weakMsg = 'কানেকশন দুর্বল, আবার চেষ্টা করুন';
       job.message=cancelled?'ডাউনলোড বাতিল':(isWeak?weakMsg:'ডাউনলোডে সমস্যা: '+error.message);
+      updatePackageProgress(job);
+      var failedStatus=document.getElementById('qxPackageStatus');
+      if(failedStatus && isWeak) failedStatus.textContent=weakMsg;
       metaMap=packageMeta();
       if(metaMap[key]){metaMap[key].status=cancelled?'paused':'incomplete';metaMap[key].done=job.done;metaMap[key].bytes=job.bytes;metaMap[key].updated=new Date().toISOString();savePackageMeta(metaMap);}
       showToast(cancelled?'ডাউনলোড থামানো হয়েছে':(isWeak?weakMsg:'ডাউনলোড সম্পূর্ণ হয়নি: '+error.message));
@@ -1334,17 +1342,39 @@ async function openOfflineHadithCollection(collection){
 // [PAGE: Hadith] start
 function renderHadith(){if(typeof showOther==='function')showOther('{{i_hadith}} হাদিস প্যাকেজ');const appEl = document.getElementById('app');var info=document.createElement('div');info.className='note';info.style.textAlign='center';info.textContent='একে একে পড়ো, মুখস্থ হলে চিহ্নিত করো — ৬টি সহিহ গ্রন্থসহ';appEl.appendChild(info);
 var pkgs=[{k:'nawawi',icon:'{{menu_book}}',name:'৪০ হাদিস (ইমাম নববী)',desc:'ইমাম নববীর সংকলন থেকে সোর্স-যাচাইকৃত নির্বাচিত হাদিস',count:HADITH_DATA.nawawi.length},{k:'qudsi',icon:'{{auto_awesome}}',name:'হাদিসে কুদসি',desc:'আল্লাহর কথা, রাসূল ﷺ-এর ভাষায় — হাদিস কুদসি থেকে সোর্স-যাচাইকৃত',count:HADITH_DATA.qudsi.length},{k:'short',icon:'{{lightbulb}}',name:'ছোট হাদিস — দৈনন্দিন জীবন',desc:'ছোট ছোট হাদিস, মুখস্থ করা সহজ — প্রতিদিন ১টা',count:HADITH_DATA.short.length}];pkgs.forEach(function(pk){var mem={};try{mem=JSON.parse(localStorage.getItem('quranix_hadith_mem')||'{}');}catch(e){}var done=0;for (let i=0;i<pk.count;i++){if(mem[pk.k+':'+i])done++;}var card=document.createElement('div');card.className='hadith-pkg';card.innerHTML='<h3>'+pk.icon+' '+pk.name+'</h3><div class="sub">'+pk.desc+'</div><div class="khatam-row" style="margin-top:8px"><span>'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'টি হাদিস</span><span>মুখস্থ: '+(typeof toBn==='function'?toBn(done):done)+'/'+(typeof toBn==='function'?toBn(pk.count):pk.count)+'</span><span style="color:var(--qx-main-color);font-weight:700">খোলো →</span></div><div class="goal-track"><div class="goal-fill" style="width:'+Math.round(done/pk.count*100)+'%" ></div></div>';card.onclick=function(){renderHadithList(pk.k,pk.name);};appEl.appendChild(card);});
-// --- 6 Sahih Books ---
-var corpusTitle=document.createElement('div');corpusTitle.className='home-section-title';corpusTitle.style.marginTop='16px';corpusTitle.textContent='৬টি সহিহ হাদিসগ্রন্থ';appEl.appendChild(corpusTitle);
-var corpusGrid=document.createElement('div');corpusGrid.className='home-browse-nav';corpusGrid.style.display='grid';corpusGrid.style.gridTemplateColumns='1fr 1fr';corpusGrid.style.gap='10px';corpusGrid.style.margin='8px 0 16px';
+// --- Six canonical Hadith collections (Kutub al-Sittah) ---
+var corpusTitle=document.createElement('div');
+corpusTitle.className='home-section-title';
+corpusTitle.style.marginTop='16px';
+corpusTitle.textContent='কুতুবুস সিত্তাহ · ৬টি হাদিসগ্রন্থ';
+appEl.appendChild(corpusTitle);
+var corpusGrid=document.createElement('div');
+corpusGrid.className='hadith-books-grid';
+corpusGrid.setAttribute('aria-label','ছয়টি প্রধান হাদিসগ্রন্থ');
 var pkgMeta=packageMeta();
 (HADITH_CORPUS||[]).forEach(function(c){
-  var key='hadith|'+c.id; var st=pkgMeta[key]||{}; var isDone=st.status==='complete'; var isPaused=st.status==='paused';
-  var card=document.createElement('button');card.type='button';card.className='home-tile';card.style.textAlign='left';card.style.minHeight='88px';
-  card.innerHTML='<span class="t-ic" style="background:var(--qx-main-soft);color:var(--qx-main-color)">{{menu_book}}</span><span class="t-nm">'+c.name+'</span><span class="t-sub" style="font-size:11px;color:var(--qx-meta-color)">'+toBn(c.chapters)+' অধ্যায় · '+(isDone?'অফলাইনে আছে':isPaused?'থামানো':'ডাউনলোড করুন')+'</span>';
+  var key='hadith|'+c.id;
+  var st=pkgMeta[key]||{};
+  var isDone=st.status==='complete';
+  var isPaused=st.status==='paused';
+  var isPartial=st.status==='incomplete';
+  var stateLabel=isDone?'অফলাইনে সংরক্ষিত':isPaused?'ডাউনলোড স্থগিত':isPartial?'আংশিক ডাউনলোড':'ডাউনলোড করতে চাপ দিন';
+  var card=document.createElement('button');
+  card.type='button';
+  card.className='hadith-book-card';
+  card.setAttribute('aria-label',c.name+' · '+c.chapters+' অধ্যায় · '+stateLabel);
+  card.innerHTML='<span class="t-ic" style="display:grid;place-items:center;width:38px;height:38px;margin:0 auto 9px;border-radius:12px;background:var(--qx-main-soft);color:var(--qx-main-color)">{{menu_book}}</span>'+
+    '<b>'+c.name+'</b>'+
+    '<small>'+toBn(c.chapters)+' অধ্যায়</small>'+
+    '<span class="hadith-book-badge">'+stateLabel+'</span>';
   card.onclick=function(){
-    if(isDone){ openOfflineHadithCollection(c); }
-    else { if(typeof runPackage==='function') runPackage('hadith',c.id,c.name); else { if(typeof showToast==='function') showToast('ডাউনলোড মেনু থেকে '+c.name+' ডাউনলোড করুন'); } }
+    if(isDone){
+      openOfflineHadithCollection(c);
+    } else if(typeof runPackage==='function'){
+      runPackage('hadith',c.id,c.name);
+    } else if(typeof showToast==='function'){
+      showToast('ডাউনলোড মেনু থেকে '+c.name+' ডাউনলোড করুন');
+    }
   };
   corpusGrid.appendChild(card);
 });
@@ -2917,6 +2947,15 @@ function qxListGrid(){
   grid.className = "surah-grid" + (qxListView() === "list" ? " is-list" : "");
   return grid;
 }
+function qxAddGridTag(card, label){
+  if (!card || card.querySelector(".qx-grid-tag")) return card;
+  const tag = document.createElement("span");
+  tag.className = "qx-grid-tag";
+  tag.textContent = label;
+  tag.setAttribute("aria-hidden", "true");
+  card.appendChild(tag);
+  return card;
+}
 /* Sort — বিষয়ভিত্তিক ট্যাবে সাজানো। গ্রিড / লিস্ট — ২ ভিউতেই একই Sort কাজ করে।
    কালার: ফাইলের নিজের ভেরিয়েবল — var(--qx-card-bg), var(--qx-border), var(--qx-meta-color), var(--qx-text-color), var(--qx-main-color) / var(--qx-on-main)। নতুন হার্ডকোড কালার নাই।
    Grid/List বাটন: .qx-view-btn-এর পুরান রুলই ব্যবহার হয় (off = card-bg + meta, on = main-color + on-main)।
@@ -3055,6 +3094,7 @@ function renderTopics(){
   sorted.forEach(({ t, serial }) => {
     const topicItem = item(toBn(serial), t.bn, toBn(t.count) + " বার", t.ar, () => renderTopicDetail(t));
     topicItem.classList.add("surah-item");
+    qxAddGridTag(topicItem, "বিষয়");
     const arabic = topicItem.querySelector(".ar-name");
     if (arabic) { arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); }
     grid.appendChild(topicItem);
@@ -3157,6 +3197,7 @@ function renderDict150List(){
     const sub = (d[6] ? "উচ্চারণ : " + d[6] + " · " : "") + QX_DICT150_CATS[d[0]] + " · " + qxDict150CountText(d);
     const it = item(toBn(rank), "শব্দার্থ : " + d[2], sub, d[1], () => renderDict150Detail(d, rank));
     it.classList.add("surah-item");
+    qxAddGridTag(it, "শব্দার্থ");
     const arabic = it.querySelector(".ar-name");
     if (arabic) { arabic.setAttribute("lang", "ar"); arabic.setAttribute("dir", "rtl"); }
     grid.appendChild(it);
@@ -3274,6 +3315,7 @@ function renderTopicDetail(t){
     const name = (window.QX_BN_SURAH && window.QX_BN_SURAH[sn - 1]) || ("সূরা " + toBn(sn));
     const ayahItem = item(toBn(an), name + " · আয়াত " + toBn(an), "সূরা " + toBn(sn) + ":" + toBn(an), "", () => openSurah(sn, 0, an));
     ayahItem.classList.add("surah-item");
+    qxAddGridTag(ayahItem, "আয়াত");
     grid.appendChild(ayahItem);
   });
   app.appendChild(grid);
@@ -3310,6 +3352,7 @@ function renderQuranHome(){
     for (let i = 1; i <= 30; i++) {
       const juzItem = item(i, "পারা " + toBn(i), "Juz " + i, "", () => openJuz(i));
       juzItem.classList.add("surah-item");
+      qxAddGridTag(juzItem, "পারা");
       juzGrid.appendChild(juzItem);
     }
     app.appendChild(juzGrid);
@@ -3329,6 +3372,7 @@ function renderQuranHome(){
     const type = s.revelationType === "Meccan" ? "মাক্কী" : "মাদানী";
     const surahItem = item(s.number, s.englishName, s.englishNameTranslation, s.name, () => openSurah(s.number));
     surahItem.classList.add("surah-item");
+    qxAddGridTag(surahItem, "সূরা");
     surahItem.setAttribute("role", "button");
     surahItem.setAttribute("tabindex", "0");
     surahItem.setAttribute("aria-label", "সূরা " + toBn(s.number) + ": " + s.englishName + ", " + s.englishNameTranslation + ", " + type + ", আয়াত " + toBn(s.numberOfAyahs));

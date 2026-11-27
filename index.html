@@ -961,6 +961,12 @@ body.bars-hidden header {
 }
 
 .qx-tsb-phrase {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
   text-align: center;
 }
 
@@ -1766,31 +1772,31 @@ body.inside-page h1 {
 
 .kaaba-badge {
   position: absolute;
-  top: 14px;
+  top: 2px;
   left: 50%;
   transform: translateX(-50%);
   background: #16a34a;
   color: var(--qx-on-main);
   padding: 0;
   border-radius: 50%;
-  font-size: var(--qx-fs-lg);
+  font-size: 17px;
   font-weight: 700;
   box-shadow: var(--qx-shadow);
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
 }
 
 .kaaba-needle {
   position: absolute;
-  top: 46px;
+  top: 30px;
   bottom: 50%;
   left: 50%;
-  width: 6px;
-  margin-left: -3px;
+  width: 8px;
+  margin-left: -4px;
   background: #16a34a;
-  border-radius: 4px;
+  border-radius: 5px;
 }
 
 .compass-center {
@@ -4391,6 +4397,51 @@ nav button b .ms {
   flex-wrap: nowrap;
   align-items: center;
 }
+/* [PHASE-2] Tasks 33, 35, 37 — compact Quran / Hadith / Dua / learning lists */
+.surah-grid {
+  gap: 5px;
+}
+.surah-grid:not(.is-list) .surah-item {
+  padding: calc(6px * var(--qx-scale));
+  gap: 5px;
+}
+.surah-grid.is-list {
+  gap: 6px;
+}
+.surah-grid.is-list .surah-item {
+  padding: calc(6px * var(--qx-scale)) calc(9px * var(--qx-scale));
+  gap: 9px;
+}
+.surah-grid .surah-item .num {
+  min-width: calc(30px * var(--qx-scale));
+  height: calc(30px * var(--qx-scale));
+}
+.qx-sec-page {
+  gap: 7px;
+}
+.qx-sec-page > .ayah.qx-sec-card {
+  padding: calc(9px * var(--qx-scale)) calc(12px * var(--qx-scale));
+}
+.qx-sec-page > .ayah.qx-sec-card .bn {
+  margin-top: 5px;
+}
+.hadith-pkg {
+  padding: calc(9px * var(--qx-scale)) calc(11px * var(--qx-scale));
+  margin: 7px 0;
+}
+.hadith-pkg .sub {
+  margin-top: 2px;
+  line-height: 1.45;
+}
+.hadith-item {
+  padding: calc(6px * var(--qx-scale)) calc(9px * var(--qx-scale));
+  margin: 4px 0;
+}
+.hadith-item .ar {
+  line-height: 1.65;
+}
+/* [PHASE-2] compact lists end */
+
 /* [SURAH-LIST] end */
 
 
@@ -8852,6 +8903,45 @@ html[data-theme="dark"] .trk-cat {
 .qx-fa-single-main small{display:block;font-size:11px;color:var(--qx-meta-color);margin-top:2px}
 .qx-fa-single-arrow{color:var(--qx-meta-color)}
 
+
+/* [FULL-AUDIO-REFERENCE-UI] start */
+.qx-full-audio-page{max-width:560px;padding:0 12px calc(30px + env(safe-area-inset-bottom));}
+.qx-fa-topbar{display:flex;align-items:center;gap:11px;margin:0 -12px 12px;padding:12px 14px;background:var(--qx-top-bar,#0a4a3a);color:#fff;min-height:58px;box-sizing:border-box;}
+.qx-fa-topbar .qx-fa-back{width:36px;height:36px;flex:0 0 36px;border:0;background:transparent;color:#fff;font-size:22px;}
+.qx-fa-brand{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0;line-height:1.2;}
+.qx-fa-brand strong{font-size:15px;font-weight:700;color:#fff;}
+.qx-fa-brand small{font-size:11px;color:rgba(255,255,255,.76);}
+.qx-fa-headphones{font-size:23px;color:rgba(255,255,255,.92);}
+.qx-fa-surah-pill{margin:0 2px 12px;padding:10px 12px;border-radius:999px;text-align:center;background:var(--qx-main-soft);color:var(--qx-main-color);font-size:13px;font-weight:650;}
+.qx-fa-player{border:1px solid color-mix(in srgb,var(--qx-main-color) 12%,var(--qx-border));background:linear-gradient(180deg,color-mix(in srgb,var(--qx-main-color) 8%,var(--qx-card-bg)),var(--qx-card-bg));border-radius:20px;padding:16px 14px 14px;box-shadow:0 7px 22px rgba(10,74,58,.07);}
+.qx-fa-hero-art{height:128px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;max-width:280px;border-radius:16px;background:radial-gradient(ellipse at 50% 75%,rgba(15,118,110,.13),transparent 68%);}
+.qx-fa-hero-art svg{width:220px;max-width:100%;height:142px;}
+.qx-fa-now-label{font-size:11px;color:var(--qx-meta-color);letter-spacing:0;text-transform:none;}
+.qx-fa-now-title{font-size:21px;line-height:1.3;margin-top:3px;color:var(--qx-text-color);}
+.qx-fa-now-sub{font-size:12px;margin-top:3px;}
+.qx-fa-progress{height:22px;margin:18px 3px 2px;display:flex;align-items:center;}
+.qx-fa-progress input{position:relative;z-index:2;width:100%;height:4px;margin:0;appearance:none;-webkit-appearance:none;border-radius:99px;background:var(--qx-light-mint-2,#d1e9e1);outline:0;cursor:pointer;}
+.qx-fa-progress input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--qx-main-color);border:2px solid var(--qx-card-bg);box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.qx-fa-progress input::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:var(--qx-main-color);border:2px solid var(--qx-card-bg);}
+.qx-fa-progress span{display:none;}
+.qx-fa-time{font-size:11px;}
+.qx-fa-controls{gap:13px;margin:13px 0 0;}
+.qx-fa-controls button{width:44px;height:44px;border:0;background:var(--qx-main-soft);color:var(--qx-main-color);}
+.qx-fa-controls .qx-fa-main-play{width:62px;height:62px;background:var(--qx-top-bar,#0a4a3a);color:#fff;box-shadow:0 7px 18px rgba(10,74,58,.22);}
+.qx-fa-controls #qxFaRead{border:1px solid color-mix(in srgb,var(--qx-main-color) 30%,transparent);}
+.qx-fa-single-link{margin-top:14px;padding:11px 12px;border-radius:13px;}
+.qx-fa-single-main strong{font-size:14px;color:var(--qx-text-color);}
+.qx-fa-single-main small{font-size:11px;}
+.qx-fa-list-head{margin:6px 0 12px;}
+.qx-fa-list{gap:6px;padding-bottom:22px;}
+.qx-fa-row{min-height:60px;border-radius:12px;padding:9px 10px;}
+.qx-fa-row.current{border-color:var(--qx-main-color);box-shadow:inset 0 0 0 1px var(--qx-main-color);}
+.qx-fa-row-play{border:0;background:var(--qx-main-color);color:#fff;}
+.qx-fa-row-play.on{background:var(--qx-top-bar,#0a4a3a);color:#fff;}
+@media(max-width:420px){.qx-fa-topbar{margin-left:-9px;margin-right:-9px;padding-left:12px;padding-right:12px}.qx-fa-hero-art{height:116px}.qx-fa-hero-art svg{height:130px}.qx-fa-controls{gap:10px}}
+[data-theme="dark"] .qx-fa-player{background:linear-gradient(180deg,color-mix(in srgb,var(--qx-main-color) 15%,var(--qx-card-bg)),var(--qx-card-bg));}
+/* [FULL-AUDIO-REFERENCE-UI] end */
+
 /* [FULL-SURAH-AUDIO-PAGE] end */
 
 
@@ -8898,25 +8988,16 @@ html[data-theme="dark"] .trk-cat {
 }
 
 /* [PHASE-2] Task 38 - Location select */
-.qx-loc-search {
-  width: 100%;
-  margin-bottom: 12px;
-}
-.qx-loc-search input {
-  width: 100%;
-  height: 44px;
-  border-radius: 12px;
-  padding: 0 14px 0 40px;
-}
 .district-item {
   position: relative;
   border-radius: 12px;
-  transition: all 0.2s ease;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
 }
+.district-item:active { transform:scale(.98); }
 .district-item.selected {
-  border-color: #16a34a;
-  background: #f0fdf4;
-  color: #15803d;
+  border:2px solid #16a34a;
+  background:var(--qx-main-soft,#f0fdf4);
+  color:var(--qx-main-color,#15803d);
 }
 .district-item.selected::after {
   content: "✓";
@@ -8937,7 +9018,7 @@ html[data-theme="dark"] .trk-cat {
 .qx-gps-btn {
   width: 100%;
   height: 44px;
-  margin-top: 12px;
+  margin: 12px 0 10px;
   background: var(--qx-main-color);
   color: #fff;
   border-radius: 999px;
@@ -8948,12 +9029,22 @@ html[data-theme="dark"] .trk-cat {
   gap: 8px;
 }
 
-/* [PHASE-2] Task 39 - 64 district art - soft abstract AI mix same family */
+/* [PHASE-2] Task 38-39 - searchable district picker + 64 abstract district artworks */
+.qx-district-picker { margin: 10px 0 14px; }
+.qx-district-title { display:block; margin: 0 0 9px; font-size: var(--qx-fs-md); }
+.qx-loc-search { position:relative; display:block; width:100%; margin:0 0 10px; }
+.qx-loc-search input { width:100%; height:44px; border-radius:12px; padding:0 14px 0 42px; box-sizing:border-box; }
+.qx-loc-search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--qx-meta-color); pointer-events:none; }
+.qx-district-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
 .district-art-card {
-  border-radius: var(--qx-radius-lg);
-  overflow: hidden;
-  background: var(--qx-card-bg);
-  border: 1px solid var(--qx-border);
+  display:flex; flex-direction:column; min-width:0; padding:0; text-align:center;
+  border-radius:var(--qx-radius-lg); overflow:hidden; background:var(--qx-card-bg);
+  border:1px solid var(--qx-border); color:var(--qx-text-color); cursor:pointer;
+}
+.district-art-card[hidden] { display:none !important; }
+.district-art-card .district-art {
+  display:block; width:100%; height:72px; object-fit:cover; position:relative;
+  background:var(--district-art-bg,linear-gradient(135deg,#e8f5f3 0%,#d1ece7 100%)); overflow:hidden;
 }
 .district-art-card .district-art {
   width: 100%;
@@ -8964,13 +9055,19 @@ html[data-theme="dark"] .trk-cat {
   overflow: hidden;
 }
 .district-art-card .district-art::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 60%),
-              radial-gradient(ellipse 60% 40% at 80% 70%, rgba(255,255,255,0.4) 0%, transparent 50%),
-              radial-gradient(ellipse 40% 80% at 50% 50%, rgba(0,0,0,0.03) 0%, transparent 70%);
+  content:""; position:absolute; inset:-18%;
+  background:radial-gradient(ellipse 65% 55% at 22% 30%,rgba(255,255,255,.68) 0%,transparent 65%),
+             radial-gradient(ellipse 55% 70% at 78% 72%,rgba(255,255,255,.38) 0%,transparent 60%),
+             radial-gradient(ellipse 42% 45% at 52% 45%,rgba(0,0,0,.06) 0%,transparent 75%);
 }
+.district-art-card .district-art::after {
+  content:""; position:absolute; width:74px; height:74px; right:-14px; bottom:-38px;
+  border:1px solid rgba(255,255,255,.58); border-radius:42% 58% 62% 38%;
+  box-shadow:0 0 0 9px rgba(255,255,255,.10),0 0 0 19px rgba(255,255,255,.08);
+  transform:rotate(28deg);
+}
+.district-art-card .district-name { display:block; padding:7px 4px 1px; font-size:var(--qx-fs-sm); font-weight:650; }
+.district-art-card .district-division { display:block; padding:0 4px 7px; color:var(--qx-meta-color); font-size:10px; }
 .district-art-card .district-art.art-1 { --district-art-bg: linear-gradient(135deg, #e8f5f3 0%, #d1ece7 40%, #b8e0d8 100%); }
 .district-art-card .district-art.art-2 { --district-art-bg: linear-gradient(135deg, #e6f0f5 0%, #cfe2ec 40%, #b5d3e0 100%); }
 .district-art-card .district-art.art-3 { --district-art-bg: linear-gradient(135deg, #f0f5e8 0%, #e2ecd1 40%, #d4e3b8 100%); }
@@ -9033,22 +9130,26 @@ html[data-theme="dark"] .trk-cat {
 .prayer-time-card.isha {
   background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?w=400');
 }
+.prayer-time-card { min-height:112px; height:auto; gap:5px; box-sizing:border-box; }
+.prayer-time-card.on { outline:2px solid var(--qx-main-color); outline-offset:2px; }
+.prayer-card-name { font-size:var(--qx-fs-md); }
+.prayer-card-time { font-size:clamp(17px,4.5vw,23px); line-height:1.2; font-variant-numeric:tabular-nums; }
+.prayer-card-next { font-size:10px; font-weight:700; opacity:.95; }
 
 /* [PHASE-2] Task 41 - Grid+List tag */
 .qx-grid-tag {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  background: var(--qx-main-soft);
-  color: var(--qx-main-color);
-  font-weight: 600;
-  line-height: 1.2;
+  position:absolute; top:6px; right:8px; z-index:2;
+  font-size:9px; padding:2px 6px; border-radius:999px;
+  background:var(--qx-main-soft); color:var(--qx-main-color);
+  font-weight:600; line-height:1.2; opacity:.88; pointer-events:none;
 }
 .surah-item, .item, .home-tile {
   position: relative;
+}
+@media (max-width:380px) {
+  .qx-district-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .prayer-times-grid { gap:8px; padding-left:var(--qx-gutter); padding-right:var(--qx-gutter); }
+  .prayer-time-card { min-height:104px; padding:10px; }
 }
 
 /* [PHASE-2] Task 46 - Azan alert */
@@ -9068,48 +9169,47 @@ html[data-theme="dark"] .trk-cat {
   background: #f0fdf4;
 }
 
-/* [PHASE-2] Task 42-45 full-width fixes */
-.kalima-page .item,
-#kalimaPage .item,
-.dua-page .item,
-#duaPage .item,
-#doaPage .item {
-  max-width: 100%;
+/* [PHASE-2] Task 42-45 layout fixes */
+.qx-sec-page > .ayah.qx-sec-card {
   width: 100%;
+  max-width: 100%;
   margin-left: 0;
   margin-right: 0;
 }
-.tasbih-wrap, .tasbih-circle-wrap {
+
+.qx-tsb-phrase > .ar,
+.qx-tsb-phrase > .bn {
   width: 100%;
-  max-width: 100%;
-  padding: 12px var(--qx-gutter);
+  text-align: center;
 }
-.qx-tsb-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
+
+.qx-tsb-phrase .qx-tsb-wrap {
   width: 100%;
-  padding: 12px;
-  background: var(--qx-card-bg);
-  border: 1px solid var(--qx-border);
-  border-radius: var(--qx-radius-lg);
-  margin-top: 12px;
+  margin: 2px 0;
 }
-.qx-tsb-controls button {
-  flex: 1 1 60px;
-  min-width: 56px;
-  height: 40px;
-  border-radius: 999px;
+
+.qx-tsb-phrase .qx-tsb-ctl {
+  width: 100%;
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--qx-border);
 }
+
+.qx-tsb-phrase .qx-tsb-opt {
+  flex: 1 1 58px;
+}
+
 .qibla-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   width: 100%;
 }
+
 .qibla-actions button {
-  flex: 1 1 50%;
-  height: 44px;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
 }
 
 </style>
@@ -9181,7 +9281,7 @@ html[data-theme="dark"] .trk-cat {
   <!-- [MORE-MENU] end --> 
 
   <!-- [HEADER > Reader progress bar item] -->
-  <div class="reader-progress" id="readerProgress"><div class="reader-progress-track"><div class="reader-progress-fill" id="readerProgressFill"></div></div><span class="reader-progress-text" id="readerProgressText">০%</span></div>
+  <div class="reader-progress" id="readerProgress" role="progressbar" aria-label="পাঠের অগ্রগতি" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reader-progress-track"><div class="reader-progress-fill" id="readerProgressFill"></div></div><span class="reader-progress-text" id="readerProgressText">০%</span></div>
 </header>
 <!-- [HEADER] end -->
 
@@ -9295,6 +9395,8 @@ html[data-theme="dark"] .trk-cat {
   function setText(){
     if(!fill || !text) return;
     var n = Math.round(parseFloat(fill.style.width) || 0);
+    var bar = document.getElementById('readerProgress');
+    if(bar) bar.setAttribute('aria-valuenow', String(n));
     text.textContent = String(n).replace(/\d/g, function(d){ return '০১২৩৪৫৬৭৮৯'.charAt(d); }) + '%';
   }
   setTop(); setText();
@@ -9304,37 +9406,55 @@ html[data-theme="dark"] .trk-cat {
   if(fill) new MutationObserver(setText).observe(fill, {attributes:true, attributeFilter:['style']});
 })();
 
-/* Phase 2 - Task 47 download fix */
+/* Phase 2 - Task 47 download feedback */
 (function(){
-  function showDownloading(el, pct){
+  function setStatus(el, text, state){
+    var status = el && (el.querySelector('.dl-status') || el.querySelector('#qxPackageStatus') || el.querySelector('#dlSub'));
+    if(status){ status.textContent=text; status.className=(status.className||'').replace(/\bdownloading\b|\bfailed\b|\bdone\b/g,'').trim()+' '+state; }
+  }
+  function setFill(el,pct){
     if(!el) return;
-    var status = el.querySelector('.dl-status');
-    var fill = el.querySelector('.dl-fill');
-    if(status){
-      status.textContent = 'ডাউনলোড হচ্ছে... ' + pct + '%';
-      status.className = 'dl-status downloading';
-    }
-    if(fill) fill.style.width = pct + '%';
+    var fill=el.querySelector('.dl-fill') || el.querySelector('#qxPackageProgressBar');
+    if(fill) fill.style.width=Math.max(0,Math.min(100,Number(pct)||0))+'%';
+    var label=el.querySelector('#qxPackagePct'); if(label) label.textContent=Math.max(0,Math.min(100,Number(pct)||0))+'%';
   }
-  function showError(el, msg){
-    var status = el ? el.querySelector('.dl-status') : null;
-    if(status){
-      status.textContent = msg || 'কানেকশন দুর্বল, আবার চেষ্টা করুন';
-      status.className = 'dl-status failed';
-    }
-  }
-  function showDone(el){
-    var status = el ? el.querySelector('.dl-status') : null;
-    var fill = el ? el.querySelector('.dl-fill') : null;
-    if(status){
-      status.textContent = 'ডাউনলোড করা ✓';
-      status.className = 'dl-status done';
-    }
-    if(fill) fill.style.width = '100%';
-  }
-  window.qxDownloadFix = { showDownloading, showError, showDone };
+  function showDownloading(el,pct){ setStatus(el,'ডাউনলোড হচ্ছে... '+pct+'%','downloading'); setFill(el,pct); }
+  function showError(el,msg){ setStatus(el,msg||'কানেকশন দুর্বল, আবার চেষ্টা করুন','failed'); }
+  function showDone(el){ setStatus(el,'ডাউনলোড করা ✓','done'); setFill(el,100); }
+  window.qxDownloadFix={showDownloading:showDownloading,showError:showError,showDone:showDone};
 })();
 </script>
 
 </body>
 </html>
+/* [PHASE-2] Task 46 — Azan alert screen */
+.qx-azan-head { margin-bottom:12px; }
+.qx-azan-status { font-size:13px; opacity:.9; margin-top:5px; }
+.qx-azan-next-card {
+  margin:0 var(--qx-gutter) 14px; padding:18px 18px 20px; border-radius:20px;
+  color:#fff; background:linear-gradient(135deg,#087a43,#16a34a 68%,#22c55e);
+  box-shadow:0 8px 22px rgba(22,163,74,.16); text-align:center;
+}
+.qx-azan-next-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.qx-azan-next-label { font-size:13px; font-weight:700; opacity:.95; }
+.qx-azan-next-icon { font-size:24px; line-height:1; }
+.qx-azan-next-name { font-size:25px; font-weight:800; margin-top:5px; }
+.qx-azan-next-time { font-size:16px; opacity:.95; margin-top:2px; }
+.qx-azan-countdown { font-size:clamp(26px,7vw,34px); font-weight:800; letter-spacing:1px; font-variant-numeric:tabular-nums; margin-top:10px; }
+.qx-azan-list-card,.qx-azan-settings { margin-top:12px; }
+.qx-azan-prayer-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 13px; margin-top:8px; border:1px solid var(--qx-border); border-radius:14px; background:var(--qx-card-bg); transition:border-color .15s,background .15s; }
+.qx-azan-prayer-row.active { border:2px solid #16a34a; background:rgba(22,163,74,.08); padding:11px 12px; }
+.qx-azan-prayer-info { min-width:0; display:grid; grid-template-columns:auto auto; align-items:center; column-gap:10px; row-gap:2px; }
+.qx-azan-prayer-info b { font-size:15px; }
+.qx-azan-prayer-time { font-size:14px; font-weight:700; color:var(--qx-text-color); }
+.qx-azan-prayer-left { grid-column:1 / -1; color:var(--qx-muted); font-size:12px; }
+.qx-azan-toggle { width:42px; height:42px; flex:0 0 42px; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-muted); font-size:18px; cursor:pointer; }
+.qx-azan-toggle.on { color:#15803d; background:#dcfce7; border-color:#86efac; }
+.qx-azan-master-toggle,.qx-azan-test-btn { width:100%; min-height:44px; border-radius:12px; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; font-weight:700; margin:8px 0; cursor:pointer; }
+.qx-azan-master-toggle.on { color:#166534; background:#dcfce7; border-color:#86efac; }
+.qx-azan-sound-label { display:flex; flex-direction:column; gap:7px; margin:12px 0; font-size:14px; font-weight:700; }
+.qx-azan-sound-select { width:100%; min-height:44px; padding:0 12px; border:1px solid var(--qx-border); border-radius:12px; background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; }
+.qx-azan-test-btn { color:var(--qx-main-color); }
+.qx-azan-save-btn { display:block; width:100%; margin:14px 0 2px; min-height:50px; border:0; border-radius:999px; background:#16a34a; color:#fff; font:inherit; font-weight:800; cursor:pointer; }
+.qx-azan-save-btn:focus-visible,.qx-azan-toggle:focus-visible,.qx-azan-master-toggle:focus-visible,.qx-azan-test-btn:focus-visible { outline:3px solid rgba(22,163,74,.35); outline-offset:2px; }
+@media(max-width:380px){ .qx-azan-next-card{padding:15px}.qx-azan-prayer-row{padding:10px}.qx-azan-prayer-row.active{padding:9px 9px}.qx-azan-prayer-info{column-gap:7px} }
