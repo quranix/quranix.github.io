@@ -975,19 +975,6 @@ function renderAlertsView(){
 
   const now = new Date();
   const schedule = getSchedule(now);
-  const nextCard = mk("section", "qx-azan-next-card");
-  nextCard.setAttribute("aria-label", "পরবর্তী নামাজ");
-  const nextTop = mk("div", "qx-azan-next-top");
-  nextTop.appendChild(mk("span", "qx-azan-next-label", "পরবর্তী নামাজ"));
-  nextTop.appendChild(mk("span", "qx-azan-next-icon", "◷"));
-  nextCard.appendChild(nextTop);
-  const nextName = mk("div", "qx-azan-next-name", schedule.next ? schedule.next.name : "সময় পাওয়া যায়নি");
-  const nextTime = mk("div", "qx-azan-next-time", schedule.next ? fmtTime(schedule.next.time) : "—");
-  const countdown = mk("div", "qx-azan-countdown", schedule.next ? fmtCd(schedule.next.time-now) : "—");
-  countdown.setAttribute("aria-live", "off");
-  nextCard.appendChild(nextName); nextCard.appendChild(nextTime); nextCard.appendChild(countdown);
-  app.appendChild(nextCard);
-
   const listCard = mk("section", "trk-cat qx-azan-list-card");
   listCard.appendChild(mk("h3", null, "নামাজভিত্তিক অ্যালার্ট"));
   listCard.appendChild(mk("div", "sub", "প্রতিটি ওয়াক্তের অ্যালার্ট আলাদাভাবে নির্বাচন করুন"));
@@ -1001,15 +988,22 @@ function renderAlertsView(){
     info.appendChild(mk("span", "qx-azan-prayer-time", time ? fmtTime(time) : "সময় পাওয়া যায়নি"));
     const remaining = mk("small", "qx-azan-prayer-left", "");
     info.appendChild(remaining);
-    const toggle = mk("button", "qx-azan-toggle" + (draft.prayers[k] ? " on" : ""), draft.prayers[k] ? "🔔" : "♧");
-    toggle.type = "button"; toggle.setAttribute("aria-label", prayerNames[k]+" অ্যালার্ট "+(draft.prayers[k]?"চালু":"বন্ধ"));
-    toggle.setAttribute("aria-pressed", String(!!draft.prayers[k]));
-    toggle.onclick = () => {
-      draft.prayers[k] = !draft.prayers[k];
+    const toggle = mk("button", "qx-azan-toggle" + (draft.prayers[k] ? " on" : ""));
+    toggle.type = "button";
+    const toggleIcon = document.createElement("span");
+    toggleIcon.className = "ms";
+    toggleIcon.setAttribute("aria-hidden", "true");
+    const syncToggleIcon = () => {
+      toggleIcon.textContent = draft.prayers[k] ? "notifications_active" : "notifications_off";
       toggle.classList.toggle("on", draft.prayers[k]);
-      toggle.textContent = draft.prayers[k] ? "🔔" : "♧";
       toggle.setAttribute("aria-pressed", String(!!draft.prayers[k]));
       toggle.setAttribute("aria-label", prayerNames[k]+" অ্যালার্ট "+(draft.prayers[k]?"চালু":"বন্ধ"));
+    };
+    syncToggleIcon();
+    toggle.appendChild(toggleIcon);
+    toggle.onclick = () => {
+      draft.prayers[k] = !draft.prayers[k];
+      syncToggleIcon();
     };
     row.appendChild(info); row.appendChild(toggle); listCard.appendChild(row);
     rowRefs[k] = {row, remaining};
@@ -1037,7 +1031,11 @@ function renderAlertsView(){
   const testBtn = mk("button", "qx-azan-test-btn", "▶ টেস্ট অ্যালার্ট");
   testBtn.type = "button"; testBtn.onclick = () => { playAdhanTone(draft.sound === "silent" ? "adhan" : draft.sound); showToast("টেস্ট অ্যালার্ট বাজানো হয়েছে"); };
   settings.appendChild(testBtn);
-  settings.appendChild(mk("div", "note-box", "অ্যাপ খোলা ও স্ক্রিন চালু থাকলে অ্যালার্ট কাজ করবে। ব্যাকগ্রাউন্ডে বা স্ক্রিন বন্ধ থাকলে ব্রাউজারের সীমাবদ্ধতার কারণে অ্যালার্ট নাও আসতে পারে।"));
+  const alertNote = mk("div", "note-box qx-azan-note");
+  const noteMark = mk("span", "qx-azan-note-mark", "*");
+  const noteText = mk("span", "qx-azan-note-text", "অ্যাপ খোলা থাকা অবস্থায় এবং স্ক্রিন সক্রিয় থাকলে অ্যালার্ট কাজ করবে। তবে অ্যাপ ব্যাকগ্রাউন্ডে থাকলে বা ডিভাইসের স্ক্রিন বন্ধ থাকলে ব্রাউজারের সীমাবদ্ধতার কারণে অ্যালার্ট নাও পাওয়া যেতে পারে।");
+  alertNote.append(noteMark, noteText);
+  settings.appendChild(alertNote);
   const saveBtn = mk("button", "qx-azan-save-btn", "✓ সেটিংস সংরক্ষণ করুন");
   saveBtn.type = "button";
   saveBtn.onclick = async () => {
@@ -1056,13 +1054,8 @@ function renderAlertsView(){
   settings.appendChild(saveBtn); app.appendChild(settings);
 
   function refreshCountdowns(){
-    if (!document.body.contains(nextCard)) return;
+    if (!document.body.contains(listCard)) return;
     const current = new Date(), sc = getSchedule(current);
-    if (sc.next) {
-      nextName.textContent = sc.next.name;
-      nextTime.textContent = fmtTime(sc.next.time);
-      countdown.textContent = fmtCd(sc.next.time-current);
-    }
     prayerKeys.forEach(k => {
       const ref = rowRefs[k], t = sc.today[k];
       if (!t) { ref.remaining.textContent = ""; return; }
@@ -1074,7 +1067,7 @@ function renderAlertsView(){
     });
   }
   refreshCountdowns();
-  const tick = setInterval(() => { if (!document.body.contains(nextCard)) clearInterval(tick); else refreshCountdowns(); }, 1000);
+  const tick = setInterval(() => { if (!document.body.contains(listCard)) clearInterval(tick); else refreshCountdowns(); }, 1000);
 }
 // [PAGE: Prayer Alerts] end
 
@@ -2829,6 +2822,7 @@ function openHelpModal(isFirstTime){
 function openSettingsModal() {
   const dd = document.getElementById("gridDropdown"), gm = document.getElementById("gridMenu");
   if (!dd) return;
+  if(dd._qxSettingsKeydown){ document.removeEventListener("keydown", dd._qxSettingsKeydown); dd._qxSettingsKeydown=null; }
   dd.querySelectorAll(".g-settings-panel").forEach(function(el){ el.remove(); });
   if (!dd.classList.contains("open") && gm) gm.click();
   const content = document.createElement("div"); content.className = "g-settings-panel"; content.setAttribute("role", "group"); content.setAttribute("aria-label", "কাস্টমাইজেশন");
@@ -2848,6 +2842,7 @@ function openSettingsModal() {
   const onSettingsKeydown = (e) => {
     if (e.key === "Escape") { e.preventDefault(); dismissSettings(); }
   };
+  dd._qxSettingsKeydown = onSettingsKeydown;
   close.setAttribute("aria-label", "বন্ধ করুন"); close.onclick = dismissSettings;
   header.appendChild(close);
   content.appendChild(header);
@@ -3051,8 +3046,34 @@ setInterval(checkPrayerAlerts, 5000);
   const qEl = document.getElementById('q');
   const transOrig = document.getElementById('transSel');
   if(!gridBtn||!dd) return;
-  function closeDropdown(){ dd.classList.remove('open'); gridBtn.style.background=''; gridBtn.style.color=''; }
-  gridBtn.onclick=function(e){ e.stopPropagation(); document.body.classList.remove('bars-hidden'); var isOpen=dd.classList.toggle('open'); gridBtn.style.background=isOpen?'var(--qx-main-color)':''; gridBtn.style.color=isOpen?'var(--qx-on-main)':''; };
+  function resetDropdownSubmenu(){
+    if(dd._qxSettingsKeydown){
+      document.removeEventListener('keydown', dd._qxSettingsKeydown);
+      dd._qxSettingsKeydown = null;
+    }
+    dd.querySelectorAll('.g-settings-panel').forEach(function(el){ el.remove(); });
+    dd.classList.remove('g-settings-view');
+  }
+  function closeDropdown(){
+    dd.classList.remove('open');
+    resetDropdownSubmenu();
+    gridBtn.style.background='';
+    gridBtn.style.color='';
+    gridBtn.setAttribute('aria-expanded', 'false');
+  }
+  gridBtn.onclick=function(e){
+    e.stopPropagation();
+    document.body.classList.remove('bars-hidden');
+    if(dd.classList.contains('open')){
+      closeDropdown();
+      return;
+    }
+    resetDropdownSubmenu();
+    dd.classList.add('open');
+    gridBtn.style.background='var(--qx-main-color)';
+    gridBtn.style.color='var(--qx-on-main)';
+    gridBtn.setAttribute('aria-expanded', 'true');
+  };
   const headerSearchBtn = document.getElementById('headerSearchBtn');
   if(headerSearchBtn){
     headerSearchBtn.onclick=function(e){ e.stopPropagation(); if(typeof openPopup==='function') openPopup('search'); else if(window.openGridPopup) window.openGridPopup('search'); };
@@ -3113,8 +3134,8 @@ setInterval(checkPrayerAlerts, 5000);
   window.openGridPopup=openPopup;
   function head(title){ return '<div class="pp-header"><h3>'+title+'</h3><button type="button" class="pp-close" aria-label="বন্ধ করুন" onclick="document.getElementById(\'gridPopupOverlay\').classList.remove(\'open\')">{{close}}</button></div>'; }
   function renderPwaPopup(){
-    if(window.isInApp && window.isInApp()){ overlay.classList.remove('open'); return; }
-    var installed=!!(window.quranixIsInstalled && window.quranixIsInstalled());
+    var inApp=!!(window.isInApp && window.isInApp());
+    var installed=inApp || !!(window.quranixIsInstalled && window.quranixIsInstalled());
     var ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
     var android=/Android/i.test(navigator.userAgent);
     var mobile=ios||android;
@@ -3129,7 +3150,9 @@ setInterval(checkPrayerAlerts, 5000);
         +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px">{{smartphone}}</div><b style="display:block;text-align:center;font-size:var(--qx-fs-md);margin-bottom:6px">মোবাইল</b>'+mobileSteps+'</div>'
         +'<div style="border:1px solid var(--qx-border);border-radius:var(--qx-radius-lg);padding:12px 9px;background:var(--qx-card-bg)"><div style="font-size:25px;text-align:center;color:var(--qx-main-color);margin-bottom:5px"><svg class="ms-svg" viewBox="0 0 24 24" style="font-size:1em" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><b style="display:block;text-align:center;font-size:var(--qx-fs-md);margin-bottom:6px">ল্যাপটপ</b>'+pcSteps+'</div>'
         +'</div><p class="pp-mini" style="margin:0 0 10px">*ইনস্টল বাটন কাজ করতে ব্রাউজারে PWA install সমর্থিত হতে হবে।</p>';
-    box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:var(--qx-radius-lg);background:var(--qx-main-color);color:var(--qx-on-main);display:grid;place-items:center;font-size:26px">{{download}}</div><b>অফলাইনে পড়ুন</b><p class="pp-mini">মোবাইল বা ডেস্কটপে Quranix ইনস্টল করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} ইনস্টল করুন</button>':'<button class="pp-btn" id="quranixPopupOpen">{{smartphone}} অ্যাপ খুলুন</button>');
+    box.innerHTML=head(title)+'<div style="text-align:center;padding:8px 0 4px"><div style="width:54px;height:54px;margin:0 auto 9px;border-radius:var(--qx-radius-lg);background:var(--qx-main-color);color:var(--qx-on-main);display:grid;place-items:center;font-size:26px">{{download}}</div><b>অফলাইনে পড়ুন</b><p class="pp-mini">মোবাইল বা ডেস্কটপে Quranix ইনস্টল করে অ্যাপের মতো ব্যবহার করুন।</p></div>'+content+(!installed?'<button class="pp-btn" id="quranixPopupInstall">{{download}} ইনস্টল করুন</button>':'<button class="pp-btn" id="quranixPopupOpen">{{smartphone}} অ্যাপ খুলুন</button>')+'<div style="height:10px"></div><button class="pp-btn" id="quranixPopupAbout" type="button">{{info}} Quranix সম্পর্কে</button><div style="height:7px"></div><button class="pp-btn" id="quranixPopupSource" type="button">{{menu_book}} উৎস ও তথ্যসূত্র</button>';
+    box.querySelector('#quranixPopupAbout').onclick=function(){ renderAboutPopup(); };
+    box.querySelector('#quranixPopupSource').onclick=function(){ renderSourcePopup(); };
     var openButton=box.querySelector('#quranixPopupOpen');
     if(openButton) openButton.onclick=function(){ if(window.quranixOpenApp) window.quranixOpenApp(); };
     var installButton=box.querySelector('#quranixPopupInstall');
@@ -3464,13 +3487,8 @@ setInterval(checkPrayerAlerts, 5000);
     if(sb) sb.onclick=function(){ renderSourcePopup(); };
   }
   function renderHelpPopup(){
-    function item(t,d){ return '<div class="pp-mini" style="margin:0 0 10px"><b style="display:block;margin-bottom:2px">'+t+'</b>'+d+'</div>'; }
-    box.innerHTML=head('{{info}} সহায়তা')
-      +item('সার্চ','হেডারের সার্চ বাটনে শব্দ লিখুন। সরাসরি আয়াতে যেতে "২:২৫৫" বা "বাকারা ২৫৫" লিখুন।')
-      +item('পড়ার প্রস্থ ও থিম','হেডারের প্রস্থ বাটনে সংকীর্ণ/পূর্ণ প্রস্থ বদলান। চাঁদ আইকনে ডার্ক/লাইট থিম বদলান।')
-      +item('তাফসির','আয়াতে ট্যাপ করলে তাফসির খোলে। তাফসির লোড করতে ইন্টারনেট লাগে।')
-      +item('ব্যাকআপ ও রিস্টোর','মেনুর "ব্যাকআপ ও রিস্টোর" থেকে আপনার সংরক্ষিত তথ্য ফাইলে নিন এবং পরে ফিরিয়ে আনুন।')
-      +item('অ্যাপ ইনস্টল','মেনুর "Quranix অ্যাপ" থেকে ফোন বা কম্পিউটারে ইনস্টল করুন।');
+    box.innerHTML=head('{{volunteer_activism}} সহযোগিতা করুন')
+      +'<div style="text-align:center;padding:12px 4px 6px"><div style="width:58px;height:58px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:var(--qx-main-soft);color:var(--qx-main-color);font-size:28px"><span class="ms">volunteer_activism</span></div><b>Quranix-এর উন্নয়নে সহযোগিতা করুন</b><p class="pp-mini" style="margin-top:7px">অ্যাপটির উন্নয়ন, রক্ষণাবেক্ষণ ও ভবিষ্যৎ কার্যক্রমে আপনার সহযোগিতা মূল্যবান।</p><p class="pp-mini" style="margin-top:8px">সহযোগিতার নির্দিষ্ট পদ্ধতি ও পেমেন্ট তথ্য এখনো যুক্ত করা হয়নি।</p></div>';
   }
 
   refreshMinis();
@@ -5308,6 +5326,7 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
   "use strict";
   let activeFilter = "";
   let pageMode = "player";
+  let selectedSurah = 0;
 
   function bnNumber(value){
     return String(value).replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[Number(d)]);
@@ -5329,10 +5348,12 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
     const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null;
     return state && state.number ? getSurah(state.number) : getSurah(1);
   }
-  function renderPage(){
+  function renderPage(surahNumber){
+    if (Number.isInteger(Number(surahNumber)) && Number(surahNumber) >= 1 && Number(surahNumber) <= 114) selectedSurah = Number(surahNumber);
     window.qxFullAudioPageOpen = true;
     pageMode = "player";
-    if (typeof qxNav !== "undefined" && qxNav.pushMode) qxNav.pushMode();
+    const pageAlreadyOpen = !!document.querySelector(".qx-full-audio-page");
+    if (!pageAlreadyOpen && typeof qxNav !== "undefined" && qxNav.pushMode) qxNav.pushMode();
     showOther("Full Audio Quran");
     const page = document.createElement("section");
     page.className = "qx-full-audio-page";
@@ -5359,10 +5380,10 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
       </section>`;
     app.appendChild(page);
     page.querySelector("#qxFaOpenList").addEventListener("click", renderListPage);
-    page.querySelector("#qxFaPrev").addEventListener("click", () => { const n = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState().number : 0; if (n > 1) window.qxToggleFullSurahAudio(n - 1); });
-    page.querySelector("#qxFaNext").addEventListener("click", () => { const n = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState().number : 0; if (n > 0 && n < 114) window.qxToggleFullSurahAudio(n + 1); });
-    page.querySelector("#qxFaPlay").addEventListener("click", () => { const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null; if (state && state.number) window.qxToggleFullSurahAudio(state.number); else window.qxToggleFullSurahAudio(1); });
-    page.querySelector("#qxFaCurrentPlay").addEventListener("click", () => { const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null; if (state && state.number) window.qxToggleFullSurahAudio(state.number); else window.qxToggleFullSurahAudio(1); });
+    page.querySelector("#qxFaPrev").addEventListener("click", () => { const n = selectedSurah || (window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState().number : 0); if (n > 1) { selectedSurah = n - 1; window.qxToggleFullSurahAudio(selectedSurah); } });
+    page.querySelector("#qxFaNext").addEventListener("click", () => { const n = selectedSurah || (window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState().number : 0); if (n > 0 && n < 114) { selectedSurah = n + 1; window.qxToggleFullSurahAudio(selectedSurah); } });
+    page.querySelector("#qxFaPlay").addEventListener("click", () => { const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null; const n = selectedSurah || (state && state.number) || 1; selectedSurah = n; window.qxToggleFullSurahAudio(n); });
+    page.querySelector("#qxFaCurrentPlay").addEventListener("click", () => { const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null; const n = selectedSurah || (state && state.number) || 1; selectedSurah = n; window.qxToggleFullSurahAudio(n); });
     page.querySelector("#qxFaSeek").addEventListener("input", e => { if (window.qxSeekFullSurahAudio) window.qxSeekFullSurahAudio(Number(e.target.value) / 1000); });
     updatePlayer();
   }
@@ -5387,11 +5408,14 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
       page.querySelector("#qxFaCount").textContent = bnNumber(rows.length) + "টি";
       rows.forEach(s => {
         const row = document.createElement("div"); row.className = "qx-fa-row"; row.dataset.surah = String(s.number);
+        row.setAttribute("role", "button"); row.setAttribute("tabindex", "0");
+        row.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " এর প্লেয়ার খুলুন");
         const info = document.createElement("div"); info.className = "qx-fa-row-info";
         const num = document.createElement("span"); num.className = "qx-fa-num"; num.textContent = bnNumber(s.number);
         const names = document.createElement("span"); names.className = "qx-fa-names";
-        const primary = document.createElement("strong"); primary.textContent = s.name || ("সূরা " + bnNumber(s.number));
-        const secondary = document.createElement("small"); secondary.textContent = (s.englishNameTranslation || s.englishName || "") + " · " + bnNumber(s.numberOfAyahs || 0) + " আয়াত";
+        const surahMeta = window.SURAH_META && window.SURAH_META.find(item => Number(item.n) === Number(s.number));
+        const primary = document.createElement("strong"); primary.textContent = surahMeta ? surahMeta.bn : (s.englishNameTranslation || ("সূরা " + bnNumber(s.number)));
+        const secondary = document.createElement("small"); secondary.textContent = (s.englishName || "") + " · " + bnNumber(s.numberOfAyahs || (surahMeta && surahMeta.ayahs) || 0) + " আয়াত";
         names.append(primary, secondary); info.append(num, names);
         const actions = document.createElement("div"); actions.className = "qx-fa-row-actions";
         const read = document.createElement("button"); read.type = "button"; read.className = "qx-fa-row-read"; read.innerHTML = '<span class="ms">menu_book</span>'; read.title = "সূরা পড়ুন"; read.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " পড়ুন");
@@ -5400,7 +5424,21 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
           if (typeof openSurah === "function") openSurah(s.number);
         });
         const play = document.createElement("button"); play.type = "button"; play.className = "qx-surah-audio-btn qx-fa-row-play"; play.dataset.surah = String(s.number); play.innerHTML = '<span class="ms">play_arrow</span>'; play.title = "সম্পূর্ণ সূরা শুনুন"; play.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " চালান");
-        play.addEventListener("click", () => window.qxToggleFullSurahAudio && window.qxToggleFullSurahAudio(s.number));
+        play.addEventListener("click", () => {
+          selectedSurah = s.number;
+          if (window.qxToggleFullSurahAudio) window.qxToggleFullSurahAudio(s.number);
+        });
+        const openSelectedPlayer = event => {
+          if (event && event.target && event.target.closest && event.target.closest("button")) return;
+          renderPage(s.number);
+        };
+        row.addEventListener("click", openSelectedPlayer);
+        row.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            renderPage(s.number);
+          }
+        });
         actions.append(read, play);
         row.append(info, actions); list.appendChild(row);
       });
@@ -5415,20 +5453,24 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
     const page = document.querySelector(".qx-full-audio-page");
     if (!page || !window.qxGetFullSurahAudioState) return;
     const state = window.qxGetFullSurahAudioState();
-    const s = state.number ? getSurah(state.number) : null;
+    const displayNumber = selectedSurah || state.number;
+    const s = displayNumber ? getSurah(displayNumber) : null;
     if (pageMode === "player") {
       page.querySelector("#qxFaPlay .ms").textContent = state.playing ? "pause" : "play_arrow";
-      page.querySelector("#qxFaSeek").value = state.duration ? Math.round(state.currentTime / state.duration * 1000) : 0;
-      page.querySelector("#qxFaProgressFill").style.width = (state.duration ? state.currentTime / state.duration * 100 : 0) + "%";
+      const progress = state.duration ? Math.max(0, Math.min(100, state.currentTime / state.duration * 100)) : 0;
+      page.querySelector("#qxFaSeek").value = state.duration ? Math.round(progress * 10) : 0;
+      page.querySelector("#qxFaSeek").style.background = "linear-gradient(to right, var(--qx-main-color) 0%, var(--qx-main-color) " + progress + "%, var(--qx-light-mint-2, #d1e9e1) " + progress + "%, var(--qx-light-mint-2, #d1e9e1) 100%)";
+      page.querySelector("#qxFaProgressFill").style.width = progress + "%";
       page.querySelector("#qxFaCurrentTime").textContent = formatTime(state.currentTime);
       page.querySelector("#qxFaDuration").textContent = formatTime(state.duration);
       const currentName = page.querySelector("#qxFaCurrentName");
       const currentMeta = page.querySelector("#qxFaCurrentMeta");
       const currentPlay = page.querySelector("#qxFaCurrentPlay");
-      if (currentName) currentName.textContent = s ? (bnNumber(s.number) + ". " + (s.name || "সূরা " + bnNumber(s.number))) : "কোনো সূরা নির্বাচন করা হয়নি";
+      const selectedMeta = displayNumber && window.SURAH_META ? window.SURAH_META.find(item => Number(item.n) === Number(displayNumber)) : null;
+      if (currentName) currentName.textContent = s ? (bnNumber(s.number) + ". " + (selectedMeta ? selectedMeta.bn : (s.englishNameTranslation || "সূরা " + bnNumber(s.number)))) : "কোনো সূরা নির্বাচন করা হয়নি";
       if (currentMeta) currentMeta.textContent = s ? (bnNumber(s.numberOfAyahs || 0) + " আয়াত") : "সূরা নির্বাচন করুন";
       if (currentPlay) {
-        currentPlay.dataset.surah = String(state.number || 0);
+        currentPlay.dataset.surah = String(displayNumber || 0);
         const currentIcon = currentPlay.querySelector(".ms");
         if (currentIcon) currentIcon.textContent = state.playing ? "pause" : "play_arrow";
       }

@@ -319,23 +319,22 @@ header {
   right: 0;
   top: var(--qx-hdr-h, calc(62px + env(safe-area-inset-top)));
   z-index: 49;
-  height: 28px;
-  background: var(--qx-card-bg);
-  border-bottom: 1px solid var(--qx-border);
+  height: 4px;
+  background: transparent;
+  border: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 var(--qx-gutter);
+  padding: 0;
   opacity: 0;
   pointer-events: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: none;
   transition: opacity .2s ease, top .25s ease;
 }
 
 .reader-progress-track {
   flex: 1;
-  height: 6px;
-  border-radius: 999px;
+  height: 3px;
+  border-radius: 0;
   background: var(--qx-border);
   overflow: hidden;
 }
@@ -352,14 +351,6 @@ body.bars-hidden .reader-progress {
   top: env(safe-area-inset-top, 0px);
 }
 
-.reader-progress-text {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--qx-main-color);
-  min-width: 36px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
 
 body.reader-active .reader-progress {
   opacity: 1;
@@ -367,7 +358,7 @@ body.reader-active .reader-progress {
 }
 
 body.reader-active #app {
-  margin-top: 28px;
+  margin-top: 4px;
 }
 
 .bar {
@@ -1295,6 +1286,11 @@ body.inside-page h1 {
 .audio-bar.with-nav {
   bottom: calc(66px * var(--qx-scale) + env(safe-area-inset-bottom));
 }
+
+html.qx-audio-open,
+body.qx-audio-open {
+  overflow: hidden;
+}
 .audio-bar .audio-inner {
   position: relative;
   display: flex;
@@ -1320,6 +1316,9 @@ body.inside-page h1 {
   font-size: 11px;
   color: var(--qx-meta-color);
 }
+.audio-top-row .audio-info small {
+  color: #47645E;
+}
 .audio-status {
   text-align: center;
   padding: 0 14px 6px;
@@ -1342,11 +1341,12 @@ body.inside-page h1 {
   box-shadow: 0 1px 4px rgba(0,0,0,.15);
 }
 .audio-top-row {
-  background: color-mix(in srgb, var(--qx-card-bg) 88%, var(--qx-main-color) 12%);
+  background: #D9E6E5;
+  color: #18322E;
 }
 
 .audio-top-actions button {
-  color: var(--qx-text-color);
+  color: #18322E;
 }
 .audio-ctrls.qx-audio-ctrls-v3 {
   display: flex;
@@ -1370,13 +1370,9 @@ body.inside-page h1 {
 .qx-side-btn .ms {
   font-size: 26px;
 }
-.qx-side-btn#audioSpeed {
-  font-size: var(--qx-fs-sm);
-  font-weight: 600;
-  border: 1px solid var(--qx-border);
-  background: var(--qx-card-bg);
-  width: 44px;
-  height: 44px;
+.qx-side-btn.on {
+  background: var(--qx-main-soft);
+  color: var(--qx-main-color);
 }
 .qx-center-btn {
   width: 64px;
@@ -5722,19 +5718,27 @@ html.in-app .install-menu-item.show {
 .audio-top-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 10px 12px 6px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 8px;
+}
+
+.audio-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .audio-top-actions {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  flex: none;
+  gap: 8px;
 }
 
 .audio-top-actions button {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  flex: none;
   border-radius: 50%;
   border: 1px solid var(--qx-border);
   background: var(--qx-card-bg);
@@ -5748,7 +5752,7 @@ html.in-app .install-menu-item.show {
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   color: var(--qx-meta-color);
-  padding: 0 14px 10px;
+  padding: 6px 14px 8px;
 }
 
 .audio-float {
@@ -8514,8 +8518,8 @@ html[data-theme="dark"] .trk-cat {
 .qx-fa-brand small{font-size:11px;color:rgba(255,255,255,.76);}
 .qx-fa-headphones{font-size:23px;color:rgba(255,255,255,.92);}
 .qx-fa-surah-pill{margin:0 2px 12px;padding:10px 12px;border-radius:999px;text-align:center;background:var(--qx-main-soft);color:var(--qx-main-color);font-size:13px;font-weight:650;}
-.qx-fa-player{border:1px solid color-mix(in srgb,var(--qx-main-color) 12%,var(--qx-border));background:linear-gradient(180deg,color-mix(in srgb,var(--qx-main-color) 8%,var(--qx-card-bg)),var(--qx-card-bg));border-radius:20px;padding:16px 14px 14px;box-shadow:0 7px 22px rgba(10,74,58,.07);}
-.qx-fa-hero-art{height:166px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;max-width:280px;border-radius:18px;background:radial-gradient(circle at 50% 48%,color-mix(in srgb,var(--qx-main-color) 18%,transparent) 0%,color-mix(in srgb,var(--qx-main-color) 8%,transparent) 42%,transparent 72%);}
+.qx-fa-player{min-height:min(680px,calc(100svh - 220px));display:flex;flex-direction:column;justify-content:space-between;border:1px solid color-mix(in srgb,var(--qx-main-color) 12%,var(--qx-border));background:linear-gradient(180deg,color-mix(in srgb,var(--qx-main-color) 8%,var(--qx-card-bg)),var(--qx-card-bg));border-radius:20px;padding:16px 14px 14px;box-shadow:0 7px 22px rgba(10,74,58,.07);}
+.qx-fa-hero-art{height:auto;min-height:220px;flex:1;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;max-width:280px;border-radius:18px;background:radial-gradient(circle at 50% 48%,color-mix(in srgb,var(--qx-main-color) 18%,transparent) 0%,color-mix(in srgb,var(--qx-main-color) 8%,transparent) 42%,transparent 72%);}
 .qx-fa-hero-art .ms.qi{display:grid;place-items:center;width:132px;height:132px;border-radius:50%;font-size:76px;color:color-mix(in srgb,var(--qx-main-color) 88%,var(--qx-text-color));background:radial-gradient(circle,color-mix(in srgb,var(--qx-main-color) 17%,var(--qx-card-bg)) 0%,color-mix(in srgb,var(--qx-main-color) 8%,var(--qx-card-bg)) 68%,transparent 70%);filter:drop-shadow(0 8px 14px color-mix(in srgb,var(--qx-main-color) 20%,transparent));}
 
 .qx-fa-progress{height:22px;margin:18px 3px 2px;display:flex;align-items:center;}
@@ -8532,7 +8536,7 @@ html[data-theme="dark"] .trk-cat {
 .qx-fa-single-main small{font-size:11px;}
 .qx-fa-list-head{margin:6px 0 12px;}
 .qx-fa-list{gap:6px;padding-bottom:22px;}
-.qx-fa-row{min-height:60px;border-radius:12px;padding:9px 10px;}
+.qx-fa-row{min-height:72px;border-radius:14px;padding:12px 11px;}
 .qx-fa-row.current{border-color:var(--qx-main-color);box-shadow:inset 0 0 0 1px var(--qx-main-color);}
 .qx-fa-row-play{border:0;background:var(--qx-main-color);color:#fff;}
 .qx-fa-row-play.on{background:var(--qx-top-bar,#0a4a3a);color:#fff;}
@@ -8544,7 +8548,7 @@ html[data-theme="dark"] .trk-cat {
 .qx-fa-current-info small{font-size:11px;color:var(--qx-meta-color);}
 .qx-fa-open-list{display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 12px;border:0;border-radius:24px;background:var(--qx-main-color);color:#fff;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;}
 .qx-fa-open-list .ms{font-size:19px;}
-@media(max-width:420px){.qx-fa-topbar{margin-left:-9px;margin-right:-9px;padding-left:12px;padding-right:12px}.qx-fa-hero-art{height:146px}.qx-fa-hero-art .ms.qi{width:116px;height:116px;font-size:68px}.qx-fa-controls{gap:10px}}
+@media(max-width:420px){.qx-fa-topbar{margin-left:-9px;margin-right:-9px;padding-left:12px;padding-right:12px}.qx-fa-player{min-height:min(680px,calc(100svh - 205px));padding:14px 12px 12px}.qx-fa-hero-art{min-height:240px}.qx-fa-hero-art .ms.qi{width:116px;height:116px;font-size:68px}.qx-fa-controls{gap:10px}}
 [data-theme="dark"] .qx-fa-player{background:linear-gradient(180deg,color-mix(in srgb,var(--qx-main-color) 15%,var(--qx-card-bg)),var(--qx-card-bg));}
 /* [FULL-AUDIO-REFERENCE-UI] end */
 
@@ -8812,18 +8816,12 @@ html[data-theme="dark"] .trk-cat {
 
 /* [PHASE-2] Task 46 — Azan alert screen */
 .qx-azan-head { margin-bottom:12px; }
+.qx-azan-note{display:flex;align-items:flex-start;gap:7px;color:inherit;background:var(--qx-card-bg);border:1px solid var(--qx-border);}
+.qx-azan-note-mark{flex:0 0 auto;color:inherit;font-weight:700;}
+.qx-azan-note-text{color:inherit;}
+.qx-azan-toggle .ms{font-size:21px;line-height:1;}
+
 .qx-azan-status { font-size:13px; opacity:.9; margin-top:5px; }
-.qx-azan-next-card {
-  margin:0 var(--qx-gutter) 14px; padding:18px 18px 20px; border-radius:20px;
-  color:#fff; background:linear-gradient(135deg,#087a43,#16a34a 68%,#22c55e);
-  box-shadow:0 8px 22px rgba(22,163,74,.16); text-align:center;
-}
-.qx-azan-next-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
-.qx-azan-next-label { font-size:13px; font-weight:700; opacity:.95; }
-.qx-azan-next-icon { font-size:24px; line-height:1; }
-.qx-azan-next-name { font-size:25px; font-weight:800; margin-top:5px; }
-.qx-azan-next-time { font-size:16px; opacity:.95; margin-top:2px; }
-.qx-azan-countdown { font-size:clamp(26px,7vw,34px); font-weight:800; letter-spacing:1px; font-variant-numeric:tabular-nums; margin-top:10px; }
 .qx-azan-list-card,.qx-azan-settings { margin-top:12px; }
 .qx-azan-prayer-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 13px; margin-top:8px; border:1px solid var(--qx-border); border-radius:14px; background:var(--qx-card-bg); transition:border-color .15s,background .15s; }
 .qx-azan-prayer-row.active { border:2px solid #16a34a; background:rgba(22,163,74,.08); padding:11px 12px; }
@@ -8840,7 +8838,7 @@ html[data-theme="dark"] .trk-cat {
 .qx-azan-test-btn { color:var(--qx-main-color); }
 .qx-azan-save-btn { display:block; width:100%; margin:14px 0 2px; min-height:50px; border:0; border-radius:999px; background:#16a34a; color:#fff; font:inherit; font-weight:800; cursor:pointer; }
 .qx-azan-save-btn:focus-visible,.qx-azan-toggle:focus-visible,.qx-azan-master-toggle:focus-visible,.qx-azan-test-btn:focus-visible { outline:3px solid rgba(22,163,74,.35); outline-offset:2px; }
-@media(max-width:380px){ .qx-azan-next-card{padding:15px}.qx-azan-prayer-row{padding:10px}.qx-azan-prayer-row.active{padding:9px 9px}.qx-azan-prayer-info{column-gap:7px} }
+@media(max-width:380px){ .qx-azan-prayer-row{padding:10px}.qx-azan-prayer-row.active{padding:9px 9px}.qx-azan-prayer-info{column-gap:7px} }
 </style>
 </head>
 <body>
@@ -8890,18 +8888,14 @@ html[data-theme="dark"] .trk-cat {
         <button class="g-menu-item" data-popup="share"><span><span class="ms" aria-hidden="true">share</span>অ্যাপ শেয়ার করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
 
         <!-- [MORE-MENU > Help item] -->
-        <button class="g-menu-item" data-popup="help"><span><span class="ms" aria-hidden="true">help</span>সহায়তা</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <!-- [MORE-MENU > Source and references item] -->
-        <button class="g-menu-item" data-popup="source"><span><span class="ms" aria-hidden="true">info</span>উৎস ও তথ্যসূত্র</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <!-- [MORE-MENU > About item] -->
-        <button class="g-menu-item" data-popup="about"><span><span class="ms" aria-hidden="true">info</span>Quranix সম্পর্কে</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="help"><span><span class="ms" aria-hidden="true">volunteer_activism</span>সহযোগিতা করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
       </div>
     </div>
   </div> 
   <!-- [MORE-MENU] end --> 
 
   <!-- [HEADER > Reader progress bar item] -->
-  <div class="reader-progress" id="readerProgress" role="progressbar" aria-label="পাঠের অগ্রগতি" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reader-progress-track"><div class="reader-progress-fill" id="readerProgressFill"></div></div><span class="reader-progress-text" id="readerProgressText">০%</span></div>
+  <div class="reader-progress" id="readerProgress" role="progressbar" aria-label="পাঠের অগ্রগতি" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="reader-progress-track"><div class="reader-progress-fill" id="readerProgressFill"></div></div></div>
 </header>
 <!-- [HEADER] end -->
 
@@ -8961,10 +8955,10 @@ html[data-theme="dark"] .trk-cat {
     <div class="audio-progress-top"><input id="audioSeek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="অডিও অগ্রগতি"><div class="audio-progress-fill" id="audioProgressFill"></div></div>
     <!-- [AUDIO-BAR > Title and top buttons item] -->
     <div class="audio-top-row"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-top-actions"><button id="audioHide" type="button" aria-label="মিনিমাইজ"><span class="ms" aria-hidden="true">expand_more</span></button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো"><span class="ms" aria-hidden="true">close</span></button></div></div>
-    <!-- [AUDIO-BAR > Controls item] -->
-    <div class="audio-ctrls qx-audio-ctrls-v3"><button id="audioAuto" type="button" class="qx-side-btn" aria-label="অটো-প্লে"><span class="ms" aria-hidden="true">shuffle</span></button><button id="audioPrev" type="button" class="qx-side-btn" aria-label="আগের আয়াত"><span class="ms" aria-hidden="true">skip_previous</span></button><button id="audioPlayPause" type="button" class="qx-center-btn primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true">play_arrow</span></button><button id="audioNext" type="button" class="qx-side-btn" aria-label="পরের আয়াত"><span class="ms" aria-hidden="true">skip_next</span></button><button id="audioSpeed" type="button" class="qx-side-btn" aria-label="তেলাওয়াতের গতি">1x</button></div>
     <!-- [AUDIO-BAR > Time item] -->
     <div class="audio-bottom"><span id="audioCurrentTime">০:০০</span><span id="audioDuration">০:০০</span></div>
+    <!-- [AUDIO-BAR > Controls item] -->
+    <div class="audio-ctrls qx-audio-ctrls-v3"><button id="audioRepeat" type="button" class="qx-side-btn" aria-label="আয়াত পুনরাবৃত্তি চালু করুন" aria-pressed="false"><span class="ms" aria-hidden="true">repeat_one</span></button><button id="audioPrev" type="button" class="qx-side-btn" aria-label="আগের আয়াত"><span class="ms" aria-hidden="true">skip_previous</span></button><button id="audioPlayPause" type="button" class="qx-center-btn primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true">play_arrow</span></button><button id="audioNext" type="button" class="qx-side-btn" aria-label="পরের আয়াত"><span class="ms" aria-hidden="true">skip_next</span></button><button id="audioSleepTimer" type="button" class="qx-side-btn" aria-label="স্লিপ টাইমার"><span class="ms" aria-hidden="true">bedtime</span></button></div>
     <!-- [AUDIO-BAR > Status item] -->
     <div class="audio-status" id="audioStatus" aria-live="polite"></div>
   </div>
@@ -9004,26 +8998,16 @@ html[data-theme="dark"] .trk-cat {
 
 
 <script>
-/* Phase 2 - Task 32 progress % + হেডারের নিচে স্টিকি অবস্থান */
+/* Reader progress: keep the thin indicator aligned below the sticky header. */
 (function(){
   var header = document.querySelector('header');
-  var fill = document.getElementById('readerProgressFill');
-  var text = document.getElementById('readerProgressText');
   function setTop(){
     if(header) document.documentElement.style.setProperty('--qx-hdr-h', header.offsetHeight + 'px');
   }
-  function setText(){
-    if(!fill || !text) return;
-    var n = Math.round(parseFloat(fill.style.width) || 0);
-    var bar = document.getElementById('readerProgress');
-    if(bar) bar.setAttribute('aria-valuenow', String(n));
-    text.textContent = String(n).replace(/\d/g, function(d){ return '০১২৩৪৫৬৭৮৯'.charAt(d); }) + '%';
-  }
-  setTop(); setText();
+  setTop();
   window.addEventListener('resize', setTop);
   window.addEventListener('load', setTop);
   if(window.ResizeObserver && header) new ResizeObserver(setTop).observe(header);
-  if(fill) new MutationObserver(setText).observe(fill, {attributes:true, attributeFilter:['style']});
 })();
 
 /* Phase 2 - Task 47 download feedback */

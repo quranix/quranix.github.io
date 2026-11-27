@@ -457,11 +457,10 @@ window.qxPromptAsync = window.qxPromptAsync || function(message, def){
           offlineAudioObjectUrl = URL.createObjectURL(blob);
           currentPlayIdx = idx;
           audioObj.src = offlineAudioObjectUrl;
-          audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+          audioObj.playbackRate = 1;
           audioTitle.textContent = item.s.englishName + ' · আয়াত ' + toBn(item.no);
           audioReciterLabel.textContent = reciterName(rec) + ' · অফলাইন';
           qxAudioBarShow();
-          audioAuto.classList.toggle('on', autoPlayNext);
           highlightPlayingCard(item.s.number, item.no);
           await audioObj.play();
           audioPlayPause.textContent = '{{pause}}';
@@ -1536,21 +1535,7 @@ function qxIco(name, filled){
 const LOCAL = window.QURAN || null;
 const API = "https://api.alquran.cloud/v1";
 
-/* --- অডিও স্পিড কন্ট্রোল --- */
-const SPEEDS = [1, 1.25, 1.5, 0.75];
-let audioSpeedIdx = lsGet("audioSpeedIdx", 0);
-const audioSpeedBtn = document.getElementById("audioSpeed");
-if (audioSpeedBtn) {
-  audioSpeedBtn.textContent = SPEEDS[audioSpeedIdx] + "x";
-  audioSpeedBtn.onclick = () => {
-    audioSpeedIdx = (audioSpeedIdx + 1) % SPEEDS.length;
-    lsSet("audioSpeedIdx", audioSpeedIdx);
-    const rate = SPEEDS[audioSpeedIdx];
-    audioObj.playbackRate = rate;
-    audioSpeedBtn.textContent = rate + "x";
-    showToast("তেলাওয়াতের গতি: " + rate + "x");
-  };
-}
+/* Speed control removed: playback remains at normal speed. */
 
 /* --- ব্যক্তিগত আয়াত নোট (Personal Notes) --- */
 let ayahNotes = lsGet("notes", {});
@@ -1825,6 +1810,26 @@ function buildAotdCard(){
     playAyahFromList([aObj], item.s, item.a);
   };
 
+  const favoriteBtn = document.createElement("button");
+  favoriteBtn.type = "button";
+  favoriteBtn.className = "icon-btn";
+  favoriteBtn.title = "Favorite-এ Add";
+  favoriteBtn.setAttribute("aria-label", "Favorite-এ Add");
+  const favoriteKey = item.s + ":" + item.a;
+  const syncFavoriteButton = () => {
+    const isFavorite = savedHas("quran", favoriteKey);
+    favoriteBtn.textContent = isFavorite ? "{{star:f}}" : "{{star}}";
+    favoriteBtn.title = isFavorite ? "Favorite থেকে সরান" : "Favorite-এ Add";
+    favoriteBtn.setAttribute("aria-label", favoriteBtn.title);
+    favoriteBtn.setAttribute("aria-pressed", String(isFavorite));
+  };
+  syncFavoriteButton();
+  favoriteBtn.onclick = () => {
+    const on = savedToggle("quran", favoriteKey);
+    syncFavoriteButton();
+    showToast(on ? "Favorite-এ যোগ হয়েছে" : "Favorite থেকে সরানো হয়েছে");
+  };
+
   const copyBtn = document.createElement("button");
   copyBtn.type = "button";
   copyBtn.setAttribute("aria-label", "আয়াত কপি করুন");
@@ -1847,6 +1852,7 @@ function buildAotdCard(){
   };
 
   acts.appendChild(playBtn);
+  acts.appendChild(favoriteBtn);
   acts.appendChild(copyBtn);
   acts.appendChild(nextBtn);
 
@@ -1995,7 +2001,7 @@ function qxPlayWithCrossfade(nextIdx){
     if(_nextPreloadedIdx === nextIdx && _nextAudioObj.src){
       const oldAud = audioObj;
       const newAud = _nextAudioObj;
-      newAud.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+      newAud.playbackRate = 1;
       // Start newAud for overlap
       try{ newAud.currentTime = 0; }catch(e){}
       const playP = newAud.play().catch(()=>{});
@@ -2042,6 +2048,8 @@ function qxInitAudioHide(){
   if(hideBtn && floatWrap){
     hideBtn.onclick = () => {
       audioBar.style.display = 'none';
+      document.documentElement.classList.remove('qx-audio-open');
+      document.body.classList.remove('qx-audio-open');
       floatWrap.style.display = 'block';
       updateAudioBarPos();
     };
@@ -2057,7 +2065,10 @@ const audioBar = document.getElementById("audioBar");
 const audioTitle = document.getElementById("audioTitle");
 const audioReciterLabel = document.getElementById("audioReciterLabel");
 const audioPlayPause = document.getElementById("audioPlayPause");
-const audioAuto = document.getElementById("audioAuto");
+const audioRepeatBtn = document.getElementById('audioRepeat');
+const audioSleepTimerBtn = document.getElementById('audioSleepTimer');
+let qxAudioRepeat = false;
+let qxAudioSleepTimerId = null;
 
 function pad3(n){ return String(n).padStart(3, "0"); }
 function getReciterName(id){ const f = RECITERS.find(r => r[0] === id); return f ? f[1] : RECITERS[0][1]; }
@@ -2074,6 +2085,8 @@ function qxAudioBarShow(){
   const floatEl = document.getElementById("audioFloat");
   if (floatEl) floatEl.style.display = "none";
   audioBar.style.display = "block";
+  document.documentElement.classList.add('qx-audio-open');
+  document.body.classList.add('qx-audio-open');
   updateAudioBarPos();
 }
 
@@ -2107,12 +2120,11 @@ function playAyahAtIndex(idx){
     } else {
       audioObj.src = remoteUrl;
     }
-    audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+    audioObj.playbackRate = 1;
     audioObj.volume = 1;
     audioTitle.textContent = `${item.s.englishName} · আয়াত ${toBn(item.no)}`;
     audioReciterLabel.textContent = getReciterName(currentReciter);
     qxAudioBarShow();
-    audioAuto.classList.toggle("on", autoPlayNext);
     highlightPlayingCard(item.s.number, item.no);
     // Ensure room tone ctx resumed on user gesture
     qxEnsureRoomTone();
@@ -2128,12 +2140,11 @@ function playAyahAtIndex(idx){
     });
   }).catch(()=>{
     audioObj.src = remoteUrl;
-    audioObj.playbackRate = SPEEDS[audioSpeedIdx] || 1;
+    audioObj.playbackRate = 1;
     audioObj.volume = 1;
     audioTitle.textContent = `${item.s.englishName} · আয়াত ${toBn(item.no)}`;
     audioReciterLabel.textContent = getReciterName(currentReciter);
     qxAudioBarShow();
-    audioAuto.classList.toggle("on", autoPlayNext);
     highlightPlayingCard(item.s.number, item.no);
     qxEnsureRoomTone();
     audioObj.play().then(() => {
@@ -2164,12 +2175,16 @@ function stopAudio(){
   try{ _nextAudioObj.src = ""; }catch(e){}
   _nextPreloadedIdx = -1;
   audioBar.style.display = "none";
+  if(qxAudioSleepTimerId){ clearTimeout(qxAudioSleepTimerId); qxAudioSleepTimerId=null; }
+  if(audioSleepTimerBtn){ audioSleepTimerBtn.classList.remove('on'); audioSleepTimerBtn.setAttribute('aria-label','স্লিপ টাইমার'); }
+  document.documentElement.classList.remove('qx-audio-open');
+  document.body.classList.remove('qx-audio-open');
   const floatAfterStop = document.getElementById("audioFloat");
   if (floatAfterStop) floatAfterStop.style.display = "none";
   currentPlayIdx = -1;
   qxRoomToneFade(0, 150);
   const statusEl = document.getElementById('audioStatus');
-  if(statusEl) statusEl.textContent = 'বন্ধ';
+  if(statusEl) statusEl.textContent = '';
   document.querySelectorAll(".ayah.playing").forEach(el => el.classList.remove("playing"));
 }
 
@@ -2188,16 +2203,57 @@ document.getElementById("audioPrev").onclick = () => {
 document.getElementById("audioNext").onclick = () => {
   if (currentPlayIdx + 1 < currentPlaylist.length) playAyahAtIndex(currentPlayIdx + 1);
 };
-audioAuto.onclick = () => {
-  autoPlayNext = !autoPlayNext;
-  lsSet("autoPlayNext", autoPlayNext);
-  audioAuto.classList.toggle("on", autoPlayNext);
-  showToast(autoPlayNext ? "অটো-প্লে চালু হয়েছে" : "অটো-প্লে বন্ধ হয়েছে");
-};
+if(audioRepeatBtn){
+  audioRepeatBtn.setAttribute('aria-pressed', 'false');
+  audioRepeatBtn.onclick = () => {
+    qxAudioRepeat = !qxAudioRepeat;
+    audioRepeatBtn.classList.toggle('on', qxAudioRepeat);
+    audioRepeatBtn.setAttribute('aria-pressed', qxAudioRepeat ? 'true' : 'false');
+    audioRepeatBtn.setAttribute('aria-label', qxAudioRepeat ? 'আয়াত পুনরাবৃত্তি বন্ধ করুন' : 'আয়াত পুনরাবৃত্তি চালু করুন');
+    showToast(qxAudioRepeat ? 'বর্তমান আয়াত পুনরাবৃত্তি হবে' : 'আয়াত পুনরাবৃত্তি বন্ধ হয়েছে');
+  };
+}
+if(audioSleepTimerBtn){
+  audioSleepTimerBtn.onclick = async () => {
+    if(typeof window.qxPromptAsync !== 'function') return;
+    const value = await window.qxPromptAsync('কত মিনিট পরে অডিও বন্ধ হবে? ১–১৮০ মিনিট লিখুন। ০ দিলে চালু থাকা টাইমার বাতিল হবে।', '15');
+    if(value === null) return;
+    const minutes = Number.parseInt(String(value).trim(), 10);
+    if(!Number.isInteger(minutes) || minutes < 0 || minutes > 180){
+      showToast('১ থেকে ১৮০ মিনিটের মধ্যে সময় দিন, অথবা ০ লিখুন');
+      return;
+    }
+    if(qxAudioSleepTimerId){ clearTimeout(qxAudioSleepTimerId); qxAudioSleepTimerId = null; }
+    if(minutes === 0){
+      audioSleepTimerBtn.classList.remove('on');
+      audioSleepTimerBtn.setAttribute('aria-label', 'স্লিপ টাইমার');
+      showToast('স্লিপ টাইমার বাতিল হয়েছে');
+      return;
+    }
+    audioSleepTimerBtn.classList.add('on');
+    audioSleepTimerBtn.setAttribute('aria-label', minutes + ' মিনিট পরে অডিও বন্ধ হবে');
+    qxAudioSleepTimerId = window.setTimeout(() => {
+      try{ audioObj.pause(); }catch(e){}
+      audioPlayPause.textContent = '{{play_arrow}}';
+      audioPlayPause.setAttribute('aria-label', 'আবার চালাও');
+      const statusEl = document.getElementById('audioStatus');
+      if(statusEl) statusEl.textContent = '';
+      audioSleepTimerBtn.classList.remove('on');
+      audioSleepTimerBtn.setAttribute('aria-label', 'স্লিপ টাইমার');
+      qxAudioSleepTimerId = null;
+      showToast('স্লিপ টাইমার শেষ—অডিও বন্ধ হয়েছে');
+    }, minutes * 60 * 1000);
+    showToast(minutes + ' মিনিট পরে অডিও বন্ধ হবে');
+  };
+}
 document.getElementById("audioClose").onclick = stopAudio;
 try{ qxInitAudioHide(); }catch(e){}
 /* দুটো অডিও এলিমেন্টেই (আসল ও প্রিলোড/ক্রসফেড) "ended" শোনা হয়: swap-এর পর নতুন মূল এলিমেন্টেও অটো-প্লে চলে */
 function qxHandleAudioEnded(){
+  if(qxAudioRepeat && currentPlayIdx >= 0 && currentPlayIdx < currentPlaylist.length){
+    playAyahAtIndex(currentPlayIdx);
+    return;
+  }
   if (autoPlayNext && currentPlayIdx + 1 < currentPlaylist.length) {
     // Phase 2: try preloaded crossfade first, else normal
     if(!qxPlayWithCrossfade(currentPlayIdx + 1)){
@@ -2273,7 +2329,7 @@ function qxSyncPlayButtons(){
     aud.addEventListener('loadedmetadata',function(){
       if(aud!==getMain()) return;
       updateProgress();
-      status.textContent='অডিও চলছে';
+      status.textContent='';
       // MediaMetadata
       try{
         const item=currentPlaylist[currentPlayIdx];
@@ -2285,14 +2341,14 @@ function qxSyncPlayButtons(){
     aud.addEventListener('waiting',function(){ if(aud===getMain()) status.textContent='অডিও লোড হচ্ছে…'; });
     aud.addEventListener('playing',function(){
       if(aud!==getMain()) return;
-      status.textContent='অডিও চলছে';
+      status.textContent='';
       audioPlayPause.textContent='{{pause}}';
       // P11: background check - ensure room tone off when playing
       qxRoomToneFade(0, 150);
     });
     aud.addEventListener('pause',function(){
       if(aud!==getMain()) return;
-      // বিরতির সময় নিচের স্ট্যাটাস লাইন খালি থাকে (আগে এখানে "বিরতি" লেখা দেখাত); play হলে আবার "অডিও চলছে"
+      // বিরতির সময় স্ট্যাটাস লাইন খালি থাকে।
       if(aud.src && !aud.ended){
         status.textContent='';
       }
@@ -2304,7 +2360,7 @@ function qxSyncPlayButtons(){
     });
     aud.addEventListener('emptied',function(){
       if(aud!==getMain()) return;
-      seek.value='0';seek.disabled=true;curEl.textContent='০:০০';durEl.textContent='০:০০';status.textContent='বন্ধ';
+      seek.value='0';seek.disabled=true;curEl.textContent='০:০০';durEl.textContent='০:০০';status.textContent='';
       if(fillEl) fillEl.style.width='0%';
       // P11: revoke blob on emptied to prevent leak
       qxSafeRevokeAudioSrc(aud);
@@ -3478,7 +3534,7 @@ function ayahCard(label, ar, bn, a, removable){
   };
   addMenu(10, () => "{{share}} শেয়ার করুন", () => shareBtn.onclick());
   addMenu(20, () => "{{image}} ছবি বানাও", () => { if(window.openAyahCard) window.openAyahCard(label, ar, bn); });
-  addMenu(30, () => "{{bookmark}} বুকমার্ক করুন", () => st.onclick(), () => !!st);
+  addMenu(30, () => "{{star}} Favorite-এ Add", () => st.onclick(), () => !!st);
   addMenu(40, () => "{{content_copy}} কপি করুন", () => copyBtn.onclick());
 
   if (a) {
@@ -3633,31 +3689,14 @@ async function openSurah(n, y, targetAyah){
     if (renderToken !== readerRenderToken) return;
     app.innerHTML = "";
 
-    // পূর্ণ সূরার MP3 বাটন শুধু সূরার হেডারে থাকবে; আয়াতের প্লেয়ার আলাদা থাকবে।
+    // পূর্ণ সূরার অডিও প্লেয়ার শুধু Grid Menu-এর Full Audio Quran আইটেম থেকে খোলা যাবে।
     const surahHeader = document.createElement("div");
     surahHeader.className = "sh qx-surah-header";
     const surahHeaderName = document.createElement("span");
     surahHeaderName.className = "qx-surah-header-name";
     surahHeaderName.textContent = (s ? s.name : "সূরা " + n) + (s && s.englishName ? " · " + s.englishName : "");
-    const surahAudioButton = document.createElement("button");
-    surahAudioButton.type = "button";
-    surahAudioButton.className = "qx-surah-audio-btn";
-    surahAudioButton.dataset.surah = String(n);
-    surahAudioButton.textContent = "{{play_arrow}}";
-    surahAudioButton.title = "সম্পূর্ণ সূরা শুনুন";
-    surahAudioButton.setAttribute("aria-label", "সম্পূর্ণ সূরা শুনুন");
-    surahAudioButton.onclick = function(){
-      if (typeof window.qxToggleFullSurahAudio === "function") {
-        window.qxToggleFullSurahAudio(n);
-      } else {
-        showToast("পূর্ণ সূরার অডিও প্রস্তুত হচ্ছে। একটু পরে চেষ্টা করুন।");
-      }
-    };
-    surahHeader.append(surahHeaderName, surahAudioButton);
+    surahHeader.appendChild(surahHeaderName);
     app.appendChild(surahHeader);
-    if (typeof window.qxSyncFullSurahAudioButtons === "function") {
-      window.qxSyncFullSurahAudioButtons();
-    }
 
     if (n !== 1 && n !== 9) {
       const b = document.createElement("div"); b.className = "bism"; b.textContent = bism;
