@@ -5504,12 +5504,17 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
         <div class="qx-fa-hero-art" aria-hidden="true">
           <span class="ms qi" data-i="mosque" aria-hidden="true" data-nosnippet></span>
         </div>
-        <div class="qx-fa-progress"><input id="qxFaSeek" type="range" min="0" max="1000" value="0" aria-label="অডিওর অবস্থান"><span id="qxFaProgressFill"></span></div>
-        <div class="qx-fa-time"><span id="qxFaCurrentTime">০:০০</span><span id="qxFaDuration">০:০০</span></div>
+        <div class="qx-fa-progress" id="qxFaProgress">
+          <div class="qx-fa-bar-labels"><b id="qxFaCurrentTime">০:০০</b><b id="qxFaDuration">০:০০</b></div>
+          <span id="qxFaProgressFill"><em class="qx-fa-bar-labels on-fill" id="qxFaFillLabels"><b id="qxFaCurrentTime2">০:০০</b><b id="qxFaDuration2">০:০০</b></em></span>
+          <input id="qxFaSeek" type="range" min="0" max="1000" value="0" aria-label="অডিওর অবস্থান">
+        </div>
         <div class="qx-fa-controls">
+          <button type="button" id="qxFaRepeat" aria-label="সূরা পুনরাবৃত্তি" title="সূরা পুনরাবৃত্তি" aria-pressed="false"><span class="ms" data-nosnippet>repeat_one</span></button>
           <button type="button" id="qxFaPrev" aria-label="আগের সূরা" title="আগের সূরা"><span class="ms" data-nosnippet>skip_previous</span></button>
           <button type="button" id="qxFaPlay" class="qx-fa-main-play" aria-label="Play/Pause" title="Play/Pause"><span class="ms" data-nosnippet>play_arrow</span></button>
           <button type="button" id="qxFaNext" aria-label="পরের সূরা" title="পরের সূরা"><span class="ms" data-nosnippet>skip_next</span></button>
+          <button type="button" id="qxFaSleep" aria-label="স্লিপ টাইমার" title="স্লিপ টাইমার"><span class="ms" data-nosnippet>bedtime</span><small id="qxFaSleepLabel"></small></button>
         </div>
       </section>`;
     app.appendChild(page);
@@ -5519,6 +5524,8 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
     page.querySelector("#qxFaPlay").addEventListener("click", () => { const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null; const n = selectedSurah || (state && state.number) || 1; selectedSurah = n; window.qxToggleFullSurahAudio(n); });
     page.querySelector("#qxFaCurrentPlay").addEventListener("click", () => { const state = window.qxGetFullSurahAudioState ? window.qxGetFullSurahAudioState() : null; const n = selectedSurah || (state && state.number) || 1; selectedSurah = n; window.qxToggleFullSurahAudio(n); });
     page.querySelector("#qxFaSeek").addEventListener("input", e => { if (window.qxSeekFullSurahAudio) window.qxSeekFullSurahAudio(Number(e.target.value) / 1000); });
+    page.querySelector("#qxFaRepeat").addEventListener("click", () => { if (window.qxToggleFullSurahRepeat) window.qxToggleFullSurahRepeat(); });
+    page.querySelector("#qxFaSleep").addEventListener("click", () => { if (window.qxCycleFullSurahSleep) window.qxCycleFullSurahSleep(); });
     updatePlayer();
   }
   function renderListPage(){
@@ -5593,10 +5600,19 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
       page.querySelector("#qxFaPlay .ms").textContent = state.playing ? "pause" : "play_arrow";
       const progress = state.duration ? Math.max(0, Math.min(100, state.currentTime / state.duration * 100)) : 0;
       page.querySelector("#qxFaSeek").value = state.duration ? Math.round(progress * 10) : 0;
-      page.querySelector("#qxFaSeek").style.background = "linear-gradient(to right, var(--qx-main-color) 0%, var(--qx-main-color) " + progress + "%, var(--qx-light-mint-2, #d1e9e1) " + progress + "%, var(--qx-light-mint-2, #d1e9e1) 100%)";
       page.querySelector("#qxFaProgressFill").style.width = progress + "%";
-      page.querySelector("#qxFaCurrentTime").textContent = formatTime(state.currentTime);
-      page.querySelector("#qxFaDuration").textContent = formatTime(state.duration);
+      const timeNow = formatTime(state.currentTime), timeEnd = formatTime(state.duration);
+      ["#qxFaCurrentTime", "#qxFaCurrentTime2"].forEach(sel => { const el = page.querySelector(sel); if (el) el.textContent = timeNow; });
+      ["#qxFaDuration", "#qxFaDuration2"].forEach(sel => { const el = page.querySelector(sel); if (el) el.textContent = timeEnd; });
+      const barEl = page.querySelector("#qxFaProgress"), fillLabels = page.querySelector("#qxFaFillLabels");
+      if (barEl && fillLabels) fillLabels.style.width = barEl.clientWidth + "px";
+      const opts = window.qxGetFullSurahOptions ? window.qxGetFullSurahOptions() : null;
+      if (opts) {
+        const repeatBtn = page.querySelector("#qxFaRepeat"), sleepBtn = page.querySelector("#qxFaSleep"), sleepLabel = page.querySelector("#qxFaSleepLabel");
+        if (repeatBtn) { repeatBtn.classList.toggle("on", !!opts.repeat); repeatBtn.setAttribute("aria-pressed", opts.repeat ? "true" : "false"); }
+        if (sleepBtn) sleepBtn.classList.toggle("on", !!opts.sleepActive);
+        if (sleepLabel) sleepLabel.textContent = opts.sleepAtEnd ? "শেষ" : (opts.sleepEndsAt ? bnNumber(Math.max(1, Math.ceil((opts.sleepEndsAt - Date.now()) / 60000))) + "মি" : "");
+      }
       const currentName = page.querySelector("#qxFaCurrentName");
       const currentMeta = page.querySelector("#qxFaCurrentMeta");
       const currentPlay = page.querySelector("#qxFaCurrentPlay");
@@ -5630,6 +5646,39 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
   let objectUrl = null;
   let requestToken = 0;
   let cacheFallbackTried = false;
+
+  // সূরা পুনরাবৃত্তি ও স্লিপ টাইমার
+  let repeatOne = false;
+  try { repeatOne = localStorage.getItem("qx_fa_repeat") === "1"; } catch(e) {}
+  const SLEEP_CYCLE = [0, 15, 30, 60, "end"];
+  let sleepMode = 0, sleepTimer = null, sleepEndsAt = 0, sleepAtEnd = false;
+  const bnDigits = v => String(v).replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[Number(d)]);
+  function notify(msg){ if (typeof showToast === "function") showToast(msg); }
+  function clearSleep(){
+    if (sleepTimer) clearTimeout(sleepTimer);
+    sleepTimer = null; sleepEndsAt = 0; sleepAtEnd = false; sleepMode = 0;
+  }
+  function fireSleep(){
+    try { audio.pause(); } catch(e) {}
+    clearSleep();
+    notify("স্লিপ টাইমার: অডিও বন্ধ হয়েছে");
+    syncButtons();
+  }
+  function applySleep(mode){
+    clearSleep();
+    sleepMode = mode;
+    if (mode === "end") {
+      sleepAtEnd = true;
+      notify("স্লিপ টাইমার: সূরা শেষ হলে বন্ধ হবে");
+    } else if (mode > 0) {
+      sleepEndsAt = Date.now() + mode * 60000;
+      sleepTimer = setTimeout(fireSleep, mode * 60000);
+      notify("স্লিপ টাইমার: " + bnDigits(mode) + " মিনিট");
+    } else {
+      notify("স্লিপ টাইমার বন্ধ");
+    }
+    syncButtons();
+  }
 
   function audioUrl(file){
     return new URL("audio/" + encodeURIComponent(file), document.baseURI).href;
@@ -5805,15 +5854,42 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
     syncButtons();
   };
 
+  window.qxToggleFullSurahRepeat = function(){
+    repeatOne = !repeatOne;
+    try { localStorage.setItem("qx_fa_repeat", repeatOne ? "1" : "0"); } catch(e) {}
+    notify(repeatOne ? "এই সূরা বারবার চলবে" : "পুনরাবৃত্তি বন্ধ");
+    syncButtons();
+  };
+  window.qxCycleFullSurahSleep = function(){
+    const idx = SLEEP_CYCLE.indexOf(sleepMode);
+    applySleep(SLEEP_CYCLE[(idx + 1) % SLEEP_CYCLE.length]);
+  };
+  window.qxGetFullSurahOptions = function(){
+    return { repeat: repeatOne, sleepAtEnd: sleepAtEnd, sleepEndsAt: sleepEndsAt, sleepActive: sleepAtEnd || sleepEndsAt > 0 };
+  };
   window.qxSyncFullSurahAudioButtons = syncButtons;
   window.qxGetFullSurahAudioState = function(){ return { number: currentSurah, playing: !audio.paused && !audio.ended, currentTime: Number(audio.currentTime) || 0, duration: Number(audio.duration) || 0 }; };
   window.qxSeekFullSurahAudio = function(ratio){ if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = Math.max(0, Math.min(1, Number(ratio) || 0)) * audio.duration; };
 
-  audio.addEventListener("timeupdate", syncButtons);
+  audio.addEventListener("timeupdate", function(){
+    if (sleepEndsAt && Date.now() >= sleepEndsAt) { fireSleep(); return; }
+    syncButtons();
+  });
   audio.addEventListener("durationchange", syncButtons);
   audio.addEventListener("play", syncButtons);
   audio.addEventListener("pause", syncButtons);
   audio.addEventListener("ended", function(){
+    if (sleepAtEnd) {
+      clearSleep();
+      notify("স্লিপ টাইমার: সূরা শেষ, অডিও বন্ধ হয়েছে");
+      syncButtons();
+      return;
+    }
+    if (repeatOne && currentSurah >= 1) {
+      try { audio.currentTime = 0; const again = audio.play(); if (again && typeof again.catch === "function") again.catch(function(){}); } catch(e) {}
+      syncButtons();
+      return;
+    }
     if (currentSurah >= 1 && currentSurah < 114) {
       startSurah(currentSurah + 1);
     } else {
