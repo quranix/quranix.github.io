@@ -169,6 +169,8 @@ document.querySelectorAll("#nav button[data-m]").forEach(b => b.onclick = () => 
 function mk(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function showOther(title){
   stopTimer();
+  // Invalidate pending async reader loads so they cannot repaint this destination page.
+  if(typeof window.qxInvalidateReaderRender === "function") window.qxInvalidateReaderRender();
   document.body.classList.remove("reader-active");
   document.body.classList.add("inside-page");
   titleEl.innerHTML = String(title).replace(/\{\{([a-z_0-9]+)(:f)?\}\}/g, function(match, name, filled){
@@ -1636,7 +1638,27 @@ function renderPrayer(){
   });
   if (districtEntries.length) {
     const districtWrap = mk("section", "qx-district-picker");
-    const districtTitle = mk("b", "qx-district-title", "বাংলাদেশের জেলা বাছাই করুন");
+    const districtTitle = mk("b", "qx-district-title", "বাংলাদেশের জেলা");
+    const selectedName = loc.dist || (districtEntries.some(d => d.name === loc.n) ? loc.n : "");
+    const selectedEntry = districtEntries.find(d => d.name === selectedName);
+    const selectedCard = mk("button", "qx-district-feature");
+    selectedCard.type = "button";
+    selectedCard.setAttribute("aria-label", "জেলা পরিবর্তন করুন");
+    const featureArt = mk("span", "qx-district-feature-art");
+    featureArt.setAttribute("aria-hidden", "true");
+    const featureText = mk("span", "qx-district-feature-text");
+    featureText.append(mk("strong", "", selectedEntry ? selectedEntry.name : "জেলা নির্বাচন করুন"), mk("small", "", selectedEntry ? selectedEntry.div + " বিভাগ" : "আপনার জেলা নির্বাচন করতে চাপ দিন"));
+    selectedCard.append(featureArt, featureText, mk("span", "qx-district-feature-action", "{{expand_more}}"));
+
+    const sheet = mk("div", "qx-district-sheet-ov");
+    const sheetBox = mk("div", "qx-district-sheet");
+    const sheetHead = mk("div", "qx-district-sheet-head");
+    sheetHead.append(mk("strong", "", "জেলা নির্বাচন করুন"));
+    const closeBtn = mk("button", "qx-district-sheet-close", "{{close}}");
+    closeBtn.type = "button";
+    const closeSheet = () => sheet.classList.remove("open");
+    closeBtn.onclick = closeSheet;
+    sheetHead.appendChild(closeBtn);
     const searchWrap = mk("label", "qx-loc-search");
     searchWrap.setAttribute("aria-label", "জেলা খুঁজুন");
     const searchIcon = mk("span", "qx-loc-search-icon", "{{search}}");
@@ -1662,6 +1684,7 @@ function renderPrayer(){
       card.onclick = () => {
         loc = { n:d.name, lat:Number(d.lat), lng:Number(d.lng), div:d.div, dist:d.name };
         lsSet("loc", loc);
+        closeSheet();
         renderPrayer();
       };
       districtGrid.appendChild(card);
@@ -1679,7 +1702,11 @@ function renderPrayer(){
       });
     };
     districtSearch.addEventListener("input", applyDistrictSearch);
-    districtWrap.append(districtTitle, searchWrap, districtGrid);
+    selectedCard.onclick = () => { sheet.classList.add("open"); districtSearch.focus(); };
+    sheet.onclick = (e) => { if (e.target === sheet) closeSheet(); };
+    sheetBox.append(sheetHead, searchWrap, districtGrid);
+    sheet.appendChild(sheetBox);
+    districtWrap.append(districtTitle, selectedCard, sheet);
     app.appendChild(districtWrap);
     applyDistrictSearch();
   }
@@ -2048,6 +2075,25 @@ const savedTheme = lsGet("theme", null);
 const initialTheme = savedTheme === "light" ? "light" : "dark";
 document.documentElement.setAttribute("data-theme", initialTheme);
 document.getElementById("themeToggle").textContent = initialTheme === "dark" ? "{{light_mode}}" : "{{dark_mode}}";
+
+// Persisted Theme & language preferences are restored during app startup.
+(function qxRestoreThemeAndLanguage(){
+  const saved = lsGet("qx_theme_config", null);
+  if(saved && saved.id){
+    const root = document.documentElement, colors = saved.colors || {};
+    root.dataset.qxTheme = saved.id;
+    root.dataset.homeTheme = saved.id;
+    ["--qx-home-bg","--qx-home-card-bg","--qx-home-accent","--qx-home-text"].forEach(k=>{
+      if(colors[k]) root.style.setProperty(k,colors[k]);
+    });
+    root.style.setProperty("--qx-outer-bg",colors["--qx-home-bg"] || "var(--qx-outer-bg)");
+    const img = saved.illust ? (saved.illust.startsWith("http") ? saved.illust : "https://quranix.github.io/" + saved.illust.replace(/^\//,"")) : "";
+    root.style.setProperty("--qx-theme-image",img ? "url('"+img+"')" : "none");
+    root.style.setProperty("--qx-theme-overlay",img ? "rgba(255,255,255,.08)" : "transparent");
+  }
+  const lang = lsGet("qx_lang","bn");
+  document.documentElement.setAttribute("lang",lang === "en" ? "en" : "bn");
+})();
 
 document.getElementById("themeToggle").onclick = () => {
   const current = document.documentElement.getAttribute("data-theme");
@@ -2900,7 +2946,7 @@ function openSettingsModal() {
   const accSec = accSection("{{text_fields}} ফন্ট কাস্টমাইজেশন");
 
   accSec.appendChild(fontField("অ্যাপের সাইজ", [
-    ["lite", "Lite (সবচেয়ে বড়)"],
+    ["lite", "Light (সবচেয়ে বড়)"],
     ["medium", "Medium"],
     ["small", "Small (এখনকার সাইজ)"]
   ], (val) => (appPrefs.uiSize || "small") === val, (val) => {
@@ -2932,11 +2978,74 @@ function openSettingsModal() {
 
   body.appendChild(accSec);
 
+  // 1B. Theme selection (local presets + theme catalog)
+  const themeSec = accSection("রং ও থিম", "palette");
+  const themeHint = mk("small", "qx-g-hint", "থিম নির্বাচন করলে রং ও ব্যাকগ্রাউন্ড সংরক্ষিত থাকবে।");
+  themeSec.appendChild(themeHint);
+  const themeGrid = mk("div", "qx-settings-theme-grid");
+  themeSec.appendChild(themeGrid);
+  const qxThemePresets = [
+    {id:"default", name:"ডিফল্ট", colors:{"--qx-home-bg":"#E8F5E9","--qx-home-card-bg":"#FFFFFF","--qx-home-accent":"#0F766E","--qx-home-text":"#1B5E20"}},
+    {id:"rahmat", name:"রহমত", colors:{"--qx-home-bg":"#E8F5E9","--qx-home-card-bg":"#FFFFFF","--qx-home-accent":"#2E7D32","--qx-home-text":"#1B5E20"}},
+    {id:"maghfirat", name:"মাগফিরাত", colors:{"--qx-home-bg":"#E8EAF6","--qx-home-card-bg":"#FFFFFF","--qx-home-accent":"#5C6BC0","--qx-home-text":"#283593"}},
+    {id:"najat", name:"নাজাত", colors:{"--qx-home-bg":"#FFF3E0","--qx-home-card-bg":"#FFFFFF","--qx-home-accent":"#EF6C00","--qx-home-text":"#E65100"}}
+  ];
+  const qxThemeApply = (theme) => {
+    const root = document.documentElement;
+    const saved = theme && theme.id ? theme : {id:"default"};
+    const colors = saved.colors || {};
+    ["--qx-home-bg","--qx-home-card-bg","--qx-home-accent","--qx-home-text"].forEach(k => {
+      if(colors[k]) root.style.setProperty(k, colors[k]); else root.style.removeProperty(k);
+    });
+    root.dataset.qxTheme = saved.id;
+    root.dataset.homeTheme = saved.id;
+    root.style.setProperty("--qx-outer-bg", colors["--qx-home-bg"] || (root.getAttribute("data-theme") === "dark" ? "var(--qx-c-night-outer)" : "#E5E7EB"));
+    const imagePath = saved.illust ? (saved.illust.startsWith("http") ? saved.illust : "https://quranix.github.io/" + saved.illust.replace(/^\//,"")) : "";
+    root.style.setProperty("--qx-theme-image", imagePath ? "url('" + imagePath + "')" : "none");
+    root.style.setProperty("--qx-theme-overlay", imagePath ? "rgba(255,255,255,.08)" : "transparent");
+    lsSet("qx_theme", saved.id);
+    lsSet("qx_theme_config", saved);
+    document.querySelectorAll(".qx-settings-theme-card").forEach(card => card.classList.toggle("on", card.dataset.themeId === saved.id));
+    showToast("থিম সংরক্ষণ হয়েছে");
+  };
+  function qxRenderThemeCard(theme){
+    const card = mk("button", "qx-settings-theme-card"); card.type="button"; card.dataset.themeId=theme.id;
+    const preview=mk("span","preview");
+    const img=theme.preview || theme.illust;
+    if(img){ preview.style.backgroundImage="linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)),url('"+(img.startsWith("http")?img:"https://quranix.github.io/"+img.replace(/^\//,""))+"')"; }
+    else if(theme.colors && theme.colors["--qx-home-bg"]) preview.style.backgroundColor=theme.colors["--qx-home-bg"];
+    card.appendChild(preview); card.appendChild(mk("span","name",theme.name_bn || theme.name));
+    card.onclick=()=>qxThemeApply(theme); themeGrid.appendChild(card);
+  }
+  const currentTheme = lsGet("qx_theme_config", null);
+  qxThemePresets.forEach(qxRenderThemeCard);
+  fetch("themes.json", {cache:"no-cache"}).then(r=>r.ok?r.json():null).then(data=>{
+    if(data && Array.isArray(data.themes)) data.themes.forEach(t=>qxRenderThemeCard(t));
+    const selected=lsGet("qx_theme_config", null);
+    if(selected) qxThemeApply(selected);
+    else { const preset=qxThemePresets.find(t=>t.id===lsGet("qx_theme","default")) || qxThemePresets[0]; qxThemeApply(preset); }
+  }).catch(()=>{ if(currentTheme) qxThemeApply(currentTheme); });
+  body.appendChild(themeSec);
+
+  // 2. Interface language preference (translations are not present in source)
+  const langSec = accSection("ভাষা / Language", "language");
+  langSec.appendChild(mk("small", "qx-g-hint", "ভাষার পছন্দ সংরক্ষণ করা হবে। ইংরেজি UI অনুবাদ সম্পূর্ণ করতে আলাদা translation source প্রয়োজন।"));
+  const langSelect = selectEl("Interface language", [["bn","বাংলা"],["en","English"]], val => (lsGet("qx_lang","bn")===val), val=>{
+    lsSet("qx_lang",val); document.documentElement.setAttribute("lang",val);
+    showToast(val === "en" ? "English preference saved" : "বাংলা ভাষা সংরক্ষিত হয়েছে");
+  });
+  langSec.appendChild(langSelect);
+  body.appendChild(langSec);
+
   // 2. Translation, tafsir, audio
   const transSec = accSection("{{translate}} অনুবাদ, তাফসির ও অডিও");
   transSec.appendChild(fontField("অনুবাদ", [
     ["bn.bengali", "মাওলানা মুহিউদ্দীন খান"],
-    ["bn.zakaria", "ড. আবু বকর মুহাম্মাদ যাকারিয়া"]
+    ["bn.zakaria", "ড. আবু বকর মুহাম্মাদ যাকারিয়া"],
+    ["en.sahih", "English · Saheeh International (Online)"],
+    ["en.yusufali", "English · Abdullah Yusuf Ali (Online)"],
+    ["en.asad", "English · Muhammad Asad (Online)"],
+    ["en.pickthall", "English · Marmaduke Pickthall (Offline)"]
   ], (val) => val === currentEdition, (val) => {
     currentEdition = val;
     lsSet("edition", currentEdition);
@@ -4303,16 +4412,37 @@ function trkOpenReport(key){
   return true;
 }
 window.trkOpenReport=trkOpenReport;
+function trkCardCfgLoad(){
+  var base={goal:80,color:'#16a34a'};
+  try{ var x=JSON.parse(localStorage.getItem('quranix_tracker_card_cfg')||'null'); if(x&&typeof x==='object'){ var g=Number(x.goal); if(Number.isFinite(g)) base.goal=Math.max(1,Math.min(100,Math.round(g))); if(/^#[0-9a-fA-F]{6}$/.test(x.color||'')) base.color=x.color; } }catch(e){}
+  return base;
+}
+function trkCardCfgSave(cfg){ try{ localStorage.setItem('quranix_tracker_card_cfg',JSON.stringify(cfg)); return true; }catch(e){ if(typeof showToast==='function') showToast('সেটিং সংরক্ষণ করা যায়নি'); return false; } }
+function trkOpenCardCustomize(){
+  var cfg=trkCardCfgLoad(), colors=[['#16a34a','সবুজ'],['#0d9488','টিল'],['#2563eb','নীল'],['#7c3aed','বেগুনি'],['#d97706','কমলা'],['#db2777','গোলাপি']];
+  qxSheet('ট্র্যাকার কার্ড সাজান',function(box,close){
+    var label=mk('label','','দৈনিক লক্ষ্য (%)'); label.style.cssText='display:block;margin:10px 0 5px;color:var(--qx-meta-color)';
+    var goal=mk('input','qx-input'); goal.type='number'; goal.min='1'; goal.max='100'; goal.value=cfg.goal; goal.inputMode='numeric';
+    box.append(label,goal);
+    var ctitle=mk('div','','প্রগ্রেসের রং'); ctitle.style.cssText='margin:12px 0 6px;font-weight:700'; box.appendChild(ctitle);
+    var palette=mk('div'); palette.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px';
+    colors.forEach(function(c){ var b=mk('button'); b.type='button'; b.title=c[1]; b.setAttribute('aria-label',c[1]); b.style.cssText='width:36px;height:36px;border-radius:50%;border:3px solid '+(cfg.color===c[0]?'var(--qx-text-color)':'var(--qx-border)')+';background:'+c[0]+';cursor:pointer'; b.onclick=function(){cfg.color=c[0]; palette.querySelectorAll('button').forEach(function(z){z.style.borderColor='var(--qx-border)'}); b.style.borderColor='var(--qx-text-color)';}; palette.appendChild(b); }); box.appendChild(palette);
+    var save=mk('button','qx-btn','সংরক্ষণ করুন'); save.type='button'; save.style.width='100%'; save.onclick=function(){ var g=Number(goal.value); if(!Number.isFinite(g)||g<1||g>100){goal.focus(); if(typeof showToast==='function') showToast('লক্ষ্য ১–১০০% এর মধ্যে দিন'); return;} cfg.goal=Math.round(g); if(trkCardCfgSave(cfg)){close(); if(typeof showToast==='function') showToast('ট্র্যাকার কার্ড সেটিং সেভ হয়েছে'); if(typeof renderHome==='function') renderHome(); else if(typeof buildTrackerCard==='function'){var old=document.querySelector('.khatam-card'); if(old) old.replaceWith(buildTrackerCard());} } };
+    box.appendChild(save);
+  });
+}
 function buildTrackerCard(){
-  var d=trkLoad(); var td=trkToday();
+  var d=trkLoad(); var td=trkToday(), cfg=trkCardCfgLoad();
   var nm=d.namaz[td]||{}; var nDone=Object.keys(nm).filter(function(k){return nm[k]}).length;
   var dh=d.dhikr[td]||{}; var dhDone=Object.keys(dh).filter(function(k){return dh[k]}).length;
-  var box=document.createElement('div'); box.className='khatam-card';
+  var box=document.createElement('div'); box.className='khatam-card qx-tracker-home-card';
   var score=Math.round(((nDone/5)*0.6+(dhDone/4)*0.2+((d.roza[td]?1:0)*0.2))*100);
-  box.innerHTML='<div class="khatam-row"><b>{{bar_chart}} আজকের ট্র্যাকার</b><span>'+trkBn(score)+'%</span></div>'
+  var bar=Math.min(100,Math.round(score/cfg.goal*100));
+  box.innerHTML='<div class="khatam-row"><b>{{bar_chart}} আজকের ট্র্যাকার</b><span>'+trkBn(score)+'% · লক্ষ্য '+trkBn(cfg.goal)+'%</span></div>'
     +'<div class="khatam-row"><span>{{i_mosque}} নামাজ '+trkBn(nDone)+'/৫</span><span>{{i_ramadan}} রমজান '+(d.roza[td]?'{{check_circle:f}}':'{{hourglass_top}}')+'</span><span>{{i_tasbih}} জিকির '+trkBn(dhDone)+'/৪</span></div>'
-    +'<div class="goal-track" style="margin:8px 0"><div class="goal-fill" style="width:'+score+'%"></div></div>'
-    +'<div class="khatam-row"><span style="color:var(--qx-main-color);font-weight:700">ট্র্যাকার খোলো →</span><span>সব ক্যাটাগরি এক জায়গায়</span></div>';
+    +'<div class="goal-track" style="margin:8px 0"><div class="goal-fill qx-tracker-home-fill" style="width:'+bar+'%;background:'+cfg.color+'"></div></div>'
+    +'<div class="khatam-row"><span class="qx-tracker-open-label">ট্র্যাকার খোলো →</span><span>সব ক্যাটাগরি এক জায়গায়</span></div>';
+  var edit=mk('button','qx-tracker-card-edit','সাজান'); edit.type='button'; edit.innerHTML='{{edit}} সাজান'; edit.onclick=function(e){e.stopPropagation();trkOpenCardCustomize();}; box.appendChild(edit);
   box.onclick=function(){ if(typeof setMode==='function') setMode('tracker'); };
   return box;
 }

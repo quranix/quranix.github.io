@@ -849,6 +849,24 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     return {usage:0,quota:0};
   }
   function formatBytes(bytes){ if(!bytes) return '—'; var units=['B','KB','MB','GB']; var i=0; while(bytes>=1024&&i<3){bytes/=1024;i++;} return bytes.toFixed(i?1:0)+' '+units[i]; }
+  // Task 09: hide download-list entries without deleting downloaded data.
+  function qxHiddenDownloads(){
+    try{ var v=JSON.parse(localStorage.getItem('qx_hidden_downloads')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; }
+  }
+  function qxSetHiddenDownloads(list){
+    try{ localStorage.setItem('qx_hidden_downloads',JSON.stringify(list)); }catch(e){}
+  }
+  function qxHideDownloadRow(key){
+    var hidden=qxHiddenDownloads(); if(hidden.indexOf(key)<0) hidden.push(key); qxSetHiddenDownloads(hidden);
+    var old=document.getElementById('qxDownloadUndoToast'); if(old) old.remove();
+    var toast=document.createElement('div'); toast.id='qxDownloadUndoToast'; toast.className='toast qx-download-undo-toast';
+    toast.appendChild(document.createTextNode('ডাউনলোড আইটেম লুকানো হয়েছে'));
+    var undo=document.createElement('button'); undo.type='button'; undo.textContent='Undo'; undo.setAttribute('aria-label','লুকানো আইটেম ফিরিয়ে আনুন');
+    undo.onclick=function(){ qxSetHiddenDownloads(qxHiddenDownloads().filter(function(x){return x!==key;})); toast.remove(); renderDownloadsPopup('open'); };
+    toast.appendChild(undo); document.body.appendChild(toast);
+    setTimeout(function(){ if(toast.isConnected) toast.remove(); },3000);
+    renderDownloadsPopup('open');
+  }
   async function renderDownloadsPopup(opener){
     try{
       await renderDownloadsPopupInner(opener);
@@ -876,6 +894,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     var selectedTafsir=(typeof tafsirId!=='undefined'?tafsirId:381);
     var selectedReciter=reciterNow();
     var packages=packageMeta();
+    var hiddenDownloads=qxHiddenDownloads();
     Object.keys(packages).forEach(function(k){
       if(packages[k].status==='downloading' && (!packageJob || packageJob.finished)) packages[k].status='incomplete';
     });
@@ -887,6 +906,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     var isDone=function(k){return packages[k]&&packages[k].status==='complete';};
     var card=function(btnId,title,note,btnText){return '<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{folder_open}}</span><b>'+title+'</b></div><small style="display:block;margin:4px 0 8px">'+note+'</small><button class="pp-btn" id="'+btnId+'">{{download}} '+btnText+'</button></div>';};
     if(!isDone(packageKey('translation','bn.zakaria'))) html+=card('qxDownloadTranslation','অনুবাদ · ড. আবু বকর মুহাম্মাদ যাকারিয়া','সম্পূর্ণ ১১৪ সূরার বাংলা অনুবাদ','সম্পূর্ণ অনুবাদ ডাউনলোড');
+    if(!isDone(packageKey('translation','en.pickthall'))) html+=card('qxDownloadEnglishOffline','English · Marmaduke Pickthall','ইংরেজি অনুবাদ সম্পূর্ণ ১১৪ সূরা ডাউনলোড করে অফলাইনে পড়ুন','ইংরেজি অনুবাদ ডাউনলোড');
     var pendingTafsir=TAFSIRS.filter(function(t){return !isDone(packageKey('tafsir',t[0]));});
     if(pendingTafsir.length){
       html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{menu_book}}</span><b>তাফসির</b></div><small style="display:block;margin:4px 0 8px">সম্পূর্ণ কুরআনের তাফসির অফলাইনে সংরক্ষণ করুন</small><div class="dl-grid cols-2">';
@@ -906,10 +926,11 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
       html+='</div></div>';
     }
     var m=meta(), ks=Object.keys(m);
-    var hasSurahAudio = ks.length>0;
-    if(ks.length){
+    var visibleSurahAudio=ks.filter(function(k){return hiddenDownloads.indexOf('surah-audio:'+k)<0;});
+    var hasSurahAudio = visibleSurahAudio.length>0;
+    if(visibleSurahAudio.length){
       html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{headphones}}</span> সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
-      ks.forEach(function(k){var info=m[k],parts=k.split('|'),sn=parseInt(parts[0],10); html+='<div class="dl-item"><div><b>'+(info.name||('সূরা '+sn))+'</b><br><small>'+getReciterName(info.reciter)+' · '+info.count+' আয়াত</small></div><button class="dl-btn ghost" data-del="'+k+'">{{delete}}</button></div>';});
+      visibleSurahAudio.forEach(function(k){var info=m[k],parts=k.split('|'),sn=parseInt(parts[0],10); html+='<div class="dl-item"><div><b>'+(info.name||('সূরা '+sn))+'</b><br><small>'+getReciterName(info.reciter)+' · '+info.count+' আয়াত</small></div><div style="display:flex;gap:6px"><button class="dl-btn ghost" data-hide-dl="surah-audio:'+k+'" aria-label="তালিকা থেকে লুকান">×</button><button class="dl-btn ghost" data-del="'+k+'">{{delete}}</button></div></div>';});
     }
     if(packageJob && !packageJob.finished){
       html+='<div class="dl-item" style="display:block;background:color-mix(in srgb,var(--qx-main-color) 8%, var(--qx-card-bg));border-color:var(--qx-main-color)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b id="qxPackageStatus">'+packageJob.message+'</b><small id="qxPackagePct" class="pp-mini">0%</small></div><div style="width:100%;height:10px;background:var(--qx-border);border-radius:var(--qx-radius-pill);overflow:hidden;margin:10px 0"><div id="qxPackageProgressBar" style="height:100%;width:0%;background:var(--qx-main-color);border-radius:var(--qx-radius-pill);transition:width .2s"></div></div><progress id="qxPackageProgress" max="100" value="0" style="width:100%;height:4px;opacity:0;position:absolute;pointer-events:none"></progress><div style="display:flex;gap:8px"><button class="dl-btn" id="qxPackageAction">বিরতি</button><button class="dl-btn ghost" id="qxPackageCancel">বাতিল</button></div></div>';
@@ -929,10 +950,11 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
         +'</div></div>';
     })();
     var entries=Object.keys(packages).filter(function(k){return ['complete','incomplete','paused'].includes(packages[k].status);});
-    var hasPackages = entries.length>0;
-    if(entries.length){ html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{folder_open}}</span> ডাউনলোড করা প্যাকেজ</h4>';
-    if(entries.length){
-      entries.forEach(function(k){
+    var visibleEntries=entries.filter(function(k){return hiddenDownloads.indexOf('package:'+k)<0;});
+    var hasPackages = visibleEntries.length>0;
+    if(visibleEntries.length){ html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{folder_open}}</span> ডাউনলোড করা প্যাকেজ</h4>';
+    if(visibleEntries.length){
+      visibleEntries.forEach(function(k){
         var item=packages[k];
         var state=item.status==='complete'?'সম্পূর্ণ':item.status==='paused'?'থামানো':'অসম্পূর্ণ';
         var total=Number(item.total||0), done=Number(item.done||0);
@@ -942,7 +964,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
           +'<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;width:100%"><div style="min-width:0;flex:1"><b>'+String(item.label||'প্যাকেজ')+'</b><br><small>'+state+' · '+done+'/'+total+' · '+formatBytes(item.bytes||0)+'</small></div>'
           +'<div style="display:flex;gap:6px;flex-shrink:0">'
           +(item.status==='complete'?'':'<button class="dl-btn" data-pkgretry="'+k+'">আবার চেষ্টা</button>')
-          +'<button class="dl-btn ghost" data-pkgdel="'+k+'">{{delete}} মুছুন</button></div></div>'
+          +'<button class="dl-btn ghost" data-hide-dl="package:'+k+'" aria-label="তালিকা থেকে লুকান">×</button>'+'<button class="dl-btn ghost" data-pkgdel="'+k+'">{{delete}} মুছুন</button></div></div>'
           +(showProg?'<div style="width:100%;height:8px;background:var(--qx-border);border-radius:var(--qx-radius-pill);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--qx-main-color);border-radius:var(--qx-radius-pill);transition:width .3s"></div></div><small class="pp-mini" style="text-align:right">'+pct+'% · '+done+'/'+total+'</small>':'')
           +'</div>';
       });
@@ -1012,6 +1034,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     })();
     var bind=function(id,fn){var el=box.querySelector('#'+id);if(el)el.onclick=fn;};
     bind('qxDownloadTranslation',function(){runPackage('translation','bn.zakaria','অনুবাদ · ড. আবু বকর মুহাম্মাদ যাকারিয়া');});
+    bind('qxDownloadEnglishOffline',function(){runPackage('translation','en.pickthall','English · Marmaduke Pickthall (Offline)');});
     box.querySelectorAll('[data-tafsir-dl]').forEach(function(b){b.onclick=function(){var tid=parseInt(b.dataset.tafsirDl,10);runPackage('tafsir',tid,'তাফসির · '+tafsirLabel(tid));};});
     box.querySelectorAll('[data-audio-dl]').forEach(function(b){b.onclick=function(){var rid=b.dataset.audioDl;runPackage('audio',rid,'অডিও · '+getReciterName(rid));};});
     box.querySelectorAll('[data-hadith-dl]').forEach(function(b){b.onclick=function(){var c=HADITH_CORPUS.find(function(x){return x.id===b.dataset.hadithDl;});if(c)runPackage('hadith',c.id,c.name);};});
@@ -1019,6 +1042,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     bind('qxPackageCancel',function(){if(!packageJob)return;packageJob.cancelled=true;if(packageJob.controller)packageJob.controller.abort();});
     box.querySelectorAll('[data-pkgretry]').forEach(function(b){b.onclick=function(){var bits=b.dataset.pkgretry.split('|'),type=bits.shift(),id=bits.join('|'),item=packages[b.dataset.pkgretry];runPackage(type,id,item.label||'প্যাকেজ');};});
     box.querySelectorAll('[data-pkgdel]').forEach(function(b){b.onclick=function(){var bits=b.dataset.pkgdel.split('|');deletePackage(bits[0],bits.slice(1).join('|'));};});
+    box.querySelectorAll('[data-hide-dl]').forEach(function(b){b.onclick=function(e){e.preventDefault();e.stopPropagation();qxHideDownloadRow(b.dataset.hideDl);};});
     box.querySelectorAll('[data-del]').forEach(function(b){
       b.onclick=async function(e){
         e.preventDefault(); e.stopPropagation();
@@ -2048,6 +2072,7 @@ function qxInitAudioHide(){
   if(hideBtn && floatWrap){
     hideBtn.onclick = () => {
       audioBar.style.display = 'none';
+      // Hiding the player must also release the page scroll lock; playback continues.
       document.documentElement.classList.remove('qx-audio-open');
       document.body.classList.remove('qx-audio-open');
       floatWrap.style.display = 'block';
@@ -2067,7 +2092,7 @@ const audioReciterLabel = document.getElementById("audioReciterLabel");
 const audioPlayPause = document.getElementById("audioPlayPause");
 const audioRepeatBtn = document.getElementById('audioRepeat');
 const audioSleepTimerBtn = document.getElementById('audioSleepTimer');
-let qxAudioRepeat = false;
+let qxAudioRepeatMode = 0; // 0=off, 1=playlist repeat, 2=current ayah repeat
 let qxAudioSleepTimerId = null;
 
 function pad3(n){ return String(n).padStart(3, "0"); }
@@ -2090,12 +2115,23 @@ function qxAudioBarShow(){
   updateAudioBarPos();
 }
 
-function highlightPlayingCard(surahNo, ayahNo){
+let qxReaderUserScrolled = false;
+let qxReaderSessionAutoScroll = true;
+function qxAyahIsInViewport(card, margin){
+  if(!card) return false;
+  const r = card.getBoundingClientRect();
+  const pad = Math.max(0, Number(margin) || 0);
+  return r.bottom >= pad && r.top <= window.innerHeight - pad;
+}
+function highlightPlayingCard(surahNo, ayahNo, forceScroll){
   document.querySelectorAll(".ayah.playing").forEach(el => el.classList.remove("playing"));
   const card = document.querySelector(`.ayah[data-key="${surahNo}:${ayahNo}"]`);
   if (card) {
     card.classList.add("playing");
-    card.scrollIntoView({ behavior: qxScrollBehavior(), block: "center" });
+    // Follow playback only when the user has not taken control of scrolling.
+    if(forceScroll || (qxReaderSessionAutoScroll && !qxReaderUserScrolled && !qxAyahIsInViewport(card, 72))){
+      card.scrollIntoView({ behavior: forceScroll ? "auto" : qxScrollBehavior(), block: "center" });
+    }
   }
 }
 
@@ -2204,13 +2240,22 @@ document.getElementById("audioNext").onclick = () => {
   if (currentPlayIdx + 1 < currentPlaylist.length) playAyahAtIndex(currentPlayIdx + 1);
 };
 if(audioRepeatBtn){
-  audioRepeatBtn.setAttribute('aria-pressed', 'false');
+  const repeatLabels = ['পুনরাবৃত্তি বন্ধ', 'সব আয়াত পুনরাবৃত্তি', 'বর্তমান আয়াত পুনরাবৃত্তি'];
+  const repeatIcons = ['repeat', 'repeat', 'repeat_one'];
+  function qxUpdateRepeatButton(){
+    audioRepeatBtn.classList.toggle('on', qxAudioRepeatMode !== 0);
+    audioRepeatBtn.dataset.repeatMode = String(qxAudioRepeatMode);
+    audioRepeatBtn.setAttribute('aria-pressed', qxAudioRepeatMode !== 0 ? 'true' : 'false');
+    audioRepeatBtn.setAttribute('aria-label', repeatLabels[qxAudioRepeatMode]);
+    const icon = audioRepeatBtn.querySelector('.ms');
+    if(icon) icon.textContent = repeatIcons[qxAudioRepeatMode];
+    audioRepeatBtn.title = repeatLabels[qxAudioRepeatMode];
+  }
+  qxUpdateRepeatButton();
   audioRepeatBtn.onclick = () => {
-    qxAudioRepeat = !qxAudioRepeat;
-    audioRepeatBtn.classList.toggle('on', qxAudioRepeat);
-    audioRepeatBtn.setAttribute('aria-pressed', qxAudioRepeat ? 'true' : 'false');
-    audioRepeatBtn.setAttribute('aria-label', qxAudioRepeat ? 'আয়াত পুনরাবৃত্তি বন্ধ করুন' : 'আয়াত পুনরাবৃত্তি চালু করুন');
-    showToast(qxAudioRepeat ? 'বর্তমান আয়াত পুনরাবৃত্তি হবে' : 'আয়াত পুনরাবৃত্তি বন্ধ হয়েছে');
+    qxAudioRepeatMode = (qxAudioRepeatMode + 1) % 3;
+    qxUpdateRepeatButton();
+    showToast(['পুনরাবৃত্তি বন্ধ', 'সব আয়াত ধারাবাহিকভাবে পুনরাবৃত্তি হবে', 'বর্তমান আয়াত পুনরাবৃত্তি হবে'][qxAudioRepeatMode]);
   };
 }
 if(audioSleepTimerBtn){
@@ -2250,11 +2295,23 @@ document.getElementById("audioClose").onclick = stopAudio;
 try{ qxInitAudioHide(); }catch(e){}
 /* দুটো অডিও এলিমেন্টেই (আসল ও প্রিলোড/ক্রসফেড) "ended" শোনা হয়: swap-এর পর নতুন মূল এলিমেন্টেও অটো-প্লে চলে */
 function qxHandleAudioEnded(){
-  if(qxAudioRepeat && currentPlayIdx >= 0 && currentPlayIdx < currentPlaylist.length){
+  if(qxAudioRepeatMode === 2 && currentPlayIdx >= 0 && currentPlayIdx < currentPlaylist.length){
     playAyahAtIndex(currentPlayIdx);
     return;
   }
-  if (autoPlayNext && currentPlayIdx + 1 < currentPlaylist.length) {
+  const hasNext = currentPlayIdx + 1 < currentPlaylist.length;
+  if (qxAudioRepeatMode === 1 && currentPlaylist.length > 0) {
+    const nextIndex = hasNext ? currentPlayIdx + 1 : 0;
+    if(!qxPlayWithCrossfade(nextIndex)) playAyahAtIndex(nextIndex);
+    else {
+      try{
+        const ni = currentPlaylist[nextIndex];
+        if(ni){ currentPlayIdx = nextIndex; audioTitle.textContent = ni.s.englishName + ' · আয়াত ' + toBn(ni.no); highlightPlayingCard(ni.s.number, ni.no); }
+      }catch(e){}
+    }
+    return;
+  }
+  if (autoPlayNext && hasNext) {
     // Phase 2: try preloaded crossfade first, else normal
     if(!qxPlayWithCrossfade(currentPlayIdx + 1)){
       playAyahAtIndex(currentPlayIdx + 1);
@@ -2446,6 +2503,8 @@ window.qxSourcesHtml = function(){
       'আরবি পাঠ: Tanzil Project, AlQuran Cloud-এর মাধ্যমে · ' + A('https://tanzil.net') + ' · ' + A('https://alquran.cloud') + ' · অ্যাপের সাথে অফলাইন',
       'বাংলা অনুবাদ (মাওলানা মুহিউদ্দীন খান): AlQuran Cloud সংস্করণ bn.bengali · অ্যাপের সাথে অফলাইন',
       'বাংলা অনুবাদ (ড. আবু বকর মুহাম্মাদ যাকারিয়া): প্রকাশক King Fahd Glorious Quran Printing Complex, উৎস ' + A('https://quranenc.com') + ' · সংস্করণ V1.1.1 · ডাউনলোড করে অফলাইনে ব্যবহার করা যায়',
+      'ইংরেজি অনুবাদ (Saheeh International, Yusuf Ali, Muhammad Asad): AlQuran Cloud API · ' + A('https://alquran.cloud') + ' · অনলাইন সংস্করণ',
+      'ইংরেজি অনুবাদ (Marmaduke Pickthall, 1930): en.pickthall · AlQuran Cloud API · ডাউনলোড করে অ্যাপের স্টোরেজে অফলাইনে রাখা যায়; মূল ১৯৩০ সংস্করণ পাবলিক ডোমেইন হিসেবে নথিভুক্ত ' + A('https://en.wikisource.org/wiki/The_Meaning_of_the_Glorious_Koran'),
       'শব্দে শব্দে অর্থ ও উচ্চারণ: Quran.com API v4 · ' + A('https://quran.com') + ' · ইন্টারনেট প্রয়োজন'
     ]],
     ['তাফসির', [
@@ -2571,7 +2630,7 @@ async function openTafseer(surahNo, ayahNo, label){
   header.appendChild(close);
   content.appendChild(header);
   
-  const body = document.createElement("div"); body.className = "tafseer-body";
+  const body = document.createElement("div"); body.className = "tafseer-body" + (Number(tafsirId) === 164 ? " tafseer-ibn-kathir" : "");
   body.textContent = "তাফসির লোড হচ্ছে…";
   content.appendChild(body);
   overlay.appendChild(content);
@@ -2688,6 +2747,12 @@ function restoreReaderScroll(y, renderToken){
   }
 }
 let scrollSaveTimer = 0;
+function qxMarkReaderUserScroll(){ if(reading) qxReaderUserScrolled = true; }
+window.addEventListener("wheel", qxMarkReaderUserScroll, { passive:true });
+window.addEventListener("touchstart", qxMarkReaderUserScroll, { passive:true });
+window.addEventListener("keydown", event => {
+  if(reading && ["ArrowDown","ArrowUp","PageDown","PageUp","Home","End"," "].includes(event.key) && !/^(INPUT|TEXTAREA|SELECT)$/.test(event.target && event.target.tagName || "")) qxMarkReaderUserScroll();
+});
 function updateReaderProgress(){
   const bar = document.getElementById("readerProgress");
   const fill = document.getElementById("readerProgressFill");
@@ -2809,6 +2874,28 @@ async function loadSurahAyahs(n){
 }
 
 async function loadJuzAyahs(j){
+  if (window.quranixPackageStore && LOCAL && currentEdition !== "bn.bengali" && currentEdition !== "bn.zakaria") {
+    const neededSurahs = Array.from(new Set(LOCAL.juz.reduce((out, arr, si) => {
+      if (arr.some(jj => jj === j)) out.push(si + 1);
+      return out;
+    }, [])));
+    const offlineTranslations = {};
+    let allOffline = neededSurahs.length > 0;
+    for (const surahNo of neededSurahs) {
+      const rows = await window.quranixPackageStore.getTranslation(currentEdition, surahNo);
+      if (!Array.isArray(rows) || !rows.length) { allOffline = false; break; }
+      offlineTranslations[surahNo] = rows;
+    }
+    if (allOffline) {
+      const out = [];
+      LOCAL.juz.forEach((arr, si) => arr.forEach((jj, i) => {
+        if (jj !== j) return;
+        const meta = LOCAL.meta[si], row = offlineTranslations[si + 1][i];
+        out.push({s:{number:si+1,name:meta.name,englishName:meta.en},no:i+1,ar:LOCAL.ar[si][i],bn:row && row.bn ? row.bn : ""});
+      }));
+      if (out.length) return out;
+    }
+  }
   if (LOCAL && currentEdition === "bn.bengali") {
     const out = [];
     LOCAL.juz.forEach((arr, si) => arr.forEach((jj, i) => {
@@ -3380,6 +3467,7 @@ function renderTopicDetail(t){
 
 // [PAGE: Quran Home] start
 function renderQuranHome(){
+  if(typeof window.qxInvalidateReaderRender === "function") window.qxInvalidateReaderRender();
   window.qxTopicOpen = null;
   document.body.classList.remove("inside-page");
   titleEl.textContent = "Quranix";
@@ -3428,7 +3516,7 @@ function renderQuranHome(){
     const type = s.revelationType === "Meccan" ? "মাক্কী" : "মাদানী";
     const surahItem = item(s.number, s.englishName, s.englishNameTranslation, s.name, () => openSurah(s.number));
     surahItem.classList.add("surah-item");
-    qxAddGridTag(surahItem, "সূরা");
+    // Task 07: remove the Surah-specific grid label; retain the revelation and ayah metadata.
     surahItem.setAttribute("role", "button");
     surahItem.setAttribute("tabindex", "0");
     surahItem.setAttribute("aria-label", "সূরা " + toBn(s.number) + ": " + s.englishName + ", " + s.englishNameTranslation + ", " + type + ", আয়াত " + toBn(s.numberOfAyahs));
@@ -3662,6 +3750,13 @@ function ayahCard(label, ar, bn, a, removable){
 
 // Prevent slower previous reader requests from replacing the page the user opened most recently.
 let readerRenderToken = 0;
+window.qxInvalidateReaderRender = function(){
+  saveScroll();
+  readerRenderToken++;
+  reading = null;
+  qxReaderUserScrolled = false;
+  qxReaderSessionAutoScroll = false;
+};
 
 // [PAGE: Reader shell] start
 function showReader(title){
@@ -3679,6 +3774,8 @@ function showReader(title){
 // [PAGE: Surah Reader] start
 async function openSurah(n, y, targetAyah){
   const renderToken = ++readerRenderToken;
+  qxReaderUserScrolled = false;
+  qxReaderSessionAutoScroll = !targetAyah;
   reading = last = {t:"s", n, y:0}; lsSet("last", last);
   const s = surahs.find(x => x.number === n);
   showReader(s ? s.englishName : "সূরা " + n);
@@ -3691,11 +3788,20 @@ async function openSurah(n, y, targetAyah){
 
     // পূর্ণ সূরার অডিও প্লেয়ার শুধু Grid Menu-এর Full Audio Quran আইটেম থেকে খোলা যাবে।
     const surahHeader = document.createElement("div");
-    surahHeader.className = "sh qx-surah-header";
+    const revelation = String(s && (s.revelationType || s.type) || "").toLowerCase();
+    const isMadani = revelation.indexOf("mad") >= 0 || revelation.indexOf("med") >= 0;
+    surahHeader.className = "sh qx-surah-header qx-surah-banner " + (isMadani ? "madani" : "makki");
+    const surahHeaderText = document.createElement("div");
+    surahHeaderText.className = "qx-surah-banner-text";
     const surahHeaderName = document.createElement("span");
     surahHeaderName.className = "qx-surah-header-name";
-    surahHeaderName.textContent = (s ? s.name : "সূরা " + n) + (s && s.englishName ? " · " + s.englishName : "");
-    surahHeader.appendChild(surahHeaderName);
+    surahHeaderName.textContent = (s ? s.name : "সূরা " + n);
+    const surahHeaderSub = document.createElement("small");
+    surahHeaderSub.className = "qx-surah-banner-sub";
+    surahHeaderSub.textContent = (s && s.englishNameTranslation ? s.englishNameTranslation + " · " : "") + (s && s.englishName ? s.englishName : "") + " · " + (isMadani ? "মাদানী" : "মাক্কী");
+    surahHeaderText.appendChild(surahHeaderName);
+    surahHeaderText.appendChild(surahHeaderSub);
+    surahHeader.appendChild(surahHeaderText);
     app.appendChild(surahHeader);
 
     if (n !== 1 && n !== 9) {
@@ -3705,9 +3811,11 @@ async function openSurah(n, y, targetAyah){
     window._activeAyahList = ayahs;
     ayahs.forEach(a => app.appendChild(ayahCard("আয়াত " + toBn(a.no), cleanText(a), a.bn, a)));
     if (targetAyah) {
+      qxReaderUserScrolled = true; // Explicit navigation: don't later override the user's target.
+      qxReaderSessionAutoScroll = false;
       const targetCard = document.querySelector(`.ayah[data-key="${n}:${targetAyah}"]`);
       if (targetCard) {
-        targetCard.scrollIntoView({ behavior: qxScrollBehavior(), block: "center" });
+        targetCard.scrollIntoView({ behavior: "auto", block: "center" });
         targetCard.style.transition = "box-shadow 0.4s ease";
         targetCard.style.boxShadow = "0 0 0 2px var(--qx-main-color)";
         setTimeout(() => { targetCard.style.boxShadow = ""; }, 2200);
@@ -3728,6 +3836,8 @@ async function openSurah(n, y, targetAyah){
 // [PAGE: Juz Reader] start
 async function openJuz(n, y){
   const renderToken = ++readerRenderToken;
+  qxReaderUserScrolled = false;
+  qxReaderSessionAutoScroll = true;
   reading = last = {t:"j", n, y:0}; lsSet("last", last);
   showReader("পারা " + toBn(n));
   msg("লোড হচ্ছে…");

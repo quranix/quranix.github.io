@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Quranix | বাংলা কুরআন",
+  "name": "Quranix",
   "short_name": "Quranix",
-  "description": "কুরআন, তাজউইদ, হিফজ, ট্র্যাকার, হিজরি ক্যালেন্ডার - সব একসাথে",
+  "description": "বাংলা কুরআন - তাজউইদ, হিফজ, ট্র্যাকার",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -207,6 +207,8 @@ ABOUT THIS FILE
   --qx-tag-text: #4b5563;
   --qx-pad-sm: calc(10px * var(--qx-scale));
   --qx-pad-item: calc(14px * var(--qx-scale)) calc(18px * var(--qx-scale));
+  --qx-item-padding: calc(12px * var(--qx-scale)) calc(14px * var(--qx-scale));
+  --qx-item-min-height: calc(68px * var(--qx-scale));
   --qx-pad: calc(20px * var(--qx-scale));
   --qx-pad-xl: calc(60px * var(--qx-scale)) 0;
   --qx-gap: calc(10px * var(--qx-scale));
@@ -221,8 +223,8 @@ ABOUT THIS FILE
   --qx-fs-xl: calc(18px * var(--qx-scale));
   --qx-fs-ar-base: 30px;
   --qx-fs-bn-base: 18px;
-  --qx-fs-ar: var(--qx-fs-ar-base);
-  --qx-fs-bn: var(--qx-fs-bn-base);
+  --qx-fs-ar: calc(var(--qx-fs-ar-base) * var(--qx-scale));
+  --qx-fs-bn: calc(var(--qx-fs-bn-base) * var(--qx-scale));
   --qx-font-arabic: "Amiri Quran","Noto Naskh Arabic","Traditional Arabic",serif;
   --qx-font: "Hind Siliguri","Noto Serif Bengali","Kalpurush","Noto Sans Bengali",sans-serif;
   --qx-content-max: 720px;
@@ -233,9 +235,9 @@ ABOUT THIS FILE
   --qx-z-modal: 100;
   --qx-z-toast: 10100;
   --qx-z-dropdown: 90;
-  --qx-btn-h: 44px;
-  --qx-btn-h-sm: 36px;
-  --qx-icon-size: 22px;
+  --qx-btn-h: calc(44px * var(--qx-scale));
+  --qx-btn-h-sm: calc(36px * var(--qx-scale));
+  --qx-icon-size: calc(22px * var(--qx-scale));
 }
 
 [data-theme="dark"] {
@@ -265,6 +267,12 @@ ABOUT THIS FILE
   --qx-tj-iqlab: #f472b6;
 }
 
+[data-theme="light"] {
+  --qx-bg: #F5F5F5;
+  --qx-outer-bg: #E5E7EB;
+  --qx-hover: var(--qx-outer-bg);
+}
+
 [data-hc=""] {
   --qx-text-color: #000;
   --qx-meta-color: #333;
@@ -281,6 +289,10 @@ ABOUT THIS FILE
   --qx-main-color: var(--qx-c-mint-hc);
   --qx-tile-bg: #111;
   --qx-hover: #333;
+}
+
+[data-theme="light"][data-hc=""] {
+  --qx-hover: var(--qx-outer-bg);
 }
 
 [data-reduced-motion=""] *,[data-reduced-motion=""] *::before,[data-reduced-motion=""] *::after {
@@ -505,7 +517,8 @@ body.bars-hidden header {
   background: var(--qx-card-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
-  padding: calc(10px * var(--qx-scale));
+  padding: var(--qx-item-padding);
+  min-height: var(--qx-item-min-height);
   margin: 6px 0;
   cursor: pointer;
 }
@@ -546,7 +559,7 @@ body.bars-hidden header {
   padding: clamp(15px,2.4vw,calc(22px * var(--qx-scale)));
   margin: 12px auto;
   max-width: 900px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.025);
+  box-shadow: var(--qx-shadow);
 }
 
 .ayah .ar {
@@ -682,10 +695,54 @@ body.bars-hidden header {
   text-align: start;
 }
 
-.qx-surah-header-name {
+ .qx-surah-header-name {
   min-width: 0;
   font-weight: 700;
 }
+
+/* [SURAH-BANNER] start — Makki teal / Madani navy, abstract pattern at 8% */
+.qx-surah-banner {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 82px;
+  padding: 16px 18px;
+  border: 0;
+  color: #fff;
+  background: #0f766e;
+  border-radius: var(--qx-radius-lg);
+  box-shadow: 0 8px 22px color-mix(in srgb, #0f766e 22%, transparent);
+}
+.qx-surah-banner.madani {
+  background: #1e3a8a;
+  box-shadow: 0 8px 22px color-mix(in srgb, #1e3a8a 22%, transparent);
+}
+.qx-surah-banner::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  opacity: .08;
+  background: repeating-linear-gradient(45deg, transparent 0 18px, #fff 18px 20px), repeating-linear-gradient(-45deg, transparent 0 28px, #fff 28px 30px);
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+.qx-surah-banner-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.qx-surah-banner .qx-surah-header-name {
+  font-size: 1.16em;
+  line-height: 1.35;
+}
+.qx-surah-banner-sub {
+  color: color-mix(in srgb, #fff 82%, transparent);
+  font-size: .88em;
+  line-height: 1.4;
+}
+/* [SURAH-BANNER] end */
 
 .qx-surah-audio-btn {
   flex: 0 0 auto;
@@ -1132,14 +1189,14 @@ select {
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
-  box-shadow: 0 6px 18px rgba(0,0,0,.12), inset 0 -6px 12px rgba(0,0,0,.08);
+  box-shadow: var(--qx-shadow);
   transition: transform .08s ease, box-shadow .08s ease;
   aspect-ratio: 1 / 1;
 }
 
 .tbtn:active {
   transform: scale(.97);
-  box-shadow: 0 3px 10px rgba(0,0,0,.12), inset 0 -3px 8px rgba(0,0,0,.08);
+  box-shadow: var(--qx-shadow);
 }
 
 .tcount {
@@ -1258,9 +1315,56 @@ body.inside-page h1 {
 
 /* [TAFSEER] start */
 .tafseer-body {
-  line-height: 1.8;
+  line-height: 1.95;
   font-size: var(--qx-fs-lg);
+  color: var(--qx-text-color);
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: calc(12px * var(--qx-scale)) calc(6px * var(--qx-scale));
+  overflow-wrap: anywhere;
 }
+.tafseer-body p {
+  margin: 0 0 1.15em;
+  text-align: justify;
+  text-wrap: pretty;
+}
+.tafseer-body h1,
+.tafseer-body h2,
+.tafseer-body h3,
+.tafseer-body h4 {
+  color: var(--qx-main-color);
+  line-height: 1.5;
+  margin: 1.45em 0 .65em;
+  font-weight: 700;
+  text-align: start;
+}
+.tafseer-body h1 { font-size: 1.35em; }
+.tafseer-body h2 { font-size: 1.22em; }
+.tafseer-body h3,
+.tafseer-body h4 { font-size: 1.08em; }
+.tafseer-body ul,
+.tafseer-body ol {
+  padding-inline-start: 1.6em;
+  margin: .6em 0 1.2em;
+}
+.tafseer-body li { margin: .35em 0; padding-inline-start: .2em; }
+.tafseer-body blockquote {
+  margin: 1em 0;
+  padding: .75em 1em;
+  border-inline-start: 3px solid var(--qx-main-color);
+  border-radius: var(--qx-radius);
+  background: var(--qx-tile-bg);
+}
+.tafseer-body strong,
+.tafseer-body b { color: var(--qx-text-color); }
+.tafseer-body hr {
+  border: 0;
+  border-top: 1px solid var(--qx-border);
+  margin: 1.4em 0;
+}
+.tafseer-body.tafseer-ibn-kathir p { margin-bottom: 1.35em; }
+.tafseer-body.tafseer-ibn-kathir h2,
+.tafseer-body.tafseer-ibn-kathir h3 { padding-bottom: .35em; border-bottom: 1px solid var(--qx-border); }
 /* [TAFSEER] end */
 
 /* [AUDIO-BAR] start */
@@ -1272,9 +1376,9 @@ body.inside-page h1 {
   right: 0;
   bottom: env(safe-area-inset-bottom);
   z-index: 50;
-  background: var(--qx-card-bg);
+  background: var(--qx-main-soft);
   border-top: 1px solid var(--qx-border);
-  box-shadow: 0 -4px 16px rgba(0,0,0,.10);
+  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
 }
 .audio-bar.show,
 .audio-bar.on,
@@ -1322,6 +1426,9 @@ body.qx-audio-open {
 .audio-status {
   text-align: center;
   padding: 0 14px 6px;
+}
+.audio-status:empty {
+  display: none;
 }
 .audio-progress-top {
   margin: 0;
@@ -1395,6 +1502,32 @@ body.qx-audio-open {
   outline: 2px solid var(--qx-main-color);
   outline-offset: 2px;
 }
+
+/* [AUDIO-BAR > dark-mode controls] start */
+[data-theme="dark"] .audio-top-row {
+  background: color-mix(in srgb, var(--qx-card-bg) 88%, var(--qx-main-color));
+  color: var(--qx-text-color);
+  border-bottom: 1px solid var(--qx-border);
+}
+[data-theme="dark"] .audio-top-row .audio-info small { color: var(--qx-meta-color); }
+[data-theme="dark"] .audio-top-actions button {
+  color: var(--qx-text-color);
+  background: color-mix(in srgb, var(--qx-card-bg) 85%, var(--qx-main-color));
+  border: 1px solid var(--qx-border);
+  border-radius: 10px;
+}
+[data-theme="dark"] .qx-center-btn {
+  background: var(--qx-main-color);
+  color: #fff;
+  border: 1px solid color-mix(in srgb, var(--qx-main-color) 65%, #fff);
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+[data-theme="dark"] .qx-side-btn { color: var(--qx-text-color); }
+[data-theme="dark"] .qx-side-btn.on {
+  color: var(--qx-main-color);
+  background: color-mix(in srgb, var(--qx-main-color) 20%, var(--qx-card-bg));
+}
+/* [AUDIO-BAR > dark-mode controls] end */
 
 /* [AUDIO-BAR] end */
 
@@ -1749,12 +1882,12 @@ summary.set-title:focus-visible {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: #CCFBF1;
+  width: calc(44px * var(--qx-scale));
+  height: calc(44px * var(--qx-scale));
+  border-radius: var(--qx-radius-lg);
+  background: var(--qx-main-soft);
   color: var(--qx-main-color);
-  font-size: 24px;
+  font-size: calc(24px * var(--qx-scale));
 }
 .set-ico .ms {
   font-size: 1em;
@@ -1768,13 +1901,13 @@ summary.set-title:focus-visible {
   display: flex;
   align-items: center;
   gap: 14px;
-  min-height: 52px;
-  padding: 10px 16px;
-  margin: 0 16px 8px;
-  border-radius: 14px;
+  min-height: calc(52px * var(--qx-scale));
+  padding: calc(10px * var(--qx-scale)) calc(16px * var(--qx-scale));
+  margin: 0 calc(16px * var(--qx-scale)) calc(8px * var(--qx-scale));
+  border-radius: var(--qx-radius-lg);
   background: var(--qx-card-bg);
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-  font-size: 15px;
+  box-shadow: var(--qx-shadow);
+  font-size: var(--qx-fs);
   color: var(--qx-text-color);
   cursor: pointer;
   border: 0;
@@ -1782,7 +1915,7 @@ summary.set-title:focus-visible {
 }
 .set-row:active {
   transform: scale(.98);
-  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  box-shadow: var(--qx-shadow);
 }
 
 label.set-row {
@@ -1798,8 +1931,8 @@ label.set-row {
 }
 
 .set-label small {
-  color: #6b7280;
-  font-size: 12px;
+  color: var(--qx-meta-color);
+  font-size: var(--qx-fs-sm);
   line-height: 1.35;
   font-weight: 400;
 }
@@ -1859,13 +1992,13 @@ label.set-row {
   appearance: none;
   position: relative;
   flex-shrink: 0;
-  width: 42px;
-  height: 26px;
+  width: calc(42px * var(--qx-scale));
+  height: calc(26px * var(--qx-scale));
   margin: 0 0 0 auto;
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: #E5E7EB;
+  background: var(--qx-border);
   cursor: pointer;
   transition: background-color .22s ease;
 }
@@ -1873,22 +2006,22 @@ label.set-row {
 .set-switch::after {
   content: "";
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 22px;
-  height: 22px;
+  top: calc(2px * var(--qx-scale));
+  left: calc(2px * var(--qx-scale));
+  width: calc(22px * var(--qx-scale));
+  height: calc(22px * var(--qx-scale));
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  background: var(--qx-card-bg);
+  box-shadow: var(--qx-shadow);
   transition: transform .22s cubic-bezier(.2,.7,.3,1);
 }
 
 .set-switch:checked {
-  background: #0F766E;
-  border-color: #0F766E;
+  background: var(--qx-main-color);
+  border-color: var(--qx-main-color);
 }
 .set-switch:checked::after {
-  transform: translateX(16px);
+  transform: translateX(calc(16px * var(--qx-scale)));
 }
 
 .set-switch:focus-visible {
@@ -2026,7 +2159,7 @@ html,body,button,input,select,textarea {
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  z-index: 70;
+  z-index: 120;
   background: var(--qx-tile-bg);
   border: 1px solid var(--qx-border);
   border-radius: var(--qx-radius-lg);
@@ -2879,6 +3012,13 @@ body.hifz-on #hifzBar {
 .khatam-dot.today {
   box-shadow: 0 0 0 2px var(--qx-main-color);
 }
+/* [TRACKER-CARD-CUSTOMIZE] start */
+.qx-tracker-home-card { position:relative; padding-bottom:42px; }
+.qx-tracker-home-fill { transition:width .35s ease, background-color .2s ease; }
+.qx-tracker-open-label { color:var(--qx-main-color); font-weight:700; }
+.qx-tracker-card-edit { position:absolute; right:10px; bottom:8px; border:1px solid var(--qx-border); border-radius:var(--qx-radius-pill); background:var(--qx-card-bg); color:var(--qx-text-color); padding:5px 10px; font:inherit; font-size:var(--qx-fs-xs); cursor:pointer; }
+@media (prefers-reduced-motion:reduce) { .qx-tracker-home-fill { transition:none; } }
+/* [TRACKER-CARD-CUSTOMIZE] end */
 /* [KHATAM] end */
 
 /* [DOWNLOAD] start */
@@ -4118,14 +4258,16 @@ nav button b .ms {
   gap: 5px;
 }
 .surah-grid:not(.is-list) .surah-item {
-  padding: calc(6px * var(--qx-scale));
-  gap: 5px;
+  padding: var(--qx-item-padding);
+  min-height: var(--qx-item-min-height);
+  gap: 8px;
 }
 .surah-grid.is-list {
   gap: 6px;
 }
 .surah-grid.is-list .surah-item {
-  padding: calc(6px * var(--qx-scale)) calc(9px * var(--qx-scale));
+  padding: var(--qx-item-padding);
+  min-height: var(--qx-item-min-height);
   gap: 9px;
 }
 .surah-grid .surah-item .num {
@@ -4134,7 +4276,7 @@ nav button b .ms {
 }
 
 .qx-sec-page > .ayah.qx-sec-card {
-  padding: calc(9px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  padding: var(--qx-item-padding);
 }
 .qx-sec-page > .ayah.qx-sec-card .bn {
   margin-top: 5px;
@@ -4583,7 +4725,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   align-items: center;
   gap: var(--qx-gap);
   width: 100%;
-  padding: var(--qx-pad-item);
+  padding: var(--qx-item-padding);
+  min-height: var(--qx-item-min-height);
   text-align: left;
   background: none;
   color: var(--qx-text-color);
@@ -4875,6 +5018,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   align-items: center;
   justify-content: center;
   line-height: 0;
+}
+
+.qx-nm .surah-grid .surah-item {
+  min-height: calc(76px * var(--qx-scale));
+  padding: calc(14px * var(--qx-scale)) calc(14px * var(--qx-scale));
 }
 
 .qx-nm .qx-nm-chev {
@@ -5685,7 +5833,7 @@ html.in-app .install-menu-item.show {
 
 .audio-progress-top,
 .qx-fa-progress {
-  height: 5px;
+  height: 4px;
   border-radius: 10px;
   background: var(--qx-border);
 }
@@ -5749,10 +5897,13 @@ html.in-app .install-menu-item.show {
 .audio-bottom {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   color: var(--qx-meta-color);
-  padding: 6px 14px 8px;
+  background: var(--qx-card-bg);
+  padding: 3px 14px 5px;
+  margin-top: 0;
 }
 
 .audio-float {
@@ -5777,6 +5928,32 @@ html.in-app .install-menu-item.show {
   display: grid;
   place-items: center;
 }
+/* [AUDIO-BAR > dark-mode controls] start */
+[data-theme="dark"] .audio-top-row {
+  background: color-mix(in srgb, var(--qx-card-bg) 88%, var(--qx-main-color));
+  color: var(--qx-text-color);
+  border-bottom: 1px solid var(--qx-border);
+}
+[data-theme="dark"] .audio-top-row .audio-info small { color: var(--qx-meta-color); }
+[data-theme="dark"] .audio-top-actions button {
+  color: var(--qx-text-color);
+  background: color-mix(in srgb, var(--qx-card-bg) 85%, var(--qx-main-color));
+  border: 1px solid var(--qx-border);
+  border-radius: 10px;
+}
+[data-theme="dark"] .qx-center-btn {
+  background: var(--qx-main-color);
+  color: #fff;
+  border: 1px solid color-mix(in srgb, var(--qx-main-color) 65%, #fff);
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+[data-theme="dark"] .qx-side-btn { color: var(--qx-text-color); }
+[data-theme="dark"] .qx-side-btn.on {
+  color: var(--qx-main-color);
+  background: color-mix(in srgb, var(--qx-main-color) 20%, var(--qx-card-bg));
+}
+/* [AUDIO-BAR > dark-mode controls] end */
+
 /* [AUDIO-BAR] end */
 
 /* [QIBLA] start */
@@ -6317,7 +6494,7 @@ body.qx-home-edit-mode .home-quick-btn::after {
 .qx-home-theme-wrap{position:relative;overflow:hidden;border-radius:var(--qx-radius-lg);isolation:isolate}
 .qx-home-theme-bg{position:absolute;inset:0;z-index:-1;opacity:.92;transition:background .35s ease}
 .qx-home-theme-bg .ill{position:absolute;bottom:-6%;right:-4%;width:min(68%,280px);aspect-ratio:1;opacity:.95;pointer-events:none;filter:drop-shadow(0 8px 18px rgba(0,0,0,.12));background-size:contain;background-repeat:no-repeat;background-position:bottom right}
-.qx-home-theme-bg .pattern{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(circle at 1px 1px,var(--qx-home-accent) 1px,transparent 0);background-size:18px 18px}
+.qx-home-theme-bg .pattern{position:absolute;inset:0;opacity:.08;background-image:radial-gradient(circle at 1px 1px,var(--qx-home-accent) 1px,transparent 0);background-size:18px 18px}
 [data-home-theme="rahmat"]{--qx-home-bg:#E8F5E9;--qx-home-card-bg:#FFFFFF;--qx-home-accent:#2E7D32;--qx-home-text:#1B5E20;--qx-home-soft:color-mix(in srgb,var(--qx-home-accent) 14%,transparent)}
 [data-home-theme="rahmat"] .qx-home-theme-bg{background:linear-gradient(180deg,#E8F5E9 0%,#C8E6C9 100%)}
 [data-home-theme="maghfirat"]{--qx-home-bg:#E8EAF6;--qx-home-card-bg:#FFFFFF;--qx-home-accent:#5C6BC0;--qx-home-text:#283593;--qx-home-soft:color-mix(in srgb,var(--qx-home-accent) 14%,transparent)}
@@ -6339,6 +6516,15 @@ body.qx-home-edit-mode .home-quick-btn::after {
 .qx-theme-card .meta small{font-size:10px;color:var(--qx-meta-color)}
 .qx-theme-card .check{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--qx-main-color);color:#fff;display:none;place-items:center;font-size:12px}
 .qx-theme-card.on .check{display:grid}
+/* [SETTINGS-THEME-PICKER] start */
+.qx-settings-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.qx-settings-theme-card{display:flex;flex-direction:column;gap:0;min-height:86px;padding:0;overflow:hidden;text-align:left;border:1px solid var(--qx-border);background:var(--qx-card-bg);}
+.qx-settings-theme-card .preview{display:block;height:58px;background-size:cover;background-position:center;background-color:var(--qx-outer-bg)}
+.qx-settings-theme-card .name{display:block;padding:6px 8px;font-size:var(--qx-fs-sm);font-weight:600}
+.qx-settings-theme-card.on{border-color:var(--qx-main-color);box-shadow:0 0 0 2px color-mix(in srgb,var(--qx-main-color) 22%,transparent)}
+html[data-qx-theme] body{background-color:var(--qx-outer-bg);background-image:linear-gradient(var(--qx-theme-overlay),var(--qx-theme-overlay)),var(--qx-theme-image);background-size:cover;background-position:center;background-attachment:fixed}
+@media(max-width:360px){.qx-settings-theme-grid{grid-template-columns:1fr}}
+/* [SETTINGS-THEME-PICKER] end */
 /* [HOME-THEMES] end */
 
 /* [THEME-VARIABLES] start */
@@ -6651,7 +6837,7 @@ body.qx-home-edit-mode .home-quick-btn::after {
     gap: 14px;
   }
   .item {
-    padding: calc(16px * var(--qx-scale));
+    padding: var(--qx-item-padding);
   }
   :root {
     --qx-content-max: 100%;
@@ -7780,7 +7966,7 @@ body.qx-g-ptr {
   height: 26px;
   border-radius: 999px;
   border: 1px solid transparent;
-  background: #E5E7EB;
+  background: var(--qx-border);
   cursor: pointer;
   padding: 0;
   transition: background-color .2s ease;
@@ -7800,8 +7986,8 @@ body.qx-g-ptr {
 }
 
 .qx-sheet-switch.on {
-  background: #0F766E;
-  border-color: #0F766E;
+  background: var(--qx-main-color);
+  border-color: var(--qx-main-color);
 }
 
 .qx-sheet-switch.on::after {
@@ -8045,7 +8231,7 @@ html[data-theme="dark"] .ayah .ar.hifz-hide::after {
 /* P14 B - LITE size fix - Item 3 */
 
 html[data-size="small"] {
-  --qx-scale: 1;
+  --qx-scale: 1.04;
 }
 
 html[data-size="medium"] {
@@ -8053,11 +8239,7 @@ html[data-size="medium"] {
 }
 
 html[data-size="lite"] {
-  --qx-scale: 1.25;
-  --qx-btn-h: calc(44px * var(--qx-scale));
-  --qx-btn-h-sm: calc(36px * var(--qx-scale));
-  --qx-fs-ar: calc(var(--qx-fs-ar-base) * var(--qx-scale));
-  --qx-fs-bn: calc(var(--qx-fs-bn-base) * var(--qx-scale));
+  --qx-scale: 1.20;
 }
 
 html[data-size="lite"] .ayah .ar {
@@ -8536,7 +8718,7 @@ html[data-theme="dark"] .trk-cat {
 .qx-fa-single-main small{font-size:11px;}
 .qx-fa-list-head{margin:6px 0 12px;}
 .qx-fa-list{gap:6px;padding-bottom:22px;}
-.qx-fa-row{min-height:72px;border-radius:14px;padding:12px 11px;}
+.qx-fa-row{min-height:78px;border-radius:14px;padding:13px 12px;}
 .qx-fa-row.current{border-color:var(--qx-main-color);box-shadow:inset 0 0 0 1px var(--qx-main-color);}
 .qx-fa-row-play{border:0;background:var(--qx-main-color);color:#fff;}
 .qx-fa-row-play.on{background:var(--qx-top-bar,#0a4a3a);color:#fff;}
@@ -8552,6 +8734,57 @@ html[data-theme="dark"] .trk-cat {
 [data-theme="dark"] .qx-fa-player{background:linear-gradient(180deg,color-mix(in srgb,var(--qx-main-color) 15%,var(--qx-card-bg)),var(--qx-card-bg));}
 /* [FULL-AUDIO-REFERENCE-UI] end */
 
+/* [FULL-SURAH-AUDIO-PAGE > viewport fit] start */
+/* Keep the player page within the viewport and leave a small gap above footer nav. */
+main:has(.qx-full-audio-page) {
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+}
+.qx-full-audio-page:has(.qx-fa-current-row) {
+  height: calc(100svh - 88px - env(safe-area-inset-bottom));
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+.qx-full-audio-page .qx-fa-current-row {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+.qx-full-audio-page .qx-fa-player {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+  padding: 12px;
+}
+.qx-full-audio-page .qx-fa-hero-art {
+  min-height: 0;
+  height: auto;
+  margin-bottom: 4px;
+}
+.qx-full-audio-page .qx-fa-progress {
+  margin-top: 8px;
+}
+.qx-full-audio-page .qx-fa-controls {
+  margin-top: 8px;
+}
+@media (max-height: 650px) {
+  .qx-full-audio-page .qx-fa-hero-art .ms.qi {
+    width: 100px;
+    height: 100px;
+    font-size: 58px;
+  }
+  .qx-full-audio-page .qx-fa-controls .qx-fa-main-play {
+    width: 52px;
+    height: 52px;
+  }
+  .qx-full-audio-page .qx-fa-controls button:not(.qx-fa-main-play) {
+    width: 38px;
+    height: 38px;
+  }
+}
+/* [FULL-SURAH-AUDIO-PAGE > viewport fit] end */
 /* [FULL-SURAH-AUDIO-PAGE] end */
 
 /* [PHASE-2] Task 36 - 6 hadith books */
@@ -8638,7 +8871,34 @@ html[data-theme="dark"] .trk-cat {
   gap: 8px;
 }
 
-/* [PHASE-2] Task 38-39 - searchable district picker + 64 abstract district artworks */
+/* [PHASE-5] Task 15-17 - district feature card + searchable bottom-sheet picker */
+.qx-district-picker { margin: 10px 0 14px; }
+.qx-district-feature {
+  position:relative; display:flex; width:100%; height:280px; min-height:280px; padding:0;
+  border:1px solid var(--qx-border); border-radius:var(--qx-radius-lg); overflow:hidden;
+  background:var(--qx-card-bg); color:var(--qx-text-color); text-align:left; cursor:pointer;
+}
+.qx-district-feature-art {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg,#d6ebe5 0%,#a8d4ca 35%,#82b7b1 65%,#477d88 100%);
+}
+.qx-district-feature-art::before {
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(ellipse 60% 40% at 22% 20%,rgba(255,255,255,.5),transparent 70%),
+    radial-gradient(ellipse 70% 55% at 82% 82%,rgba(255,255,255,.18),transparent 70%),
+    linear-gradient(180deg,transparent 30%,rgba(0,0,0,.48));
+}
+.qx-district-feature-text { position:absolute; left:16px; bottom:18px; display:flex; flex-direction:column; gap:4px; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,.35); }
+.qx-district-feature-text strong { font-size:22px; }
+.qx-district-feature-text small { font-size:13px; }
+.qx-district-feature-action { position:absolute; right:14px; bottom:16px; display:grid; place-items:center; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.22); color:#fff; backdrop-filter:blur(6px); }
+.qx-district-sheet-ov { display:none; position:fixed; inset:0; z-index:1400; background:rgba(0,0,0,.45); align-items:flex-end; justify-content:center; }
+.qx-district-sheet-ov.open { display:flex; }
+.qx-district-sheet { width:min(100%,560px); max-height:min(82vh,720px); overflow:auto; padding:16px; box-sizing:border-box; background:var(--qx-card-bg); color:var(--qx-text-color); border-radius:20px 20px 0 0; box-shadow:0 -8px 32px rgba(0,0,0,.2); }
+.qx-district-sheet-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.qx-district-sheet-close { width:38px; height:38px; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-text-color); }
+.qx-district-sheet .qx-district-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.qx-district-sheet-ov.open { overscroll-behavior:contain; }
 .qx-district-picker { margin: 10px 0 14px; }
 .qx-district-title { display:block; margin: 0 0 9px; font-size: var(--qx-fs-md); }
 .qx-loc-search { position:relative; display:block; width:100%; margin:0 0 10px; }
@@ -8756,7 +9016,8 @@ html[data-theme="dark"] .trk-cat {
   position: relative;
 }
 @media (max-width:380px) {
-  .qx-district-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .qx-district-sheet { padding:12px; }
+  .qx-district-sheet .qx-district-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .prayer-times-grid { gap:8px; padding-left:var(--qx-gutter); padding-right:var(--qx-gutter); }
   .prayer-time-card { min-height:104px; padding:10px; }
 }
@@ -8829,7 +9090,8 @@ html[data-theme="dark"] .trk-cat {
 .qx-azan-prayer-info b { font-size:15px; }
 .qx-azan-prayer-time { font-size:14px; font-weight:700; color:var(--qx-text-color); }
 .qx-azan-prayer-left { grid-column:1 / -1; color:var(--qx-muted); font-size:12px; }
-.qx-azan-toggle { width:42px; height:42px; flex:0 0 42px; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-muted); font-size:18px; cursor:pointer; }
+.qx-azan-toggle { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; padding:0; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-muted); font-size:18px; cursor:pointer; }
+.qx-azan-toggle .ms { display:block; width:1em; height:1em; line-height:1; text-align:center; font-size:21px; }
 .qx-azan-toggle.on { color:#15803d; background:#dcfce7; border-color:#86efac; }
 .qx-azan-master-toggle,.qx-azan-test-btn { width:100%; min-height:44px; border-radius:12px; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; font-weight:700; margin:8px 0; cursor:pointer; }
 .qx-azan-master-toggle.on { color:#166534; background:#dcfce7; border-color:#86efac; }
@@ -8839,9 +9101,19 @@ html[data-theme="dark"] .trk-cat {
 .qx-azan-save-btn { display:block; width:100%; margin:14px 0 2px; min-height:50px; border:0; border-radius:999px; background:#16a34a; color:#fff; font:inherit; font-weight:800; cursor:pointer; }
 .qx-azan-save-btn:focus-visible,.qx-azan-toggle:focus-visible,.qx-azan-master-toggle:focus-visible,.qx-azan-test-btn:focus-visible { outline:3px solid rgba(22,163,74,.35); outline-offset:2px; }
 @media(max-width:380px){ .qx-azan-prayer-row{padding:10px}.qx-azan-prayer-row.active{padding:9px 9px}.qx-azan-prayer-info{column-gap:7px} }
+
+/* [PHASE 2 > Task 09] Download-list dismiss snackbar */
+.qx-download-undo-toast { display:flex;align-items:center;justify-content:space-between;gap:12px; }
+.qx-download-undo-toast button { border:0;background:transparent;color:inherit;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 6px; }
 </style>
 </head>
 <body>
+<!-- [SPLASH] start -->
+<div id="qxSplash" style="position:fixed;inset:0;z-index:99999;background:var(--qx-c-teal-deep);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .4s ease">
+  <img src="icons/icon-192x192.png" alt="Quranix" style="width:110px;height:110px;border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.25)">
+  <b style="color:#fff;font-size:18px;letter-spacing:4px;font-family:sans-serif;font-weight:600">QURANIX</b>
+</div>
+<!-- [SPLASH] end -->
 <a class="qx-skip-link" href="#app">মূল কনটেন্টে যান</a>
 <!-- [HEADER] start -->
 <header>
@@ -8870,10 +9142,10 @@ html[data-theme="dark"] .trk-cat {
         <!-- [MORE-MENU > Quick area] -->
         <div class="g-quick" id="gQuick"></div>
 
+        <!-- [MORE-MENU > Full Audio Quran item] Task 08: order 0 -->
+        <button class="g-menu-item" data-popup="fullaudio"><span style="display:flex;align-items:center;gap:10px"><span class="ms" aria-hidden="true">headphones</span><span style="display:flex;flex-direction:column;line-height:1.25">বাংলা কুরআন<small style="text-align:left;font-size:var(--qx-fs-sm);font-weight:400">অর্থসহ সম্পূর্ণ কুরআন</small></span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Hijri calendar item] -->
         <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
-        <!-- [MORE-MENU > Full Audio Quran item] -->
-        <button class="g-menu-item" data-popup="fullaudio"><span><span class="ms" aria-hidden="true">headphones</span>ফুল অডিও কুরআন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Downloads item] -->
         <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
 
@@ -8908,6 +9180,10 @@ html[data-theme="dark"] .trk-cat {
       <select id="transSel">
         <option value="bn.bengali">অনুবাদ: মাওলানা মুহিউদ্দীন খান</option>
         <option value="bn.zakaria">অনুবাদ: ড. আবু বকর মুহাম্মাদ যাকারিয়া</option>
+        <option value="en.sahih">English: Saheeh International (Online API)</option>
+        <option value="en.yusufali">English: Abdullah Yusuf Ali (Online API)</option>
+        <option value="en.asad">English: Muhammad Asad (Online API)</option>
+        <option value="en.pickthall">English: Marmaduke Pickthall (Offline download)</option>
       </select>
     </div>
     <!-- [CONTROLS > Quick jump item] -->
@@ -8955,7 +9231,7 @@ html[data-theme="dark"] .trk-cat {
     <div class="audio-progress-top"><input id="audioSeek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="অডিও অগ্রগতি"><div class="audio-progress-fill" id="audioProgressFill"></div></div>
     <!-- [AUDIO-BAR > Title and top buttons item] -->
     <div class="audio-top-row"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-top-actions"><button id="audioHide" type="button" aria-label="মিনিমাইজ"><span class="ms" aria-hidden="true">expand_more</span></button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো"><span class="ms" aria-hidden="true">close</span></button></div></div>
-    <!-- [AUDIO-BAR > Time item] -->
+    <!-- [AUDIO-BAR > Time item: directly below the #D9E6E5 title banner] -->
     <div class="audio-bottom"><span id="audioCurrentTime">০:০০</span><span id="audioDuration">০:০০</span></div>
     <!-- [AUDIO-BAR > Controls item] -->
     <div class="audio-ctrls qx-audio-ctrls-v3"><button id="audioRepeat" type="button" class="qx-side-btn" aria-label="আয়াত পুনরাবৃত্তি চালু করুন" aria-pressed="false"><span class="ms" aria-hidden="true">repeat_one</span></button><button id="audioPrev" type="button" class="qx-side-btn" aria-label="আগের আয়াত"><span class="ms" aria-hidden="true">skip_previous</span></button><button id="audioPlayPause" type="button" class="qx-center-btn primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true">play_arrow</span></button><button id="audioNext" type="button" class="qx-side-btn" aria-label="পরের আয়াত"><span class="ms" aria-hidden="true">skip_next</span></button><button id="audioSleepTimer" type="button" class="qx-side-btn" aria-label="স্লিপ টাইমার"><span class="ms" aria-hidden="true">bedtime</span></button></div>
@@ -9029,5 +9305,25 @@ html[data-theme="dark"] .trk-cat {
 })();
 </script>
 
+
+<script>
+/* [SPLASH] hide */
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    var s = document.getElementById('qxSplash');
+    if(s){ s.style.opacity='0'; setTimeout(function(){ s.remove(); }, 400); }
+  }, 800);
+});
+</script>
 </body>
+
 </html>
+
+/* [PHASE-5] Task 17 - responsive linked location dropdowns */
+.row2:has(select[aria-label="বিভাগ নির্বাচন"]) { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.row2 select { min-width:0; width:100%; box-sizing:border-box; }
+@media (max-width:520px) {
+  .row2:has(select[aria-label="বিভাগ নির্বাচন"]) { grid-template-columns:1fr; gap:7px; }
+  .row2:has(select[aria-label="বিভাগ নির্বাচন"]) select { min-height:42px; }
+}
+/* [PHASE-5] end */
