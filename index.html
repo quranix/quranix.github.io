@@ -10,7 +10,7 @@ QX FILE EDIT RULES
 ABOUT THIS FILE
 - This file has the page markup and all the CSS (inside the style tag).
 - The JavaScript is in separate files. Do not change the script order at the bottom of this file:
-  quran-data.js, data/topics.js, data/dictionary.js, data/district.js, data/hadith.js, js/quran.js, js/apps.js
+  quran-data.js, data/topics.js, data/dictionary.js, data/district.js, data/district-images.js, data/hadith.js, js/quran.js, js/apps.js
 - After you change any file in the app, raise the CACHE number in sw.js so offline users get the new files.
 - Every block has [NAME] start and [NAME] end markers. Keep them. When you add a new function or block, add its markers.
 -->
@@ -6811,7 +6811,7 @@ html[data-qx-theme] body{background-color:var(--qx-outer-bg);background-image:li
   left: 50%;
   right: auto;
   bottom: 0;
-  transform: translateX(-50%);
+  translate: -50% 0;
   width: min(560px,100%);
   border-bottom: 0;
   padding: calc(4px * var(--qx-scale)) calc(8px * var(--qx-scale)) calc(4px + env(safe-area-inset-bottom));
@@ -8910,7 +8910,7 @@ main:has(.qx-full-audio-page) {
   border-radius:var(--qx-radius-lg); overflow:hidden; background:var(--qx-card-bg);
   border:1px solid var(--qx-border); color:var(--qx-text-color); cursor:pointer;
 }
-.district-art-card[hidden] { display:none !important; }
+.district-art-card[hidden] { display:none; }
 .district-art-card .district-art {
   display:block;
 }
@@ -9089,8 +9089,8 @@ main:has(.qx-full-audio-page) {
 .qx-azan-prayer-info { min-width:0; display:grid; grid-template-columns:auto auto; align-items:center; column-gap:10px; row-gap:2px; }
 .qx-azan-prayer-info b { font-size:15px; }
 .qx-azan-prayer-time { font-size:14px; font-weight:700; color:var(--qx-text-color); }
-.qx-azan-prayer-left { grid-column:1 / -1; color:var(--qx-muted); font-size:12px; }
-.qx-azan-toggle { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; padding:0; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-muted); font-size:18px; cursor:pointer; }
+.qx-azan-prayer-left { grid-column:1 / -1; color:var(--qx-meta-color); font-size:12px; }
+.qx-azan-toggle { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; padding:0; border-radius:50%; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-meta-color); font-size:18px; cursor:pointer; }
 .qx-azan-toggle .ms { display:block; width:1em; height:1em; line-height:1; text-align:center; font-size:21px; }
 .qx-azan-toggle.on { color:#15803d; background:#dcfce7; border-color:#86efac; }
 .qx-azan-master-toggle,.qx-azan-test-btn { width:100%; min-height:44px; border-radius:12px; border:1px solid var(--qx-border); background:var(--qx-card-bg); color:var(--qx-text-color); font:inherit; font-weight:700; margin:8px 0; cursor:pointer; }
@@ -9105,13 +9105,56 @@ main:has(.qx-full-audio-page) {
 /* [PHASE 2 > Task 09] Download-list dismiss snackbar */
 .qx-download-undo-toast { display:flex;align-items:center;justify-content:space-between;gap:12px; }
 .qx-download-undo-toast button { border:0;background:transparent;color:inherit;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 6px; }
+/* [SPLASH] start */
+#qxSplash {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--qx-c-teal-deep);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: opacity .4s ease;
+}
+
+#qxSplash img {
+  width: 110px;
+  height: 110px;
+  border-radius: 22px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25);
+}
+
+#qxSplash b {
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 4px;
+  font-family: sans-serif;
+  font-weight: 600;
+}
+
+/* ইনস্টল করা অ্যাপে সিস্টেমের নিজস্ব স্প্ল্যাশ আছে, তাই এটা শুধু ব্রাউজার ট্যাবে দেখায় */
+html.in-app #qxSplash {
+  display: none;
+}
+/* [SPLASH] end */
+
+/* [PHASE-5] Task 17 - responsive linked location dropdowns */
+.row2:has(select[aria-label="বিভাগ নির্বাচন"]) { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.row2 select { min-width:0; width:100%; box-sizing:border-box; }
+@media (max-width:520px) {
+  .row2:has(select[aria-label="বিভাগ নির্বাচন"]) { grid-template-columns:1fr; gap:7px; }
+  .row2:has(select[aria-label="বিভাগ নির্বাচন"]) select { min-height:42px; }
+}
+/* [PHASE-5] end */
 </style>
 </head>
 <body>
 <!-- [SPLASH] start -->
-<div id="qxSplash" style="position:fixed;inset:0;z-index:99999;background:var(--qx-c-teal-deep);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .4s ease">
-  <img src="icons/icon-192x192.png" alt="Quranix" style="width:110px;height:110px;border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.25)">
-  <b style="color:#fff;font-size:18px;letter-spacing:4px;font-family:sans-serif;font-weight:600">QURANIX</b>
+<div id="qxSplash">
+  <img src="icons/icon-192x192.png" alt="Quranix">
+  <b>QURANIX</b>
 </div>
 <!-- [SPLASH] end -->
 <a class="qx-skip-link" href="#app">মূল কনটেন্টে যান</a>
@@ -9143,7 +9186,7 @@ main:has(.qx-full-audio-page) {
         <div class="g-quick" id="gQuick"></div>
 
         <!-- [MORE-MENU > Full Audio Quran item] Task 08: order 0 -->
-        <button class="g-menu-item" data-popup="fullaudio"><span style="display:flex;align-items:center;gap:10px"><span class="ms" aria-hidden="true">headphones</span><span style="display:flex;flex-direction:column;line-height:1.25">বাংলা কুরআন<small style="text-align:left;font-size:var(--qx-fs-sm);font-weight:400">অর্থসহ সম্পূর্ণ কুরআন</small></span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="fullaudio"><span style="display:flex;align-items:center;gap:10px"><span class="ms" aria-hidden="true">headphones</span><span style="display:flex;flex-direction:column;line-height:1.25">বাংলা কুরআন<small style="text-align:left;font-size:var(--qx-fs-sm);font-weight:400">অর্থসহ সম্পূর্ণ কুরআন</small></span></span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Hijri calendar item] -->
         <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Downloads item] -->
@@ -9160,7 +9203,7 @@ main:has(.qx-full-audio-page) {
         <button class="g-menu-item" data-popup="share"><span><span class="ms" aria-hidden="true">share</span>অ্যাপ শেয়ার করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
 
         <!-- [MORE-MENU > Help item] -->
-        <button class="g-menu-item" data-popup="help"><span><span class="ms" aria-hidden="true">volunteer_activism</span>সহযোগিতা করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="help"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>সহযোগিতা করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
       </div>
     </div>
   </div> 
@@ -9267,6 +9310,7 @@ main:has(.qx-full-audio-page) {
 <script src="data/topics.js"></script>
 <script src="data/dictionary.js"></script>
 <script src="data/district.js"></script>
+<script src="data/district-images.js"></script>
 <script src="data/hadith.js"></script>
 <script src="js/quran.js"></script>
 <script src="js/apps.js"></script>
@@ -9318,12 +9362,3 @@ window.addEventListener('load', function(){
 </body>
 
 </html>
-
-/* [PHASE-5] Task 17 - responsive linked location dropdowns */
-.row2:has(select[aria-label="বিভাগ নির্বাচন"]) { grid-template-columns:repeat(3,minmax(0,1fr)); }
-.row2 select { min-width:0; width:100%; box-sizing:border-box; }
-@media (max-width:520px) {
-  .row2:has(select[aria-label="বিভাগ নির্বাচন"]) { grid-template-columns:1fr; gap:7px; }
-  .row2:has(select[aria-label="বিভাগ নির্বাচন"]) select { min-height:42px; }
-}
-/* [PHASE-5] end */
