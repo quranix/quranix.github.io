@@ -19,6 +19,13 @@ ABOUT THIS FILE
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quranix | বাংলা কুরআন</title>
+<!-- [SEO-META] start -->
+<meta name="description" content="Quranix: অর্থসহ সম্পূর্ণ বাংলা কুরআন, শব্দে শব্দে অর্থ, তাজভিদ, হিফজ, তাফসির ও অডিও এক অ্যাপে।">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quranix | বাংলা কুরআন">
+<meta property="og:description" content="Quranix: অর্থসহ সম্পূর্ণ বাংলা কুরআন, শব্দে শব্দে অর্থ, তাজভিদ, হিফজ, তাফসির ও অডিও এক অ্যাপে।">
+<meta property="og:url" content="https://quranix.github.io/">
+<!-- [SEO-META] end -->
 <meta name="theme-color" content="#0F766E">
 <meta name="google" content="notranslate">
 <meta name="googlebot" content="notranslate">
@@ -177,6 +184,7 @@ ABOUT THIS FILE
   --qx-card-bg: var(--qx-c-offwhite);
   --qx-text-color: var(--qx-c-ink);
   --qx-meta-color: var(--qx-c-meta);
+  --qx-nav-color: var(--qx-c-ink);
   --qx-main-color: var(--qx-c-teal);
   --qx-main-soft: color-mix(in srgb, var(--qx-main-color) 12%, transparent);
   --qx-icon-color: var(--qx-text-color);
@@ -247,6 +255,7 @@ ABOUT THIS FILE
   --qx-card-bg: var(--qx-c-night);
   --qx-text-color: var(--qx-c-offwhite);
   --qx-meta-color: var(--qx-c-night-muted);
+  --qx-nav-color: var(--qx-meta-color);
   --qx-main-color: var(--qx-c-green);
   --qx-main-soft: rgba(76,199,155,.16);
   --qx-icon-color: var(--qx-main-color);
@@ -4076,7 +4085,7 @@ nav button {
   align-items: center;
   justify-content: flex-start;
   font-size: var(--qx-fs-xs);
-  color: var(--qx-meta-color);
+  color: var(--qx-nav-color);
   text-align: center;
 }
 
@@ -9209,9 +9218,9 @@ html.in-app #qxSplash {
 <header>
   <div class="bar">
     <!-- [HEADER > Width toggle item] -->
-    <button id="widthToggle" class="header-btn" aria-label="পড়ার প্রস্থ পরিবর্তন করুন" title="পড়ার প্রস্থ: সংকীর্ণ / পূর্ণ" aria-pressed="false"><svg class="ms-svg-fill wt-wide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4,20q-0.82,0-1.41-0.59T2,18V6Q2,5.18 2.59,4.59T4,4H20q0.83,0 1.41,0.59Q22,5.18 22,6V18q0,0.82-0.59,1.41T20,20H4ZM20,6H4V18H20V6ZM4,6V18V6Zm5,9V9L6,12l3,3Zm9-3L15,9v6l3-3Z"/></svg><span class="ms wt-narrow" aria-hidden="true">fullscreen_exit</span></button>
+    <button id="widthToggle" class="header-btn" aria-label="পড়ার প্রস্থ পরিবর্তন করুন" title="পড়ার প্রস্থ: সংকীর্ণ / পূর্ণ" aria-pressed="false"><svg class="ms-svg-fill wt-wide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4,20q-0.82,0-1.41-0.59T2,18V6Q2,5.18 2.59,4.59T4,4H20q0.83,0 1.41,0.59Q22,5.18 22,6V18q0,0.82-0.59,1.41T20,20H4ZM20,6H4V18H20V6ZM4,6V18V6Zm5,9V9L6,12l3,3Zm9-3L15,9v6l3-3Z"/></svg><span class="ms wt-narrow" aria-hidden="true" data-nosnippet>fullscreen_exit</span></button>
     <!-- [HEADER > Back button item] -->
-    <button id="back" class="back-btn-hidden" type="button" aria-label="পেছনে যান"><span class="ms" aria-hidden="true">chevron_left</span></button>
+    <button id="back" class="back-btn-hidden" type="button" aria-label="পেছনে যান"><span class="ms" aria-hidden="true" data-nosnippet>chevron_left</span></button>
     <!-- [HEADER > Logo item] -->
     <img class="app-logo" src="icons/icon-192.png" onerror="this.onerror=null;this.src='icons/icon-192x192.png'" alt="Quranix" width="32" height="32" style="cursor:pointer;border-radius:var(--qx-radius)" role="button" tabindex="0" title="Home">
     <!-- [HEADER > Title item] -->
@@ -9219,9 +9228,9 @@ html.in-app #qxSplash {
     <!-- [HEADER > Tools group] -->
     <div class="header-tools">
       <!-- [HEADER > Search button item] -->
-      <button id="headerSearchBtn" class="header-btn" type="button" aria-label="সার্চ খুলুন" title="সার্চ"><span class="ms" aria-hidden="true">search</span></button>
+      <button id="headerSearchBtn" class="header-btn" type="button" aria-label="সার্চ খুলুন" title="সার্চ"><span class="ms" aria-hidden="true" data-nosnippet>search</span></button>
       <!-- [HEADER > Theme toggle item] -->
-      <button id="themeToggle" class="header-btn" type="button" aria-label="থিম পরিবর্তন করুন" aria-pressed="false" title="ডার্ক/লাইট"><span class="ms" aria-hidden="true">dark_mode</span></button>
+      <button id="themeToggle" class="header-btn" type="button" aria-label="থিম পরিবর্তন করুন" aria-pressed="false" title="ডার্ক/লাইট"><span class="ms" aria-hidden="true" data-nosnippet>dark_mode</span></button>
       <!-- [HEADER > More-menu button item] -->
       <button id="gridMenu" class="header-btn" type="button" aria-label="অতিরিক্ত মেনু খুলুন" aria-controls="gridDropdown" aria-expanded="false" title="মেনু">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
@@ -9233,24 +9242,24 @@ html.in-app #qxSplash {
         <div class="g-quick" id="gQuick"></div>
 
         <!-- [MORE-MENU > Full Audio Quran item] Task 08: order 0 -->
-        <button class="g-menu-item" data-popup="fullaudio"><span><span class="ms" aria-hidden="true">headphones</span><span class="g-menu-text">বাংলা কুরআন<span class="g-menu-sub">অর্থসহ সম্পূর্ণ কুরআন</span></span></span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="fullaudio"><span><span class="ms" aria-hidden="true" data-nosnippet>headphones</span><span class="g-menu-text">বাংলা কুরআন<span class="g-menu-sub">অর্থসহ সম্পূর্ণ কুরআন</span></span></span><small><span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
         <!-- [MORE-MENU > Hijri calendar item] -->
-        <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
         <!-- [MORE-MENU > Downloads item] -->
-        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true">download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="downloads"><span><span class="ms" aria-hidden="true" data-nosnippet>download</span>ডাউনলোড</span><small id="gDlMini"><span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
 
         <!-- [MORE-MENU > Settings item] -->
-        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>কাস্টমাইজেশন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="settings"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>কাস্টমাইজেশন</span><small><span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
         <!-- [MORE-MENU > Backup and restore item] -->
-        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true">save</span>ব্যাকআপ ও রিস্টোর</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="backup"><span><span class="ms" aria-hidden="true" data-nosnippet>save</span>ব্যাকআপ ও রিস্টোর</span><small><span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
 
         <!-- [MORE-MENU > App install item] -->
-        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true">smartphone</span>Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন <span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item install-menu-item" data-popup="pwa"><span><span class="ms" aria-hidden="true" data-nosnippet>smartphone</span>Quranix অ্যাপ</span><small id="gPwaMini">ইনস্টল করুন <span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
         <!-- [MORE-MENU > Share item] -->
-        <button class="g-menu-item" data-popup="share"><span><span class="ms" aria-hidden="true">share</span>অ্যাপ শেয়ার করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="share"><span><span class="ms" aria-hidden="true" data-nosnippet>share</span>অ্যাপ শেয়ার করুন</span><small><span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
 
         <!-- [MORE-MENU > Help item] -->
-        <button class="g-menu-item" data-popup="help"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>সহযোগিতা করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="help"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>সহযোগিতা করুন</span><small><span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></small></button>
       </div>
     </div>
   </div> 
@@ -9292,7 +9301,7 @@ html.in-app #qxSplash {
 <!-- [APP-MOUNT] end -->
 
 <!-- [HIFZ-BAR] start -->
-<div id="hifzBar"><b><span class="ms" aria-hidden="true">psychology</span> হিফজ মোড</b>
+<div id="hifzBar"><b><span class="ms" aria-hidden="true" data-nosnippet>psychology</span> হিফজ মোড</b>
 <!-- [HIFZ-BAR > Hide Bangla item] -->
 <button class="hifz-chip" data-hifz="bn">বাংলা লুকাও</button>
 <!-- [HIFZ-BAR > Hide Arabic item] -->
@@ -9306,13 +9315,13 @@ html.in-app #qxSplash {
 <!-- [HIFZ-BAR] end -->
 
 <!-- [WW-BAR] start -->
-<div id="wwBar" class="ww-bar"><span class="ms" aria-hidden="true">abc</span> <b>শব্দে শব্দে মোড</b><span>যেকোনো আরবি শব্দে ট্যাপ করো</span><span id="wwBarClose" style="margin-left:auto;cursor:pointer"><span class="ms" aria-hidden="true">close</span></span></div>
+<div id="wwBar" class="ww-bar"><span class="ms" aria-hidden="true" data-nosnippet>abc</span> <b>শব্দে শব্দে মোড</b><span>যেকোনো আরবি শব্দে ট্যাপ করো</span><span id="wwBarClose" style="margin-left:auto;cursor:pointer"><span class="ms" aria-hidden="true" data-nosnippet>close</span></span></div>
 <!-- [WW-BAR] end -->
 <!-- [TAJWEED-LEGEND] start -->
-<div id="tajweedLegend"><b><span class="ms" aria-hidden="true">palette</span> তাজভিদ:</b><span><i class="tj-dot" style="background:var(--qx-tj-ghunnah)"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-qalqalah)"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-ikhfa)"></i>ইখফা</span><span><i class="tj-dot" style="background:var(--qx-tj-idgham)"></i>ইদগাম</span><span><i class="tj-dot" style="background:var(--qx-tj-iqlab)"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:var(--qx-tj-madd)"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto"><span class="ms" aria-hidden="true">close</span></span></div>
+<div id="tajweedLegend"><b><span class="ms" aria-hidden="true" data-nosnippet>palette</span> তাজভিদ:</b><span><i class="tj-dot" style="background:var(--qx-tj-ghunnah)"></i>গুন্নাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-qalqalah)"></i>ক্বলক্বলাহ</span><span><i class="tj-dot" style="background:var(--qx-tj-ikhfa)"></i>ইখফা</span><span><i class="tj-dot" style="background:var(--qx-tj-idgham)"></i>ইদগাম</span><span><i class="tj-dot" style="background:var(--qx-tj-iqlab)"></i>ইক্বলাব</span><span><i class="tj-dot" style="background:var(--qx-tj-madd)"></i>মাদ</span><span id="tajweedLegendClose" style="cursor:pointer;margin-left:auto"><span class="ms" aria-hidden="true" data-nosnippet>close</span></span></div>
 <!-- [TAJWEED-LEGEND] end -->
 <!-- [DOWNLOAD-BAR] start -->
-<div id="dlBar"><div class="dl-txt"><b id="dlTitle"><span class="ms" aria-hidden="true">download</span> এই সূরার তেলাওয়াত</b><small id="dlSub">অফলাইনে শোনার জন্য</small></div><button class="dl-btn" id="dlBtn"><span class="ms" aria-hidden="true">download</span> ডাউনলোড</button><button class="dl-btn ghost" id="dlManageBtn"><span class="ms" aria-hidden="true">folder_open</span> ম্যানেজ</button></div>
+<div id="dlBar"><div class="dl-txt"><b id="dlTitle"><span class="ms" aria-hidden="true" data-nosnippet>download</span> এই সূরার তেলাওয়াত</b><small id="dlSub">অফলাইনে শোনার জন্য</small></div><button class="dl-btn" id="dlBtn"><span class="ms" aria-hidden="true" data-nosnippet>download</span> ডাউনলোড</button><button class="dl-btn ghost" id="dlManageBtn"><span class="ms" aria-hidden="true" data-nosnippet>folder_open</span> ম্যানেজ</button></div>
 <!-- [DOWNLOAD-BAR] end -->
 <!-- [AUDIO-BAR] start -->
 <div id="audioBar" class="audio-bar" role="region" aria-label="অডিও প্লেয়ার">
@@ -9320,24 +9329,24 @@ html.in-app #qxSplash {
     <!-- [AUDIO-BAR > Seek bar item] -->
     <div class="audio-progress-top"><input id="audioSeek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="অডিও অগ্রগতি"><div class="audio-progress-fill" id="audioProgressFill"></div></div>
     <!-- [AUDIO-BAR > Title and top buttons item] -->
-    <div class="audio-top-row"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-top-actions"><button id="audioHide" type="button" aria-label="মিনিমাইজ"><span class="ms" aria-hidden="true">expand_more</span></button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো"><span class="ms" aria-hidden="true">close</span></button></div></div>
+    <div class="audio-top-row"><div class="audio-info"><b id="audioTitle">সূরা · আয়াত</b><small id="audioReciterLabel">মিশারি রশিদ আল-আফাসি</small></div><div class="audio-top-actions"><button id="audioHide" type="button" aria-label="মিনিমাইজ"><span class="ms" aria-hidden="true" data-nosnippet>expand_more</span></button><button id="audioClose" type="button" aria-label="প্লেয়ার বন্ধ করো"><span class="ms" aria-hidden="true" data-nosnippet>close</span></button></div></div>
     <!-- [AUDIO-BAR > Time item: directly below the #D9E6E5 title banner] -->
     <div class="audio-bottom"><span id="audioCurrentTime">০:০০</span><span id="audioDuration">০:০০</span></div>
     <!-- [AUDIO-BAR > Controls item] -->
-    <div class="audio-ctrls qx-audio-ctrls-v3"><button id="audioRepeat" type="button" class="qx-side-btn" aria-label="আয়াত পুনরাবৃত্তি চালু করুন" aria-pressed="false"><span class="ms" aria-hidden="true">repeat_one</span></button><button id="audioPrev" type="button" class="qx-side-btn" aria-label="আগের আয়াত"><span class="ms" aria-hidden="true">skip_previous</span></button><button id="audioPlayPause" type="button" class="qx-center-btn primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true">play_arrow</span></button><button id="audioNext" type="button" class="qx-side-btn" aria-label="পরের আয়াত"><span class="ms" aria-hidden="true">skip_next</span></button><button id="audioSleepTimer" type="button" class="qx-side-btn" aria-label="স্লিপ টাইমার"><span class="ms" aria-hidden="true">bedtime</span></button></div>
+    <div class="audio-ctrls qx-audio-ctrls-v3"><button id="audioRepeat" type="button" class="qx-side-btn" aria-label="আয়াত পুনরাবৃত্তি চালু করুন" aria-pressed="false"><span class="ms" aria-hidden="true" data-nosnippet>repeat_one</span></button><button id="audioPrev" type="button" class="qx-side-btn" aria-label="আগের আয়াত"><span class="ms" aria-hidden="true" data-nosnippet>skip_previous</span></button><button id="audioPlayPause" type="button" class="qx-center-btn primary" aria-label="অডিও চালাও"><span class="ms" aria-hidden="true" data-nosnippet>play_arrow</span></button><button id="audioNext" type="button" class="qx-side-btn" aria-label="পরের আয়াত"><span class="ms" aria-hidden="true" data-nosnippet>skip_next</span></button><button id="audioSleepTimer" type="button" class="qx-side-btn" aria-label="স্লিপ টাইমার"><span class="ms" aria-hidden="true" data-nosnippet>bedtime</span></button></div>
     <!-- [AUDIO-BAR > Status item] -->
     <div class="audio-status" id="audioStatus" aria-live="polite"></div>
   </div>
 </div>
 <!-- [AUDIO-BAR] end -->
 <!-- [AUDIO-FLOAT] start -->
-<div id="audioFloat" class="audio-float" style="display:none"><button id="audioFloatBtn" type="button" aria-label="অডিও দেখাও"><span class="ms">headphones</span></button></div>
+<div id="audioFloat" class="audio-float" style="display:none"><button id="audioFloatBtn" type="button" aria-label="অডিও দেখাও"><span class="ms" aria-hidden="true" data-nosnippet>headphones</span></button></div>
 <!-- [AUDIO-FLOAT] end -->
 
 <!-- [FOOTER-MENU] start -->
 <nav id="nav" aria-label="প্রধান নেভিগেশন">
   <!-- [FOOTER-MENU > Home item] -->
-  <button id="navHome" type="button"><b><span class="ms" aria-hidden="true">home</span></b><span>হোম</span></button>
+  <button id="navHome" type="button"><b><span class="ms" aria-hidden="true" data-nosnippet>home</span></b><span>হোম</span></button>
   <!-- [FOOTER-MENU > Prayer item] -->
   <button data-m="prayer"><b><span class="ms qi" data-i="mosque" aria-hidden="true"></span></b><span>নামাজ</span></button>
   <!-- [FOOTER-MENU > Quran item] -->
@@ -9345,7 +9354,7 @@ html.in-app #qxSplash {
   <!-- [FOOTER-MENU > Dua and Tasbih item] -->
   <button data-m="dua"><b><span class="ms qi" data-i="dua" aria-hidden="true"></span></b><span>দোয়া ও তাসবিহ</span></button>
   <!-- [FOOTER-MENU > More item] -->
-  <button data-m="more"><b><span class="ms" aria-hidden="true">more_horiz</span></b><span>আরও</span></button>
+  <button data-m="more"><b><span class="ms" aria-hidden="true" data-nosnippet>more_horiz</span></b><span>আরও</span></button>
 </nav>
 <!-- [FOOTER-MENU] end -->
 
@@ -9431,7 +9440,7 @@ html.in-app #qxSplash {
 
   function headerHtml(title){
     return '<div class="pp-header"><h3>' + title + '</h3>' +
-      '<button type="button" class="pp-close" data-qx-act="close" aria-label="বন্ধ করুন"><span class="ms" aria-hidden="true">close</span></button></div>';
+      '<button type="button" class="pp-close" data-qx-act="close" aria-label="বন্ধ করুন"><span class="ms" aria-hidden="true" data-nosnippet>close</span></button></div>';
   }
 
   function walletCardHtml(w){
@@ -9461,7 +9470,7 @@ html.in-app #qxSplash {
         '<div class="qx-voluntary">সম্পূর্ণ ঐচ্ছিক — সহযোগিতা ছাড়াও অ্যাপ ব্যবহার করা যাবে</div>' +
         '<div class="qx-wallet-grid">' + cards + '</div>' +
         '<p class="qx-thanks">জাযাকাল্লাহু খাইরান। আল্লাহ আপনার সহযোগিতা কবুল করুন।</p>' +
-        '<button type="button" class="qx-guide-link" data-qx-act="guide">কীভাবে পাঠাবেন? <span class="ms" aria-hidden="true">chevron_right</span></button>' +
+        '<button type="button" class="qx-guide-link" data-qx-act="guide">কীভাবে পাঠাবেন? <span class="ms" aria-hidden="true" data-nosnippet>chevron_right</span></button>' +
       '</div></div>';
   }
 

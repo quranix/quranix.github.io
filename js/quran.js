@@ -412,7 +412,7 @@ window.qxPromptAsync = window.qxPromptAsync || function(message, def){
       if(typeof showToast==='function') showToast(failed?('ডাউনলোড অসম্পূর্ণ — '+done+'টি হয়েছে, '+failed+'টি হয়নি। আবার চেষ্টা করো।'):'{{check_circle:f}} ডাউনলোড শেষ! এখন অফলাইনে চলবে');
       if(sub) sub.textContent = failed ? ('অসম্পূর্ণ — '+done+'/'+list.length) : 'ডাউনলোড করা ✓';
       if(btn){ 
-        if(!failed){ btn.innerHTML = '<span class="ms" aria-hidden="true">check_circle</span> ডাউনলোড করা'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.classList.add('done'); }
+        if(!failed){ btn.innerHTML = '<span class="ms" aria-hidden="true" data-nosnippet>check_circle</span> ডাউনলোড করা'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.classList.add('done'); }
         else { btn.textContent = '{{download}} আবার চেষ্টা'; }
         btn.disabled = false; 
       }
@@ -904,32 +904,32 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
       +'<div style="margin:8px 0 6px"><input id="qxDlSearch" class="pp-input" placeholder="অনুবাদ, তাফসির, কারি, হাদিস বা সূরা খুঁজুন..." autocomplete="off" style="margin-bottom:0"></div>'
       +'<div id="qxDlSearchInfo" class="pp-mini" style="display:none;margin-bottom:8px"></div>';
     var isDone=function(k){return packages[k]&&packages[k].status==='complete';};
-    var card=function(btnId,title,note,btnText){return '<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{folder_open}}</span><b>'+title+'</b></div><small style="display:block;margin:4px 0 8px">'+note+'</small><button class="pp-btn" id="'+btnId+'">{{download}} '+btnText+'</button></div>';};
+    var card=function(btnId,title,note,btnText){return '<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms" data-nosnippet>{{folder_open}}</span><b>'+title+'</b></div><small style="display:block;margin:4px 0 8px">'+note+'</small><button class="pp-btn" id="'+btnId+'">{{download}} '+btnText+'</button></div>';};
     if(!isDone(packageKey('translation','bn.zakaria'))) html+=card('qxDownloadTranslation','অনুবাদ · ড. আবু বকর মুহাম্মাদ যাকারিয়া','সম্পূর্ণ ১১৪ সূরার বাংলা অনুবাদ','সম্পূর্ণ অনুবাদ ডাউনলোড');
     if(!isDone(packageKey('translation','en.pickthall'))) html+=card('qxDownloadEnglishOffline','English · Marmaduke Pickthall','ইংরেজি অনুবাদ সম্পূর্ণ ১১৪ সূরা ডাউনলোড করে অফলাইনে পড়ুন','ইংরেজি অনুবাদ ডাউনলোড');
     var pendingTafsir=TAFSIRS.filter(function(t){return !isDone(packageKey('tafsir',t[0]));});
     if(pendingTafsir.length){
-      html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{menu_book}}</span><b>তাফসির</b></div><small style="display:block;margin:4px 0 8px">সম্পূর্ণ কুরআনের তাফসির অফলাইনে সংরক্ষণ করুন</small><div class="dl-grid cols-2">';
+      html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms" data-nosnippet>{{menu_book}}</span><b>তাফসির</b></div><small style="display:block;margin:4px 0 8px">সম্পূর্ণ কুরআনের তাফসির অফলাইনে সংরক্ষণ করুন</small><div class="dl-grid cols-2">';
       pendingTafsir.forEach(function(t){html+='<button class="pp-btn" data-tafsir-dl="'+t[0]+'">{{download}} '+t[1]+'</button>';});
       html+='</div></div>';
     }
     var pendingAudio=RECITERS.filter(function(r){return !isDone(packageKey('audio',r[0]));});
     if(pendingAudio.length){
-      html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms">{{volume_up}}</span><b>অডিও তিলাওয়াত</b></div><small style="display:block;margin:4px 0 8px">কারি অনুযায়ী সম্পূর্ণ কুরআন ডাউনলোড করুন</small><div class="dl-grid cols-2">';
+      html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms" data-nosnippet>{{volume_up}}</span><b>অডিও তিলাওয়াত</b></div><small style="display:block;margin:4px 0 8px">কারি অনুযায়ী সম্পূর্ণ কুরআন ডাউনলোড করুন</small><div class="dl-grid cols-2">';
       pendingAudio.forEach(function(r){html+='<button class="pp-btn" data-audio-dl="'+r[0]+'">{{download}} '+r[1]+'</button>';});
       html+='</div></div>';
     }
     var pendingHadith=HADITH_CORPUS.filter(function(c){return !isDone(packageKey('hadith',c.id));});
     if(pendingHadith.length){
-      html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{i_hadith}}</span><b>হাদিসের কিতাব</b></div><small style="display:block;margin:4px 0 8px">বাংলা ও আরবি ডেটা অধ্যায়ভিত্তিক সংরক্ষণ</small><div class="dl-grid cols-2">';
-      pendingHadith.forEach(function(c){html+='<button class="pp-btn" data-hadith-dl="'+c.id+'"><span class="ms" style="font-size:var(--qx-fs-xl);margin-right:4px">{{download}}</span>'+c.name+'</button>';});
+      html+='<div class="dl-item" style="display:block"><div class="set-title" style="margin-bottom:6px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)" data-nosnippet>{{i_hadith}}</span><b>হাদিসের কিতাব</b></div><small style="display:block;margin:4px 0 8px">বাংলা ও আরবি ডেটা অধ্যায়ভিত্তিক সংরক্ষণ</small><div class="dl-grid cols-2">';
+      pendingHadith.forEach(function(c){html+='<button class="pp-btn" data-hadith-dl="'+c.id+'"><span class="ms" style="font-size:var(--qx-fs-xl);margin-right:4px" data-nosnippet>{{download}}</span>'+c.name+'</button>';});
       html+='</div></div>';
     }
     var m=meta(), ks=Object.keys(m);
     var visibleSurahAudio=ks.filter(function(k){return hiddenDownloads.indexOf('surah-audio:'+k)<0;});
     var hasSurahAudio = visibleSurahAudio.length>0;
     if(visibleSurahAudio.length){
-      html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{headphones}}</span> সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
+      html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)" data-nosnippet>{{headphones}}</span> সূরা-ভিত্তিক অডিও ডাউনলোড</h4>';
       visibleSurahAudio.forEach(function(k){var info=m[k],parts=k.split('|'),sn=parseInt(parts[0],10); html+='<div class="dl-item"><div><b>'+(info.name||('সূরা '+sn))+'</b><br><small>'+getReciterName(info.reciter)+' · '+info.count+' আয়াত</small></div><div style="display:flex;gap:6px"><button class="dl-btn ghost" data-hide-dl="surah-audio:'+k+'" aria-label="তালিকা থেকে লুকান">×</button><button class="dl-btn ghost" data-del="'+k+'">{{delete}}</button></div></div>';});
     }
     if(packageJob && !packageJob.finished){
@@ -952,7 +952,7 @@ var HADITH_CDN='https://cdn.jsdelivr.net/gh/kafelanetwork/hadith-api@'+HADITH_CD
     var entries=Object.keys(packages).filter(function(k){return ['complete','incomplete','paused'].includes(packages[k].status);});
     var visibleEntries=entries.filter(function(k){return hiddenDownloads.indexOf('package:'+k)<0;});
     var hasPackages = visibleEntries.length>0;
-    if(visibleEntries.length){ html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)">{{folder_open}}</span> ডাউনলোড করা প্যাকেজ</h4>';
+    if(visibleEntries.length){ html+='<h4 style="margin:16px 0 8px;display:flex;align-items:center;gap:8px"><span class="ms" style="display:grid;place-items:center;width:28px;height:28px;border-radius:var(--qx-radius);background:var(--qx-main-soft);color:var(--qx-main-color);font-size:var(--qx-fs-xl)" data-nosnippet>{{folder_open}}</span> ডাউনলোড করা প্যাকেজ</h4>';
     if(visibleEntries.length){
       visibleEntries.forEach(function(k){
         var item=packages[k];
@@ -1518,8 +1518,8 @@ function qxTopicSortOnly(){
 }
 function qxIco(name, filled){
   name = String(name);
-  if(name.indexOf('i_') === 0) return '<span class="ms qi' + (filled ? ' f' : '') + '" data-i="' + name.slice(2) + '" aria-hidden="true"></span>';
-  return '<span class="ms' + (filled ? ' f' : '') + '" aria-hidden="true">' + name + '</span>';
+  if(name.indexOf('i_') === 0) return '<span class="ms qi' + (filled ? ' f' : '') + '" data-i="' + name.slice(2) + '" aria-hidden="true" data-nosnippet></span>';
+  return '<span class="ms' + (filled ? ' f' : '') + '" aria-hidden="true" data-nosnippet>' + name + '</span>';
 }
 /* {{icon}} / {{icon:f}} tokens in any text become Material icon spans (also for dynamically added text) */
 (function(){
@@ -1531,7 +1531,7 @@ function qxIco(name, filled){
     var f=document.createDocumentFragment(), last=0, m; RX.lastIndex=0;
     while((m=RX.exec(s))){
       if(m.index>last) f.appendChild(document.createTextNode(s.slice(last,m.index)));
-      var i=document.createElement('span'); i.className='ms'+(m[1].indexOf('i_')===0?' qi':'')+(m[2]?' f':''); i.setAttribute('aria-hidden','true'); if(m[1].indexOf('i_')===0) i.setAttribute('data-i',m[1].slice(2)); else i.textContent=m[1]; f.appendChild(i);
+      var i=document.createElement('span'); i.className='ms'+(m[1].indexOf('i_')===0?' qi':'')+(m[2]?' f':''); i.setAttribute('aria-hidden','true'); i.setAttribute('data-nosnippet',''); if(m[1].indexOf('i_')===0) i.setAttribute('data-i',m[1].slice(2)); else i.textContent=m[1]; f.appendChild(i);
       last=RX.lastIndex;
     }
     if(last<s.length) f.appendChild(document.createTextNode(s.slice(last)));
@@ -3872,7 +3872,7 @@ function qxP7DownloadHelpers(){
     if(!badge) return;
     const online = navigator.onLine;
     badge.classList.toggle('offline', !online);
-    badge.innerHTML = '<span class="ms">' + (online ? 'wifi' : 'wifi_off') + '</span>' + (online ? 'অনলাইন' : 'অফলাইন — সংরক্ষিত');
+    badge.innerHTML = '<span class="ms" data-nosnippet>' + (online ? 'wifi' : 'wifi_off') + '</span>' + (online ? 'অনলাইন' : 'অফলাইন — সংরক্ষিত');
   }
   window.addEventListener('online', updateOfflineBadge);
   window.addEventListener('offline', updateOfflineBadge);

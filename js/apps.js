@@ -993,7 +993,7 @@ function renderAlertsView(){
     const toggle = mk("button", "qx-azan-toggle" + (draft.prayers[k] ? " on" : ""));
     toggle.type = "button";
     const toggleIcon = document.createElement("span");
-    toggleIcon.className = "ms";
+    toggleIcon.className = "ms"; toggleIcon.setAttribute("data-nosnippet", "");
     toggleIcon.setAttribute("aria-hidden", "true");
     const syncToggleIcon = () => {
       toggleIcon.textContent = draft.prayers[k] ? "notifications_active" : "notifications_off";
@@ -1525,10 +1525,10 @@ function renderPrayer(){
   hero.appendChild(cd);
   const chip = mk("div", "hero-date hero-date-ic qx-cal-transparent"); chip.title = ds; chip.setAttribute("aria-label", ds);
   const _todayNum = (function(){ try{ return toBn(String(new Date().getDate())); }catch(e){ return ""; } })();
-  chip.innerHTML = '<span class="qx-cal-wrap"><span class="ms" aria-hidden="true">calendar_month</span><small class="qx-cal-date">' + _todayNum + '</small></span>';
+  chip.innerHTML = '<span class="qx-cal-wrap"><span class="ms" aria-hidden="true" data-nosnippet>calendar_month</span><small class="qx-cal-date">' + _todayNum + '</small></span>';
   hero.appendChild(chip);
   const snd = mk("button", "hero-snd" + (qxTickOn ? "" : " off")); snd.type = "button";
-  snd.innerHTML = '<span class="ms" aria-hidden="true">volume_up</span>';
+  snd.innerHTML = '<span class="ms" aria-hidden="true" data-nosnippet>volume_up</span>';
   const sndLbl = () => { snd.setAttribute("aria-label", qxTickOn ? "টিক শব্দ বন্ধ করুন" : "টিক শব্দ চালু করুন"); snd.title = snd.getAttribute("aria-label"); snd.setAttribute("aria-pressed", qxTickOn ? "true" : "false"); };
   sndLbl();
   snd.onclick = () => {
@@ -1646,6 +1646,8 @@ function renderPrayer(){
     selectedCard.setAttribute("aria-label", "জেলা পরিবর্তন করুন");
     const featureArt = mk("span", "qx-district-feature-art");
     featureArt.setAttribute("aria-hidden", "true");
+    const featureImg = (selectedEntry && typeof getDistrictImage === "function") ? getDistrictImage(selectedEntry.name) : "";
+    if (featureImg) featureArt.style.backgroundImage = "url('" + featureImg + "')";
     const featureText = mk("span", "qx-district-feature-text");
     featureText.append(mk("strong", "", selectedEntry ? selectedEntry.name : "জেলা নির্বাচন করুন"), mk("small", "", selectedEntry ? selectedEntry.div + " বিভাগ" : "আপনার জেলা নির্বাচন করতে চাপ দিন"));
     selectedCard.append(featureArt, featureText, mk("span", "qx-district-feature-action", "{{expand_more}}"));
@@ -1677,7 +1679,9 @@ function renderPrayer(){
       card.setAttribute("aria-label", d.name + ", " + d.div + " বিভাগ নির্বাচন করুন");
       const art = mk("span", "district-art art-" + ((i % 8) + 1));
       art.setAttribute("aria-hidden", "true");
-      art.style.filter = "hue-rotate(" + ((i * 47) % 360) + "deg)";
+      const artImg = (typeof getDistrictImage === "function") ? getDistrictImage(d.name) : "";
+      if (artImg) art.style.setProperty("--district-art-bg", "url('" + artImg + "')");
+      else art.style.filter = "hue-rotate(" + ((i * 47) % 360) + "deg)";
       const mark = mk("span", "district-name", d.name);
       const division = mk("small", "district-division", d.div + " বিভাগ");
       card.append(art, mark, division);
@@ -2409,7 +2413,7 @@ function qxReaderStep(dir){
   function indicator(){
     if (ind) return ind;
     ind = document.createElement("div"); ind.className = "qx-ptr"; ind.setAttribute("aria-hidden", "true");
-    ind.innerHTML = '<span class="ms">refresh</span>';
+    ind.innerHTML = '<span class="ms" data-nosnippet>refresh</span>';
     document.body.appendChild(ind);
     return ind;
   }
@@ -3511,8 +3515,8 @@ setInterval(checkPrayerAlerts, 5000);
       '</div>' +
       '<div class="qx-ios-sec">FONT</div>' +
       '<div class="qx-ios-card">' +
-        '<button class="qx-ios-row" id="ppArFontRow" style="width:100%;border:0;text-align:left;cursor:pointer"><b>Arabic Font</b><span class="qx-ios-link"><small>'+curArName+'</small><span class="ms qx-ios-chev">chevron_right</span></span></button>' +
-        '<button class="qx-ios-row" id="ppBnFontRow" style="width:100%;border:0;text-align:left;cursor:pointer"><b>Bengali Font</b><span class="qx-ios-link"><small>'+curBnName+'</small><span class="ms qx-ios-chev">chevron_right</span></span></button>' +
+        '<button class="qx-ios-row" id="ppArFontRow" style="width:100%;border:0;text-align:left;cursor:pointer"><b>Arabic Font</b><span class="qx-ios-link"><small>'+curArName+'</small><span class="ms qx-ios-chev" data-nosnippet>chevron_right</span></span></button>' +
+        '<button class="qx-ios-row" id="ppBnFontRow" style="width:100%;border:0;text-align:left;cursor:pointer"><b>Bengali Font</b><span class="qx-ios-link"><small>'+curBnName+'</small><span class="ms qx-ios-chev" data-nosnippet>chevron_right</span></span></button>' +
       '</div>';
     document.getElementById('ppAppMinus').onclick=function(){
       var order=['small','medium','lite']; var idx=order.indexOf(appPrefs.uiSize||'small'); if(idx>0){ appPrefs.uiSize=order[idx-1]; lsSet('appPrefs',appPrefs); applyAppPrefs(); renderFontPopup(); }
@@ -3533,7 +3537,7 @@ setInterval(checkPrayerAlerts, 5000);
     var html=head('{{font_download}} '+title) + '<div class="qx-ios-card">';
     list.forEach(function(f){
       var on=(f[0]===cur);
-      html+='<button class="qx-ios-row" data-v="'+f[0].replace(/"/g,'&quot;')+'" style="width:100%;border:0;text-align:left;cursor:pointer;'+(on?'background:#f0fdfa':'')+'"><b>'+f[1]+'</b><span class="qx-ios-link">'+(on?'<span class="ms" style="color:#0F766E">check</span>':'')+'<span class="ms qx-ios-chev">chevron_right</span></span></button>';
+      html+='<button class="qx-ios-row" data-v="'+f[0].replace(/"/g,'&quot;')+'" style="width:100%;border:0;text-align:left;cursor:pointer;'+(on?'background:#f0fdfa':'')+'"><b>'+f[1]+'</b><span class="qx-ios-link">'+(on?'<span class="ms" style="color:#0F766E" data-nosnippet>check</span>':'')+'<span class="ms qx-ios-chev" data-nosnippet>chevron_right</span></span></button>';
     });
     html+='</div><div style="height:12px"></div><button class="pp-btn" id="ppFontBack" style="background:#fff;color:#000;border:1px solid var(--qx-border)">পেছনে</button>';
     box.innerHTML=html;
@@ -3597,7 +3601,7 @@ setInterval(checkPrayerAlerts, 5000);
   }
   function renderHelpPopup(){
     box.innerHTML=head('{{volunteer_activism}} সহযোগিতা করুন')
-      +'<div style="text-align:center;padding:12px 4px 6px"><div style="width:58px;height:58px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:var(--qx-main-soft);color:var(--qx-main-color);font-size:28px"><span class="ms">volunteer_activism</span></div><b>Quranix-এর উন্নয়নে সহযোগিতা করুন</b><p class="pp-mini" style="margin-top:7px">অ্যাপটির উন্নয়ন, রক্ষণাবেক্ষণ ও ভবিষ্যৎ কার্যক্রমে আপনার সহযোগিতা মূল্যবান।</p><p class="pp-mini" style="margin-top:8px">সহযোগিতার নির্দিষ্ট পদ্ধতি ও পেমেন্ট তথ্য এখনো যুক্ত করা হয়নি।</p></div>';
+      +'<div style="text-align:center;padding:12px 4px 6px"><div style="width:58px;height:58px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:var(--qx-main-soft);color:var(--qx-main-color);font-size:28px"><span class="ms" data-nosnippet>volunteer_activism</span></div><b>Quranix-এর উন্নয়নে সহযোগিতা করুন</b><p class="pp-mini" style="margin-top:7px">অ্যাপটির উন্নয়ন, রক্ষণাবেক্ষণ ও ভবিষ্যৎ কার্যক্রমে আপনার সহযোগিতা মূল্যবান।</p><p class="pp-mini" style="margin-top:8px">সহযোগিতার নির্দিষ্ট পদ্ধতি ও পেমেন্ট তথ্য এখনো যুক্ত করা হয়নি।</p></div>';
   }
 
   refreshMinis();
@@ -3645,7 +3649,7 @@ setInterval(checkPrayerAlerts, 5000);
     var qVis=qxPageArrange('home',defs.map(function(d){return {id:d[0],d:d};})).visible;
     qVis.forEach(function(o){ var d=o.d;
       var b=document.createElement('button'); b.type='button'; b.className='home-quick-btn';
-      b.innerHTML=''+qxIco(icons[d[0]])+'<span class="home-quick-copy"><b>'+d[1]+'</b><small>'+d[2]+'</small></span><span class="ms home-quick-go" aria-hidden="true">chevron_right</span>';
+      b.innerHTML=''+qxIco(icons[d[0]])+'<span class="home-quick-copy"><b>'+d[1]+'</b><small>'+d[2]+'</small></span><span class="ms home-quick-go" aria-hidden="true" data-nosnippet>chevron_right</span>';
       b.setAttribute('aria-label',d[1]+': '+d[2]); b.onclick=d[3]; quick.appendChild(b);
     });
 
@@ -5489,23 +5493,23 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
     page.className = "qx-full-audio-page";
     page.innerHTML = `
       <div class="qx-fa-current-row">
-        <button type="button" id="qxFaCurrentPlay" class="qx-surah-audio-btn qx-fa-current-play" data-surah="0" aria-label="বর্তমান সূরা চালান"><span class="ms">play_arrow</span></button>
+        <button type="button" id="qxFaCurrentPlay" class="qx-surah-audio-btn qx-fa-current-play" data-surah="0" aria-label="বর্তমান সূরা চালান"><span class="ms" data-nosnippet>play_arrow</span></button>
         <div class="qx-fa-current-info">
           <strong id="qxFaCurrentName">কোনো সূরা নির্বাচন করা হয়নি</strong>
           <small id="qxFaCurrentMeta">সূরা নির্বাচন করুন</small>
         </div>
-        <button type="button" class="qx-fa-open-list" id="qxFaOpenList" aria-label="সূরার তালিকা"><span class="ms">format_list_bulleted</span><span>সূরা তালিকা</span></button>
+        <button type="button" class="qx-fa-open-list" id="qxFaOpenList" aria-label="সূরার তালিকা"><span class="ms" data-nosnippet>format_list_bulleted</span><span>সূরা তালিকা</span></button>
       </div>
       <section class="qx-fa-player" aria-label="অডিও প্লেয়ার">
         <div class="qx-fa-hero-art" aria-hidden="true">
-          <span class="ms qi" data-i="mosque" aria-hidden="true"></span>
+          <span class="ms qi" data-i="mosque" aria-hidden="true" data-nosnippet></span>
         </div>
         <div class="qx-fa-progress"><input id="qxFaSeek" type="range" min="0" max="1000" value="0" aria-label="অডিওর অবস্থান"><span id="qxFaProgressFill"></span></div>
         <div class="qx-fa-time"><span id="qxFaCurrentTime">০:০০</span><span id="qxFaDuration">০:০০</span></div>
         <div class="qx-fa-controls">
-          <button type="button" id="qxFaPrev" aria-label="আগের সূরা" title="আগের সূরা"><span class="ms">skip_previous</span></button>
-          <button type="button" id="qxFaPlay" class="qx-fa-main-play" aria-label="Play/Pause" title="Play/Pause"><span class="ms">play_arrow</span></button>
-          <button type="button" id="qxFaNext" aria-label="পরের সূরা" title="পরের সূরা"><span class="ms">skip_next</span></button>
+          <button type="button" id="qxFaPrev" aria-label="আগের সূরা" title="আগের সূরা"><span class="ms" data-nosnippet>skip_previous</span></button>
+          <button type="button" id="qxFaPlay" class="qx-fa-main-play" aria-label="Play/Pause" title="Play/Pause"><span class="ms" data-nosnippet>play_arrow</span></button>
+          <button type="button" id="qxFaNext" aria-label="পরের সূরা" title="পরের সূরা"><span class="ms" data-nosnippet>skip_next</span></button>
         </div>
       </section>`;
     app.appendChild(page);
@@ -5523,11 +5527,11 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
     pageMode = "list";
     page.innerHTML = `
       <header class="qx-fa-topbar">
-        <button type="button" class="qx-fa-back" id="qxFaListBack" aria-label="প্লেয়ারে ফিরে যান"><span class="ms">arrow_back</span></button>
+        <button type="button" class="qx-fa-back" id="qxFaListBack" aria-label="প্লেয়ারে ফিরে যান"><span class="ms" data-nosnippet>arrow_back</span></button>
         <div class="qx-fa-brand"><strong>Full Audio Quran</strong><small>বাংলা নাম ও আয়াতের তথ্যসহ</small></div>
         <span class="qx-fa-headphones ms" aria-hidden="true">headphones</span>
       </header>
-      <div class="qx-fa-list-head"><h3>সূরার তালিকা <span id="qxFaCount">১১৪টি</span></h3><label class="qx-fa-search"><span class="ms">search</span><input id="qxFaSearch" type="search" placeholder="সূরা খুঁজুন…" autocomplete="off"></label></div>
+      <div class="qx-fa-list-head"><h3>সূরার তালিকা <span id="qxFaCount">১১৪টি</span></h3><label class="qx-fa-search"><span class="ms" data-nosnippet>search</span><input id="qxFaSearch" type="search" placeholder="সূরা খুঁজুন…" autocomplete="off"></label></div>
       <div class="qx-fa-list" id="qxFaList"></div>`;
     const list = page.querySelector("#qxFaList");
     const search = page.querySelector("#qxFaSearch");
@@ -5548,12 +5552,12 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
         const secondary = document.createElement("small"); secondary.textContent = (s.englishName || "") + " · " + bnNumber(s.numberOfAyahs || (surahMeta && surahMeta.ayahs) || 0) + " আয়াত";
         names.append(primary, secondary); info.append(num, names);
         const actions = document.createElement("div"); actions.className = "qx-fa-row-actions";
-        const read = document.createElement("button"); read.type = "button"; read.className = "qx-fa-row-read"; read.innerHTML = '<span class="ms">menu_book</span>'; read.title = "সূরা পড়ুন"; read.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " পড়ুন");
+        const read = document.createElement("button"); read.type = "button"; read.className = "qx-fa-row-read"; read.innerHTML = '<span class="ms" data-nosnippet>menu_book</span>'; read.title = "সূরা পড়ুন"; read.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " পড়ুন");
         read.addEventListener("click", () => {
           window.qxFullAudioPageOpen = false;
           if (typeof openSurah === "function") openSurah(s.number);
         });
-        const play = document.createElement("button"); play.type = "button"; play.className = "qx-surah-audio-btn qx-fa-row-play"; play.dataset.surah = String(s.number); play.innerHTML = '<span class="ms">play_arrow</span>'; play.title = "সম্পূর্ণ সূরা শুনুন"; play.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " চালান");
+        const play = document.createElement("button"); play.type = "button"; play.className = "qx-surah-audio-btn qx-fa-row-play"; play.dataset.surah = String(s.number); play.innerHTML = '<span class="ms" data-nosnippet>play_arrow</span>'; play.title = "সম্পূর্ণ সূরা শুনুন"; play.setAttribute("aria-label", "সূরা " + bnNumber(s.number) + " চালান");
         play.addEventListener("click", () => {
           selectedSurah = s.number;
           if (window.qxToggleFullSurahAudio) window.qxToggleFullSurahAudio(s.number);
@@ -5717,7 +5721,7 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
       currentSurah = 0;
       syncButtons();
       if (typeof showToast === "function") {
-        showToast("অডিও ফাইল লোড হয়নি। ইন্টারনেট সংযোগ ও ফাইলের নাম পরীক্ষা করুন।");
+        showToast("অডিও ফাইল লোড হয়নি। ইন্টারনেট সংযোগ ও ফাইলের নাম পরীক্ষা করুন।" + (audio.error ? " (কোড " + audio.error.code + ")" : ""));
       }
     }
     return false;
@@ -5819,6 +5823,7 @@ setTimeout(() => { try{ qxApplyQuickActionsBN(); }catch(e){} }, 800);
   });
   audio.addEventListener("error", function(){
     if (!currentSurah || cacheFallbackTried) return;
+    try { console.warn("[Quranix full-audio] load error", { surah: currentSurah, src: audio.currentSrc || audio.src, code: audio.error && audio.error.code, message: audio.error && audio.error.message }); } catch(e) {}
     fallbackToCachedAudio(currentSurah, requestToken);
   });
 
