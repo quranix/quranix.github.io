@@ -38,6 +38,7 @@ ABOUT THIS FILE
       if (window.navigator.standalone === true) return true;
       if (window.Capacitor && (typeof window.Capacitor.isNativePlatform !== 'function' || window.Capacitor.isNativePlatform())) return true;
       if (typeof document.referrer === 'string' && document.referrer.indexOf('android-app://') === 0) return true;
+      if (/; wv\)/.test(navigator.userAgent || '')) return true;
     } catch(e){}
     return false;
   };
@@ -2209,6 +2210,9 @@ html,body,button,input,select,textarea {
 }
 
 .g-menu-item small {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   color: var(--qx-meta-color);
   flex-shrink: 0;
   text-align: right;
@@ -4048,9 +4052,7 @@ nav {
   bottom: 0;
   display: flex;
   gap: 0;
-  justify-content: space-around;
   background: none;
-  border-top: 1px solid var(--qx-border);
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 6;
   transition: transform .25s ease;
@@ -4136,7 +4138,7 @@ nav button[data-m="quran"] span {
   margin-top: 0;
 }
 body.bars-hidden nav {
-  transform: translateY(110%);
+  transform: translateY(calc(100% + 32px));
 }
 .ms.f,nav button.on .ms,button:active .ms,.g-menu-item:active .ms {
   font-variation-settings: 'FILL' 1;
@@ -5557,6 +5559,17 @@ html:not([data-theme="dark"]):not([data-hc]) .surah-meta .surah-ayah-count {
   align-items: center;
   gap: 14px;
   min-width: 0;
+}
+.g-menu-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+.g-menu-sub {
+  font-size: var(--qx-fs-sm);
+  font-weight: 400;
+  color: var(--qx-meta-color);
 }
 
 .g-menu-item .ms,
@@ -8881,6 +8894,7 @@ main:has(.qx-full-audio-page) {
 .qx-district-feature-art {
   position:absolute; inset:0;
   background:linear-gradient(135deg,#d6ebe5 0%,#a8d4ca 35%,#82b7b1 65%,#477d88 100%);
+  background-size:cover; background-position:center; background-repeat:no-repeat;
 }
 .qx-district-feature-art::before {
   content:""; position:absolute; inset:0;
@@ -8912,23 +8926,22 @@ main:has(.qx-full-audio-page) {
 }
 .district-art-card[hidden] { display:none; }
 .district-art-card .district-art {
-  display:block;
-}
-.district-art-card .district-art {
+  display: block;
   width: 100%;
   height: 120px;
   object-fit: cover;
   position: relative;
   background: var(--district-art-bg, linear-gradient(135deg, #e8f5f3 0%, #d1ece7 100%));
+  background-size: cover; background-position: center; background-repeat: no-repeat;
   overflow: hidden;
 }
-.district-art-card .district-art::before {
+.district-art-card .district-art:not([style*="url("])::before {
   content:""; position:absolute; inset:-18%;
   background:radial-gradient(ellipse 65% 55% at 22% 30%,rgba(255,255,255,.68) 0%,transparent 65%),
              radial-gradient(ellipse 55% 70% at 78% 72%,rgba(255,255,255,.38) 0%,transparent 60%),
              radial-gradient(ellipse 42% 45% at 52% 45%,rgba(0,0,0,.06) 0%,transparent 75%);
 }
-.district-art-card .district-art::after {
+.district-art-card .district-art:not([style*="url("])::after {
   content:""; position:absolute; width:74px; height:74px; right:-14px; bottom:-38px;
   border:1px solid rgba(255,255,255,.58); border-radius:42% 58% 62% 38%;
   box-shadow:0 0 0 9px rgba(255,255,255,.10),0 0 0 19px rgba(255,255,255,.08);
@@ -9105,6 +9118,40 @@ main:has(.qx-full-audio-page) {
 /* [PHASE 2 > Task 09] Download-list dismiss snackbar */
 .qx-download-undo-toast { display:flex;align-items:center;justify-content:space-between;gap:12px; }
 .qx-download-undo-toast button { border:0;background:transparent;color:inherit;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:4px 6px; }
+
+/* [SUPPORT QURANIX] scoped donation popup styles */
+#gridPopupBox .qx-donate{color:var(--qx-text-color);font-family:inherit;width:100%;}
+#gridPopupBox .qx-donate *{box-sizing:border-box;}
+#gridPopupBox .qx-donate .qx-donate-page{padding:5px 0 2px;}
+#gridPopupBox .qx-donate .qx-donate-heading{text-align:center;padding:10px 6px 16px;}
+#gridPopupBox .qx-donate .qx-donate-heart{font-size:32px;color:#e84c70;line-height:1.3;}
+#gridPopupBox .qx-donate h2{font-size:22px;margin:5px 0 7px;font-weight:750;}
+#gridPopupBox .qx-donate p{margin:0;color:var(--qx-meta-color);font-size:13px;line-height:1.65;}
+#gridPopupBox .qx-donate .qx-voluntary{padding:11px 8px;margin:0 3px 14px;border-radius:12px;background:#e0f5e6;color:#08603c;text-align:center;font-weight:700;font-size:13px;}
+#gridPopupBox .qx-donate .qx-wallet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+#gridPopupBox .qx-donate .qx-wallet-card{min-width:0;border:1px solid var(--wallet-border);background:var(--wallet-bg);border-radius:14px;padding:12px 9px;text-align:center;}
+#gridPopupBox .qx-donate .qx-wallet-logo{height:32px;display:grid;place-items:center;font-size:19px;font-weight:800;color:var(--wallet-color);}
+#gridPopupBox .qx-donate .qx-wallet-name{font-size:15px;font-weight:750;margin:5px 0;}
+#gridPopupBox .qx-donate .qx-wallet-number{font-size:12px;font-weight:650;letter-spacing:.2px;overflow-wrap:anywhere;margin-bottom:10px;color:var(--qx-text-color);}
+#gridPopupBox .qx-donate .qx-copy-open{width:100%;border:0;border-radius:8px;padding:10px 4px;background:var(--wallet-color);color:#fff;font:inherit;font-size:12px;font-weight:750;cursor:pointer;}
+#gridPopupBox .qx-donate .qx-copy-open:disabled{opacity:.65;cursor:wait;}
+#gridPopupBox .qx-donate .qx-thanks{text-align:center;padding:16px 4px 10px;font-size:13px;}
+#gridPopupBox .qx-donate .qx-guide-link,#gridPopupBox .qx-donate .qx-home-button{width:100%;border:0;border-radius:28px;padding:11px;background:var(--qx-main-soft);color:var(--qx-text-color);font:inherit;font-size:13px;font-weight:700;cursor:pointer;}
+#gridPopupBox .qx-donate .qx-guide-link{display:flex;align-items:center;justify-content:center;gap:8px;}
+#gridPopupBox .qx-donate .qx-back{border:0;background:transparent;color:var(--qx-main-color);padding:8px 2px;font:inherit;font-weight:700;cursor:pointer;}
+#gridPopupBox .qx-donate .qx-guide-heading{text-align:center;padding:12px 8px 18px;}
+#gridPopupBox .qx-donate .qx-success-icon{width:48px;height:48px;display:grid;place-items:center;margin:0 auto 9px;border-radius:50%;background:#15945d;color:white;font-size:26px;}
+#gridPopupBox .qx-donate .qx-steps{display:flex;flex-direction:column;gap:16px;padding:4px 3px 16px;}
+#gridPopupBox .qx-donate .qx-step{display:flex;align-items:flex-start;gap:11px;}
+#gridPopupBox .qx-donate .qx-step-number{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--qx-main-soft);color:var(--qx-main-color);display:grid;place-items:center;font-weight:800;}
+#gridPopupBox .qx-donate .qx-step h3{margin:2px 0 4px;font-size:14px;}
+#gridPopupBox .qx-donate .qx-step p{font-size:12px;}
+#gridPopupBox .qx-donate .qx-guide-note{background:var(--qx-main-soft);color:var(--qx-main-color);border-radius:11px;padding:12px;font-size:12px;line-height:1.65;margin-bottom:12px;}
+#gridPopupBox .qx-donate .qx-guide-footer{text-align:center;line-height:1.8;padding:12px 4px;font-size:13px;}
+#gridPopupBox .qx-donate .qx-home-button{background:var(--qx-main-color);color:var(--qx-on-main);}
+@media(max-width:360px){#gridPopupBox .qx-donate .qx-wallet-grid{gap:7px;}#gridPopupBox .qx-donate .qx-wallet-card{padding:10px 6px;}#gridPopupBox .qx-donate .qx-wallet-name{font-size:14px;}#gridPopupBox .qx-donate .qx-wallet-number{font-size:11px;}#gridPopupBox .qx-donate .qx-copy-open{font-size:11px;}}
+@media(prefers-reduced-motion:reduce){#gridPopupBox .qx-donate *{transition:none;}}
+/* [SUPPORT QURANIX] styles end */
 /* [SPLASH] start */
 #qxSplash {
   position: fixed;
@@ -9186,7 +9233,7 @@ html.in-app #qxSplash {
         <div class="g-quick" id="gQuick"></div>
 
         <!-- [MORE-MENU > Full Audio Quran item] Task 08: order 0 -->
-        <button class="g-menu-item" data-popup="fullaudio"><span style="display:flex;align-items:center;gap:10px"><span class="ms" aria-hidden="true">headphones</span><span style="display:flex;flex-direction:column;line-height:1.25">বাংলা কুরআন<small style="text-align:left;font-size:var(--qx-fs-sm);font-weight:400">অর্থসহ সম্পূর্ণ কুরআন</small></span></span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="fullaudio"><span><span class="ms" aria-hidden="true">headphones</span><span class="g-menu-text">বাংলা কুরআন<span class="g-menu-sub">অর্থসহ সম্পূর্ণ কুরআন</span></span></span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Hijri calendar item] -->
         <button class="g-menu-item" data-popup="hijri"><span><span class="ms qi" data-i="hijri" aria-hidden="true"></span>হিজরি ক্যালেন্ডার</span><small id="gHijriMini"><span class="ms" aria-hidden="true">chevron_right</span></small></button>
         <!-- [MORE-MENU > Downloads item] -->
@@ -9203,7 +9250,7 @@ html.in-app #qxSplash {
         <button class="g-menu-item" data-popup="share"><span><span class="ms" aria-hidden="true">share</span>অ্যাপ শেয়ার করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
 
         <!-- [MORE-MENU > Help item] -->
-        <button class="g-menu-item" data-popup="help"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>সহযোগিতা করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
+        <button class="g-menu-item" data-popup="help"><span><svg class="ms-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>সহযোগিতা করুন</span><small><span class="ms" aria-hidden="true">chevron_right</span></small></button>
       </div>
     </div>
   </div> 
@@ -9349,6 +9396,185 @@ html.in-app #qxSplash {
 })();
 </script>
 
+
+<!-- [SUPPORT QURANIX] script start -->
+<script>
+(function(){
+  var WALLETS = [
+    { id: 'bkash',  name: 'bKash',  number: '01627168957', color: '#e2136e', app: '' },
+    { id: 'nagad',  name: 'Nagad',  number: '01627168957', color: '#d9531e', app: '' },
+    { id: 'rocket', name: 'Rocket', number: '01627168957', color: '#8c3494', app: '' },
+    { id: 'upay',   name: 'Upay',   number: '01627168957', color: '#1f6fb5', app: '' }
+  ];
+
+  var overlay = document.getElementById('gridPopupOverlay');
+  var box = document.getElementById('gridPopupBox');
+  if (!overlay || !box) return;
+
+  function isReady(w){ return !/x/i.test(w.number); }
+
+  function findWallet(id){
+    for (var i = 0; i < WALLETS.length; i++) { if (WALLETS[i].id === id) return WALLETS[i]; }
+    return null;
+  }
+
+  function closeMenu(){
+    var dd = document.getElementById('gridDropdown');
+    if (dd) dd.classList.remove('open');
+    var gm = document.getElementById('gridMenu');
+    if (gm) gm.setAttribute('aria-expanded', 'false');
+  }
+
+  function closePopup(){ overlay.classList.remove('open'); }
+
+  function isDonateOpen(){ return !!box.querySelector('.qx-donate'); }
+
+  function headerHtml(title){
+    return '<div class="pp-header"><h3>' + title + '</h3>' +
+      '<button type="button" class="pp-close" data-qx-act="close" aria-label="বন্ধ করুন"><span class="ms" aria-hidden="true">close</span></button></div>';
+  }
+
+  function walletCardHtml(w){
+    var ready = isReady(w);
+    var style = '--wallet-color:' + w.color + ';' +
+      '--wallet-bg:color-mix(in srgb, ' + w.color + ' 10%, transparent);' +
+      '--wallet-border:color-mix(in srgb, ' + w.color + ' 35%, transparent);';
+    return '<div class="qx-wallet-card" style="' + style + '">' +
+      '<div class="qx-wallet-logo">' + w.name + '</div>' +
+      '<div class="qx-wallet-name">Send Money</div>' +
+      '<div class="qx-wallet-number" dir="ltr">' + w.number + '</div>' +
+      '<button type="button" class="qx-copy-open" data-qx-act="copy" data-qx-id="' + w.id + '"' + (ready ? '' : ' disabled') + '>' +
+      (ready ? 'কপি করুন' : 'নম্বর সেট হয়নি') + '</button>' +
+      '</div>';
+  }
+
+  function donatePageHtml(){
+    var cards = '';
+    for (var i = 0; i < WALLETS.length; i++) { cards += walletCardHtml(WALLETS[i]); }
+    return '<div class="qx-donate">' + headerHtml('সহযোগিতা করুন') +
+      '<div class="qx-donate-page">' +
+        '<div class="qx-donate-heading">' +
+          '<div class="qx-donate-heart" aria-hidden="true">♥</div>' +
+          '<h2>Quranix-কে সহযোগিতা করুন</h2>' +
+          '<p>আপনার সহযোগিতা অ্যাপটির উন্নয়ন ও রক্ষণাবেক্ষণে কাজে লাগবে।</p>' +
+        '</div>' +
+        '<div class="qx-voluntary">সম্পূর্ণ ঐচ্ছিক — সহযোগিতা ছাড়াও অ্যাপ ব্যবহার করা যাবে</div>' +
+        '<div class="qx-wallet-grid">' + cards + '</div>' +
+        '<p class="qx-thanks">জাযাকাল্লাহু খাইরান। আল্লাহ আপনার সহযোগিতা কবুল করুন।</p>' +
+        '<button type="button" class="qx-guide-link" data-qx-act="guide">কীভাবে পাঠাবেন? <span class="ms" aria-hidden="true">chevron_right</span></button>' +
+      '</div></div>';
+  }
+
+  function guidePageHtml(){
+    var steps = [
+      ['পছন্দের মাধ্যম বেছে নিন', 'bKash, Nagad, Rocket বা Upay'],
+      ['নম্বর কপি করুন', 'কার্ডের “কপি করুন” বাটনে চাপ দিলে নম্বরটি কপি হয়ে যাবে।'],
+      ['অ্যাপে থেকে Send Money করুন', 'মোবাইলে ওয়ালেট অ্যাপ খুলে Send Money বেছে নিন এবং কপি করা নম্বর বসান।'],
+      ['পরিমাণ লিখে নিশ্চিত করুন', 'সামর্থ্য অনুযায়ী পরিমাণ লিখে পিন দিয়ে সম্পন্ন করুন।']
+    ];
+    var list = '';
+    for (var i = 0; i < steps.length; i++) {
+      list += '<div class="qx-step"><div class="qx-step-number">' + (i + 1) + '</div>' +
+        '<div><h3>' + steps[i][0] + '</h3><p>' + steps[i][1] + '</p></div></div>';
+    }
+    return '<div class="qx-donate">' + headerHtml('কীভাবে পাঠাবেন') +
+      '<button type="button" class="qx-back" data-qx-act="back">‹ ফিরে যান</button>' +
+      '<div class="qx-guide-heading">' +
+        '<div class="qx-success-icon" aria-hidden="true">✓</div>' +
+        '<h2>মাত্র ৪টি ধাপ</h2>' +
+        '<p>মোবাইল ওয়ালেট দিয়ে সহযোগিতা পাঠানোর নিয়ম</p>' +
+      '</div>' +
+      '<div class="qx-steps">' + list + '</div>' +
+      '<div class="qx-guide-note">পাঠানোর আগে নম্বরটি আরেকবার মিলিয়ে নিন।</div>' +
+      '<div class="qx-guide-footer">জাযাকাল্লাহু খাইরান</div>' +
+      '<button type="button" class="qx-home-button" data-qx-act="home">হোমে ফিরে যান</button>' +
+      '</div>';
+  }
+
+  function render(html){
+    box.innerHTML = html;
+    box.scrollTop = 0;
+  }
+
+  function openDonate(){
+    closeMenu();
+    box.className = '';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'সহযোগিতা করুন');
+    render(donatePageHtml());
+    overlay.classList.add('open');
+  }
+
+  function copyText(text){
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function(resolve, reject){
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) resolve(); else reject();
+      } catch (err) { reject(err); }
+    });
+  }
+
+  function onCopy(btn){
+    var w = findWallet(btn.getAttribute('data-qx-id'));
+    if (!w || !isReady(w)) return;
+    var label = btn.textContent;
+    btn.disabled = true;
+    copyText(w.number).then(function(){
+      btn.textContent = 'কপি হয়েছে ✓';
+      if (w.app) { setTimeout(function(){ window.location.href = w.app; }, 350); }
+    }, function(){
+      btn.textContent = 'কপি করা যায়নি';
+    }).then(function(){
+      setTimeout(function(){ btn.textContent = label; btn.disabled = false; }, 1800);
+    });
+  }
+
+  /* মেনুর সহযোগিতা আইটেম: আগের হ্যান্ডলারের আগে ধরে এই পপআপ খোলে */
+  document.addEventListener('click', function(e){
+    var item = e.target && e.target.closest ? e.target.closest('.g-menu-item[data-popup="help"]') : null;
+    if (!item) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openDonate();
+  }, true);
+
+  box.addEventListener('click', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('[data-qx-act]') : null;
+    if (!el || !isDonateOpen()) return;
+    var act = el.getAttribute('data-qx-act');
+    if (act === 'close') closePopup();
+    else if (act === 'copy') onCopy(el);
+    else if (act === 'guide') render(guidePageHtml());
+    else if (act === 'back') render(donatePageHtml());
+    else if (act === 'home') {
+      closePopup();
+      var home = document.getElementById('navHome');
+      if (home) home.click();
+    }
+  });
+
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay && isDonateOpen()) closePopup();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && overlay.classList.contains('open') && isDonateOpen()) closePopup();
+  });
+})();
+</script>
+<!-- [SUPPORT QURANIX] script end -->
 
 <script>
 /* [SPLASH] hide */
