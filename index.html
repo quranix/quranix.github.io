@@ -9204,6 +9204,295 @@ html.in-app #qxSplash {
   .row2:has(select[aria-label="বিভাগ নির্বাচন"]) select { min-height:42px; }
 }
 /* [PHASE-5] end */
+
+/* [PHASE1-FIXES] start */
+/* Task 1: মেনু আইটেমের অ্যালাইনমেন্ট — সব আইকন একই বক্স, লেবেল একই লাইনে, ডানের অংশ একই প্রান্তে */
+#gridDropdown .g-menu-item{
+  align-items:center;
+  min-height:calc(52px * var(--qx-scale));
+  padding:calc(10px * var(--qx-scale)) calc(12px * var(--qx-scale));
+  line-height:1.3;
+}
+#gridDropdown .g-menu-item > span:first-child{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+#gridDropdown .g-menu-item > span:first-child > .ms,
+#gridDropdown .g-menu-item > span:first-child > .ms-svg{
+  flex:0 0 calc(24px * var(--qx-scale));
+  width:calc(24px * var(--qx-scale));
+  height:calc(24px * var(--qx-scale));
+  font-size:calc(24px * var(--qx-scale));
+  display:inline-grid;
+  place-items:center;
+  line-height:1;
+  vertical-align:middle;
+  margin:0;
+}
+#gridDropdown .g-menu-item .ms-svg{ padding:1px; box-sizing:border-box; font-size:calc(24px * var(--qx-scale)); }
+#gridDropdown .g-menu-item > small{
+  margin-left:auto;
+  justify-content:flex-end;
+  align-items:center;
+  white-space:nowrap;
+}
+#gridDropdown .g-menu-item > small .ms{
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 auto;
+}
+#gridDropdown .g-menu-item[data-popup="settings"]{
+  margin-top:8px;
+  padding-top:calc(10px * var(--qx-scale));
+  border-top:1px solid var(--qx-border);
+  border-radius:0 0 var(--qx-radius-lg) var(--qx-radius-lg);
+}
+
+/* Task 7: ডোনেট গাইড পপআপের ব্যাক আইকন */
+.pp-header .pp-back{
+  flex:0 0 40px;
+  width:40px;
+  height:40px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:var(--qx-text-color);
+  cursor:pointer;
+}
+.pp-header .pp-back:hover{ background:var(--qx-hover); }
+.pp-header .pp-back:active{ transform:scale(.94); }
+.pp-header .pp-back .ms{ font-size:calc(24px * var(--qx-scale)); width:calc(24px * var(--qx-scale)); height:calc(24px * var(--qx-scale)); color:inherit; }
+
+/* Task 2: থিম বাছাই করলে রঙ শুধু বাইরের ব্যাকগ্রাউন্ডে নয়, পুরো UI-তে।
+   থিমের রঙ apps.js এ --qx-home-accent এ সেট হয়; ডিফল্ট থিমে আগের চেহারাই থাকে। */
+html[data-qx-theme]:not([data-qx-theme="default"]):not([data-theme="dark"]){
+  --qx-main-color: var(--qx-home-accent, var(--qx-c-teal));
+  --qx-outer-bg: color-mix(in srgb, var(--qx-main-color) 10%, var(--qx-c-white)) !important;
+  --qx-bg: color-mix(in srgb, var(--qx-main-color) 5%, var(--qx-c-white));
+  --qx-card-bg: color-mix(in srgb, var(--qx-main-color) 8%, var(--qx-c-white));
+  --qx-tile-bg: color-mix(in srgb, var(--qx-main-color) 8%, var(--qx-c-white));
+  --qx-border: color-mix(in srgb, var(--qx-main-color) 22%, var(--qx-c-gray));
+  --qx-main-soft: color-mix(in srgb, var(--qx-main-color) 16%, transparent);
+}
+html[data-qx-theme]:not([data-qx-theme="default"])[data-theme="dark"]{
+  /* ডার্কে থিমের রঙ হালকা করে নেওয়া হয়, যাতে গাঢ় ব্যাকগ্রাউন্ডে পড়া যায় */
+  --qx-main-color: color-mix(in srgb, var(--qx-home-accent, var(--qx-c-green)) 62%, #ffffff);
+  --qx-outer-bg: color-mix(in srgb, var(--qx-main-color) 8%, var(--qx-c-night-outer)) !important;
+  --qx-bg: color-mix(in srgb, var(--qx-main-color) 8%, var(--qx-c-night));
+  --qx-card-bg: color-mix(in srgb, var(--qx-main-color) 10%, var(--qx-c-night));
+  --qx-tile-bg: color-mix(in srgb, var(--qx-main-color) 12%, var(--qx-c-night-chip));
+  --qx-border: color-mix(in srgb, var(--qx-main-color) 30%, var(--qx-c-night-border));
+  --qx-main-soft: color-mix(in srgb, var(--qx-main-color) 22%, transparent);
+}
+html[data-qx-theme]:not([data-qx-theme="default"]) header{ background:var(--qx-bg); border-bottom-color:var(--qx-border); }
+html[data-qx-theme]:not([data-qx-theme="default"]) #gridDropdown,
+html[data-qx-theme]:not([data-qx-theme="default"]) #gridPopupBox{ background:var(--qx-tile-bg); border-color:var(--qx-border); }
+html[data-qx-theme]:not([data-qx-theme="default"]) .home-tile,
+html[data-qx-theme]:not([data-qx-theme="default"]) .set-row{ background:var(--qx-card-bg); }
+/* [PHASE1-FIXES] end */
+
+/* [PHASE2-PLAYER-FIX] start */
+/* প্লেয়ার পেজ: হেডার, ফুটার ও মাঝের গোল কুরআন বাটনের (notch) উপরে সামান্য ফাঁক রেখে বসবে */
+.qx-full-audio-page:has(.qx-fa-current-row){
+  height: calc(100svh - var(--qx-hdr-h, 62px) - 12px - var(--qx-nav-h, calc(66px + env(safe-area-inset-bottom))) - 32px);
+  min-height: 280px;
+}
+.qx-full-audio-page .qx-fa-controls{ margin-bottom: 2px; flex: 0 0 auto; }
+.qx-full-audio-page .qx-fa-progress,
+.qx-full-audio-page .qx-fa-time{ flex: 0 0 auto; }
+
+/* বাঁ দিকের প্লে/পজ গোল বাটন: ফ্যাকাশে ব্যাকগ্রাউন্ডে সাদা আইকন মিলে যাচ্ছিল */
+.qx-full-audio-page .qx-fa-current-row .qx-fa-current-play{
+  background: var(--qx-main-color) !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--qx-main-color) 35%, transparent);
+}
+.qx-full-audio-page .qx-fa-current-row .qx-fa-current-play .ms{
+  color: #fff !important;
+  font-variation-settings: 'FILL' 1;
+}
+
+/* "সূরা তালিকা" বাটনের ভাঙা আইকন: আইকন-ফন্টের উপর নির্ভর না করে SVG মাস্ক */
+.qx-fa-open-list .ms{
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  display: inline-block;
+  overflow: hidden;
+  background: #fff;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0 12a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0 12a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* [PHASE2-PLAYER-FIX] end */
+
+/* [PHASE2-AYAH-BAR-FIX] start */
+/* আয়াত-ভিত্তিক অডিও প্লেয়ার (#audioBar) — ফুল অডিও কুরআন প্লেয়ার (.qx-fa-*) থেকে সম্পূর্ণ আলাদা স্টাইল */
+
+/* ১) ব্যাকগ্রাউন্ড: আগে --qx-main-soft (স্বচ্ছ) ছিল, তাই পেছনের আয়াত কার্ড ভেসে উঠছিল। এখন একটাই নিরেট সারফেস */
+.audio-bar,
+[data-theme="dark"] .audio-bar{
+  background: color-mix(in srgb, var(--qx-main-color) 12%, var(--qx-card-bg));
+  border-top: 1px solid color-mix(in srgb, var(--qx-main-color) 30%, var(--qx-border));
+  box-shadow: 0 -6px 18px rgba(0,0,0,.18);
+}
+
+/* ২) উপরের সারি, সময়ের সারি ও কন্ট্রোল সারি — আলাদা আলাদা রঙের বার নয়, একই সারফেসের অংশ */
+.audio-bar .audio-top-row,
+[data-theme="dark"] .audio-bar .audio-top-row{
+  background: transparent;
+  color: var(--qx-text-color);
+  border-bottom: 0;
+  padding: 12px 12px 4px;
+}
+.audio-bar .audio-top-row .audio-info small,
+[data-theme="dark"] .audio-bar .audio-top-row .audio-info small{ color: var(--qx-meta-color); }
+.audio-bar .audio-top-actions button,
+[data-theme="dark"] .audio-bar .audio-top-actions button{
+  color: var(--qx-text-color);
+  background: color-mix(in srgb, var(--qx-main-color) 10%, var(--qx-card-bg));
+  border: 1px solid var(--qx-border);
+}
+
+/* সময়: আলাদা স্ট্রিপ নয়, একই ব্যাকগ্রাউন্ডে, ছোট ও চাপা */
+.audio-bar .audio-bottom{
+  background: transparent;
+  padding: 0 14px;
+  margin: 0;
+  line-height: 1.2;
+  color: var(--qx-meta-color);
+}
+.audio-bar .audio-ctrls.qx-audio-ctrls-v3{
+  background: transparent;
+  padding: 2px 12px calc(10px + env(safe-area-inset-bottom, 0px) * 0);
+  gap: 18px;
+}
+.audio-bar .audio-status:empty{ display: none; }
+
+/* ৩) সিক বার: .qx-fa-progress এর সাথে শেয়ার করা স্টাইল থেকে আলাদা করে নিজস্ব নিয়ম */
+.audio-bar .audio-progress-top{
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--qx-main-color) 22%, var(--qx-border));
+}
+.audio-bar .audio-progress-fill{
+  background: var(--qx-main-color);
+}
+/* [PHASE2-AYAH-BAR-FIX] end */
+
+/* [PHASE2-AUDIO-SCROLL-FIX] start */
+/* অডিও চালু থাকলে html/body তে overflow:hidden থাকায় নিজে স্ক্রল করা যেত না — সেটা তুলে দেওয়া হলো */
+html.qx-audio-open,
+body.qx-audio-open{
+  overflow: visible !important;
+  overflow-y: auto !important;
+  height: auto !important;
+  touch-action: auto !important;
+}
+/* প্লেয়ার বারের নিচে শেষ আয়াত যেন ঢেকে না যায় */
+body.qx-audio-open main,
+body:has(.audio-bar.show) main,
+body:has(.audio-bar.on) main,
+body:has(.audio-bar.open) main,
+body:has(.audio-bar.active) main,
+body:has(.audio-bar.visible) main{
+  padding-bottom: calc(var(--qx-audio-h, 190px) + 16px + env(safe-area-inset-bottom));
+}
+/* [PHASE2-AUDIO-SCROLL-FIX] end */
+
+/* [PHASE2-FA-PROGRESS] start */
+/* প্রগ্রেস বার: ট্র্যাক + কালার ফিল + দুই পাশের সময় বারের ভেতরে */
+.qx-full-audio-page .qx-fa-progress{
+  position: relative;
+  display: block;
+  height: 28px;
+  margin: 12px 2px 4px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--qx-main-color) 16%, var(--qx-card-bg));
+  border: 1px solid color-mix(in srgb, var(--qx-main-color) 22%, var(--qx-border));
+  flex: 0 0 auto;
+}
+.qx-full-audio-page .qx-fa-progress #qxFaProgressFill{
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 0;
+  height: auto;
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--qx-main-color);
+  z-index: 1;
+  pointer-events: none;
+  transition: width .25s linear;
+}
+.qx-full-audio-page .qx-fa-progress .qx-fa-bar-labels{
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--qx-text-color);
+  pointer-events: none;
+}
+.qx-full-audio-page .qx-fa-progress .qx-fa-bar-labels b{ font-weight: 700; }
+/* ফিলের উপরের কপি: ফিল যতটুকু ঢাকে ততটুকুতে সাদা/অন-মেইন রঙের সময় দেখায় */
+.qx-full-audio-page .qx-fa-progress .qx-fa-bar-labels.on-fill{
+  right: auto;
+  width: 100%;
+  color: var(--qx-on-main);
+}
+.qx-full-audio-page .qx-fa-progress input{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  z-index: 3;
+  cursor: pointer;
+  background: transparent;
+}
+.qx-full-audio-page .qx-fa-time{ display: none; }
+
+/* রিপিট ও স্লিপ টাইমার বাটন */
+.qx-full-audio-page .qx-fa-controls{ gap: 10px; }
+.qx-full-audio-page .qx-fa-controls button{ position: relative; }
+.qx-full-audio-page .qx-fa-controls button.on{
+  background: var(--qx-main-color);
+  color: var(--qx-on-main);
+}
+.qx-full-audio-page .qx-fa-controls button .ms{ color: inherit; }
+.qx-full-audio-page .qx-fa-controls #qxFaSleep small{
+  position: absolute;
+  left: 50%;
+  bottom: -15px;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--qx-main-color);
+}
+.qx-full-audio-page .qx-fa-controls #qxFaSleep small:empty{ display: none; }
+/* [PHASE2-FA-PROGRESS] end */
 </style>
 </head>
 <body>
@@ -9362,6 +9651,94 @@ html.in-app #qxSplash {
 <div id="gridPopupOverlay"><div id="gridPopupBox"></div></div>
 <!-- [GRID-POPUP] end -->
 <!-- [SCRIPTS] start -->
+<script>
+/* [AUDIO-AUTOSCROLL-GUARD]
+   অডিও চলাকালীন অটো স্ক্রল চলবে, কিন্তু ব্যবহারকারী নিজে স্ক্রল শুরু করলেই অটো স্ক্রল বন্ধ।
+   আবার চালু হবে: প্লে/প্রিভ/নেক্সট বাটনে চাপলে, বা প্লেয়ার বন্ধ করলে। */
+(function(){
+  var userScrolled = false;
+  var lastClick = 0;
+  var touchY = null;
+
+  function bar(){ return document.getElementById('audioBar'); }
+  function audioActive(){
+    var b = bar();
+    if (b && getComputedStyle(b).display !== 'none') return true;
+    var f = document.getElementById('audioFloat');
+    return !!(f && getComputedStyle(f).display !== 'none');
+  }
+  function ignorable(t){
+    return !!(t && t.closest && t.closest('#audioBar, input[type="range"], #gridPopupBox, #gridDropdown'));
+  }
+  function markUser(e){
+    if (!audioActive() || ignorable(e.target)) return;
+    userScrolled = true;
+  }
+
+  /* ব্যবহারকারীর নিজের স্ক্রল ধরা: টাচ-ড্র্যাগ, মাউস হুইল, কিবোর্ড */
+  document.addEventListener('touchstart', function(e){
+    touchY = e.touches && e.touches[0] ? e.touches[0].clientY : null;
+  }, {passive:true, capture:true});
+  document.addEventListener('touchmove', function(e){
+    if (touchY === null || !e.touches || !e.touches[0]) return;
+    if (Math.abs(e.touches[0].clientY - touchY) > 8) markUser(e);
+  }, {passive:true, capture:true});
+  document.addEventListener('wheel', markUser, {passive:true, capture:true});
+  document.addEventListener('keydown', function(e){
+    if (['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].indexOf(e.key) !== -1) markUser(e);
+  }, true);
+
+  /* ক্লিক: প্লে-সংক্রান্ত বাটনে অটো স্ক্রল আবার চালু; ক্লিকের পরপর স্ক্রল কলকে ব্যবহারকারীর কাজ ধরা হয় */
+  document.addEventListener('click', function(e){
+    lastClick = Date.now();
+    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+    if (!btn) return;
+    var id = btn.id || '';
+    var txt = (btn.textContent || '');
+    if (id === 'audioPlayPause' || id === 'audioPrev' || id === 'audioNext' ||
+        txt.indexOf('play_arrow') !== -1) {
+      userScrolled = false;
+    }
+    if (id === 'audioClose') userScrolled = false;
+  }, true);
+
+  /* অ্যাপের প্রোগ্রাম্যাটিক স্ক্রল কল আটকানো (শুধু অডিও চালু + ব্যবহারকারী স্ক্রল করেছে + সাম্প্রতিক ক্লিক নেই) */
+  function blocked(){
+    if (!audioActive()) { userScrolled = false; return false; }
+    if (!userScrolled) return false;
+    return (Date.now() - lastClick) > 800;
+  }
+  var _sIV = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function(){
+    if (blocked()) return;
+    return _sIV.apply(this, arguments);
+  };
+  ['scrollTo','scroll','scrollBy'].forEach(function(name){
+    var w = window[name];
+    if (typeof w === 'function') {
+      window[name] = function(){ if (blocked()) return; return w.apply(window, arguments); };
+    }
+    var ep = Element.prototype[name];
+    if (typeof ep === 'function') {
+      Element.prototype[name] = function(){ if (blocked()) return; return ep.apply(this, arguments); };
+    }
+  });
+
+  /* প্লেয়ার বারের উচ্চতা CSS ভ্যারিয়েবলে */
+  function setBarH(){
+    var b = bar();
+    if (b) document.documentElement.style.setProperty('--qx-audio-h', b.offsetHeight + 'px');
+  }
+  if (window.ResizeObserver) {
+    window.addEventListener('load', function(){
+      var b = bar();
+      if (b) new ResizeObserver(setBarH).observe(b);
+      setBarH();
+    });
+  }
+  window.addEventListener('resize', setBarH);
+})();
+</script>
 <script src="quran-data.js"></script>
 <script src="data/topics.js"></script>
 <script src="data/dictionary.js"></script>
@@ -9438,8 +9815,11 @@ html.in-app #qxSplash {
 
   function isDonateOpen(){ return !!box.querySelector('.qx-donate'); }
 
-  function headerHtml(title){
-    return '<div class="pp-header"><h3>' + title + '</h3>' +
+  function headerHtml(title, withBack){
+    var backBtn = withBack
+      ? '<button type="button" class="pp-back" data-qx-act="back" aria-label="ফিরে যান"><span class="ms" aria-hidden="true" data-nosnippet>arrow_back</span></button>'
+      : '';
+    return '<div class="pp-header">' + backBtn + '<h3>' + title + '</h3>' +
       '<button type="button" class="pp-close" data-qx-act="close" aria-label="বন্ধ করুন"><span class="ms" aria-hidden="true" data-nosnippet>close</span></button></div>';
   }
 
@@ -9486,8 +9866,7 @@ html.in-app #qxSplash {
       list += '<div class="qx-step"><div class="qx-step-number">' + (i + 1) + '</div>' +
         '<div><h3>' + steps[i][0] + '</h3><p>' + steps[i][1] + '</p></div></div>';
     }
-    return '<div class="qx-donate">' + headerHtml('কীভাবে পাঠাবেন') +
-      '<button type="button" class="qx-back" data-qx-act="back">‹ ফিরে যান</button>' +
+    return '<div class="qx-donate">' + headerHtml('কীভাবে পাঠাবেন', true) +
       '<div class="qx-guide-heading">' +
         '<div class="qx-success-icon" aria-hidden="true">✓</div>' +
         '<h2>মাত্র ৪টি ধাপ</h2>' +
@@ -9593,6 +9972,19 @@ window.addEventListener('load', function(){
     if(s){ s.style.opacity='0'; setTimeout(function(){ s.remove(); }, 400); }
   }, 800);
 });
+</script>
+<script>
+/* [NAV-HEIGHT] ফুটারের আসল উচ্চতা --qx-nav-h এ রাখে, যাতে প্লেয়ার পেজ ঠিক জায়গায় বসে */
+(function(){
+  function setNavH(){
+    var n = document.querySelector('nav');
+    if (n) document.documentElement.style.setProperty('--qx-nav-h', n.offsetHeight + 'px');
+  }
+  setNavH();
+  window.addEventListener('load', setNavH);
+  window.addEventListener('resize', setNavH);
+  window.addEventListener('orientationchange', setNavH);
+})();
 </script>
 </body>
 
